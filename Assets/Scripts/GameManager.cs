@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement; // Bắt buộc phải có để Load lại màn chơi
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Progression")]
     public int currentDay = 1;
-    public float dayDuration = 10f; // Mỗi ngày dài 10 giây
-    private float currentTime;      // Thời gian đếm ngược hiện tại
+    public float dayDuration = 10f;
+    private float currentTime;
 
     [Header("Tài chính")]
     public int currentMoney = 10000;
@@ -18,46 +18,48 @@ public class GameManager : MonoBehaviour
     [Header("Giao diện UI")]
     public TextMeshProUGUI dayTextUI;
     public TextMeshProUGUI moneyTextUI;
-    public TextMeshProUGUI timeTextUI; // Dòng chữ báo thời gian
-    public GameObject gameOverPanel;   // Màn hình thua (Panel)
+    public TextMeshProUGUI timeTextUI;
+    public GameObject gameOverPanel;
+
+    // ĐÂY LÀ BIẾN MỚI ĐỂ CHỨA DÒNG CHỮ "PRESS E"
+    public TextMeshProUGUI interactTextUI;
 
     private bool isGameOver = false;
 
     private void Awake()
     {
-        // Tạm thời xóa lệnh DontDestroyOnLoad ở các bài trước để lúc bấm "Chơi lại", 
-        // toàn bộ thông số sẽ được Reset mới hoàn toàn.
         Instance = this;
     }
 
     private void Start()
     {
-        currentTime = dayDuration; // Đổ đầy thời gian lúc bắt đầu
-        if (gameOverPanel != null) gameOverPanel.SetActive(false); // Đảm bảo màn hình thua bị ẩn
+        currentTime = dayDuration;
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         UpdateUI();
+
+        // Tắt dòng chữ Press E lúc mới vào game
+        HideInteractText();
     }
 
     private void Update()
     {
-        if (isGameOver) return; // Nếu đã thua thì không đếm thời gian nữa
+        if (isGameOver) return;
 
-        // Đếm ngược thời gian thực
         currentTime -= Time.deltaTime;
 
-        // Nếu hết thời gian hoặc bấm phím T (dùng để test nhanh)
         if (currentTime <= 0 || Input.GetKeyDown(KeyCode.T))
         {
             NextDay();
         }
 
-        UpdateUI(); // Cập nhật thời gian trên màn hình liên tục
+        UpdateUI();
     }
 
     private void NextDay()
     {
         currentDay++;
         currentMoney -= dailyCost;
-        currentTime = dayDuration; 
+        currentTime = dayDuration;
 
         if (currentMoney < 0)
         {
@@ -68,15 +70,14 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         isGameOver = true;
-        Time.timeScale = 0f; 
-        if (gameOverPanel != null) gameOverPanel.SetActive(true); 
+        Time.timeScale = 0f;
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
-    
     public void RestartGame()
     {
-        Time.timeScale = 1f; 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void UpdateUI()
@@ -86,8 +87,25 @@ public class GameManager : MonoBehaviour
 
         if (timeTextUI != null)
         {
-           
             timeTextUI.text = "Time: " + Mathf.Ceil(currentTime).ToString() + "s";
+        }
+    }
+
+    // --- 2 HÀM MỚI ĐỂ BẬT/TẮT CHỮ UI ---
+    public void ShowInteractText(string message)
+    {
+        if (interactTextUI != null)
+        {
+            interactTextUI.text = message;
+            interactTextUI.gameObject.SetActive(true);
+        }
+    }
+
+    public void HideInteractText()
+    {
+        if (interactTextUI != null)
+        {
+            interactTextUI.gameObject.SetActive(false);
         }
     }
 }

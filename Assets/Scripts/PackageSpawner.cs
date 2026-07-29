@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class PackageSpawner : MonoBehaviour
 {
-    [Header("Bản mẫu Gói hàng")]
+    [Header("Package")]
     public GameObject packagePrefab; 
 
-    [Header("Thời gian sinh đồ")]
+    [Header("Time Spawn")]
     public float spawnInterval = 3f; 
 
     void Start()
