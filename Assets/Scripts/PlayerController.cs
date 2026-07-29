@@ -7,132 +7,162 @@ public class PlayerController : MonoBehaviour
     public float turnSpeed = 720f;
     public float jumpForce = 5f;
 
-    [Header("Interaction")]
+    [Header("Interaction & Carry")]
     public float interactRange = 2f;
+    public Transform holdPoint;
+    public float throwForce = 15f;
 
     private Rigidbody rb;
     private Animator animator;
     private bool isGrounded;
+    private Rigidbody heldItemRb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
-
-        if (animator == null)
-        {
-            Debug.LogError("Error: No Animator found!");
-        }
     }
 
     void Update()
     {
-        // Kiểm tra xem nhân vật có đang chạm đất không
         isGrounded = Mathf.Abs(rb.linearVelocity.y) < 0.01f;
 
-        // Xử lý Nhảy
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            if (animator != null)
-            {
-                animator.SetTrigger("Jump");
-            }
+            if (animator != null) animator.SetTrigger("Jump");
         }
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactRange);
-        Interactable targetItem = null;
-
-        // Quét xem có vật phẩm nào xung quanh không
-        foreach (var hitCollider in hitColliders)
+        if (heldItemRb == null)
         {
-            Interactable interactable = hitCollider.GetComponent<Interactable>();
-            if (interactable != null)
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactRange);
+            Interactable targetItem = null;
+
+            foreach (var hitCollider in hitColliders)
             {
-                targetItem = interactable;
-                break; // Tìm thấy 1 cái là dừng quét ngay
+                Interactable interactable = hitCollider.GetComponent<Interactable>();
+                if (interactable != null)
+                {
+                    targetItem = interactable;
+                    break;
+                }
             }
-        }
 
-        // Nếu thấy vật phẩm trong tầm với
-        if (targetItem != null)
-        {
-            // Bảo GameManager hiện cái dòng chữ trong script Interactable lên
-            GameManager.Instance.ShowInteractText(targetItem.promptMessage);
-
-            // Chờ người chơi bấm phím E
-            if (Input.GetKeyDown(KeyCode.E))
+            if (targetItem != null)
             {
-                targetItem.Interact();
-                GameManager.Instance.HideInteractText(); // Lụm xong thì tắt chữ đi
+                GameManager.Instance.ShowInteractText(targetItem.promptMessage);
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    GameManager.Instance.HideInteractText();
+                    PickUpItem(targetItem.gameObject);
+                }
+            }
+            else
+            {
+                GameManager.Instance.HideInteractText();
             }
         }
         else
         {
-            // Nếu không có vật phẩm nào ở gần thì tắt chữ đi
-            GameManager.Instance.HideInteractText();
+            GameManager.Instance.ShowInteractText("Press E to Drop | Left Click to Throw");
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                DropItem();
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                ThrowItem();
+            }
         }
     }
 
     void FixedUpdate()
     {
-        // Lấy Input từ bàn phím
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        // --- BẮT ĐẦU PHẦN SỬA ĐỒNG BỘ CAMERA ---
-        // Lấy hướng nhìn hiện tại của Camera chính
         Transform camTransform = Camera.main.transform;
         Vector3 camForward = camTransform.forward;
         Vector3 camRight = camTransform.right;
 
-        // Bỏ qua trục Y (lên/xuống) để nhân vật không bị bay lên trời hoặc lún xuống đất
         camForward.y = 0f;
         camRight.y = 0f;
         camForward.Normalize();
         camRight.Normalize();
 
-        // Tính toán hướng đi mới: W luôn là thẳng theo camera, A D là dạt sang 2 bên
         Vector3 movement = (camForward * moveZ + camRight * moveX).normalized;
-        // --- KẾT THÚC PHẦN SỬA ---
 
-        // Di chuyển vật lý
         Vector3 moveVelocity = movement * moveSpeed;
-        moveVelocity.y = rb.linearVelocity.y; // Giữ nguyên vận tốc rơi tự do của nhân vật
+        moveVelocity.y = rb.linearVelocity.y;
         rb.linearVelocity = moveVelocity;
 
-        // Xử lý xoay người mặt về phía đang chạy
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.fixedDeltaTime);
         }
 
-        // Xử lý Animation chạy/đi bộ
         if (animator != null)
         {
             float currentSpeed = movement.magnitude;
-
-            if (currentSpeed > 0f)
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    animator.SetFloat("Speed", 1.0f);
-                }
-                else
-                {
-                    animator.SetFloat("Speed", 0.3f);
-                }
-            }
-            else
-            {
-                animator.SetFloat("Speed", 0.0f);
-            }
+            animator.SetFloat("Speed", currentSpeed > 0f ? (Input.GetKey(KeyCode.LeftShift) ? 1.0f : 0.3f) : 0.0f);
         }
     }
 
-    // Hàm này giúp vẽ một vòng tròn màu vàng dưới chân nhân vật trong cửa sổ Scene
-    // Nhờ đó bạn sẽ thấy chính xác tầm với (interactRange) của nhân vật tới đâu
+    private void PickUpItem(GameObject item)
+    {
+        heldItemRb = item.GetComponent<Rigidbody>();
+        if (heldItemRb != null)
+        {
+            heldItemRb.useGravity = false;
+            heldItemRb.isKinematic = true;
+
+            Collider itemCollider = heldItemRb.GetComponent<Collider>();
+            if (itemCollider != null) itemCollider.enabled = false;
+
+            heldItemRb.transform.position = holdPoint.position;
+            heldItemRb.transform.parent = holdPoint;
+        }
+    }
+
+    private void DropItem()
+    {
+        if (heldItemRb != null)
+        {
+            heldItemRb.useGravity = true;
+            heldItemRb.isKinematic = false;
+
+            Collider itemCollider = heldItemRb.GetComponent<Collider>();
+            if (itemCollider != null) itemCollider.enabled = true;
+
+            heldItemRb.transform.parent = null;
+            heldItemRb = null;
+            GameManager.Instance.HideInteractText();
+        }
+    }
+
+    private void ThrowItem()
+    {
+        if (heldItemRb != null)
+        {
+            heldItemRb.useGravity = true;
+            heldItemRb.isKinematic = false;
+
+            Collider itemCollider = heldItemRb.GetComponent<Collider>();
+            if (itemCollider != null) itemCollider.enabled = true;
+
+            heldItemRb.transform.parent = null;
+
+            Vector3 throwDirection = Camera.main.transform.forward;
+            heldItemRb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+
+            heldItemRb = null;
+            GameManager.Instance.HideInteractText();
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
