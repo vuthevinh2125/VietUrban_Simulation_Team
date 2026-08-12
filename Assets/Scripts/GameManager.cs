@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI timeTextUI;
     public GameObject gameOverPanel;
 
-    // ĐÂY LÀ BIẾN MỚI ĐỂ CHỨA DÒNG CHỮ "PRESS E"
     public TextMeshProUGUI interactTextUI;
 
     private bool isGameOver = false;
@@ -37,7 +36,6 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         UpdateUI();
 
-        // Tắt dòng chữ Press E lúc mới vào game
         HideInteractText();
     }
 
@@ -91,7 +89,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- 2 HÀM MỚI ĐỂ BẬT/TẮT CHỮ UI ---
     public void ShowInteractText(string message)
     {
         if (interactTextUI != null)
