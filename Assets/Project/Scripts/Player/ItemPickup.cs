@@ -54,6 +54,15 @@ public class ItemPickup : MonoBehaviour
 
         bool pressed = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0);
 
+        // Nhận tiền mặt / thẻ khách đưa trên quầy -> mở màn hình thanh toán
+        PaymentToken payment = hit.collider.GetComponentInParent<PaymentToken>();
+        if (payment != null && payment.counter != null)
+        {
+            SetPrompt(payment.Prompt);
+            if (pressed) { SetPrompt(null); PaymentPanel.Open(payment.counter); }
+            return;
+        }
+
         // Quét hàng khách đặt trên quầy thu ngân
         CheckoutItem scanItem = hit.collider.GetComponentInParent<CheckoutItem>();
         if (scanItem != null && scanItem.counter != null)
