@@ -31,7 +31,13 @@ public class ShopFilterManager : MonoBehaviour
         searchInput.onValueChanged.AddListener((string val) => { ApplyFilters(); });
         displayDropdown.onValueChanged.AddListener((int val) => { ApplyFilters(); });
         categoryDropdown.onValueChanged.AddListener((int val) => { ApplyFilters(); });
+
+        // Mặt hàng chưa có giấy phép thì ẩn; mua giấy phép xong tự hiện
+        LicenseManager.OnLicensesChanged += ApplyFilters;
+        ApplyFilters();
     }
+
+    void OnDestroy() => LicenseManager.OnLicensesChanged -= ApplyFilters;
 
     // ==========================================
     // BỘ LỌC TỔNG HỢP (Kết hợp 3 điều kiện)
@@ -57,8 +63,11 @@ public class ShopFilterManager : MonoBehaviour
             // Điều kiện 3: Xem danh mục có khớp không (hoặc đang chọn All)
             bool matchCategory = (selectedCategory == "All") || (card.category == selectedCategory);
 
+            // Điều kiện 4: Đã có giấy phép bán mặt hàng này chưa?
+            bool licensed = card.itemData == null || LicenseManager.IsUnlocked(card.itemData);
+
             // TỔNG DUYỆT: Phải đúng CẢ 3 ĐIỀU KIỆN thì thẻ mới được phép hiện lên!
-            if (matchSearch && matchDisplay && matchCategory)
+            if (matchSearch && matchDisplay && matchCategory && licensed)
             {
                 card.gameObject.SetActive(true);
             }

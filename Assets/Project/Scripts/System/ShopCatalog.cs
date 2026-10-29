@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Danh mục hàng bán trên máy tính. Khi giao diện mở lần đầu, tự sinh một thẻ sản phẩm (ProductCardUI)
@@ -17,7 +20,65 @@ public class ShopCatalog : MonoBehaviour
     [Tooltip("Giữ lại các mặt hàng đang có trên thẻ cũ (sữa, ngũ cốc...) và thêm vào danh mục")]
     public bool keepExistingCardItems = true;
 
-    void Awake() => BuildCards();
+    void Awake()
+    {
+        BuildCards();
+        HookLicenseButton();
+    }
+
+    /// <summary>
+    /// Nút "Licenses" trên máy tính: dùng lại tab "Tools" ở thanh trên (đổi chữ thành Licenses);
+    /// không tìm thấy thì tự thêm một nút ở góc trên trái giao diện.
+    /// </summary>
+    private void HookLicenseButton()
+    {
+        Button target = null;
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("tool", StringComparison.OrdinalIgnoreCase) >= 0) { target = b; break; }
+        }
+
+        if (target == null)
+        {
+            var go = new GameObject("Button_Licenses", typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(transform, false);
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0f, 1f);
+            rt.sizeDelta = new Vector2(170, 46);
+            rt.anchoredPosition = new Vector2(16, -16);
+            go.GetComponent<Image>().color = new Color(0.2f, 0.7f, 0.3f);
+            var tgo = new GameObject("Text", typeof(RectTransform));
+            tgo.transform.SetParent(go.transform, false);
+            ((RectTransform)tgo.transform).sizeDelta = rt.sizeDelta;
+            var t = tgo.AddComponent<TextMeshProUGUI>();
+            t.alignment = TextAlignmentOptions.Center;
+            t.fontSize = 24;
+            t.fontStyle = FontStyles.Bold;
+            target = go.GetComponent<Button>();
+        }
+
+        SetLabel(target, "Licenses");
+        target.onClick = new Button.ButtonClickedEvent(); // bỏ hành động cũ của tab Tools
+        target.onClick.AddListener(LicensePanel.Open);
+        target.interactable = true;
+    }
+
+    private static string LabelOf(Button b)
+    {
+        TMP_Text tmp = b.GetComponentInChildren<TMP_Text>(true);
+        if (tmp != null) return tmp.text ?? "";
+        Text legacy = b.GetComponentInChildren<Text>(true);
+        return legacy != null ? legacy.text ?? "" : b.name;
+    }
+
+    private static void SetLabel(Button b, string label)
+    {
+        TMP_Text tmp = b.GetComponentInChildren<TMP_Text>(true);
+        if (tmp != null) { tmp.text = label; return; }
+        Text legacy = b.GetComponentInChildren<Text>(true);
+        if (legacy != null) legacy.text = label;
+    }
 
     public void BuildCards()
     {
