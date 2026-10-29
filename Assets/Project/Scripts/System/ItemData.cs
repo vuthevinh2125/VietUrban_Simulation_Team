@@ -51,4 +51,16 @@ public class ItemData : ScriptableObject
 
     /// <summary>Giá bán lẻ thị trường cho 1 món.</summary>
     public float MarketPrice => marketPrice > 0f ? marketPrice : Mathf.Round(unitPrice * 1.3f * 100f) / 100f;
+
+    /// <summary>Prefab 1 món hàng: lấy productPrefab, nếu trống thì lấy từ thùng hàng (cratePrefab).</summary>
+    public GameObject ResolveProductPrefab()
+    {
+        if (productPrefab != null) return productPrefab;
+        if (cratePrefab != null)
+        {
+            Interactable box = cratePrefab.GetComponent<Interactable>();
+            if (box != null && box.productPrefab != null) return box.productPrefab;
+        }
+        return null;
+    }
 }
