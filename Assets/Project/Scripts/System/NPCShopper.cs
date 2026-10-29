@@ -58,6 +58,7 @@ public class NPCShopper : MonoBehaviour
 
     private NavMeshAgent agent;
     private Animator animator;
+    private ShoppingCarrier carrier;
     private bool hasSpeedParam;
     private readonly List<ItemData> basket = new List<ItemData>();
 
@@ -116,6 +117,9 @@ public class NPCShopper : MonoBehaviour
         // --- Mua sắm ---
         SetState(NPCState.Shopping);
         int wanted = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
+        carrier = GetComponent<ShoppingCarrier>();
+        if (carrier == null) carrier = gameObject.AddComponent<ShoppingCarrier>();
+        carrier.Init(wanted); // xách giỏ hoặc đẩy xe
         var visited = new HashSet<Shelf>();
         int attempts = 0;
 
@@ -160,7 +164,11 @@ public class NPCShopper : MonoBehaviour
                     SpeechBubble.Show(transform, "Pricey...", new Color(1f, 0.8f, 0.3f), agent.height + 0.35f);
             }
             for (int i = 0; i < take && basket.Count < wanted; i++)
-                if (shelf.TryTakeForCustomer(out ItemData got) && got != null) basket.Add(got);
+                if (shelf.TryTakeForCustomer(out ItemData got) && got != null)
+                {
+                    basket.Add(got);
+                    carrier.AddItem(got);
+                }
         }
 
         // --- Thanh toán ---
@@ -251,6 +259,7 @@ public class NPCShopper : MonoBehaviour
                     SetState(NPCState.Paying);
                     Face(counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.transform.position);
                     counter.StartCheckout(this, basket);
+                    if (carrier != null) carrier.ClearItems(); // bày hàng từ giỏ ra quầy
                 }
             }
             else if (!isFirstInQueue) firstSince = -1f;
