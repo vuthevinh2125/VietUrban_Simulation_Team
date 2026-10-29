@@ -17,6 +17,18 @@ public class Interactable : MonoBehaviour
     public int productCount = 10;
     public GameObject[] visualItems;
 
+    [Header("Auto Visuals (thùng dùng chung)")]
+    [Tooltip("Thùng không có sẵn hàng mẫu bên trong: tự sinh các món hàng thật vào lòng thùng theo ItemData")]
+    public bool autoGenerateVisuals = true;
+    [Tooltip("Phần lòng thùng dùng để xếp hàng (so với kích thước thùng)")]
+    public Vector3 innerFill = new Vector3(0.84f, 0.8f, 0.84f);
+    [Tooltip("Phóng to tối đa món hàng trong thùng")]
+    public float maxVisualScale = 1.6f;
+
+    private bool visualsGenerated;
+    private Transform visualsRoot;
+    private Bounds crateLocalBounds;
+
     [Header("Flap Animation (Rigged)")]
     public Transform flap1; public Vector3 flap1OpenRot;
     public Transform flap2; public Vector3 flap2OpenRot;
@@ -61,6 +73,9 @@ public class Interactable : MonoBehaviour
         if (flap3 != null) f3Closed = flap3.localRotation;
         if (flap4 != null) f4Closed = flap4.localRotation;
 
+        crateLocalBounds = MeasureCrate();
+        if (itemData != null) BuildGeneratedVisuals();
+
         productCount = Mathf.Clamp(productCount, 0, Capacity);
         UpdateVisuals();
 
@@ -78,12 +93,12 @@ public class Interactable : MonoBehaviour
     public void SetItem(ItemData data, bool fillBox)
     {
         if (data == null) return;
+        bool changed = itemData != data || (visualsGenerated == false && (visualItems == null || visualItems.Length == 0));
         itemData = data;
-        if (fillBox)
-        {
-            productCount = Capacity;
-            UpdateVisuals();
-        }
+        if (changed) BuildGeneratedVisuals();
+        if (fillBox) productCount = Capacity;
+        productCount = Mathf.Clamp(productCount, 0, Capacity);
+        UpdateVisuals();
         StockManager.NotifyChanged();
     }
 
@@ -158,6 +173,88 @@ public class Interactable : MonoBehaviour
             if (visualItems[i] != null) visualItems[i].SetActive(i < productCount);
         }
     }
+
+    // ================= Hàng hiển thị trong thùng dùng chung =================
+    /// <summary>Kích thước thùng trong toạ độ local: ưu tiên BoxCollider, không có thì đo mesh.</summary>
+    private Bounds MeasureCrate()
+    {
+        if (coll is BoxCollider bc) return new Bounds(bc.center, bc.size);
+        return ProductFit.LocalBounds(transform);
+    }
+
+    /// <summary>
+    /// Sinh itemsPerBox bản sao món hàng xếp lưới gọn trong lòng thùng (tầng dưới trước),
+    /// dùng làm visualItems để lấy ra / bỏ vào hiện đúng số lượng như các thùng có sẵn.
+    /// </summary>
+    private void BuildGeneratedVisuals()
+    {
+        if (!autoGenerateVisuals) return;
+        if (!visualsGenerated && visualItems != null && visualItems.Length > 0) return; // thùng đã có hàng mẫu sẵn
+
+        if (visualsRoot != null) Destroy(visualsRoot.gameObject);
+        visualsRoot = null;
+        visualItems = new GameObject[0];
+        visualsGenerated = false;
+
+        GameObject prefab = ProductPrefab;
+        if (prefab == null || itemData == null) return;
+        int n = itemData.itemsPerBox > 0 ? itemData.itemsPerBox : Mathf.Max(1, productCount);
+
+        // Gốc đặt ở đáy lòng thùng, scale thế giới = 1 để tính bằng mét
+        Bounds cb = crateLocalBounds;
+        Vector3 ls = transform.lossyScale;
+        visualsRoot = new GameObject("ProductVisuals").transform;
+        visualsRoot.SetParent(transform, false);
+        visualsRoot.localPosition = new Vector3(cb.center.x, cb.min.y + cb.size.y * 0.06f, cb.center.z);
+        visualsRoot.localRotation = Quaternion.identity;
+        visualsRoot.localScale = new Vector3(1f / Safe(ls.x), 1f / Safe(ls.y), 1f / Safe(ls.z));
+        Vector3 inner = Vector3.Scale(Vector3.Scale(cb.size, ls), innerFill);
+
+        // Đo 1 món
+        Vector3 wanted = itemData.shelfScale != Vector3.zero ? itemData.shelfScale : Vector3.one;
+        GameObject probe = Instantiate(prefab, visualsRoot, false);
+        probe.transform.localRotation = Quaternion.identity;
+        Bounds lb = ProductFit.LocalBounds(probe.transform);
+        DestroyImmediate(probe);
+        Vector3 u = Vector3.Scale(lb.size, wanted);
+
+        // Chọn cách xếp (cột x hàng x tầng) cho món hàng to nhất mà vẫn vừa thùng
+        int bx = 1, bz = 1, by = n; float best = 0f;
+        for (int nx = 1; nx <= n; nx++)
+            for (int nz = 1; nx * nz <= n * 2 && nz <= n; nz++)
+            {
+                int ny = Mathf.CeilToInt(n / (float)(nx * nz));
+                float sc = Mathf.Min(inner.x / (nx * u.x), inner.z / (nz * u.z), inner.y / (ny * u.y));
+                if (sc > best + 0.0001f) { best = sc; bx = nx; bz = nz; by = ny; }
+            }
+        float s = Mathf.Min(best, maxVisualScale);
+        Vector3 size = u * s;
+        Vector3 scale = wanted * s;
+
+        visualItems = new GameObject[n];
+        for (int i = 0; i < n; i++)
+        {
+            int layer = i / (bx * bz);
+            int r = i % (bx * bz);
+            int ix = r % bx, iz = r / bx;
+            Vector3 pos = new Vector3(
+                (ix - (bx - 1) * 0.5f) * (inner.x / bx),
+                layer * size.y,
+                (iz - (bz - 1) * 0.5f) * (inner.z / bz));
+            pos -= new Vector3(lb.center.x * scale.x, lb.min.y * scale.y, lb.center.z * scale.z);
+
+            GameObject v = Instantiate(prefab, visualsRoot, false);
+            v.name = $"{prefab.name}_{i:00}";
+            ProductFit.MakeVisualOnly(v);
+            v.transform.localPosition = pos;
+            v.transform.localRotation = Quaternion.identity;
+            v.transform.localScale = scale;
+            visualItems[i] = v;
+        }
+        visualsGenerated = true;
+    }
+
+    private static float Safe(float v) => Mathf.Approximately(v, 0f) ? 1f : v;
 
     // ================= Animation nắp thùng =================
     private IEnumerator OpenFlapsAnimation()
