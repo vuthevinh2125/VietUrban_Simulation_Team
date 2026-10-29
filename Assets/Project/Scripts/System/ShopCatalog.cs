@@ -44,6 +44,12 @@ public class ShopCatalog : MonoBehaviour
         foreach (ItemData item in items)
             if (item != null && !finalItems.Contains(item)) finalItems.Add(item);
 
+        // Ảnh đang hiện trên thẻ cũ (mặt hàng cũ chưa có icon trong ItemData thì dùng lại ảnh này)
+        var oldSprites = new Dictionary<ItemData, Sprite>();
+        foreach (ProductCardUI c in existing)
+            if (c.itemData != null && c.iconImage != null && c.iconImage.sprite != null && !oldSprites.ContainsKey(c.itemData))
+                oldSprites[c.itemData] = c.iconImage.sprite;
+
         // Giữ một bản mẫu, gỡ các thẻ cũ ra khỏi Content (ShopFilterManager chỉ quét con của Content)
         GameObject template = Instantiate(existing[0].gameObject);
         template.SetActive(false);
@@ -61,6 +67,11 @@ public class ShopCatalog : MonoBehaviour
             ProductCardUI card = go.GetComponent<ProductCardUI>();
             card.category = CategoryOf(item);
             card.SetupCard(item);
+            if (item.icon == null && card.iconImage != null && oldSprites.TryGetValue(item, out Sprite old))
+            {
+                card.iconImage.sprite = old;
+                card.iconImage.enabled = true;
+            }
         }
         Destroy(template);
         Debug.Log($"[ShopCatalog] {finalItems.Count} mặt hàng trên máy tính.", this);
