@@ -199,6 +199,84 @@ public static class ExpansionBuilderTool
         Finish(exp, $"Đã dựng phòng mở rộng rộng {width:F1}m x sâu 6m, mở thông qua {walls.Length} mảng tường; {movers.Count} kệ/tủ sát tường sẽ được dời ra tường mới khi mua.");
     }
 
+    // ================= 17. Tường chặn cả 2 mặt =================
+    private const string ColliderDir = "Assets/Project/Generated/Colliders";
+
+    /// <summary>
+    /// Tường / trần / sàn của gói ModernSupermarket dùng MeshCollider là mặt phẳng 1 mặt:
+    /// từ trong ra bị chặn nhưng từ ngoài đi xuyên vào được. Tạo mesh va chạm 2 mặt rồi gán cho prefab + scene.
+    /// </summary>
+    [MenuItem("Tools/Store Setup/17. Fix Wall Colliders (chặn cả 2 mặt tường)")]
+    public static void FixWallColliders()
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Project/Generated")) AssetDatabase.CreateFolder("Assets/Project", "Generated");
+        if (!AssetDatabase.IsValidFolder(ColliderDir)) AssetDatabase.CreateFolder("Assets/Project/Generated", "Colliders");
+        var cache = new Dictionary<Mesh, Mesh>();
+        int prefabs = 0, sceneCount = 0;
+
+        foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { Arch }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject root = PrefabUtility.LoadPrefabContents(path);
+            bool dirty = false;
+            foreach (MeshCollider mc in root.GetComponentsInChildren<MeshCollider>(true))
+                if (TryDoubleSide(mc, cache)) dirty = true;
+            if (dirty) { PrefabUtility.SaveAsPrefabAsset(root, path); prefabs++; }
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        foreach (MeshCollider mc in Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (EditorUtility.IsPersistent(mc)) continue;
+            Undo.RecordObject(mc, "Double-sided collider");
+            if (!TryDoubleSide(mc, cache)) continue;
+            if (PrefabUtility.IsPartOfPrefabInstance(mc)) PrefabUtility.RecordPrefabInstancePropertyModifications(mc);
+            sceneCount++;
+        }
+        AssetDatabase.SaveAssets();
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        Dialog("Wall colliders", $"Đã tạo {cache.Count} mesh va chạm 2 mặt, sửa {prefabs} prefab và {sceneCount} collider trong scene.\nNhấn Ctrl+S để lưu scene.");
+    }
+
+    private static bool TryDoubleSide(MeshCollider mc, Dictionary<Mesh, Mesh> cache)
+    {
+        Mesh src = mc.sharedMesh;
+        if (src == null || mc.convex) return false;
+        string srcPath = AssetDatabase.GetAssetPath(src);
+        if (string.IsNullOrEmpty(srcPath) || srcPath.StartsWith(ColliderDir) || !srcPath.Contains("ModernSupermarket")) return false;
+        Vector3 size = src.bounds.size;
+        if (Mathf.Min(size.x, Mathf.Min(size.y, size.z)) > 0.25f) return false; // chỉ các tấm mỏng (tường, trần, sàn)
+
+        if (!cache.TryGetValue(src, out Mesh twoSided))
+        {
+            string file = $"{ColliderDir}/{src.name.Replace('/', '_')}_{AssetDatabase.AssetPathToGUID(srcPath).Substring(0, 6)}_2s.asset";
+            twoSided = AssetDatabase.LoadAssetAtPath<Mesh>(file);
+            if (twoSided == null)
+            {
+                twoSided = BuildDoubleSided(src);
+                AssetDatabase.CreateAsset(twoSided, file);
+            }
+            cache[src] = twoSided;
+        }
+        mc.sharedMesh = twoSided;
+        return true;
+    }
+
+    private static Mesh BuildDoubleSided(Mesh src)
+    {
+        Vector3[] verts = src.vertices;
+        var tris = new List<int>();
+        for (int sub = 0; sub < src.subMeshCount; sub++) tris.AddRange(src.GetTriangles(sub));
+        int n = tris.Count;
+        for (int i = 0; i + 2 < n; i += 3) { tris.Add(tris[i]); tris.Add(tris[i + 2]); tris.Add(tris[i + 1]); }
+        var m = new Mesh { name = src.name + "_2s" };
+        if (verts.Length > 65000) m.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        m.vertices = verts;
+        m.SetTriangles(tris, 0);
+        m.RecalculateBounds();
+        return m;
+    }
+
     // ================= Dựng phòng =================
     /// <summary>Phòng chữ nhật trong toạ độ của root: gốc ở giữa mép trước, +Z vào trong. Sàn ở y = 0.</summary>
     private static void BuildRoom(Transform root, float width, float depth, bool frontWall, bool frontDoor, out float wallHeight)
