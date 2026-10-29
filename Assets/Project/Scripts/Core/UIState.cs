@@ -26,6 +26,9 @@ public static class UIState
     /// <summary>true = vừa có UI mở, false = tất cả UI đã đóng.</summary>
     public static event Action<bool> OnChanged;
 
+    /// <summary>Frame gần nhất có giao diện bị đóng (để Esc đóng bảng không mở luôn menu tạm dừng).</summary>
+    public static int LastClosedFrame { get; private set; } = -10;
+
     public static void Open(object owner)
     {
         if (owner == null) return;
@@ -37,6 +40,7 @@ public static class UIState
     public static void Close(object owner)
     {
         if (owner == null || !openers.Remove(owner)) return;
+        LastClosedFrame = Time.frameCount;
         if (openers.Count == 0) Apply(false);
     }
 
@@ -46,6 +50,7 @@ public static class UIState
     public static void CloseAll()
     {
         if (openers.Count == 0) return;
+        LastClosedFrame = Time.frameCount;
         openers.Clear();
         Apply(false);
     }
