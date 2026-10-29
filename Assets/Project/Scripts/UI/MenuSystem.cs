@@ -91,6 +91,7 @@ public class MenuSystem : MonoBehaviour
 
     private void Continue()
     {
+        if (TutorialManager.Instance != null) TutorialManager.Instance.Stop();
         HideAll();
         Unfreeze();
         if (SaveManager.Instance != null) SaveManager.Instance.Load();
@@ -105,13 +106,19 @@ public class MenuSystem : MonoBehaviour
                 SaveManager.DeleteSave();
                 HideAll();
                 Unfreeze();
-                ProgressHUD.Toast("Welcome to your new supermarket!\nOpen the computer to order products.");
+                StartTutorial();
             });
             return;
         }
         HideAll();
         Unfreeze();
-        ProgressHUD.Toast("Welcome to your new supermarket!\nOpen the computer to order products.");
+        StartTutorial();
+    }
+
+    private static void StartTutorial()
+    {
+        ProgressHUD.Toast("Welcome to your new supermarket!");
+        if (TutorialManager.Instance != null) TutorialManager.Instance.Begin();
     }
 
     private static string SaveSummary()
