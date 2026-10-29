@@ -248,9 +248,8 @@ public class NPCShopper : MonoBehaviour
         if (debugLogs) Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
         if (test.status == NavMeshPathStatus.PathInvalid)
         {
-            WarnStuck(target.ToString("F1") + " (không tính được đường)");
-            agent.Warp(dest);
-            yield break;
+            WarnStuck(target.ToString("F1") + " (không tính được đường - kiểm tra NavMesh)");
+            yield break; // KHÔNG dịch chuyển: nơi gọi tự kiểm tra khoảng cách và bỏ qua
         }
         agent.isStopped = false;
         agent.SetDestination(dest);
@@ -323,7 +322,7 @@ public class NPCShopper : MonoBehaviour
     private void WarnStuck(string where)
     {
         if (stuckWarnings++ < 5)
-            Debug.LogWarning($"[Customer] {name} không đi tới được {where}, dịch chuyển tới luôn. Nếu hay gặp: kiểm tra NavMesh (Bake lại) ở khu đó.", this);
+            Debug.LogWarning($"[Customer] {name} không đi tới được {where}. Nếu hay gặp: kiểm tra NavMesh ở khu đó.", this);
     }
 
     private static bool HasParameter(Animator a, string paramName)
