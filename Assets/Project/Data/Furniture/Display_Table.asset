@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3de174349e4c86b17018aab244f86b, type: 3}
+  m_Name: Display_Table
+  m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
+  displayName: Display Table
+  price: 100
+  requiredLevel: 1
+  prefab: {fileID: 7421662383459057419, guid: e78792f514d39b74f8390f2346ae0ab0, type: 3}
+  displayType: Shelf
+  icon: {fileID: 0}
