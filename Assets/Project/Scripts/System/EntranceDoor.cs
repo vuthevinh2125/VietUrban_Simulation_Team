@@ -40,6 +40,7 @@ public class EntranceDoor : MonoBehaviour
             if (leaves[i] == null) continue;
             closedRot[i] = leaves[i].localRotation;
             float angle = openAngles != null && i < openAngles.Length ? openAngles[i] : 90f;
+            if (leaves[i].name.ToLower().Contains("glass")) angle = 0f; // tấm kính cố định, không xoay
             openRot[i] = closedRot[i] * Quaternion.Euler(0f, angle, 0f);
 
             foreach (Renderer r in leaves[i].GetComponentsInChildren<Renderer>())

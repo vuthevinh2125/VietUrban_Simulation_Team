@@ -50,7 +50,7 @@ public static class EntranceSetupTool
 
             // Các cánh cửa: con có tên chứa "Door" (không phải chính nó) và có renderer
             Transform[] leaves = root.Cast<Transform>()
-                .Where(t => t.name.Contains("Door") && t.GetComponentInChildren<Renderer>(true) != null)
+                .Where(t => t.name.Contains("Door") && !t.name.Contains("Glass") && t.GetComponentInChildren<Renderer>(true) != null)
                 .ToArray();
             if (leaves.Length == 0) continue;
 
