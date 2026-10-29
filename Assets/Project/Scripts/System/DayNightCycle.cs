@@ -138,6 +138,7 @@ public class DayNightCycle : MonoBehaviour
         moon.enabled = moon.intensity > 0.01f;
         moon.transform.rotation = Quaternion.Euler(50f, sunYaw + 160f, 0f);
         RenderSettings.sun = night > 0.6f ? moon : sun;
+        NightLight.SetAll(night > 0.45f); // đèn đường bật khi trời tối
 
         // Hoàng hôn: ánh sáng môi trường ngả cam
         float dusk = Mathf.Clamp01(1f - Mathf.Abs(hour - sunsetHour) / 1.2f) + Mathf.Clamp01(1f - Mathf.Abs(hour - sunriseHour) / 1.0f);

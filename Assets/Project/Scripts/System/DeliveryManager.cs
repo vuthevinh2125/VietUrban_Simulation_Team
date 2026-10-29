@@ -214,6 +214,15 @@ public class DeliveryManager : MonoBehaviour
             if (d < minDistance) continue;
             candidates.Add((Pretty(root.name), hit.point, d));
         }
+        // Địa chỉ ở khu phố mới (có số nhà + tên đường): ưu tiên để đi giao xa hơn, đa dạng hơn
+        var addresses = new List<(string, Vector3, float)>();
+        foreach (DeliveryAddress a in DeliveryAddress.All)
+        {
+            if (a == null || !a.isActiveAndEnabled) continue;
+            float d = Flat(a.doorPoint - store);
+            if (d >= minDistance) addresses.Add((a.address, a.doorPoint, d));
+        }
+        if (addresses.Count > 0 && (candidates.Count == 0 || Random.value < 0.75f)) candidates = addresses;
         if (candidates.Count == 0) return false;
         var c = candidates[Random.Range(0, candidates.Count)];
         place = c.Item1; point = c.Item2; distance = c.Item3;
