@@ -30,7 +30,10 @@ public static class StoreSetupTool
     private static readonly string[] FreshNames = { "fridge", "freezer", "fresh", "cooler", "refriger" };
     private static readonly string[] NeverArchiveNames = { "road", "street", "walk", "sideway", "pavement", "lane", "grass", "tree", "light", "navmesh", "camera", "manager", "canvas", "eventsystem", "player", "npc", "car", "honda", "c125" };
 
-    private const float MinSlotSpacing = 0.12f;
+    private const float MinSlotSpacing = 0.15f;
+    private const float SlotSpacingX = 0.22f;   // khoảng cách ô theo chiều dài kệ
+    private const float SlotSpacingZ = 0.25f;   // khoảng cách ô theo chiều sâu kệ
+    private const int MaxSlotsPerShelf = 40;
     private const int MinProductsForShelf = 2;
 
     [MenuItem("Tools/Store Setup/1. Preview (không thay đổi gì)")]
@@ -65,17 +68,26 @@ public static class StoreSetupTool
         int undoGroup = Undo.GetCurrentGroup();
 
         // ---------- 1) Ghép hàng trang trí vào kệ ----------
+        // Object đang tắt thì renderer không có kích thước -> tạm bật nhóm hàng trang trí để đo (chạy lại nhiều lần vẫn đúng)
+        bool productsWereActive = products.gameObject.activeSelf;
+        if (!productsWereActive) products.gameObject.SetActive(true);
+
         List<Transform> fixtures = PieceRoots(furniture);
         List<Transform> items = PieceRoots(products);
         var fixtureBounds = new Dictionary<Transform, Bounds>();
         foreach (Transform f in fixtures)
             if (TryBounds(f, out Bounds b)) fixtureBounds[f] = b;
+        var itemBounds = new Dictionary<Transform, Bounds>();
+        foreach (Transform item in items)
+            if (TryBounds(item, out Bounds ib)) itemBounds[item] = ib;
 
-        var byFixture = new Dictionary<Transform, List<Vector3>>();
+        if (!productsWereActive) products.gameObject.SetActive(false);
+
+        var byFixture = new Dictionary<Transform, List<Bounds>>();
         int orphan = 0;
         foreach (Transform item in items)
         {
-            if (!TryBounds(item, out Bounds ib)) continue;
+            if (!itemBounds.TryGetValue(item, out Bounds ib)) continue;
             Transform best = null;
             float bestVol = float.MaxValue;
             foreach (var kv in fixtureBounds)
@@ -87,8 +99,8 @@ public static class StoreSetupTool
                 if (vol < bestVol) { bestVol = vol; best = kv.Key; }
             }
             if (best == null) { orphan++; continue; }
-            if (!byFixture.TryGetValue(best, out var list)) byFixture[best] = list = new List<Vector3>();
-            list.Add(new Vector3(ib.center.x, ib.min.y, ib.center.z));
+            if (!byFixture.TryGetValue(best, out var list)) byFixture[best] = list = new List<Bounds>();
+            list.Add(ib);
         }
 
         sb.AppendLine($"\n## Kệ/tủ trong {FurnitureName}: {fixtures.Count} | hàng trang trí: {items.Count} | hàng không nằm trên kệ nào: {orphan}");
@@ -98,7 +110,7 @@ public static class StoreSetupTool
             Transform f = kv.Key;
             string lower = f.name.ToLower();
             bool excluded = NotShelfNames.Any(n => lower.Contains(n));
-            List<Vector3> slots = Dedupe(kv.Value);
+            List<Vector3> slots = SlotsFromItems(f, kv.Value);
             bool make = !excluded && slots.Count >= MinProductsForShelf;
             string type = FreshNames.Any(n => lower.Contains(n)) ? "Fresh" : "Shelf";
             sb.AppendLine($"- {(make ? "[KỆ]" : "[bỏ qua]")} {f.name} pos={f.position:F1} ô={slots.Count} loại={type}{(excluded ? " (không phải kệ)" : "")}");
@@ -114,7 +126,7 @@ public static class StoreSetupTool
 
         // ---------- 2) Tắt hàng trang trí ----------
         sb.AppendLine($"\n## Tắt nhóm hàng trang trí '{ProductsName}' ({items.Count} món)");
-        if (apply)
+        if (apply && products.gameObject.activeSelf)
         {
             Undo.RecordObject(products.gameObject, "Hide decorative products");
             products.gameObject.SetActive(false);
@@ -244,11 +256,52 @@ public static class StoreSetupTool
         return any;
     }
 
-    private static List<Vector3> Dedupe(List<Vector3> points)
+    /// <summary>
+    /// Trải lưới ô xếp phủ mặt đáy của từng món trang trí (theo hướng của kệ), bỏ ô trùng,
+    /// giới hạn MaxSlotsPerShelf ô mỗi kệ (lấy đều nhau).
+    /// </summary>
+    private static List<Vector3> SlotsFromItems(Transform fixture, List<Bounds> items)
     {
+        Quaternion rot = Quaternion.Euler(0f, fixture.eulerAngles.y, 0f);
+        Quaternion inv = Quaternion.Inverse(rot);
+        Vector3 origin = fixture.position;
+        var points = new List<Vector3>();
+
+        foreach (Bounds b in items)
+        {
+            float minX = float.MaxValue, maxX = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue;
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, b.min.y, (i & 2) == 0 ? b.min.z : b.max.z);
+                Vector3 l = inv * (corner - origin);
+                minX = Mathf.Min(minX, l.x); maxX = Mathf.Max(maxX, l.x);
+                minZ = Mathf.Min(minZ, l.z); maxZ = Mathf.Max(maxZ, l.z);
+            }
+
+            int nx = Mathf.Max(1, Mathf.RoundToInt((maxX - minX) / SlotSpacingX));
+            int nz = Mathf.Max(1, Mathf.RoundToInt((maxZ - minZ) / SlotSpacingZ));
+            for (int ix = 0; ix < nx; ix++)
+                for (int iz = 0; iz < nz; iz++)
+                {
+                    Vector3 local = new Vector3(minX + (ix + 0.5f) * (maxX - minX) / nx, 0f, minZ + (iz + 0.5f) * (maxZ - minZ) / nz);
+                    Vector3 world = origin + rot * local;
+                    world.y = b.min.y;
+                    points.Add(world);
+                }
+        }
+
         var result = new List<Vector3>();
         foreach (Vector3 p in points)
             if (!result.Any(q => Vector3.Distance(p, q) < MinSlotSpacing)) result.Add(p);
+
+        if (result.Count > MaxSlotsPerShelf)
+        {
+            result = result.OrderBy(p => Mathf.Round(p.y * 10f)).ThenBy(p => (inv * (p - origin)).x).ToList();
+            var picked = new List<Vector3>();
+            for (int i = 0; i < MaxSlotsPerShelf; i++)
+                picked.Add(result[Mathf.FloorToInt(i * (float)result.Count / MaxSlotsPerShelf)]);
+            result = picked;
+        }
         return result;
     }
 
