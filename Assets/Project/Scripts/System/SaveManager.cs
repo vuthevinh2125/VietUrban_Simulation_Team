@@ -39,6 +39,7 @@ public class SaveManager : MonoBehaviour
         public List<FurnitureEntry> furniture = new List<FurnitureEntry>();
         public List<BoxEntry> boxes = new List<BoxEntry>();
         public List<FurnitureBoxEntry> furnitureBoxes = new List<FurnitureBoxEntry>();
+        public List<string> checkouts = new List<string>();
         public int cashiers;
         public int restockers;
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
@@ -111,6 +112,7 @@ public class SaveManager : MonoBehaviour
             level = StoreProgress.Level,
             xp = StoreProgress.XP,
             licenses = LicenseManager.GetOwnedIds(),
+            checkouts = LockedCheckout.GetUnlockedIds(),
             cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
             restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
             market = MarketPrices.Export()
@@ -258,6 +260,7 @@ public class SaveManager : MonoBehaviour
             else missing++;
         }
 
+        LockedCheckout.LoadUnlocked(d.checkouts); // mở lại các quầy đã mua TRƯỚC khi xếp thu ngân
         if (StaffManager.Instance != null) StaffManager.Instance.LoadCounts(d.cashiers, d.restockers);
 
         StockManager.NotifyChanged();
