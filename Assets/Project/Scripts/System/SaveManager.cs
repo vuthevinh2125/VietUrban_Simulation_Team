@@ -9,7 +9,7 @@ using UnityEngine;
 /// Lưu / nạp game (giống Supermarket Simulator: tự lưu khi sang ngày mới).
 /// Lưu: ngày, tiền, cấp cửa hàng, giấy phép, giá bán, giá thị trường, nhân viên, hàng trên từng kệ, nội thất đã mua (vị trí + hàng trên đó),
 /// thùng hàng đang nằm trong cửa hàng, thùng nội thất chưa lắp.
-/// Vào game: có file lưu thì tự nạp, cửa hàng bắt đầu ngày đã lưu lúc giờ mở cửa.
+/// Vào game: menu chính có nút Continue để nạp, cửa hàng bắt đầu ngày đã lưu lúc giờ mở cửa.
 /// [F5] lưu nhanh (chỉ khi không còn khách trong cửa hàng) · [F9] nạp lại · File: Application.persistentDataPath/save.json
 /// </summary>
 public class SaveManager : MonoBehaviour
@@ -48,6 +48,15 @@ public class SaveManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
+        Create();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => Create();
+
+    private static void Create()
+    {
         if (Instance == null) new GameObject("SaveManager").AddComponent<SaveManager>();
     }
 
@@ -63,13 +72,8 @@ public class SaveManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    IEnumerator Start()
-    {
-        // Chờ các kệ / máy tính / kinh tế khởi tạo xong
-        yield return null;
-        yield return null;
-        if (File.Exists(SavePath)) Load();
-    }
+    // Nạp file lưu do menu chính quyết định (nút Continue), không tự nạp nữa
+
 
     void Update()
     {
