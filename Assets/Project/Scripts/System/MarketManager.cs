@@ -61,6 +61,17 @@ public class MarketManager : MonoBehaviour
 
     void Start()
     {
+        // DeliveryPoint chỉ là một điểm mốc: nếu lỡ có Rigidbody thì khoá lại, tránh rơi xuyên đất
+        if (deliveryPoint != null)
+        {
+            Rigidbody rb = deliveryPoint.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                Debug.LogWarning("[Market] DeliveryPoint có Rigidbody nên bị rơi. Đã khoá lại; nên gỡ Rigidbody khỏi DeliveryPoint.", deliveryPoint);
+            }
+        }
         RefreshMoney(EconomyManager.Instance.Money);
         RecalculateCart();
     }
