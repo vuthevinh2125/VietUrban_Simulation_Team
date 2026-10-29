@@ -59,7 +59,9 @@ public class PriceSetPanel : MonoBehaviour
         iconImage.sprite = item.icon;
         iconImage.enabled = item.icon != null;
         costText.text = $"Cost:  {EconomyManager.Format(item.unitPrice)}";
-        marketText.text = $"Market price:  {EconomyManager.Format(item.MarketPrice)}";
+        int trend = MarketPrices.Trend(item);
+        string arrow = trend > 0 ? "  <color=#6BE37B>(up today)</color>" : trend < 0 ? "  <color=#FF8A7A>(down today)</color>" : "";
+        marketText.text = $"Market price:  {EconomyManager.Format(MarketPrices.Get(item))}{arrow}";
         SetPrice(PriceManager.GetSellPrice(item), true);
 
         root.SetActive(true);
@@ -105,7 +107,7 @@ public class PriceSetPanel : MonoBehaviour
     {
         if (item == null) return;
         PriceManager.SetSellPrice(item, price);
-        Debug.Log($"[Price] {item.itemName}: {EconomyManager.Format(price)} (market {EconomyManager.Format(item.MarketPrice)})");
+        Debug.Log($"[Price] {item.itemName}: {EconomyManager.Format(price)} (market {EconomyManager.Format(MarketPrices.Get(item))})");
         Close();
     }
 
@@ -182,7 +184,7 @@ public class PriceSetPanel : MonoBehaviour
         profitText = Text(window.transform, "Profit", 26, new Vector2(560, 40), new Vector2(0, -95), TextAlignmentOptions.Center, Green);
         reactionText = Text(window.transform, "Reaction", 24, new Vector2(560, 40), new Vector2(0, -135), TextAlignmentOptions.Center, Green);
 
-        Btn(window.transform, "Market price", new Vector2(200, 56), new Vector2(-200, -195), () => SetPrice(item.MarketPrice, true));
+        Btn(window.transform, "Market price", new Vector2(200, 56), new Vector2(-200, -195), () => SetPrice(MarketPrices.Get(item), true));
         Btn(window.transform, "Cancel", new Vector2(160, 56), new Vector2(15, -195), Close);
         Button ok = Btn(window.transform, "Confirm", new Vector2(180, 56), new Vector2(205, -195), Confirm);
         ok.GetComponent<Image>().color = new Color(0.2f, 0.7f, 0.3f);

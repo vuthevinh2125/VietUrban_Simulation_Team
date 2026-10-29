@@ -133,7 +133,7 @@ public class ItemPickup : MonoBehaviour
         {
             ItemData it = shelf.CurrentItem;
             SetPrompt($"{it.itemName}  {shelf.Count}/{shelf.Capacity}\n" +
-                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(it.MarketPrice)})\n[LMB] Set price{moveText}");
+                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(MarketPrices.Get(it))})\n[LMB] Set price{moveText}");
             if (pressed)
             {
                 SetPrompt(null);

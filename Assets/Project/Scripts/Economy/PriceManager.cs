@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Giá BÁN của từng mặt hàng (người chơi đặt bằng nhãn giá trên kệ).
-/// Chưa đặt thì dùng giá thị trường ItemData.MarketPrice.
+/// Chưa đặt thì dùng giá thị trường HÔM NAY (MarketPrices, dao động theo ngày).
 /// Cũng quyết định khách phản ứng với giá ra sao (BuyChance).
 /// </summary>
 public static class PriceManager
@@ -21,7 +21,7 @@ public static class PriceManager
     public static float GetSellPrice(ItemData item)
     {
         if (item == null) return 0f;
-        return sellPrices.TryGetValue(item, out float price) ? price : item.MarketPrice;
+        return sellPrices.TryGetValue(item, out float price) ? price : MarketPrices.Get(item);
     }
 
     public static void SetSellPrice(ItemData item, float price)
@@ -48,7 +48,7 @@ public static class PriceManager
     public static float PriceRatio(ItemData item, float price)
     {
         if (item == null) return 1f;
-        float market = Mathf.Max(0.01f, item.MarketPrice);
+        float market = Mathf.Max(0.01f, MarketPrices.Get(item));
         return price / market;
     }
 

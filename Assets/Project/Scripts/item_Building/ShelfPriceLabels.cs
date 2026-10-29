@@ -32,6 +32,7 @@ public class ShelfPriceLabels : MonoBehaviour
         Build();
         PriceManager.OnPriceChanged += OnPriceChanged;
         StockManager.OnStockChanged += Refresh;
+        MarketPrices.OnChanged += Refresh; // giá mặc định đi theo giá thị trường hôm nay
         Refresh();
     }
 
@@ -39,6 +40,7 @@ public class ShelfPriceLabels : MonoBehaviour
     {
         PriceManager.OnPriceChanged -= OnPriceChanged;
         StockManager.OnStockChanged -= Refresh;
+        MarketPrices.OnChanged -= Refresh;
         if (root != null) Destroy(root.gameObject);
     }
 
