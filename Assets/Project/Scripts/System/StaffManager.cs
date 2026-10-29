@@ -20,7 +20,9 @@ public class StaffManager : MonoBehaviour
 
     public int CashierCount => cashiers.Count;
     public int RestockerCount => restockers.Count;
-    public int MaxCashiers => CheckoutCounter.All.Count;
+    public const int MaxCashierLimit = 4;
+    /// <summary>Mỗi quầy đang mở 1 thu ngân, tối đa 4.</summary>
+    public int MaxCashiers => Mathf.Min(MaxCashierLimit, CheckoutCounter.All.Count);
     public float DailyWages => cashiers.Count * CashierWage + restockers.Count * RestockerWage;
 
     public static event System.Action OnStaffChanged;
@@ -46,7 +48,7 @@ public class StaffManager : MonoBehaviour
     {
         reason = "";
         if (StoreProgress.Level < CashierLevel) { reason = $"Requires level {CashierLevel}"; return false; }
-        if (cashiers.Count >= MaxCashiers) { reason = "All counters staffed"; return false; }
+        if (cashiers.Count >= MaxCashiers) { reason = cashiers.Count >= MaxCashierLimit ? "Max 4 cashiers" : "Unlock more counters"; return false; }
         return true;
     }
 
@@ -67,7 +69,7 @@ public class StaffManager : MonoBehaviour
         if (counter == null) return false;
 
         counter.autoScan = true;
-        GameObject body = SpawnWorker("Cashier", CashierSpot(counter, out Quaternion rot), rot, new Color(0.75f, 0.85f, 1f));
+        GameObject body = SpawnWorker("Cashier", "Staff_Cashier", CashierSpot(counter, out Quaternion rot), rot, new Color(0.75f, 0.85f, 1f));
         if (body != null)
         {
             NavMeshAgent agent = body.GetComponent<NavMeshAgent>();
@@ -96,7 +98,7 @@ public class StaffManager : MonoBehaviour
         Transform at = spawner != null && spawner.entrancePoint != null ? spawner.entrancePoint
                      : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint : transform);
         Vector3 pos = NavMesh.SamplePosition(at.position, out NavMeshHit hit, 4f, NavMesh.AllAreas) ? hit.position : at.position;
-        GameObject body = SpawnWorker($"Restocker_{restockers.Count + 1}", pos, at.rotation, new Color(1f, 0.85f, 0.65f));
+        GameObject body = SpawnWorker($"Restocker_{restockers.Count + 1}", "Staff_Restocker", pos, at.rotation, new Color(1f, 0.85f, 0.65f));
         if (body == null) return false;
         body.AddComponent<Restocker>();
         restockers.Add(body);
@@ -137,12 +139,14 @@ public class StaffManager : MonoBehaviour
 
     // ================= Tạo nhân vật =================
     /// <summary>
-    /// Model nhân viên: Resources/Staff_Worker (tạo bằng Tools > Store Setup > 10. Build Staff Model, dùng Guard.fbx),
-    /// khác với khách. Chưa tạo thì tạm dùng model khách. Thu ngân / xếp kệ phân biệt bằng màu áo.
+    /// Model nhân viên riêng theo vai trò: Resources/Staff_Cashier, Resources/Staff_Restocker
+    /// (Tools > Store Setup > 10). Chưa có thì dùng Staff_Worker cũ, rồi tới model khách (khi đó nhuộm màu áo để phân biệt).
     /// </summary>
-    private GameObject SpawnWorker(string name, Vector3 pos, Quaternion rot, Color tint)
+    private GameObject SpawnWorker(string name, string roleModel, Vector3 pos, Quaternion rot, Color tint)
     {
-        GameObject prefab = Resources.Load<GameObject>("Staff_Worker");
+        GameObject prefab = Resources.Load<GameObject>(roleModel);
+        bool ownModel = prefab != null;
+        if (prefab == null) prefab = Resources.Load<GameObject>("Staff_Worker");
         if (prefab == null)
         {
             CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
@@ -164,8 +168,8 @@ public class StaffManager : MonoBehaviour
         Rigidbody rb = go.GetComponent<Rigidbody>();
         if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
 
-        // Màu áo phân biệt thu ngân / xếp kệ
-        foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
+        // Chưa có model riêng: nhuộm màu áo để phân biệt thu ngân / xếp kệ
+        if (!ownModel) foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
             foreach (Material m in r.materials)
             {
                 if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", m.GetColor("_BaseColor") * tint);
