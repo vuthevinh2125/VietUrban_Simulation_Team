@@ -51,8 +51,12 @@ public class CheckoutCounter : MonoBehaviour
     void OnEnable() => All.Add(this);
     void OnDisable() => All.Remove(this);
 
-    [Tooltip("Mặt quầy cao tối đa bao nhiêu so với chân quầy (bỏ qua màn hình, cột đèn...)")]
-    public float maxCounterHeight = 1.25f;
+    [Header("Drop point")]
+    [Tooltip("Tự tìm bục đặt hàng (mặt phẳng rộng nhất trong khoảng độ cao bên dưới). Tắt nếu muốn tự kéo ItemDropPoint.")]
+    public bool autoSnapDropPoint = true;
+    [Tooltip("Độ cao thấp nhất / cao nhất của bục đặt hàng so với chân quầy (mét)")]
+    public float minDropHeight = 0.55f;
+    public float maxDropHeight = 1.0f;
 
     void Awake()
     {
@@ -61,31 +65,69 @@ public class CheckoutCounter : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    void Start() => SnapDropPointToCounterTop();
+    void Start()
+    {
+        if (autoSnapDropPoint) SnapDropPointToCounterTop();
+    }
 
-    /// <summary>Hạ điểm đặt hàng xuống đúng mặt quầy (bề mặt cao nhất của quầy nhưng thấp hơn maxCounterHeight).</summary>
+    /// <summary>
+    /// Quét lưới tia chiếu từ trên xuống khắp mặt quầy, gom các điểm chạm mặt phẳng nằm ngang trong khoảng độ cao,
+    /// chọn "tầng" có nhiều điểm nhất (bục rộng nhất) và đặt ItemDropPoint vào giữa tầng đó.
+    /// </summary>
     private void SnapDropPointToCounterTop()
     {
         if (itemDropPoint == null || itemDropPoint == transform) return;
-        float baseY = transform.position.y;
-        Vector3 origin = new Vector3(itemDropPoint.position.x, baseY + maxCounterHeight, itemDropPoint.position.z);
-        float best = float.NegativeInfinity;
-        foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, maxCounterHeight + 0.5f, ~0, QueryTriggerInteraction.Ignore))
+
+        Bounds b = default;
+        bool any = false;
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
-            if (!h.transform.IsChildOf(transform)) continue;
-            if (h.point.y > best) best = h.point.y;
+            if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
         }
-        if (float.IsNegativeInfinity(best))
+        if (!any) return;
+
+        float baseY = b.min.y;
+        var hits = new List<Vector3>();
+        const float step = 0.08f;
+        for (float x = b.min.x + step * 0.5f; x < b.max.x; x += step)
+            for (float z = b.min.z + step * 0.5f; z < b.max.z; z += step)
+            {
+                Vector3 origin = new Vector3(x, baseY + maxDropHeight + 0.05f, z);
+                float best = float.NegativeInfinity;
+                Vector3 bestPoint = Vector3.zero;
+                foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, maxDropHeight + 0.1f, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (!h.transform.IsChildOf(transform) || h.normal.y < 0.9f) continue;
+                    float height = h.point.y - baseY;
+                    if (height < minDropHeight || height > maxDropHeight) continue;
+                    if (h.point.y > best) { best = h.point.y; bestPoint = h.point; }
+                }
+                if (!float.IsNegativeInfinity(best)) hits.Add(bestPoint);
+            }
+
+        if (hits.Count == 0)
         {
-            // Quầy không có collider: lấy mặt trên các renderer thấp hơn maxCounterHeight
-            foreach (Renderer r in GetComponentsInChildren<Renderer>())
-                if (r.bounds.max.y <= baseY + maxCounterHeight && r.bounds.max.y > best) best = r.bounds.max.y;
+            Debug.LogWarning($"[Checkout] Không tìm thấy bục đặt hàng trên '{name}' (quầy cần có collider). Hãy tự kéo ItemDropPoint và tắt Auto Snap.", this);
+            return;
         }
-        if (!float.IsNegativeInfinity(best))
+
+        // Gom theo độ cao (5cm một tầng), lấy tầng nhiều điểm nhất
+        var levels = new Dictionary<int, List<Vector3>>();
+        foreach (Vector3 p in hits)
         {
-            Vector3 p = itemDropPoint.position;
-            itemDropPoint.position = new Vector3(p.x, best + 0.01f, p.z);
+            int key = Mathf.RoundToInt(p.y / 0.05f);
+            if (!levels.TryGetValue(key, out var list)) levels[key] = list = new List<Vector3>();
+            list.Add(p);
         }
+        List<Vector3> bestLevel = null;
+        foreach (var kv in levels)
+            if (bestLevel == null || kv.Value.Count > bestLevel.Count) bestLevel = kv.Value;
+
+        Vector3 center = Vector3.zero;
+        foreach (Vector3 p in bestLevel) center += p;
+        center /= bestLevel.Count;
+        itemDropPoint.position = center + Vector3.up * 0.01f;
+        Debug.Log($"[Checkout] Bục đặt hàng của '{name}': cao {center.y - baseY:F2}m, {bestLevel.Count} điểm.", this);
     }
 
     /// <summary>Quầy ít người chờ nhất (hoà thì gần nhất).</summary>
