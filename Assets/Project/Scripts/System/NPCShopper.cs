@@ -332,23 +332,42 @@ public class NPCShopper : MonoBehaviour
         Destroy(gameObject);
     }
 
-    /// <summary>Điểm cách cửa ra fleeDistance mét, theo hướng từ trong cửa hàng đi ra.</summary>
+    /// <summary>
+    /// Điểm chạy trốn: cách cửa ra khoảng fleeDistance mét, đi tới được (đường đi hoàn chỉnh) và đủ xa cửa,
+    /// để người chơi có thời gian đuổi theo ngoài vỉa hè.
+    /// </summary>
     private Vector3 EscapePoint()
     {
         Vector3 exit = exitDoor != null ? exitDoor.position : transform.position;
         Vector3 store = Vector3.zero;
         int n = 0;
         foreach (Shelf sh in StockManager.Shelves) if (sh != null) { store += sh.transform.position; n++; }
-        Vector3 dir = n > 0 ? exit - store / n : transform.forward;
-        dir.y = 0f;
-        if (dir.sqrMagnitude < 0.01f) dir = transform.forward;
-        // Lấy điểm đi bộ được gần nhất (vỉa hè), thử gần dần nếu quá xa NavMesh
-        for (float f = 1f; f > 0.2f; f -= 0.2f)
+        Vector3 outDir = n > 0 ? exit - store / n : transform.forward;
+        outDir.y = 0f;
+        if (outDir.sqrMagnitude < 0.01f) outDir = transform.forward;
+        outDir.Normalize();
+
+        var path = new NavMeshPath();
+        Vector3 best = exit;
+        float bestScore = -1f;
+        // Thử nhiều hướng quanh hướng "ra khỏi cửa hàng", lấy điểm xa cửa nhất mà vẫn đi tới được
+        for (int i = 0; i < 12; i++)
         {
-            Vector3 p = exit + dir.normalized * fleeDistance * f;
-            if (NavMesh.SamplePosition(p, out NavMeshHit hit, 6f, NavMesh.AllAreas)) return hit.position;
+            float angle = (i % 2 == 0 ? 1 : -1) * (i / 2) * 25f;
+            Vector3 dir = Quaternion.Euler(0f, angle, 0f) * outDir;
+            for (float f = 1f; f >= 0.4f; f -= 0.3f)
+            {
+                Vector3 p = exit + dir * fleeDistance * f;
+                if (!NavMesh.SamplePosition(p, out NavMeshHit hit, 5f, agent.areaMask)) continue;
+                if (!agent.CalculatePath(hit.position, path) || path.status != NavMeshPathStatus.PathComplete) continue;
+                float score = FlatDistance(hit.position, exit);
+                if (score > bestScore) { bestScore = score; best = hit.position; }
+                break;
+            }
+            if (bestScore >= fleeDistance * 0.7f) break;
         }
-        return exit;
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name} chạy trốn tới {best:F1} (cách cửa {bestScore:F0}m).", this);
+        return best;
     }
 
     private void RaiseAlarm()
