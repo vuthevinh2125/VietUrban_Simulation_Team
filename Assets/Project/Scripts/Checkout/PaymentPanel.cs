@@ -119,7 +119,7 @@ public class PaymentPanel : MonoBehaviour
         get { int s = 0; foreach (int v in given) s += v; return s; }
     }
 
-    private void Give(int cents) { given.Add(cents); Refresh(); }
+    private void Give(int cents) { given.Add(cents); AudioManager.Play("coin", 0.6f); Refresh(); }
     private void Undo() { if (given.Count > 0) given.RemoveAt(given.Count - 1); Refresh(); }
     private void ClearGiven() { given.Clear(); Refresh(); }
 

@@ -61,7 +61,9 @@ public class EntranceDoor : MonoBehaviour
         if (Time.time >= nextCheck)
         {
             nextCheck = Time.time + checkInterval;
-            isOpen = IsAnyoneNear();
+            bool open = IsAnyoneNear();
+            if (open && !isOpen) AudioManager.PlayAt("door_slide", transform.position, 0.7f);
+            isOpen = open;
         }
 
         // Cánh cửa đang mở/đang chuyển động thì không chặn người (tránh cánh cửa đẩy người chơi ra ngoài)

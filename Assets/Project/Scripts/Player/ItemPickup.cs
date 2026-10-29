@@ -107,7 +107,7 @@ public class ItemPickup : MonoBehaviour
         if (furnitureBox != null)
         {
             SetPrompt($"[E] Pick up furniture: {(furnitureBox.data != null ? furnitureBox.data.displayName : "?")}");
-            if (pressed && FurniturePlacer.Instance != null) { SetPrompt(null); FurniturePlacer.Instance.BeginPlace(furnitureBox); }
+            if (pressed && FurniturePlacer.Instance != null) { SetPrompt(null); AudioManager.Play("box_pickup", 0.8f); FurniturePlacer.Instance.BeginPlace(furnitureBox); }
             return;
         }
 
@@ -208,6 +208,7 @@ public class ItemPickup : MonoBehaviour
     // ================= Hành động =================
     private void PickUp(Interactable box)
     {
+        AudioManager.Play("box_pickup", 0.7f);
         currentItem = box;
         box.OnPickedUp(holdPosition);
         SetPrompt(null);
@@ -218,6 +219,7 @@ public class ItemPickup : MonoBehaviour
         Interactable box = currentItem;
         currentItem = null;
         SetPrompt(null);
+        AudioManager.Play("box_pickup", 0.5f);
 
         if (box == null) return;
         if (box.IsEmpty) box.Discard();
@@ -228,7 +230,10 @@ public class ItemPickup : MonoBehaviour
     {
         GameObject product = Instantiate(currentItem.ProductPrefab);
         if (shelf.TryAddProduct(product, holdPosition, currentItem.itemData))
+        {
             currentItem.RemoveOne();
+            AudioManager.Play("place_item", 0.45f);
+        }
         else
             Destroy(product);
     }
@@ -243,6 +248,7 @@ public class ItemPickup : MonoBehaviour
         {
             Destroy(product);
             currentItem.AddOne();
+            AudioManager.Play("place_item", 0.35f);
         }
     }
 

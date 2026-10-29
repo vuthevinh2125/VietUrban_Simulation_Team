@@ -78,6 +78,7 @@ public class ProgressHUD : MonoBehaviour
 
     private void OnLevelUp(int level)
     {
+        AudioManager.Play("level_up", 0.9f);
         string unlock = "";
         foreach (ProductLicense l in LicenseManager.All)
             if (l.requiredLevel == level) unlock += $"\n<size=70%>New license available: {l.name}</size>";

@@ -71,6 +71,7 @@ public class AutoDoor : MonoBehaviour
 
     private void SetOpen(bool open)
     {
+        if (open && !isOpen) AudioManager.PlayAt("door_slide", transform.position, 0.7f);
         isOpen = open;
         if (animationCoroutine != null) StopCoroutine(animationCoroutine);
         animationCoroutine = StartCoroutine(AnimateDoor(open ? openRotation : closedRotation));
