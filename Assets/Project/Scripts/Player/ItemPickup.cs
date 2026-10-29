@@ -48,29 +48,50 @@ public class ItemPickup : MonoBehaviour
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit, pickupRange, interactableLayer, QueryTriggerInteraction.Ignore);
 
+        if (TryCatchThief()) return; // ưu tiên bắt trộm, kể cả khi đang cầm thùng
         if (currentItem == null) HandleEmptyHands(hasHit, hit);
         else HandleHoldingBox(hasHit, hit);
     }
 
     void OnDisable() => SetPrompt(null);
 
+    // ================= Bắt trộm =================
+    [Header("Catch thief")]
+    public float catchRange = 6f;
+
+    /// <summary>
+    /// Nhắm vào kẻ trộm đang chạy (trong hay ngoài cửa hàng) rồi bấm chuột trái / E để bắt.
+    /// Tia hình cầu (dễ trúng người đang chạy), xét mọi layer vì khách không ở layer Interactable.
+    /// </summary>
+    private bool TryCatchThief()
+    {
+        if (NPCShopper.Active.Count == 0) return false;
+        Ray look = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        NPCShopper thief = null;
+        foreach (RaycastHit h in Physics.SphereCastAll(look, 0.35f, catchRange, ~0, QueryTriggerInteraction.Ignore))
+        {
+            NPCShopper n = h.collider.GetComponentInParent<NPCShopper>();
+            if (n != null && n.IsFleeingThief) { thief = n; break; }
+        }
+        // Đứng sát bên cạnh cũng bắt được (không cần nhắm thật chuẩn)
+        if (thief == null)
+            foreach (NPCShopper n in NPCShopper.Active)
+                if (n != null && n.IsFleeingThief && Vector3.Distance(n.transform.position, playerCamera.transform.position) < 2.2f) { thief = n; break; }
+        if (thief == null) return false;
+
+        SetPrompt("<color=#FF6B6B>[LMB] Catch the thief!</color>");
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E))
+        {
+            SetPrompt(null);
+            thief.Catch();
+        }
+        return true;
+    }
+
     // ================= Tay không =================
     private void HandleEmptyHands(bool hasHit, RaycastHit hit)
     {
         bool pressed = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0);
-
-        // Kẻ trộm đang chạy trốn: nhìn vào và bấm để bắt (tia này xét mọi layer vì khách không nằm ở layer Interactable)
-        Ray look = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        if (Physics.Raycast(look, out RaycastHit npcHit, pickupRange + 1.5f, ~0, QueryTriggerInteraction.Ignore))
-        {
-            NPCShopper thief = npcHit.collider.GetComponentInParent<NPCShopper>();
-            if (thief != null && thief.IsFleeingThief)
-            {
-                SetPrompt("<color=#FF6B6B>[LMB] Catch the thief!</color>");
-                if (pressed) { SetPrompt(null); thief.Catch(); }
-                return;
-            }
-        }
 
         if (!hasHit) { SetPrompt(null); return; }
 
