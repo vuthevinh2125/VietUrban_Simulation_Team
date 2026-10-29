@@ -28,9 +28,16 @@ public class ItemPickup : MonoBehaviour
     private float nextRepeatTime;
     private string lastPrompt;
 
+    void Awake()
+    {
+        // Chỉ người chơi thật (có camera) mới lắp nội thất (ComputerUI cũng lỡ gắn một ItemPickup thừa)
+        if (playerCamera != null && GetComponent<FurniturePlacer>() == null) gameObject.AddComponent<FurniturePlacer>();
+    }
+
     void Update()
     {
         if (playerCamera == null) return;
+        if (FurniturePlacer.Instance != null && FurniturePlacer.Instance.IsBusy) return; // đang lắp / dời nội thất
 
         if (UIState.IsBlockingUIOpen)
         {
@@ -95,6 +102,15 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
+        // Thùng nội thất mới mua -> nhặt lên để chọn chỗ lắp
+        FurnitureBox furnitureBox = hit.collider.GetComponentInParent<FurnitureBox>();
+        if (furnitureBox != null)
+        {
+            SetPrompt($"[E] Pick up furniture: {(furnitureBox.data != null ? furnitureBox.data.displayName : "?")}");
+            if (pressed && FurniturePlacer.Instance != null) { SetPrompt(null); FurniturePlacer.Instance.BeginPlace(furnitureBox); }
+            return;
+        }
+
         Interactable box = hit.collider.GetComponentInParent<Interactable>();
         if (box != null)
         {
@@ -105,16 +121,29 @@ public class ItemPickup : MonoBehaviour
 
         // Nhìn vào kệ có hàng: xem giá, bấm để đặt giá bán (như bấm vào nhãn giá trong Supermarket Simulator)
         Shelf shelf = hit.collider.GetComponentInParent<Shelf>();
+        PlacedFurniture placed = hit.collider.GetComponentInParent<PlacedFurniture>();
+        string moveText = placed != null ? "   [F] Move" : "";
+        if (placed != null && Input.GetKeyDown(KeyCode.F) && FurniturePlacer.Instance != null)
+        {
+            SetPrompt(null);
+            FurniturePlacer.Instance.BeginMove(placed);
+            return;
+        }
         if (shelf != null && shelf.CurrentItem != null)
         {
             ItemData it = shelf.CurrentItem;
             SetPrompt($"{it.itemName}  {shelf.Count}/{shelf.Capacity}\n" +
-                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(it.MarketPrice)})\n[LMB] Set price");
+                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(it.MarketPrice)})\n[LMB] Set price{moveText}");
             if (pressed)
             {
                 SetPrompt(null);
                 PriceSetPanel.Open(it);
             }
+            return;
+        }
+        if (placed != null)
+        {
+            SetPrompt($"{(placed.data != null ? placed.data.displayName : placed.name)}{moveText}");
             return;
         }
 
@@ -218,7 +247,7 @@ public class ItemPickup : MonoBehaviour
     }
 
     // ================= Gợi ý trên màn hình =================
-    private void SetPrompt(string message)
+    public void SetPrompt(string message)
     {
         if (message == lastPrompt) return;
         lastPrompt = message;
