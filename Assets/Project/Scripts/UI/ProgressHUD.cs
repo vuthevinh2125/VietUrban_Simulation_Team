@@ -10,7 +10,8 @@ using UnityEngine.UI;
 public class ProgressHUD : MonoBehaviour
 {
     private static ProgressHUD instance;
-    private TMP_Text levelText, xpText, toastText;
+    private TMP_Text levelText, xpText, toastText, moneyText, dayText, clockText;
+    private float shownMoney = float.NaN;
     private RectTransform barFill;
     private CanvasGroup toastGroup;
     private readonly Queue<string> toasts = new Queue<string>();
@@ -37,6 +38,25 @@ public class ProgressHUD : MonoBehaviour
         StoreProgress.OnLevelUp += OnLevelUp;
         LicenseManager.OnLicensesChanged += OnLicense;
         Refresh();
+    }
+
+    /// <summary>Góc trên trái: ngày, giờ + trạng thái cửa hàng, số tiền (cập nhật liên tục).</summary>
+    private void RefreshInfo()
+    {
+        GameManager gm = GameManager.Instance;
+        EconomyManager eco = EconomyManager.Instance;
+        if (eco != null && !Mathf.Approximately(eco.Money, shownMoney))
+        {
+            shownMoney = eco.Money;
+            moneyText.text = EconomyManager.Format(eco.Money);
+            moneyText.color = eco.Money >= 0f ? new Color(0.45f, 1f, 0.5f) : new Color(1f, 0.45f, 0.4f);
+        }
+        if (gm != null)
+        {
+            dayText.text = $"DAY {gm.currentDay}";
+            string status = gm.IsStoreOpen ? "<color=#5BE36B>OPEN</color>" : (gm.IsClosingTime ? "<color=#FFB347>CLOSING</color>" : "<color=#FF6B6B>CLOSED</color>");
+            clockText.text = $"{gm.ClockString}   {status}";
+        }
     }
 
     void OnDestroy()
@@ -66,6 +86,7 @@ public class ProgressHUD : MonoBehaviour
 
     void Update()
     {
+        RefreshInfo();
         if (Time.unscaledTime > toastUntil)
         {
             if (toasts.Count > 0)
@@ -104,6 +125,13 @@ public class ProgressHUD : MonoBehaviour
         barFill.offsetMin = barFill.offsetMax = Vector2.zero;
         fill.AddComponent<Image>().color = new Color(0.3f, 0.8f, 1f);
         xpText = Label(bar.transform, 12, new Vector2(320, 14), Vector2.zero, TextAlignmentOptions.Center, true);
+
+        // Ngày / giờ / tiền: góc trên trái
+        GameObject info = Rect("Info", canvasGo.transform, new Vector2(300, 110), new Vector2(0f, 1f), new Vector2(160, -12));
+        info.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.55f);
+        dayText = Label(info.transform, 26, new Vector2(280, 32), new Vector2(0, 34), TextAlignmentOptions.Left, true);
+        clockText = Label(info.transform, 20, new Vector2(280, 28), new Vector2(0, 4), TextAlignmentOptions.Left, false);
+        moneyText = Label(info.transform, 32, new Vector2(280, 40), new Vector2(0, -32), TextAlignmentOptions.Left, true);
 
         // Thông báo nổi
         GameObject toast = Rect("Toast", canvasGo.transform, new Vector2(900, 110), new Vector2(0.5f, 1f), new Vector2(0, -150));
