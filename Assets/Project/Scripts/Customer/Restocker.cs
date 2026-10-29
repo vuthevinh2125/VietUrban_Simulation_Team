@@ -76,6 +76,22 @@ public class Restocker : MonoBehaviour
     {
         if (!FindJob(out Interactable box, out Shelf shelf))
         {
+            // Không có kệ nào cần xếp: mang thùng nằm dưới sàn cất lên kệ kho (nếu có kệ kho còn chỗ)
+            if (FindStoreJob(out Interactable loose, out StorageRack rackJob))
+            {
+                myBox = loose;
+                claimedBoxes.Add(loose);
+                yield return MoveTo(loose.transform.position, 1.1f);
+                if (loose == null || loose.IsHeld || Flat(transform.position, loose.transform.position) > 1.6f)
+                {
+                    if (loose != null) skipUntil[loose] = Time.time + 30f;
+                    yield break;
+                }
+                loose.OnPickedUp(hand);
+                carrying = loose;
+                yield return StoreCarried(rackJob);
+                yield break;
+            }
             if (Time.time >= nextIdleNotice)
             {
                 nextIdleNotice = Time.time + 20f;
@@ -117,9 +133,47 @@ public class Restocker : MonoBehaviour
             yield return new WaitForSeconds(placeInterval);
         }
 
-        // 4) Thùng rỗng thì vứt, còn hàng thì đặt xuống
+        // 4) Thùng rỗng thì vứt, còn hàng thì cất lên kệ kho (nếu có) hoặc đặt xuống
         if (box != null && box.IsEmpty) { carrying = null; box.Discard(); }
-        else DropCarried();
+        else
+        {
+            StorageRack rack = StorageRack.FindFree(transform.position);
+            if (rack != null) yield return StoreCarried(rack);
+            else DropCarried();
+        }
+    }
+
+    /// <summary>Mang thùng đang cầm tới kệ kho và cất vào ô trống (kệ đầy thì đặt xuống).</summary>
+    private IEnumerator StoreCarried(StorageRack rack)
+    {
+        if (carrying == null) yield break;
+        if (rack == null || !rack.HasFreeSlot) { DropCarried(); yield break; }
+        yield return MoveTo(rack.StandPoint(), 0.6f);
+        if (rack == null || carrying == null) { DropCarried(); yield break; }
+        Face(rack.transform.position);
+        Interactable b = carrying;
+        carrying = null;
+        if (!rack.TryStore(b, transform.position + Vector3.up)) { carrying = b; DropCarried(); }
+        else if (debugLogs && GameDebug.Verbose) Debug.Log($"[Restocker] {name}: cất thùng {b.DisplayName} lên kệ kho.", this);
+    }
+
+    /// <summary>Thùng còn hàng đang nằm dưới sàn (không trên kệ kho) + kệ kho còn chỗ.</summary>
+    private bool FindStoreJob(out Interactable best, out StorageRack rack)
+    {
+        best = null; rack = null;
+        if (StorageRack.All.Count == 0) return false;
+        float bestD = float.MaxValue;
+        foreach (Interactable box in StockManager.Boxes)
+        {
+            if (box == null || box.IsHeld || box.IsEmpty || box.itemData == null || claimedBoxes.Contains(box)) continue;
+            if (skipUntil.TryGetValue(box, out float until) && Time.time < until) continue;
+            if (StorageRack.IsStored(box)) continue;
+            float d = (box.transform.position - transform.position).sqrMagnitude;
+            if (d < bestD) { bestD = d; best = box; }
+        }
+        if (best == null) return false;
+        rack = StorageRack.FindFree(best.transform.position);
+        return rack != null;
     }
 
     private void DropCarried()
