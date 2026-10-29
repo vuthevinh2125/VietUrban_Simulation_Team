@@ -329,7 +329,7 @@ public class CheckoutCounter : MonoBehaviour
         StoreProgress.AddXP(StoreProgress.XPForSale(total, scannedCount));
         Debug.Log($"[Checkout] Khách trả {EconomyManager.Format(total)} cho {scannedCount} món ({Method})" +
                   (lostCents > 0 ? $", thối dư mất {EconomyManager.Format(lostCents / 100f)}." : "."));
-        AudioManager.PlayAt(Method == PaymentMethod.Card ? "card_beep" : "cash_register", transform.position, 0.9f);
+        AudioManager.PlayAt(Method == PaymentMethod.Card ? "cardpayment" : "cash_register", transform.position, 0.9f);
         if (paySound != null)
         {
             if (audioSource != null) audioSource.PlayOneShot(paySound);
