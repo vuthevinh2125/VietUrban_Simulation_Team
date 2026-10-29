@@ -25,6 +25,8 @@ public class ShelfPriceLabels : MonoBehaviour
     private float shownPrice = -1f;
     private bool shownVisible = true;
     private Transform root;
+    private Vector3 builtPos;
+    private Quaternion builtRot = Quaternion.identity;
 
     void Start()
     {
@@ -42,6 +44,15 @@ public class ShelfPriceLabels : MonoBehaviour
         StockManager.OnStockChanged -= Refresh;
         MarketPrices.OnChanged -= Refresh;
         if (root != null) Destroy(root.gameObject);
+    }
+
+    // Kệ bị dời (mở rộng cửa hàng, dời nội thất) -> nhãn đi theo
+    void LateUpdate()
+    {
+        if (root == null || !transform.hasChanged) return;
+        transform.hasChanged = false;
+        Quaternion r = transform.rotation * Quaternion.Inverse(builtRot);
+        root.SetPositionAndRotation(transform.position - r * builtPos, r);
     }
 
     private void OnPriceChanged(ItemData item, float price)
@@ -74,6 +85,8 @@ public class ShelfPriceLabels : MonoBehaviour
         if (first == null) return;
 
         root = new GameObject($"PriceLabels_{name}").transform; // không làm con của kệ để khỏi bị méo theo scale kệ
+        builtPos = transform.position;
+        builtRot = transform.rotation;
         Vector3 right = first.right, fwd = first.forward, origin = first.position;
 
         // Gom ô theo tầng (cùng độ cao)

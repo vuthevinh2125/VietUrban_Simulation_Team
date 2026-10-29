@@ -23,6 +23,11 @@ public class StoreExpansion : MonoBehaviour
     public float price = 2000f;
     public GameObject[] showOnUnlock;
     public GameObject[] hideOnUnlock;
+    [Tooltip("Kệ/tủ kê sát bức tường được mở: mua xong dời ra sát tường mới (hàng trên kệ đi theo).")]
+    public Transform[] moveOnUnlock;
+    public Vector3 moveOffset;
+
+    private Vector3[] homePositions;
 
     public bool IsUnlocked => unlocked.Contains(id);
 
@@ -31,6 +36,11 @@ public class StoreExpansion : MonoBehaviour
         if (string.IsNullOrEmpty(id)) id = $"{name}@{transform.position.x:F0},{transform.position.z:F0}";
         if (!All.Contains(this)) All.Add(this);
         All.Sort((a, b) => a.order.CompareTo(b.order));
+        if (moveOnUnlock != null)
+        {
+            homePositions = new Vector3[moveOnUnlock.Length];
+            for (int i = 0; i < moveOnUnlock.Length; i++) if (moveOnUnlock[i] != null) homePositions[i] = moveOnUnlock[i].position;
+        }
         Apply();
     }
 
@@ -41,6 +51,9 @@ public class StoreExpansion : MonoBehaviour
         bool on = IsUnlocked;
         if (showOnUnlock != null) foreach (GameObject g in showOnUnlock) if (g != null && g != gameObject) g.SetActive(on);
         if (hideOnUnlock != null) foreach (GameObject g in hideOnUnlock) if (g != null && g != gameObject) g.SetActive(!on);
+        if (moveOnUnlock != null && homePositions != null)
+            for (int i = 0; i < moveOnUnlock.Length; i++)
+                if (moveOnUnlock[i] != null) moveOnUnlock[i].position = homePositions[i] + (on ? moveOffset : Vector3.zero);
     }
 
     public bool CanBuy(out string reason)

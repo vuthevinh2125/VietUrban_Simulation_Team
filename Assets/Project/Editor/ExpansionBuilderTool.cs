@@ -19,6 +19,14 @@ public static class ExpansionBuilderTool
     private const string Arch = "Assets/Assets_ThirdParty/ModernSupermarket/Prefabs/Architecture";
     private const string RackPrefab = "Assets/Project/Prefabs/Furniture/Storage_Rack.prefab";
     private const string StoreRoot = "Supermarket_full";
+    /// <summary>Bật khi chạy tự động (không hiện hộp thoại).</summary>
+    public static bool Silent;
+
+    private static void Dialog(string title, string msg)
+    {
+        Debug.Log($"[Expansion] {title}: {msg}");
+        if (!Silent) EditorUtility.DisplayDialog(title, msg, "OK");
+    }
 
     // ================= 15. Nhà kho =================
     [MenuItem("Tools/Store Setup/15. Build Warehouse (chọn 1 object đánh dấu vị trí)")]
@@ -27,8 +35,8 @@ public static class ExpansionBuilderTool
         GameObject spot = Selection.activeGameObject;
         if (spot == null || EditorUtility.IsPersistent(spot))
         {
-            EditorUtility.DisplayDialog("Warehouse", "Tạo 1 GameObject rỗng đặt ở chỗ muốn làm CỬA nhà kho (trên mặt đất),\n" +
-                "xoay cho mũi tên xanh dương (Z) chỉ vào phía trong nhà kho, chọn nó rồi chạy lại.", "OK");
+            Dialog("Warehouse", "Tạo 1 GameObject rỗng đặt ở chỗ muốn làm CỬA nhà kho (trên mặt đất),\n" +
+                "xoay cho mũi tên xanh dương (Z) chỉ vào phía trong nhà kho, chọn nó rồi chạy lại.");
             return;
         }
         float width = 8f, depth = 6f;
@@ -39,7 +47,7 @@ public static class ExpansionBuilderTool
 
         BuildRoom(root, width, depth, frontWall: true, frontDoor: true, out float wallHeight);
 
-        // Kệ kho dọc tường sau
+        // Kệ kho: kín tường sau + dọc hai tường bên (chừa lối vào ở cửa)
         GameObject rack = AssetDatabase.LoadAssetAtPath<GameObject>(RackPrefab);
         int racks = 0;
         if (rack != null)
@@ -47,24 +55,40 @@ public static class ExpansionBuilderTool
             Bounds rb = LocalBounds(rack);
             bool longX = rb.size.x >= rb.size.z;
             float len = longX ? rb.size.x : rb.size.z, deep = longX ? rb.size.z : rb.size.x;
-            int count = Mathf.Clamp(Mathf.FloorToInt((width - 0.6f) / (len + 0.2f)), 1, 3);
-            for (int i = 0; i < count; i++)
+            Quaternion along = longX ? Quaternion.identity : Quaternion.Euler(0f, 90f, 0f);   // chạy dọc trục X của nhà kho
+            const float gap = 0.1f, margin = 0.25f;
+
+            // Tường sau
+            int back = Mathf.Max(1, Mathf.FloorToInt((width - 2f * margin + gap) / (len + gap)));
+            for (int i = 0; i < back; i++)
             {
-                var inst = (GameObject)PrefabUtility.InstantiatePrefab(rack, root);
-                Quaternion r = longX ? Quaternion.identity : Quaternion.Euler(0f, 90f, 0f);
-                float x = (i - (count - 1) * 0.5f) * (len + 0.2f);
-                Vector3 localCenter = new Vector3(x, 0f, depth - deep * 0.5f - 0.25f);
-                Place(inst.transform, root, r, localCenter, rb, bottomAt: 0f);
-                // Kệ cố định của nhà kho: không dời được, không đưa vào danh sách nội thất trong file lưu
-                PlacedFurniture pf = inst.GetComponent<PlacedFurniture>();
-                if (pf != null) Object.DestroyImmediate(pf);
-                racks++;
+                float x = (i - (back - 1) * 0.5f) * (len + gap);
+                AddRack(rack, root, along, new Vector3(x, 0f, depth - deep * 0.5f - margin), rb); racks++;
+            }
+            // Hai tường bên: từ sau kệ tường sau tới cách cửa 2m
+            float zFrom = 2f, zTo = depth - deep - margin - 0.9f;
+            int side = Mathf.Max(0, Mathf.FloorToInt((zTo - zFrom + gap) / (len + gap)));
+            Quaternion across = along * Quaternion.Euler(0f, 90f, 0f);
+            for (int i = 0; i < side; i++)
+            {
+                float z = zFrom + len * 0.5f + i * (len + gap);
+                AddRack(rack, root, across, new Vector3(-width / 2f + deep * 0.5f + margin, 0f, z), rb); racks++;
+                AddRack(rack, root, across, new Vector3(width / 2f - deep * 0.5f - margin, 0f, z), rb); racks++;
             }
         }
 
         StoreExpansion exp = CreateExpansion(root, "Warehouse", "A storage building next to the store for your boxes", 3, 1500f,
             new[] { root.gameObject }, new GameObject[0]);
         Finish(exp, $"Đã dựng nhà kho {width}x{depth}m (tường cao {wallHeight:F1}m) với {racks} kệ kho.");
+    }
+
+    private static void AddRack(GameObject rack, Transform root, Quaternion rot, Vector3 localCenter, Bounds rb)
+    {
+        var inst = (GameObject)PrefabUtility.InstantiatePrefab(rack, root);
+        Place(inst.transform, root, rot, localCenter, rb, bottomAt: 0f);
+        // Kệ cố định của nhà kho: không dời được, không đưa vào danh sách nội thất trong file lưu
+        PlacedFurniture pf = inst.GetComponent<PlacedFurniture>();
+        if (pf != null) Object.DestroyImmediate(pf);
     }
 
     // ================= 16. Mở rộng siêu thị =================
@@ -74,8 +98,8 @@ public static class ExpansionBuilderTool
         GameObject[] walls = Selection.gameObjects.Where(g => !EditorUtility.IsPersistent(g)).ToArray();
         if (walls.Length == 0 || !TryWorldBounds(walls, out Bounds wb))
         {
-            EditorUtility.DisplayDialog("Store Expansion", "Chọn 1 hoặc nhiều mảng TƯỜNG NGOÀI liền nhau của siêu thị (giữ Ctrl để chọn nhiều) rồi chạy lại.\n" +
-                "Phòng mở rộng sẽ được dựng ở phía ngoài các mảng tường đó.", "OK");
+            Dialog("Store Expansion", "Chọn 1 hoặc nhiều mảng TƯỜNG NGOÀI liền nhau của siêu thị (giữ Ctrl để chọn nhiều) rồi chạy lại.\n" +
+                "Phòng mở rộng sẽ được dựng ở phía ngoài các mảng tường đó.");
             return;
         }
         Vector3 storeCenter = GameObject.Find(StoreRoot) is GameObject store && TryWorldBounds(new[] { store }, out Bounds sb) ? sb.center : wb.center - Vector3.forward;
@@ -119,13 +143,60 @@ public static class ExpansionBuilderTool
             if (PrefabUtility.IsPartOfPrefabInstance(w)) { PrefabUtility.RecordPrefabInstancePropertyModifications(mod); PrefabUtility.RecordPrefabInstancePropertyModifications(obs); }
         }
 
+        // Kệ / tủ kê sát bức tường này: mua xong dời ra sát tường mới để mở lối đi vào phần mở rộng
+        var movers = new List<Transform>();
+        Transform furnitureRoot = GameObject.Find(StoreRoot)?.transform.Find("Furniture");
+        if (furnitureRoot != null)
+        {
+            Vector3 along = wallDir;
+            float d0 = Vector3.Dot(wb.center, normal);
+            float sMin = Vector3.Dot(wb.min, along), sMax = Vector3.Dot(wb.max, along);
+            foreach (Transform f in furnitureRoot)
+            {
+                if (!f.gameObject.activeInHierarchy || !TryWorldBounds(new[] { f.gameObject }, out Bounds fb)) continue;
+                float a = Vector3.Dot(fb.min, normal), b = Vector3.Dot(fb.max, normal);
+                float dMin = Mathf.Min(a, b), dMax = Mathf.Max(a, b);
+                float s1 = Vector3.Dot(fb.min, along), s2 = Vector3.Dot(fb.max, along);
+                float lo = Mathf.Min(s1, s2), hi = Mathf.Max(s1, s2);
+                bool againstWall = dMax <= d0 + 0.25f && dMin >= d0 - 1.35f;
+                bool insideSpan = lo >= sMin - 0.15f && hi <= sMax + 0.15f;
+                if (!againstWall || !insideSpan) continue;
+                movers.Add(f);
+                // Bỏ "Batching Static": mesh gộp tĩnh không dời theo transform khi chơi
+                foreach (Transform ch in f.GetComponentsInChildren<Transform>(true))
+                {
+                    StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(ch.gameObject);
+                    if ((flags & StaticEditorFlags.BatchingStatic) != 0)
+                    {
+                        Undo.RecordObject(ch.gameObject, "Static flags");
+                        GameObjectUtility.SetStaticEditorFlags(ch.gameObject, flags & ~StaticEditorFlags.BatchingStatic);
+                    }
+                }
+                // Không nướng vào NavMesh, thay bằng NavMeshObstacle để dời đi vẫn đúng đường đi
+                NavMeshModifier fm = f.GetComponent<NavMeshModifier>();
+                if (fm == null) fm = Undo.AddComponent<NavMeshModifier>(f.gameObject);
+                fm.ignoreFromBuild = true;
+                NavMeshObstacle fo = f.GetComponent<NavMeshObstacle>();
+                if (fo == null) fo = Undo.AddComponent<NavMeshObstacle>(f.gameObject);
+                Bounds flb = LocalBounds(f.gameObject);
+                Vector3 fls = f.lossyScale;
+                fo.shape = NavMeshObstacleShape.Box;
+                fo.center = Div(flb.center, fls);
+                fo.size = Vector3.Max(Div(flb.size, fls), Vector3.one * 0.05f);
+                fo.carving = true;
+                if (PrefabUtility.IsPartOfPrefabInstance(f)) { PrefabUtility.RecordPrefabInstancePropertyModifications(fm); PrefabUtility.RecordPrefabInstancePropertyModifications(fo); }
+            }
+        }
+
         int[] levels = { 4, 6, 8, 10 };
         float[] prices = { 2500f, 4000f, 6000f, 8000f };
         int t = Mathf.Clamp(index - 1, 0, levels.Length - 1);
         StoreExpansion exp = CreateExpansion(root, $"Store Expansion #{index}", "More floor space for shelves and fridges", levels[t], prices[t],
             new[] { root.gameObject }, walls);
         exp.order = 10 + index;
-        Finish(exp, $"Đã dựng phòng mở rộng rộng {width:F1}m x sâu 6m, mở thông qua {walls.Length} mảng tường.");
+        exp.moveOnUnlock = movers.ToArray();
+        exp.moveOffset = normal * 6f;
+        Finish(exp, $"Đã dựng phòng mở rộng rộng {width:F1}m x sâu 6m, mở thông qua {walls.Length} mảng tường; {movers.Count} kệ/tủ sát tường sẽ được dời ra tường mới khi mua.");
     }
 
     // ================= Dựng phòng =================
@@ -144,15 +215,18 @@ public static class ExpansionBuilderTool
         {
             Bounds wlb = LocalBounds(wall);
             wallHeight = wlb.size.y;
-            Edge(root, wall, null, new Vector3(-width / 2f, 0f, depth), new Vector3(width / 2f, 0f, depth));   // sau
-            Edge(root, wall, null, new Vector3(-width / 2f, 0f, 0f), new Vector3(-width / 2f, 0f, depth));     // trái
-            Edge(root, wall, null, new Vector3(width / 2f, 0f, 0f), new Vector3(width / 2f, 0f, depth));       // phải
-            if (frontWall) Edge(root, wall, frontDoor ? door : null, new Vector3(-width / 2f, 0f, 0f), new Vector3(width / 2f, 0f, 0f));
+            Vector3 mid = new Vector3(0f, 0f, depth * 0.5f);
+            Edge(root, wall, null, new Vector3(-width / 2f, 0f, depth), new Vector3(width / 2f, 0f, depth), mid);   // sau
+            Edge(root, wall, null, new Vector3(-width / 2f, 0f, 0f), new Vector3(-width / 2f, 0f, depth), mid);     // trái
+            Edge(root, wall, null, new Vector3(width / 2f, 0f, 0f), new Vector3(width / 2f, 0f, depth), mid);       // phải
+            if (frontWall) Edge(root, wall, frontDoor ? door : null, new Vector3(-width / 2f, 0f, 0f), new Vector3(width / 2f, 0f, 0f), mid);
         }
         if (ceiling != null)
         {
             Bounds cb = LocalBounds(ceiling);
             Tile(root, ceiling, cb, width, depth, wallHeight, topAt: false);
+            // Mái nhìn từ bên ngoài: tấm trần lật ngửa lên trên
+            Tile(root, ceiling, cb, width, depth, wallHeight + 0.03f, topAt: false, Quaternion.Euler(0f, 0f, 180f));
         }
 
         var lightGo = new GameObject("Light");
@@ -167,8 +241,9 @@ public static class ExpansionBuilderTool
     }
 
     /// <summary>Lát kín hình chữ nhật bằng các tấm (sàn / trần), co giãn cho vừa khít.</summary>
-    private static void Tile(Transform root, GameObject prefab, Bounds b, float width, float depth, float y, bool topAt)
+    private static void Tile(Transform root, GameObject prefab, Bounds b, float width, float depth, float y, bool topAt, Quaternion? rot = null)
     {
+        Quaternion q = rot ?? Quaternion.identity;
         int nx = Mathf.Max(1, Mathf.RoundToInt(width / Mathf.Max(0.1f, b.size.x)));
         int nz = Mathf.Max(1, Mathf.RoundToInt(depth / Mathf.Max(0.1f, b.size.z)));
         Vector3 scale = new Vector3(width / (nx * b.size.x), 1f, depth / (nz * b.size.z));
@@ -179,12 +254,13 @@ public static class ExpansionBuilderTool
                 inst.transform.localScale = Vector3.Scale(inst.transform.localScale, scale);
                 Bounds sb = new Bounds(Vector3.Scale(b.center, scale), Vector3.Scale(b.size, scale));
                 Vector3 c = new Vector3(-width / 2f + (i + 0.5f) * width / nx, 0f, (j + 0.5f) * depth / nz);
-                Place(inst.transform, root, Quaternion.identity, c, sb, topAt ? y - sb.size.y : y);
+                Place(inst.transform, root, q, c, sb, topAt ? y - sb.size.y : y);
             }
     }
 
-    /// <summary>Dựng tường dọc một cạnh (a -> b), chia đều thành các mảng; mảng giữa có thể là cửa.</summary>
-    private static void Edge(Transform root, GameObject wall, GameObject middle, Vector3 a, Vector3 b)
+    /// <summary>Dựng tường dọc một cạnh (a -> b), chia đều thành các mảng; mảng giữa có thể là cửa.
+    /// Mặt chính của mảng tường (trục Z của nó) quay vào trong phòng; thêm một mảng quay lưng ra ngoài để nhìn từ ngoài cũng thấy tường.</summary>
+    private static void Edge(Transform root, GameObject wall, GameObject middle, Vector3 a, Vector3 b, Vector3 roomCenter)
     {
         Vector3 d = b - a;
         float length = d.magnitude;
@@ -207,9 +283,19 @@ public static class ExpansionBuilderTool
             inst.transform.localScale = s;
             Bounds sb = new Bounds(new Vector3(pb.center.x * (px ? k : 1f), pb.center.y, pb.center.z * (px ? 1f : k)),
                                    new Vector3(pb.size.x * (px ? k : 1f), pb.size.y, pb.size.z * (px ? 1f : k)));
-            Quaternion r = px ? Quaternion.LookRotation(Vector3.Cross(dir, Vector3.up)) : Quaternion.LookRotation(dir);
             Vector3 c = a + dir * (length / n) * (i + 0.5f);
+            Vector3 inward = Vector3.Cross(dir, Vector3.up);
+            Vector3 toCenter = roomCenter - c; toCenter.y = 0f;
+            if (Vector3.Dot(inward, toCenter) < 0f) inward = -inward;
+            // Prefab dài theo X: Z của nó là pháp tuyến; dài theo Z: X của nó là pháp tuyến
+            Quaternion r = px ? Quaternion.LookRotation(inward) : Quaternion.LookRotation(Vector3.Cross(inward, Vector3.up));
             Place(inst.transform, root, r, c, sb, 0f);
+
+            // Mặt ngoài
+            var outer = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root);
+            outer.name = prefab.name + "_Outside";
+            outer.transform.localScale = s;
+            Place(outer.transform, root, r * Quaternion.Euler(0f, 180f, 0f), c, sb, 0f);
         }
     }
 
@@ -245,8 +331,7 @@ public static class ExpansionBuilderTool
         Selection.activeGameObject = e.gameObject;
         string full = msg + $"\nGiá: cấp {e.requiredLevel}, {e.price}$ (sửa trong component StoreExpansion trên '{e.name}').\n\n" +
                       "BƯỚC TIẾP: chọn 'NavMesh Manager' trong Hierarchy > NavMeshSurface > Bake, rồi Ctrl+S.";
-        Debug.Log("[Expansion] " + full);
-        EditorUtility.DisplayDialog("Expansion", full, "OK");
+        Dialog("Expansion", full);
     }
 
     private static GameObject Load(string name) => AssetDatabase.LoadAssetAtPath<GameObject>($"{Arch}/{name}.prefab");
