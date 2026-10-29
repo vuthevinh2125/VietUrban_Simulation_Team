@@ -41,6 +41,9 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Đi quá thời gian này mà chưa tới nơi thì dịch chuyển tới luôn (chống kẹt)")]
     public float moveTimeout = 25f;
 
+    [Tooltip("Khách chỉ lấy hàng khi đứng cách điểm đứng của kệ trong khoảng này (mét)")]
+    public float reachDistance = 2.5f;
+
     [Header("Debug")]
     [Tooltip("Ghi log mỗi khi khách đổi trạng thái / đi tới đâu")]
     public bool debugLogs = true;
@@ -114,7 +117,13 @@ public class NPCShopper : MonoBehaviour
             if (shelf == null) break;
             visited.Add(shelf);
 
-            yield return MoveTo(ShelfStandPoint(shelf));
+            Vector3 stand = ShelfStandPoint(shelf);
+            yield return MoveTo(stand);
+            if (FlatDistance(transform.position, stand) > reachDistance)
+            {
+                if (debugLogs) Debug.Log($"[Customer] {name} không tới được kệ {shelf.name}, bỏ qua.", this);
+                continue;
+            }
             Face(shelf.transform.position);
             yield return new WaitForSeconds(browseTime * Random.Range(0.7f, 1.4f));
 
@@ -174,7 +183,7 @@ public class NPCShopper : MonoBehaviour
             if (isFirstInQueue && counter.Current == null)
             {
                 if (firstSince < 0f) firstSince = Time.time;
-                bool arrived = Arrived(0.6f) || (Time.time - firstSince > 4f && IsStill());
+                bool arrived = FlatDistance(transform.position, Sample(queueTarget)) <= 1.0f;
                 if (!arrived && Time.time - firstSince > moveTimeout)
                 {
                     WarnStuck("quầy thu ngân");
@@ -222,11 +231,26 @@ public class NPCShopper : MonoBehaviour
         if (!agent.isOnNavMesh) yield break;
 
         Vector3 dest = Sample(target);
-        if (debugLogs)
+
+        // Đang đi trên cầu nối (NavMeshLink) thì chờ đi hết đã
+        float linkWait = 0f;
+        while (agent.isOnOffMeshLink && linkWait < 5f) { linkWait += Time.deltaTime; yield return null; }
+
+        // Đường đi chưa tính được (vừa sinh ra, đứng sát cầu nối...) -> thử lại vài lần
+        var test = new NavMeshPath();
+        for (int attempt = 0; attempt < 10; attempt++)
         {
-            var test = new NavMeshPath();
-            agent.CalculatePath(dest, test);
-            Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
+            if (agent.CalculatePath(dest, test) && test.status != NavMeshPathStatus.PathInvalid) break;
+            if (attempt == 4 && NavMesh.SamplePosition(transform.position, out NavMeshHit near, 2f, NavMesh.AllAreas))
+                agent.Warp(near.position + (near.position - dest).normalized * 0.1f);
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (debugLogs) Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
+        if (test.status == NavMeshPathStatus.PathInvalid)
+        {
+            WarnStuck(target.ToString("F1") + " (không tính được đường)");
+            agent.Warp(dest);
+            yield break;
         }
         agent.isStopped = false;
         agent.SetDestination(dest);
@@ -258,6 +282,12 @@ public class NPCShopper : MonoBehaviour
 
     // Khi đang đi qua NavMeshLink (cầu nối ở cửa) Unity báo velocity = 0, không tính là đứng yên
     private bool IsStill() => !agent.isOnOffMeshLink && agent.velocity.sqrMagnitude < 0.01f;
+
+    private static float FlatDistance(Vector3 a, Vector3 b)
+    {
+        a.y = 0f; b.y = 0f;
+        return Vector3.Distance(a, b);
+    }
 
     private static Vector3 Sample(Vector3 p) =>
         NavMesh.SamplePosition(p, out NavMeshHit hit, 3f, NavMesh.AllAreas) ? hit.position : p;
