@@ -50,6 +50,25 @@ public class DeliveryManager : MonoBehaviour
     private TMP_Text hudText;
     private GameObject hudPanel;
 
+    /// <summary>Mục tiêu hiện tại cho bản đồ / minimap: gói hàng cần lấy hoặc chỗ giao hàng.</summary>
+    public static bool TryGetTarget(out Vector3 position, out string label, out bool isPackage)
+    {
+        position = default; label = null; isPackage = false;
+        DeliveryManager m = Instance;
+        if (m == null || m.order == null) return false;
+        if (m.stage == Stage.PickUp && m.package != null)
+        {
+            position = m.package.transform.position; label = "Package"; isPackage = true;
+            return true;
+        }
+        if (m.stage == Stage.Delivering)
+        {
+            position = m.order.destination; label = m.order.placeName;
+            return true;
+        }
+        return false;
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
@@ -130,7 +149,7 @@ public class DeliveryManager : MonoBehaviour
             case Stage.Delivering:
                 Transform p = PlayerTransform();
                 float dist = p != null ? Flat(p.position - order.destination) : 999f;
-                ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n<size=80%>Ride a motorbike or car: walk up to it and press [F]</size>");
+                ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>");
                 if (dist <= arriveRadius) Complete();
                 else CheckLate();
                 break;

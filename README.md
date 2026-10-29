@@ -32,6 +32,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Nhân viên | Thu ngân (tự quét + nhận tiền), nhân viên xếp kệ (tự mang thùng đi xếp), **bảo vệ** gác ngoài cửa tự đuổi bắt kẻ trộm; trả lương cuối ngày |
 | Trộm & dọn dẹp | Kẻ trộm ôm hàng bỏ chạy (còi chống trộm kêu) — cầm **gậy** đuổi theo đánh trúng để lấy lại tiền; vết bẩn xuất hiện trong cửa hàng, cầm **chổi** quét, bẩn nhiều khách mua ít |
 | Giao hàng | Đơn đặt hàng qua điện thoại: nhận đơn, lấy gói hàng, chạy **xe máy / ô tô** tới cột sáng vàng để giao, giao nhanh được tip |
+| Bản đồ | Minimap tròn (xoay theo hướng nhìn) + bản đồ lớn **[M]**: đánh dấu cửa hàng, gói hàng / chỗ giao, kẻ trộm, bảo vệ; vẽ lộ trình đường đi tới chỗ giao hàng |
 | Ngày / đêm | Mặt trời mọc / lặn theo giờ trong game, chiều tà ngả cam, tối có ánh trăng, đèn xe tự bật |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
 | Menu | Menu chính, tạm dừng, cài đặt (độ nhạy chuột, âm lượng, đồ hoạ, toàn màn hình, bóng đèn), Game Over |
@@ -52,6 +53,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | **F** (nhìn kệ / tủ / nội thất) | Dời chỗ (cả kệ có sẵn) · **F** cạnh xe: lên / xuống xe |
 | **1 / 2 / 3** | Tay không / chổi (giữ chuột trái để quét) / gậy (chuột trái để vung) |
 | **J / K** | Nhận / từ chối đơn giao hàng |
+| **M** | Mở / đóng bản đồ lớn (lăn chuột để phóng to) |
 | **V** (đang lái xe) | Đổi góc nhìn thứ nhất / thứ ba |
 | Lắp nội thất | Click = đặt · Giữ chuột trái + kéo = xoay · **Q / R** = xoay 90° |
 | **Esc** | Đóng bảng đang mở / menu tạm dừng |
@@ -79,7 +81,7 @@ Phím test (chỉ trong Unity Editor): **F7** +$1000 · **F8** lên 1 cấp · *
 | `Customer/` | `CustomerSpawner`, `Restocker` (AI nhân viên xếp kệ), `ShoppingCarrier` (giỏ / xe đẩy) |
 | `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng), `PlayerTools` (chổi, gậy) |
 | `System/` (mới) | `StoreExpansion`, `DirtManager`, `StoreGuard`, `DeliveryManager`, `DayNightCycle` |
-| `UI/` | `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `DayReportPanel`, `UIKit` |
+| `UI/` | `MinimapSystem`, `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `DayReportPanel`, `UIKit` |
 
 Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockChanged`, `OnPriceChanged`, `OnNewDay`…), giao diện bảng phụ được dựng bằng code nên không cần prefab.
 
