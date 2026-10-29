@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
     private float OpenMinutes => openingHour * 60f;
     private float WorkMinutes => Mathf.Max(1, closingHour - openingHour) * 60f;
     public float DayProgress01 => Mathf.Clamp01((clockMinutes - OpenMinutes) / WorkMinutes);
+    /// <summary>Giờ hiện tại trong game (0-24, có phần lẻ) - dùng cho trời sáng / tối.</summary>
+    public float ClockHours => (clockMinutes % 1440f) / 60f;
 
     private void Awake()
     {
