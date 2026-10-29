@@ -25,7 +25,7 @@ public static class FurnitureSetupTool
     private const float MinClearance = 0.12f;  // khoảng trống tối thiểu phía trên một tầng
     private const float MaxLevelHeight = 1.8f; // không xếp trên nóc kệ
     private const float Inset = 0.03f;         // chừa mép tầng
-    private const float MinNormalY = 0.85f;    // chấp nhận tầng kệ nghiêng tới ~30 độ
+    private const float MinNormalY = 0.7f;     // chấp nhận tầng kệ / sạp nghiêng tới ~45 độ
 
     private struct Entry
     {
@@ -247,6 +247,7 @@ public static class FurnitureSetupTool
             }
 
         var result = new List<Vector3>();
+        var used = new HashSet<int>();
         levelCount = 0;
         lastDiag = $"tia trúng {rawHits}, mặt phẳng {flatHits}, ngoài độ cao {tooHigh}, quá sát {tooTight}, " +
                    $"nhóm mặt {levels.Count} (lớn nhất {(levels.Count > 0 ? levels.Max(l => l.Count) : 0)} điểm), cao {wb.size.y:F2}m";
@@ -272,7 +273,41 @@ public static class FurnitureSetupTool
                     result.Add(new Vector3(x, surface.y, z));
                     added++;
                 }
-            if (added > 0) levelCount++;
+            if (added > 0)
+            {
+                levelCount++;
+                foreach (Vector2Int c in level.Keys) used.Add(c.x * 100000 + c.y + Mathf.RoundToInt(level[c].y * 1000f) * 7919);
+            }
+        }
+
+        // Lượt 2 - kệ lưới sắt (tia lọt qua khe nên các điểm chạm rời rạc): gom các điểm còn lại theo độ cao,
+        // tầng nào có đủ điểm trải rộng thì phủ ô lên cả khung chữ nhật của tầng đó.
+        var rest = new List<Vector3>();
+        foreach (var kv in grid)
+            foreach (Vector3 p in kv.Value)
+                if (!used.Contains(kv.Key.x * 100000 + kv.Key.y + Mathf.RoundToInt(p.y * 1000f) * 7919)) rest.Add(p);
+        rest.Sort((a, b) => a.y.CompareTo(b.y));
+        var cluster = new List<Vector3>();
+        for (int i = 0; i <= rest.Count; i++)
+        {
+            if (i < rest.Count && (cluster.Count == 0 || rest[i].y - cluster[cluster.Count - 1].y <= 0.03f)) { cluster.Add(rest[i]); continue; }
+            if (cluster.Count >= 6)
+            {
+                float minX = cluster.Min(p => p.x) , maxX = cluster.Max(p => p.x);
+                float minZ = cluster.Min(p => p.z) , maxZ = cluster.Max(p => p.z);
+                if (maxX - minX >= 0.25f && maxZ - minZ >= 0.15f)
+                {
+                    float y = cluster.Average(p => p.y);
+                    int nx = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / SlotX + 0.5f));
+                    int nz = Mathf.Max(1, Mathf.FloorToInt((maxZ - minZ) / SlotZ + 0.5f));
+                    for (int ix = 0; ix < nx; ix++)
+                        for (int iz = 0; iz < nz; iz++)
+                            result.Add(new Vector3(minX + (ix + 0.5f) * (maxX - minX) / nx, y, minZ + (iz + 0.5f) * (maxZ - minZ) / nz));
+                    levelCount++;
+                }
+            }
+            cluster.Clear();
+            if (i < rest.Count) cluster.Add(rest[i]);
         }
         return result;
     }
