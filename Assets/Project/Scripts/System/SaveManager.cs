@@ -19,7 +19,7 @@ public class SaveManager : MonoBehaviour
 
     // ================= Dữ liệu =================
     [Serializable] public class PriceEntry { public string item; public float price; }
-    [Serializable] public class ShelfEntry { public string path; public string item; public int count; }
+    [Serializable] public class ShelfEntry { public string path; public string name; public Vector3 pos; public string item; public int count; }
     [Serializable] public class FurnitureEntry { public string data; public Vector3 pos; public Quaternion rot; public string item; public int count; }
     [Serializable] public class BoxEntry { public string item; public int count; public Vector3 pos; public Quaternion rot; }
     [Serializable] public class FurnitureBoxEntry { public string data; public Vector3 pos; public Quaternion rot; }
@@ -107,7 +107,7 @@ public class SaveManager : MonoBehaviour
             }
             else if (shelf.Count > 0)
             {
-                d.shelves.Add(new ShelfEntry { path = PathOf(shelf.transform), item = item, count = shelf.Count });
+                d.shelves.Add(new ShelfEntry { path = PathOf(shelf.transform), name = shelf.name, pos = shelf.transform.position, item = item, count = shelf.Count });
             }
         }
         // Nội thất đã mua nhưng không có Shelf (phòng hờ)
@@ -169,14 +169,33 @@ public class SaveManager : MonoBehaviour
         foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             Destroy(fb.gameObject);
 
-        // Kệ có sẵn trong cửa hàng
-        var shelvesByPath = new Dictionary<string, Shelf>();
+        // Kệ có sẵn trong cửa hàng: nhận ra bằng VỊ TRÍ (kệ có sẵn không bao giờ di chuyển),
+        // đường dẫn trong Hierarchy chỉ để dự phòng vì thứ tự object có thể đổi khi chơi
+        var sceneShelves = new List<Shelf>();
         foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-            if (shelf.GetComponent<PlacedFurniture>() == null) shelvesByPath[PathOf(shelf.transform)] = shelf;
+            if (shelf.GetComponent<PlacedFurniture>() == null) sceneShelves.Add(shelf);
+        var filled = new HashSet<Shelf>();
         foreach (ShelfEntry s in d.shelves)
         {
-            if (shelvesByPath.TryGetValue(s.path, out Shelf shelf) && items.TryGetValue(s.item, out ItemData it)) shelf.FillInstant(it, s.count);
-            else missing++;
+            Shelf target = null;
+            float best = 0.2f;
+            foreach (Shelf shelf in sceneShelves)
+            {
+                if (filled.Contains(shelf)) continue;
+                float dist = Vector3.Distance(shelf.transform.position, s.pos);
+                if (dist < best && (string.IsNullOrEmpty(s.name) || shelf.name == s.name)) { best = dist; target = shelf; }
+            }
+            if (target == null) target = sceneShelves.Find(sh => !filled.Contains(sh) && PathOf(sh.transform) == s.path);
+            if (target != null && items.TryGetValue(s.item, out ItemData it))
+            {
+                target.FillInstant(it, s.count);
+                filled.Add(target);
+            }
+            else
+            {
+                missing++;
+                Debug.LogWarning($"[Save] Không tìm thấy kệ '{s.name}' tại {s.pos:F2} (hàng {s.item} x{s.count}).");
+            }
         }
 
         // Nội thất đã mua
