@@ -27,6 +27,8 @@ public class EntranceDoor : MonoBehaviour
     private float nextCheck;
     private float t; // 0 = đóng, 1 = mở
     private readonly Collider[] hits = new Collider[32];
+    private readonly List<Collider> leafColliders = new List<Collider>();
+    private bool collidersEnabled = true;
 
     void Start()
     {
@@ -40,8 +42,10 @@ public class EntranceDoor : MonoBehaviour
             if (leaves[i] == null) continue;
             closedRot[i] = leaves[i].localRotation;
             float angle = openAngles != null && i < openAngles.Length ? openAngles[i] : 90f;
-            if (leaves[i].name.ToLower().Contains("glass")) angle = 0f; // tấm kính cố định, không xoay
+            bool isGlass = leaves[i].name.ToLower().Contains("glass");
+            if (isGlass) angle = 0f; // tấm kính cố định, không xoay
             openRot[i] = closedRot[i] * Quaternion.Euler(0f, angle, 0f);
+            if (!isGlass) leafColliders.AddRange(leaves[i].GetComponentsInChildren<Collider>());
 
             foreach (Renderer r in leaves[i].GetComponentsInChildren<Renderer>())
             {
@@ -58,6 +62,14 @@ public class EntranceDoor : MonoBehaviour
         {
             nextCheck = Time.time + checkInterval;
             isOpen = IsAnyoneNear();
+        }
+
+        // Cánh cửa đang mở/đang chuyển động thì không chặn người (tránh cánh cửa đẩy người chơi ra ngoài)
+        bool shouldCollide = !isOpen && t <= 0.001f;
+        if (shouldCollide != collidersEnabled)
+        {
+            collidersEnabled = shouldCollide;
+            foreach (Collider c in leafColliders) if (c != null) c.enabled = shouldCollide;
         }
 
         float target = isOpen ? 1f : 0f;
