@@ -23,8 +23,12 @@ public class CheckoutCounter : MonoBehaviour
     public int maxQueue = 6;
 
     [Header("Items on counter")]
-    public float itemSpacing = 0.22f;
-    public int itemsPerRow = 4;
+    [Tooltip("Kích thước khay đặt hàng (ngang x sâu, mét) quanh ItemDropPoint. Auto Snap sẽ tự đo.")]
+    public Vector2 dropAreaSize = new Vector2(0.4f, 0.3f);
+    [Tooltip("Món hàng chiếm tối đa bao nhiêu phần một ô trong khay (chừa khe để không chạm nhau)")]
+    [Range(0.5f, 1f)] public float itemFill = 0.85f;
+    [Tooltip("Lề chừa ra mỗi bên khay (mét), để hàng không chạm thành khay / thân máy")]
+    public float dropAreaMargin = 0.03f;
 
     [Header("Cashier")]
     [Tooltip("Tự quét hàng (để test, hoặc sau này thuê thu ngân)")]
@@ -71,8 +75,9 @@ public class CheckoutCounter : MonoBehaviour
     }
 
     /// <summary>
-    /// Quét lưới tia chiếu từ trên xuống khắp mặt quầy, gom các điểm chạm mặt phẳng nằm ngang trong khoảng độ cao,
-    /// chọn "tầng" có nhiều điểm nhất (bục rộng nhất) và đặt ItemDropPoint vào giữa tầng đó.
+    /// Quét lưới tia chiếu từ trên xuống khắp quầy, lấy các điểm chạm mặt phẳng nằm ngang trong khoảng độ cao,
+    /// gom thành các mặt liền nhau, chọn mặt liền lớn nhất (khay đặt hàng), rồi đặt ItemDropPoint vào giữa
+    /// và đo kích thước khay (dropAreaSize) theo hướng của quầy.
     /// </summary>
     private void SnapDropPointToCounterTop()
     {
@@ -87,47 +92,78 @@ public class CheckoutCounter : MonoBehaviour
         if (!any) return;
 
         float baseY = b.min.y;
-        var hits = new List<Vector3>();
-        const float step = 0.08f;
-        for (float x = b.min.x + step * 0.5f; x < b.max.x; x += step)
-            for (float z = b.min.z + step * 0.5f; z < b.max.z; z += step)
+        const float step = 0.04f;
+        int cols = Mathf.CeilToInt(b.size.x / step), rows = Mathf.CeilToInt(b.size.z / step);
+        var grid = new Dictionary<Vector2Int, Vector3>();
+        for (int ix = 0; ix < cols; ix++)
+            for (int iz = 0; iz < rows; iz++)
             {
-                Vector3 origin = new Vector3(x, baseY + maxDropHeight + 0.05f, z);
-                float best = float.NegativeInfinity;
-                Vector3 bestPoint = Vector3.zero;
+                Vector3 origin = new Vector3(b.min.x + (ix + 0.5f) * step, baseY + maxDropHeight + 0.05f, b.min.z + (iz + 0.5f) * step);
+                // Mặt CAO NHẤT tại điểm này phải là mặt quầy nằm ngang (không bị vật khác che bên trên)
+                float topY = float.NegativeInfinity;
+                RaycastHit top = default;
                 foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, maxDropHeight + 0.1f, ~0, QueryTriggerInteraction.Ignore))
                 {
-                    if (!h.transform.IsChildOf(transform) || h.normal.y < 0.9f) continue;
-                    float height = h.point.y - baseY;
-                    if (height < minDropHeight || height > maxDropHeight) continue;
-                    if (h.point.y > best) { best = h.point.y; bestPoint = h.point; }
+                    if (!h.transform.IsChildOf(transform)) continue;
+                    if (h.point.y > topY) { topY = h.point.y; top = h; }
                 }
-                if (!float.IsNegativeInfinity(best)) hits.Add(bestPoint);
+                if (float.IsNegativeInfinity(topY) || top.normal.y < 0.95f) continue;
+                float height = topY - baseY;
+                if (height < minDropHeight || height > maxDropHeight) continue;
+                grid[new Vector2Int(ix, iz)] = top.point;
             }
 
-        if (hits.Count == 0)
+        if (grid.Count == 0)
         {
-            Debug.LogWarning($"[Checkout] Không tìm thấy bục đặt hàng trên '{name}' (quầy cần có collider). Hãy tự kéo ItemDropPoint và tắt Auto Snap.", this);
+            Debug.LogWarning($"[Checkout] Không tìm thấy khay đặt hàng trên '{name}' (quầy cần có collider). Hãy tự kéo ItemDropPoint, chỉnh Drop Area Size và tắt Auto Snap.", this);
             return;
         }
 
-        // Gom theo độ cao (5cm một tầng), lấy tầng nhiều điểm nhất
-        var levels = new Dictionary<int, List<Vector3>>();
-        foreach (Vector3 p in hits)
+        // Gom các ô liền nhau, cùng độ cao (lệch < 1.5cm) thành từng mặt; lấy mặt lớn nhất
+        var visited = new HashSet<Vector2Int>();
+        List<Vector3> best = null;
+        Vector2Int[] dirs = { Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down };
+        foreach (var start in grid.Keys)
         {
-            int key = Mathf.RoundToInt(p.y / 0.05f);
-            if (!levels.TryGetValue(key, out var list)) levels[key] = list = new List<Vector3>();
-            list.Add(p);
+            if (visited.Contains(start)) continue;
+            var region = new List<Vector3>();
+            var stack = new Stack<Vector2Int>();
+            stack.Push(start);
+            visited.Add(start);
+            while (stack.Count > 0)
+            {
+                Vector2Int c = stack.Pop();
+                region.Add(grid[c]);
+                foreach (Vector2Int d in dirs)
+                {
+                    Vector2Int n = c + d;
+                    if (visited.Contains(n) || !grid.TryGetValue(n, out Vector3 np)) continue;
+                    if (Mathf.Abs(np.y - grid[c].y) > 0.015f) continue;
+                    visited.Add(n);
+                    stack.Push(n);
+                }
+            }
+            if (best == null || region.Count > best.Count) best = region;
         }
-        List<Vector3> bestLevel = null;
-        foreach (var kv in levels)
-            if (bestLevel == null || kv.Value.Count > bestLevel.Count) bestLevel = kv.Value;
 
-        Vector3 center = Vector3.zero;
-        foreach (Vector3 p in bestLevel) center += p;
-        center /= bestLevel.Count;
-        itemDropPoint.position = center + Vector3.up * 0.01f;
-        Debug.Log($"[Checkout] Bục đặt hàng của '{name}': cao {center.y - baseY:F2}m, {bestLevel.Count} điểm.", this);
+        // Khung chữ nhật của mặt đó theo hướng quầy
+        Quaternion rot = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        Quaternion inv = Quaternion.Inverse(rot);
+        Vector3 refPoint = best[0];
+        float minX = float.MaxValue, maxX = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue, sumY = 0f;
+        foreach (Vector3 p in best)
+        {
+            Vector3 l = inv * (p - refPoint);
+            minX = Mathf.Min(minX, l.x); maxX = Mathf.Max(maxX, l.x);
+            minZ = Mathf.Min(minZ, l.z); maxZ = Mathf.Max(maxZ, l.z);
+            sumY += p.y;
+        }
+        Vector3 center = refPoint + rot * new Vector3((minX + maxX) * 0.5f, 0f, (minZ + maxZ) * 0.5f);
+        center.y = sumY / best.Count;
+
+        itemDropPoint.SetPositionAndRotation(center + Vector3.up * 0.002f, rot);
+        dropAreaSize = new Vector2(maxX - minX + step, maxZ - minZ + step); // điểm lưới nằm giữa ô -> cộng nửa ô mỗi bên
+        Debug.Log($"[Checkout] Khay đặt hàng của '{name}': cao {center.y - baseY:F2}m, rộng {dropAreaSize.x:F2} x {dropAreaSize.y:F2}m.", this);
     }
 
     /// <summary>Quầy ít người chờ nhất (hoà thì gần nhất).</summary>
@@ -184,8 +220,14 @@ public class CheckoutCounter : MonoBehaviour
         runningTotal = 0f;
         scannedCount = 0;
 
-        for (int i = 0; i < basket.Count; i++)
-            itemsOnCounter.Add(SpawnCounterItem(basket[i], i));
+        // Chia khay thành lưới đủ ô cho cả giỏ hàng, mỗi món một ô
+        Vector2 area = new Vector2(Mathf.Max(0.05f, dropAreaSize.x - dropAreaMargin * 2f), Mathf.Max(0.05f, dropAreaSize.y - dropAreaMargin * 2f));
+        int n = basket.Count;
+        int nx = Mathf.Clamp(Mathf.CeilToInt(Mathf.Sqrt(n * area.x / area.y)), 1, n);
+        int nz = Mathf.CeilToInt(n / (float)nx);
+        Vector2 cellSize = new Vector2(area.x / nx, area.y / nz);
+        for (int i = 0; i < n; i++)
+            itemsOnCounter.Add(SpawnCounterItem(basket[i], i % nx, i / nx, nx, nz, cellSize));
 
         if (autoScan) StartCoroutine(AutoScanRoutine());
     }
@@ -240,23 +282,28 @@ public class CheckoutCounter : MonoBehaviour
         itemsOnCounter.Clear();
     }
 
-    private CheckoutItem SpawnCounterItem(ItemData data, int index)
+    private CheckoutItem SpawnCounterItem(ItemData data, int col, int row, int nx, int nz, Vector2 cellSize)
     {
-        int perRow = Mathf.Max(1, itemsPerRow);
-        int row = index / perRow;
-        int col = index % perRow;
-        Vector3 offset = itemDropPoint.right * ((col - (perRow - 1) * 0.5f) * itemSpacing) + itemDropPoint.forward * (row * itemSpacing);
-
         GameObject prefab = data != null ? data.ResolveProductPrefab() : null;
         GameObject go = prefab != null ? Instantiate(prefab) : GameObject.CreatePrimitive(PrimitiveType.Cube);
         go.name = "Checkout_" + (data != null ? data.itemName : "Item");
-        // Kích thước giống lúc nằm trên kệ (prefab lấy từ trong thùng hàng có thể mang tỉ lệ của thùng)
-        if (prefab == null) go.transform.localScale = Vector3.one * 0.15f;
-        else go.transform.localScale = data != null && data.shelfScale != Vector3.zero ? data.shelfScale : Vector3.one;
+        go.transform.rotation = itemDropPoint.rotation;
 
-        go.transform.SetPositionAndRotation(itemDropPoint.position + offset, itemDropPoint.rotation);
+        // Kích thước như trên kệ, thu nhỏ nếu không vừa ô của khay
+        Vector3 wanted = prefab == null ? Vector3.one * 0.15f
+            : (data != null && data.shelfScale != Vector3.zero ? data.shelfScale : Vector3.one);
+        Bounds lb = ProductFit.LocalBounds(go.transform);
+        Vector3 size = Vector3.Scale(lb.size, wanted);
+        float k = Mathf.Min(1f, cellSize.x * itemFill / Mathf.Max(0.001f, size.x), cellSize.y * itemFill / Mathf.Max(0.001f, size.z));
+        Vector3 scale = wanted * k;
+        go.transform.localScale = scale;
 
-        foreach (Rigidbody rb in go.GetComponentsInChildren<Rigidbody>()) rb.isKinematic = true;
+        // Tâm ô trong khay, đáy món hàng chạm mặt khay
+        Vector3 cellLocal = new Vector3((col - (nx - 1) * 0.5f) * cellSize.x, 0f, (row - (nz - 1) * 0.5f) * cellSize.y);
+        Vector3 pivotOffset = new Vector3(-lb.center.x * scale.x, -lb.min.y * scale.y, -lb.center.z * scale.z);
+        go.transform.position = itemDropPoint.TransformPoint(cellLocal) + itemDropPoint.rotation * pivotOffset;
+
+        foreach (Rigidbody rb in go.GetComponentsInChildren<Rigidbody>()) { rb.isKinematic = true; rb.useGravity = false; }
         if (go.GetComponentInChildren<Collider>() == null) go.AddComponent<BoxCollider>();
 
         int layer = LayerMask.NameToLayer("Interactable");
@@ -289,7 +336,9 @@ public class CheckoutCounter : MonoBehaviour
         if (itemDropPoint != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(itemDropPoint.position, new Vector3(itemSpacing * Mathf.Max(1, itemsPerRow), 0.02f, itemSpacing * 2f));
+            Gizmos.matrix = Matrix4x4.TRS(itemDropPoint.position, itemDropPoint.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.up * 0.01f, new Vector3(dropAreaSize.x, 0.02f, dropAreaSize.y));
+            Gizmos.matrix = Matrix4x4.identity;
         }
     }
 }
