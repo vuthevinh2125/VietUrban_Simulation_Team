@@ -354,8 +354,16 @@ public static class FurnitureSetupTool
         return result;
     }
 
-    /// <summary>Kệ kho: mỗi tầng đủ cao (>= 0.42m trống) trải một hàng ô thùng, cách nhau 0.65m theo chiều dài kệ.</summary>
+    /// <summary>Kệ kho: mỗi tầng đủ cao (>= 0.3m trống) trải một hàng ô thùng, cách nhau 0.65m theo chiều dài kệ.
+    /// Không tầng nào đủ cao thì vẫn dùng mọi tầng (thùng có thể chạm tầng trên một chút).</summary>
     private static List<Vector3> BoxSlotsFrom(List<Vector3> productSlots, Transform root)
+    {
+        var result = BoxSlotsFrom(productSlots, root, 0.3f);
+        if (result.Count == 0) result = BoxSlotsFrom(productSlots, root, 0f);
+        return result;
+    }
+
+    private static List<Vector3> BoxSlotsFrom(List<Vector3> productSlots, Transform root, float minClearance)
     {
         var result = new List<Vector3>();
         var levels = new List<List<Vector3>>();
@@ -371,7 +379,7 @@ public static class FurnitureSetupTool
             float cz = lv.Average(p => p.z);
             float minX = lv.Min(p => p.x) - SlotX * 0.5f, maxX = lv.Max(p => p.x) + SlotX * 0.5f;
             Vector3 center = new Vector3((minX + maxX) * 0.5f, y, cz);
-            if (ClearanceAbove(center, root) < 0.42f) continue; // tầng thấp quá, không lọt thùng
+            if (ClearanceAbove(center + Vector3.up * 0.01f, root) < minClearance) continue; // tầng thấp quá, không lọt thùng
             int n = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / 0.65f));
             for (int i = 0; i < n; i++)
                 result.Add(new Vector3(minX + (i + 0.5f) * (maxX - minX) / n, y, cz));
