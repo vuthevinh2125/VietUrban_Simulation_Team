@@ -42,6 +42,19 @@ public static class ComputerSetupTool
             return;
         }
 
+        // Chặn chọn nhầm (ví dụ con chuột, bàn phím)
+        if (TryGetBounds(target.transform, Quaternion.identity, canvasRect, out Vector3 tMin, out Vector3 tMax, localSpaceOf: target.transform))
+        {
+            Vector3 s = Vector3.Scale(tMax - tMin, target.transform.lossyScale);
+            float largest = Mathf.Max(Mathf.Abs(s.x), Mathf.Abs(s.y), Mathf.Abs(s.z));
+            if (largest < 0.2f &&
+                !EditorUtility.DisplayDialog("Computer Setup",
+                    $"'{target.name}' chỉ rộng khoảng {largest * 100f:0} cm, có vẻ không phải màn hình.\n\n" +
+                    "Với iMac ở quầy, hãy chọn object 'MonitorScreen' (bên trong Computer_dfc1a9).",
+                    "Vẫn tiếp tục", "Huỷ"))
+                return;
+        }
+
         Undo.SetCurrentGroupName("Move Computer UI");
         int group = Undo.GetCurrentGroup();
 
@@ -76,7 +89,9 @@ public static class ComputerSetupTool
             target.layer = interactableLayer;
         }
 
-        // 3) Đặt canvas khớp mặt màn hình (giữ nguyên hướng xoay hiện tại của canvas)
+        // 3) Xoay canvas theo mặt màn hình, quay về phía camera Scene view, rồi đặt khớp vào
+        Undo.RecordObject(canvasRect, "Rotate Computer UI");
+        canvasRect.rotation = ComputeScreenRotation(target.transform, canvasRect, canvasRect.rotation);
         PlaceCanvas(canvasRect, target.transform);
 
         Undo.CollapseUndoOperations(group);
@@ -103,6 +118,49 @@ public static class ComputerSetupTool
     }
 
     // ================= Helpers =================
+    /// <summary>
+    /// Mặt màn hình = trục mỏng nhất của mesh. Canvas nhìn thấy từ phía -forward,
+    /// nên forward được chọn hướng RA XA camera Scene view (người dùng đang nhìn vào màn hình).
+    /// </summary>
+    private static Quaternion ComputeScreenRotation(Transform screen, Transform ignoreUnder, Quaternion fallback)
+    {
+        if (!TryGetBounds(screen, Quaternion.identity, ignoreUnder, out Vector3 min, out Vector3 max, localSpaceOf: screen))
+            return fallback;
+
+        Vector3 size = Vector3.Scale(max - min, screen.lossyScale);
+        size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
+        Vector3[] axes = { screen.right, screen.up, screen.forward };
+        float[] dims = { size.x, size.y, size.z };
+
+        int thin = 0;
+        for (int i = 1; i < 3; i++) if (dims[i] < dims[thin]) thin = i;
+
+        // Không rõ trục mỏng (vật gần như khối vuông) -> giữ hướng cũ
+        float second = Mathf.Min(dims[(thin + 1) % 3], dims[(thin + 2) % 3]);
+        if (dims[thin] > second * 0.6f) return fallback;
+
+        Vector3 normal = axes[thin].normalized;
+
+        int upIndex = -1;
+        float bestUp = -1f;
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == thin) continue;
+            float d = Mathf.Abs(Vector3.Dot(axes[i], Vector3.up));
+            if (d > bestUp) { bestUp = d; upIndex = i; }
+        }
+        Vector3 up = axes[upIndex] * Mathf.Sign(Vector3.Dot(axes[upIndex], Vector3.up));
+
+        Vector3 center = screen.TransformPoint((min + max) * 0.5f);
+        SceneView view = SceneView.lastActiveSceneView;
+        Vector3 toViewer = view != null && view.camera != null
+            ? view.camera.transform.position - center
+            : -(fallback * Vector3.forward);
+
+        if (Vector3.Dot(normal, toViewer) > 0f) normal = -normal;
+        return Quaternion.LookRotation(normal, up);
+    }
+
     private static void PlaceCanvas(RectTransform canvasRect, Transform screen)
     {
         Quaternion rot = canvasRect.rotation;
