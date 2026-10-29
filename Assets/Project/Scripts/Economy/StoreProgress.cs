@@ -36,6 +36,14 @@ public static class StoreProgress
         OnChanged?.Invoke();
     }
 
+    /// <summary>Nạp từ file lưu.</summary>
+    public static void Load(int level, int xp)
+    {
+        Level = Mathf.Max(1, level);
+        XP = Mathf.Max(0, xp);
+        OnChanged?.Invoke();
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {

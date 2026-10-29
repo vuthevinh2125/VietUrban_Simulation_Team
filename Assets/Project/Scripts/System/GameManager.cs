@@ -152,6 +152,17 @@ public class GameManager : MonoBehaviour
         UpdateClockText();
     }
 
+    /// <summary>Nạp ngày từ file lưu: bắt đầu ngày đó từ đầu (giờ mở cửa, cửa hàng đóng).</summary>
+    public void LoadDay(int day)
+    {
+        currentDay = Mathf.Max(1, day);
+        clockMinutes = OpenMinutes;
+        closingTimeReached = false;
+        dayEnded = false;
+        SetStoreOpen(false, force: true);
+        UpdateUI();
+    }
+
     // ================= Ngày =================
     private void EndDay()
     {

@@ -146,6 +146,16 @@ public class EconomyManager : MonoBehaviour
         return (amount < 0f ? "-$" : "$") + Mathf.Abs(amount).ToString("N2");
     }
 
+    /// <summary>Nạp lại số tiền và ngày từ file lưu (SaveManager). Sổ sách trong ngày bắt đầu lại từ đầu.</summary>
+    public void LoadState(float money, int day)
+    {
+        Money = money;
+        history.Clear();
+        transactions.Clear();
+        StartNewDay(Mathf.Max(1, day));
+        OnMoneyChanged?.Invoke(Money);
+    }
+
     // ================= Internal =================
 
     private void StartNewDay(int day)

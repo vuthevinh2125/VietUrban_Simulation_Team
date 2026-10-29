@@ -37,6 +37,11 @@ public static class PriceManager
     /// <summary>Lãi trên mỗi món = giá bán - giá nhập.</summary>
     public static float GetProfitPerUnit(ItemData item) => item == null ? 0f : GetSellPrice(item) - item.unitPrice;
 
+    // ================= Lưu / nạp =================
+    public static IReadOnlyDictionary<ItemData, float> AllCustomPrices => sellPrices;
+
+    public static void ClearCustomPrices() => sellPrices.Clear();
+
     // ================= Khách phản ứng với giá =================
     public static float PriceRatio(ItemData item) => PriceRatio(item, GetSellPrice(item));
 

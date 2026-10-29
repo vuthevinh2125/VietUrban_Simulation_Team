@@ -101,6 +101,17 @@ public static class LicenseManager
         return true;
     }
 
+    // ================= Lưu / nạp =================
+    public static List<string> GetOwnedIds() => new List<string>(owned);
+
+    public static void LoadOwned(IEnumerable<string> ids)
+    {
+        owned.Clear();
+        owned.Add(StarterId);
+        if (ids != null) foreach (string id in ids) if (!string.IsNullOrEmpty(id)) owned.Add(id);
+        OnLicensesChanged?.Invoke();
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
