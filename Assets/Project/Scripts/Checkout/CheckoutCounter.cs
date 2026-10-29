@@ -51,11 +51,41 @@ public class CheckoutCounter : MonoBehaviour
     void OnEnable() => All.Add(this);
     void OnDisable() => All.Remove(this);
 
+    [Tooltip("Mặt quầy cao tối đa bao nhiêu so với chân quầy (bỏ qua màn hình, cột đèn...)")]
+    public float maxCounterHeight = 1.25f;
+
     void Awake()
     {
         if (customerPoint == null) customerPoint = transform;
         if (itemDropPoint == null) itemDropPoint = transform;
         audioSource = GetComponent<AudioSource>();
+    }
+
+    void Start() => SnapDropPointToCounterTop();
+
+    /// <summary>Hạ điểm đặt hàng xuống đúng mặt quầy (bề mặt cao nhất của quầy nhưng thấp hơn maxCounterHeight).</summary>
+    private void SnapDropPointToCounterTop()
+    {
+        if (itemDropPoint == null || itemDropPoint == transform) return;
+        float baseY = transform.position.y;
+        Vector3 origin = new Vector3(itemDropPoint.position.x, baseY + maxCounterHeight, itemDropPoint.position.z);
+        float best = float.NegativeInfinity;
+        foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, maxCounterHeight + 0.5f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (!h.transform.IsChildOf(transform)) continue;
+            if (h.point.y > best) best = h.point.y;
+        }
+        if (float.IsNegativeInfinity(best))
+        {
+            // Quầy không có collider: lấy mặt trên các renderer thấp hơn maxCounterHeight
+            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+                if (r.bounds.max.y <= baseY + maxCounterHeight && r.bounds.max.y > best) best = r.bounds.max.y;
+        }
+        if (!float.IsNegativeInfinity(best))
+        {
+            Vector3 p = itemDropPoint.position;
+            itemDropPoint.position = new Vector3(p.x, best + 0.01f, p.z);
+        }
     }
 
     /// <summary>Quầy ít người chờ nhất (hoà thì gần nhất).</summary>
@@ -178,7 +208,9 @@ public class CheckoutCounter : MonoBehaviour
         GameObject prefab = data != null ? data.ResolveProductPrefab() : null;
         GameObject go = prefab != null ? Instantiate(prefab) : GameObject.CreatePrimitive(PrimitiveType.Cube);
         go.name = "Checkout_" + (data != null ? data.itemName : "Item");
+        // Kích thước giống lúc nằm trên kệ (prefab lấy từ trong thùng hàng có thể mang tỉ lệ của thùng)
         if (prefab == null) go.transform.localScale = Vector3.one * 0.15f;
+        else go.transform.localScale = data != null && data.shelfScale != Vector3.zero ? data.shelfScale : Vector3.one;
 
         go.transform.SetPositionAndRotation(itemDropPoint.position + offset, itemDropPoint.rotation);
 
