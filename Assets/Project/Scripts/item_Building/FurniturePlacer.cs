@@ -6,7 +6,8 @@ using UnityEngine.Rendering;
 /// <summary>
 /// Lắp đặt / dời nội thất (giống Supermarket Simulator):
 ///  - Cầm thùng nội thất: hiện bóng mờ của món đồ trên sàn, xanh = đặt được, đỏ = vướng.
-///    [R] / lăn chuột = xoay · [LMB] = đặt · [E] = bỏ thùng xuống.
+///    Giữ chuột trái + kéo trái/phải = xoay tự do 360° (2 chiều) · Click chuột trái = đặt
+///    [Q]/[R] = xoay 90° · lăn chuột = xoay 15° · [E] = bỏ thùng xuống.
 ///  - Nhìn vào nội thất mình đã mua, bấm [F] để dời chỗ ([LMB] đặt, [F]/[Esc] huỷ).
 /// Tự gắn vào người chơi (cùng object với ItemPickup).
 /// </summary>
@@ -17,6 +18,10 @@ public class FurniturePlacer : MonoBehaviour
     public float placeRange = 6f;
     public float rotateStep = 90f;
     public float scrollStep = 15f;
+    [Tooltip("Độ xoay (độ) cho mỗi đơn vị kéo chuột khi giữ chuột trái")]
+    public float dragRotateSpeed = 6f;
+    [Tooltip("Kéo chuột quá mức này thì tính là xoay, không phải click đặt")]
+    public float dragThreshold = 0.3f;
 
     private ItemPickup hands;
     private Transform playerRoot;
@@ -35,6 +40,8 @@ public class FurniturePlacer : MonoBehaviour
     private bool valid;
     private Vector3 ghostPos;
     private int startFrame = -1;
+    private bool lmbHeld, dragging;
+    private float dragAmount;
 
     public bool IsBusy => placingData != null || moving != null;
 
@@ -86,6 +93,7 @@ public class FurniturePlacer : MonoBehaviour
         if (UIState.IsBlockingUIOpen || cam == null) return;
 
         if (Input.GetKeyDown(KeyCode.R)) yaw += rotateStep;
+        if (Input.GetKeyDown(KeyCode.Q)) yaw -= rotateStep;
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) > 0.01f) yaw += Mathf.Sign(scroll) * scrollStep;
 
@@ -93,10 +101,33 @@ public class FurniturePlacer : MonoBehaviour
 
         string name = placingData != null ? placingData.displayName : (moving.data != null ? moving.data.displayName : moving.name);
         string cancel = placingData != null ? "[E] Drop box" : "[F] Cancel";
-        hands.SetPrompt($"{name}\n{(valid ? "[LMB] Place" : "<color=#FF6B6B>Can't place here</color>")}   [R] Rotate   {cancel}");
+        string place = valid ? "[Click LMB] Place" : "<color=#FF6B6B>Can't place here</color>";
+        hands.SetPrompt($"{name}\n{place}   [Hold LMB + drag] Rotate   [Q/R] 90°   {cancel}");
 
         if (Time.frameCount == startFrame) return; // phím vừa dùng để bắt đầu, không tính lần nữa
-        if (Input.GetMouseButtonDown(0) && valid) Place();
+
+        // Chuột trái: kéo = xoay tự do, click (không kéo) = đặt
+        if (Input.GetMouseButtonDown(0)) { lmbHeld = true; dragging = false; dragAmount = 0f; }
+        if (lmbHeld && Input.GetMouseButton(0))
+        {
+            float dx = Input.GetAxis("Mouse X");
+            dragAmount += Mathf.Abs(dx);
+            if (!dragging && dragAmount > dragThreshold) dragging = true;
+            if (dragging)
+            {
+                PlayerController.LookLocked = true; // giữ camera đứng yên trong lúc xoay
+                yaw += dx * dragRotateSpeed;
+            }
+        }
+        if (lmbHeld && Input.GetMouseButtonUp(0))
+        {
+            bool click = !dragging;
+            lmbHeld = false;
+            dragging = false;
+            PlayerController.LookLocked = false;
+            if (click && valid) { Place(); return; }
+        }
+
         else if (placingData != null && Input.GetKeyDown(KeyCode.E)) CancelPlace();
         else if (moving != null && (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Escape))) CancelMove();
     }
@@ -197,6 +228,9 @@ public class FurniturePlacer : MonoBehaviour
         placingData = null;
         placingBox = null;
         moving = null;
+        lmbHeld = false;
+        dragging = false;
+        PlayerController.LookLocked = false;
         if (ghost != null) Destroy(ghost);
         ghost = null;
         hands.SetPrompt(null);
