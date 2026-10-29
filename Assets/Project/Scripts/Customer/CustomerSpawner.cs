@@ -68,7 +68,7 @@ public class CustomerSpawner : MonoBehaviour
         nextSpawnTime = Time.time + Random.Range(spawnInterval.x, spawnInterval.y);
 
         GameManager gm = GameManager.Instance;
-        if (gm != null && (gm.IsGameOver || gm.DayProgress01 > stopSpawningAt)) return;
+        if (gm != null && (gm.IsGameOver || !gm.IsStoreOpen || gm.DayProgress01 > stopSpawningAt)) return; // chỉ đón khách khi đang mở cửa
         if (NPCShopper.Active.Count >= maxCustomers) return;
         if (onlyWhenStocked && StockManager.GetRandomStockedShelf() == null) return;
 
