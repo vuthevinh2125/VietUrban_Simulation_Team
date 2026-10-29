@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (ItemPickup.isComputerOpen)
+        if (UIState.IsBlockingUIOpen)
         {
             moveX = 0f;
             moveZ = 0f;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (ItemPickup.isComputerOpen)
+        if (UIState.IsBlockingUIOpen)
         {
             rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
             return;

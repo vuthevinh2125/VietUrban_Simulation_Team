@@ -1,9 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class NPCShopper : MonoBehaviour
 {
+    /// <summary>Tất cả khách đang có trong scene (AutoDoor dùng để mở cửa).</summary>
+    public static readonly List<NPCShopper> Active = new List<NPCShopper>();
+
+    void OnEnable() => Active.Add(this);
+    void OnDisable() => Active.Remove(this);
+
     public enum NPCState { GoToShelf, PickItem, GoToCheckout, Checkout, Leave }
 
     [Header("Trạng thái hiện tại")]
