@@ -20,7 +20,9 @@ public static class FurnitureSetupTool
     private const string PrefabFolder = "Assets/Project/Prefabs/Furniture";
     private const string DataFolder = "Assets/Project/Data/Furniture";
 
-    private const float Step = 0.05f;          // bước lưới tia chiếu
+    private const float CoarseStep = 0.05f;    // bước lưới tia chiếu
+    private const float FineStep = 0.015f;     // lưới mịn cho kệ lưới sắt (tia hay lọt qua khe)
+    private static float Step = CoarseStep;
     private const float SlotX = 0.22f, SlotZ = 0.25f;
     private const float MinClearance = 0.12f;  // khoảng trống tối thiểu phía trên một tầng
     private const float MaxLevelHeight = 1.8f; // không xếp trên nóc kệ
@@ -66,6 +68,7 @@ public static class FurnitureSetupTool
                 GameObject prefab = BuildPrefab(src, e, out int slots, out int levels);
                 log.AppendLine($"- {e.name} ({e.source}): {levels} tầng, {slots} ô, loại {e.type}   [{lastDiag}]");
                 if (prefab == null) continue;
+                if (slots == 0) { log.AppendLine($"  -> BỎ khỏi danh mục bán vì không dò được chỗ xếp hàng."); continue; }
 
                 string dataPath = $"{DataFolder}/{e.name.Replace(' ', '_')}.asset";
                 FurnitureData data = AssetDatabase.LoadAssetAtPath<FurnitureData>(dataPath);
@@ -125,7 +128,16 @@ public static class FurnitureSetupTool
             Physics.SyncTransforms();
 
             Bounds wb = WorldBounds(inst);
+            Step = CoarseStep;
             List<Vector3> slots = FindSlots(inst.transform, wb, out levelCount);
+            if (slots.Count == 0)
+            {
+                // Có thể là kệ lưới sắt: bắn lại với lưới mịn hơn
+                Step = FineStep;
+                slots = FindSlots(inst.transform, wb, out levelCount);
+                lastDiag += " (lưới mịn)";
+                Step = CoarseStep;
+            }
 
             foreach (MeshCollider mc in tempColliders) Object.DestroyImmediate(mc);
             foreach (Collider c in disabled) c.enabled = true;
@@ -291,7 +303,7 @@ public static class FurnitureSetupTool
         for (int i = 0; i <= rest.Count; i++)
         {
             if (i < rest.Count && (cluster.Count == 0 || rest[i].y - cluster[cluster.Count - 1].y <= 0.03f)) { cluster.Add(rest[i]); continue; }
-            if (cluster.Count >= 6)
+            if (cluster.Count >= (Step < CoarseStep ? 20 : 6))
             {
                 float minX = cluster.Min(p => p.x) , maxX = cluster.Max(p => p.x);
                 float minZ = cluster.Min(p => p.z) , maxZ = cluster.Max(p => p.z);
