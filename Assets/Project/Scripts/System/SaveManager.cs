@@ -10,7 +10,7 @@ using UnityEngine;
 /// Lưu: ngày, tiền, cấp cửa hàng, giấy phép, giá bán, hàng trên từng kệ, nội thất đã mua (vị trí + hàng trên đó),
 /// thùng hàng đang nằm trong cửa hàng, thùng nội thất chưa lắp.
 /// Vào game: có file lưu thì tự nạp, cửa hàng bắt đầu ngày đã lưu lúc giờ mở cửa.
-/// [F5] lưu nhanh · [F9] nạp lại · File: Application.persistentDataPath/save.json
+/// [F5] lưu nhanh (chỉ khi không còn khách trong cửa hàng) · [F9] nạp lại · File: Application.persistentDataPath/save.json
 /// </summary>
 public class SaveManager : MonoBehaviour
 {
@@ -70,11 +70,28 @@ public class SaveManager : MonoBehaviour
     void Update()
     {
         if (UIState.IsBlockingUIOpen) return;
-        if (Input.GetKeyDown(KeyCode.F5)) Save();
+        if (Input.GetKeyDown(KeyCode.F5)) TryManualSave();
         if (Input.GetKeyDown(KeyCode.F9) && File.Exists(SavePath)) Load();
     }
 
     private void OnNewDay(int day) => Save(); // tự lưu khi sang ngày mới
+
+    /// <summary>
+    /// Lưu tay (F5). Giống Supermarket Simulator: không lưu khi còn khách trong cửa hàng,
+    /// vì hàng khách đã lấy khỏi kệ mà chưa trả tiền sẽ bị mất (khách không được lưu).
+    /// </summary>
+    public bool TryManualSave()
+    {
+        int customers = NPCShopper.Active.Count;
+        if (customers > 0)
+        {
+            ProgressHUD.Toast($"Can't save while {customers} customer(s) are in the store.\nClose the store and serve them first.");
+            Debug.Log($"[Save] Chưa lưu: còn {customers} khách trong cửa hàng.");
+            return false;
+        }
+        Save();
+        return true;
+    }
 
     // ================= Lưu =================
     public void Save()
@@ -159,7 +176,9 @@ public class SaveManager : MonoBehaviour
         foreach (PriceEntry p in d.prices)
             if (items.TryGetValue(p.item, out ItemData it)) PriceManager.SetSellPrice(it, p.price); else missing++;
 
-        // Xoá trạng thái hiện tại: hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
+        // Xoá trạng thái hiện tại: khách, hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
+        for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)
+            if (NPCShopper.Active[i] != null) Destroy(NPCShopper.Active[i].gameObject);
         foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             Destroy(pf.gameObject);
         foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
