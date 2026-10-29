@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PaymentMethod { Cash, Card }
+
 /// <summary>
 /// Quầy thu ngân. Khách xếp hàng phía sau customerPoint, khách đầu tiên đặt hàng lên quầy (itemDropPoint),
 /// người chơi click từng món để QUÉT, quét hết thì khách trả tiền -> EconomyManager.RecordSale.
@@ -34,9 +36,13 @@ public class CheckoutCounter : MonoBehaviour
     [Tooltip("Tự quét hàng (để test, hoặc sau này thuê thu ngân)")]
     public bool autoScan = false;
     public float autoScanInterval = 0.6f;
-    [Tooltip("Thời gian khách trả tiền sau khi quét xong")]
+    [Tooltip("Thời gian khách lấy tiền / thẻ ra sau khi quét xong")]
     public float paymentDelay = 1.2f;
+    [Tooltip("Tỉ lệ khách trả bằng thẻ (còn lại trả tiền mặt)")]
+    [Range(0f, 1f)] public float cardChance = 0.45f;
     public AudioClip scanSound;
+    [Tooltip("(Tuỳ chọn) âm thanh khi thanh toán xong")]
+    public AudioClip paySound;
 
     private readonly List<NPCShopper> queue = new List<NPCShopper>();
     private readonly List<CheckoutItem> itemsOnCounter = new List<CheckoutItem>();
@@ -44,6 +50,16 @@ public class CheckoutCounter : MonoBehaviour
     private float runningTotal;
     private int scannedCount;
     private bool paying;
+    private bool awaitingPayment;
+    private PaymentToken token;
+
+    public PaymentMethod Method { get; private set; }
+    /// <summary>Số tiền phải trả (cent).</summary>
+    public int DueCents { get; private set; }
+    /// <summary>Tiền mặt khách đưa (cent).</summary>
+    public int CashGivenCents { get; private set; }
+    /// <summary>Đã quét xong, đang chờ người chơi nhận tiền / quẹt thẻ.</summary>
+    public bool AwaitingPayment => awaitingPayment;
     private AudioSource audioSource;
 
     public NPCShopper Current => current;
@@ -262,13 +278,57 @@ public class CheckoutCounter : MonoBehaviour
         }
     }
 
+    /// <summary>Quét xong: khách lấy tiền mặt hoặc thẻ ra đặt lên quầy, chờ người chơi nhận.</summary>
     private IEnumerator CompletePayment()
     {
         paying = true;
         yield return new WaitForSeconds(paymentDelay);
 
-        EconomyManager.Instance.RecordSale(runningTotal, scannedCount, $"Customer paid {scannedCount} item(s)");
-        Debug.Log($"[Checkout] Khách trả {EconomyManager.Format(runningTotal)} cho {scannedCount} món.");
+        DueCents = Mathf.RoundToInt(runningTotal * 100f);
+        Method = Random.value < cardChance ? PaymentMethod.Card : PaymentMethod.Cash;
+        CashGivenCents = Method == PaymentMethod.Cash ? PickCashAmount(DueCents) : 0;
+        awaitingPayment = true;
+
+        if (current != null)
+        {
+            string say = Method == PaymentMethod.Cash ? $"Cash {EconomyManager.Format(CashGivenCents / 100f)}" : "Card";
+            SpeechBubble.Show(current.transform, say, Color.white, 2.15f, 4f);
+        }
+
+        if (autoScan)
+        {
+            // Có thu ngân: tự thối tiền / quẹt thẻ
+            yield return new WaitForSeconds(autoScanInterval * 2f);
+            FinishPayment(0);
+            yield break;
+        }
+
+        Vector3 pos = itemDropPoint != null ? itemDropPoint.position : transform.position;
+        Quaternion rot = itemDropPoint != null ? itemDropPoint.rotation : transform.rotation;
+        token = PaymentToken.Create(this, Method, pos, rot);
+    }
+
+    /// <summary>
+    /// Người chơi đã nhận tiền xong (gọi từ PaymentPanel).
+    /// lostCents = số tiền thối dư (bị mất).
+    /// </summary>
+    public void FinishPayment(int lostCents)
+    {
+        if (!awaitingPayment) return;
+        awaitingPayment = false;
+        if (token != null) Destroy(token.gameObject);
+        token = null;
+
+        float total = DueCents / 100f;
+        EconomyManager.Instance.RecordSale(total, scannedCount, $"Customer paid {scannedCount} item(s) by {Method}");
+        if (lostCents > 0) EconomyManager.Instance.Charge(lostCents / 100f, MoneyCategory.Other, "Too much change given");
+        Debug.Log($"[Checkout] Khách trả {EconomyManager.Format(total)} cho {scannedCount} món ({Method})" +
+                  (lostCents > 0 ? $", thối dư mất {EconomyManager.Format(lostCents / 100f)}." : "."));
+        if (paySound != null)
+        {
+            if (audioSource != null) audioSource.PlayOneShot(paySound);
+            else AudioSource.PlayClipAtPoint(paySound, transform.position);
+        }
 
         NPCShopper paidCustomer = current;
         current = null;
@@ -278,8 +338,27 @@ public class CheckoutCounter : MonoBehaviour
         RefreshQueue();
     }
 
+    /// <summary>Khách trả tiền mặt như ngoài đời: đưa vừa đủ, hoặc làm tròn lên tờ 5/10/20/50/100.</summary>
+    private static int PickCashAmount(int due)
+    {
+        var options = new List<int>();
+        foreach (int step in new[] { 100, 500, 1000, 2000, 5000, 10000 })
+        {
+            int v = Mathf.CeilToInt(due / (float)step) * step;
+            if (v >= due && !options.Contains(v)) options.Add(v);
+        }
+        if (options.Count == 0) return due;
+        // Ưu tiên các mức nhỏ (khách hay đưa tờ gần với số tiền)
+        int pick = Mathf.Min(options.Count - 1, Mathf.FloorToInt(Mathf.Pow(Random.value, 1.6f) * Mathf.Min(options.Count, 4)));
+        return options[pick];
+    }
+
     private void ClearCounter()
     {
+        awaitingPayment = false;
+        if (token != null) Destroy(token.gameObject);
+        token = null;
+        PaymentPanel.CloseFor(this);
         foreach (CheckoutItem item in itemsOnCounter)
             if (item != null) Destroy(item.gameObject);
         itemsOnCounter.Clear();
@@ -322,7 +401,10 @@ public class CheckoutCounter : MonoBehaviour
     public string GetStatusText()
     {
         if (current == null) return queue.Count > 0 ? $"Waiting customers: {queue.Count}" : "No customers";
-        if (paying) return $"Customer paying {EconomyManager.Format(runningTotal)}...";
+        if (awaitingPayment) return Method == PaymentMethod.Cash
+            ? $"Customer pays cash {EconomyManager.Format(CashGivenCents / 100f)} for {EconomyManager.Format(DueCents / 100f)} - click the cash"
+            : $"Customer pays by card {EconomyManager.Format(DueCents / 100f)} - click the card";
+        if (paying) return $"Total {EconomyManager.Format(runningTotal)} - customer is getting the money...";
         return $"Total {EconomyManager.Format(runningTotal)} | Items left: {itemsOnCounter.Count}";
     }
 
