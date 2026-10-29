@@ -138,13 +138,27 @@ public class NPCShopper : MonoBehaviour
 
             if (shelf.IsEmpty) continue;
             ItemData item = shelf.CurrentItem;
-            if (item != null && PriceManager.GetSellPrice(item) > item.MarketPrice * maxPriceRatio)
-            {
-                Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(PriceManager.GetSellPrice(item))}), bỏ qua.");
-                continue;
-            }
-
             int take = Random.Range(1, 3);
+            if (item != null)
+            {
+                // So giá trên nhãn với giá thị trường: đắt thì có thể bỏ qua, rẻ thì lấy thêm
+                float sell = PriceManager.GetSellPrice(item);
+                float ratio = PriceManager.PriceRatio(item, sell);
+                if (Random.value > PriceManager.BuyChance(item, sell, maxPriceRatio))
+                {
+                    SpeechBubble.Show(transform, "Too expensive!", new Color(1f, 0.35f, 0.3f), agent.height + 0.35f);
+                    if (debugLogs) Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(sell)}, thị trường {EconomyManager.Format(item.MarketPrice)}), bỏ qua.", this);
+                    continue;
+                }
+                if (ratio <= PriceManager.CheapRatio)
+                {
+                    take++;
+                    wanted++;
+                    SpeechBubble.Show(transform, "Great price!", new Color(0.4f, 1f, 0.45f), agent.height + 0.35f);
+                }
+                else if (ratio > 1.15f)
+                    SpeechBubble.Show(transform, "Pricey...", new Color(1f, 0.8f, 0.3f), agent.height + 0.35f);
+            }
             for (int i = 0; i < take && basket.Count < wanted; i++)
                 if (shelf.TryTakeForCustomer(out ItemData got) && got != null) basket.Add(got);
         }
