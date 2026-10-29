@@ -1,13 +1,16 @@
 using UnityEngine;
-using System.Collections; // Required for Coroutines
+using System.Collections;
 
+/// <summary>
+/// Thùng hàng người chơi cầm được. Chứa productCount món của mặt hàng itemData.
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class Interactable : MonoBehaviour
 {
     public string promptMessage = "Pick up box";
 
     [Header("Item Data Reference")]
-    public ItemData itemData; // Liên kết tới file dữ liệu ItemData chứa shelfScale
+    public ItemData itemData; // Thùng này chứa mặt hàng gì
 
     [Header("Crate Inventory")]
     public GameObject productPrefab;
@@ -24,32 +27,71 @@ public class Interactable : MonoBehaviour
     private Rigidbody rb;
     private Collider coll;
 
-    // Các biến để "nhớ" góc quay ban đầu (trạng thái đóng nắp)
+    // Góc quay ban đầu của nắp (trạng thái đóng)
     private Quaternion f1Closed, f2Closed, f3Closed, f4Closed;
 
+    // ================= Thông tin =================
+    /// <summary>Sức chứa của thùng: theo số món hiển thị, nếu không có thì theo ItemData.itemsPerBox.</summary>
+    public int Capacity
+    {
+        get
+        {
+            if (visualItems != null && visualItems.Length > 0) return visualItems.Length;
+            if (itemData != null && itemData.itemsPerBox > 0) return itemData.itemsPerBox;
+            return Mathf.Max(1, productCount);
+        }
+    }
+
+    public bool IsEmpty => productCount <= 0;
+    public bool IsFull => productCount >= Capacity;
+    public bool IsHeld { get; private set; }
+    public string DisplayName => itemData != null ? itemData.itemName : "Unknown item";
+
+    /// <summary>Prefab món hàng để xếp lên kệ (ưu tiên của thùng, không có thì lấy từ ItemData).</summary>
+    public GameObject ProductPrefab => productPrefab != null ? productPrefab : (itemData != null ? itemData.productPrefab : null);
+
+    // ================= Unity =================
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         coll = GetComponent<Collider>();
 
-        // Lưu lại vị trí đóng nắp mặc định ngay khi vừa vào game
         if (flap1 != null) f1Closed = flap1.localRotation;
         if (flap2 != null) f2Closed = flap2.localRotation;
         if (flap3 != null) f3Closed = flap3.localRotation;
         if (flap4 != null) f4Closed = flap4.localRotation;
 
+        productCount = Mathf.Clamp(productCount, 0, Capacity);
         UpdateVisuals();
+
+        if (itemData == null)
+            Debug.LogWarning($"[Box] '{name}' chưa gán ItemData - kệ sẽ không biết đây là hàng gì.", this);
+    }
+
+    void OnEnable() => StockManager.Register(this);
+    void OnDisable() => StockManager.Unregister(this);
+
+    // ================= API =================
+    public void SetItem(ItemData data)
+    {
+        if (data == null || data == itemData) return;
+        itemData = data;
+        StockManager.NotifyChanged();
     }
 
     public void OnPickedUp(Transform holdPosition)
     {
+        IsHeld = true;
         rb.isKinematic = true;
-        coll.enabled = false;
-        transform.SetParent(holdPosition);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+        if (coll != null) coll.enabled = false;
 
-        // Nếu hộp chưa mở thì chạy Animation Mở
+        if (holdPosition != null)
+        {
+            transform.SetParent(holdPosition);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+
         if (!isOpened)
         {
             StopAllCoroutines();
@@ -60,11 +102,11 @@ public class Interactable : MonoBehaviour
 
     public void OnDropped()
     {
+        IsHeld = false;
         transform.SetParent(null);
         rb.isKinematic = false;
-        coll.enabled = true;
+        if (coll != null) coll.enabled = true;
 
-        // Nếu hộp đang mở thì chạy Animation Đóng
         if (isOpened)
         {
             StopAllCoroutines();
@@ -73,41 +115,43 @@ public class Interactable : MonoBehaviour
         }
     }
 
+    /// <summary>Lấy 1 món ra khỏi thùng (để xếp lên kệ).</summary>
+    public bool RemoveOne()
+    {
+        if (IsEmpty) return false;
+        productCount--;
+        UpdateVisuals();
+        StockManager.NotifyChanged();
+        return true;
+    }
+
+    /// <summary>Bỏ 1 món vào lại thùng (lấy từ kệ xuống).</summary>
+    public bool AddOne()
+    {
+        if (IsFull) return false;
+        productCount++;
+        UpdateVisuals();
+        StockManager.NotifyChanged();
+        return true;
+    }
+
+    /// <summary>Vứt thùng (thường là thùng rỗng).</summary>
+    public void Discard()
+    {
+        StopAllCoroutines();
+        Destroy(gameObject);
+    }
+
     public void UpdateVisuals()
     {
+        if (visualItems == null) return;
         for (int i = 0; i < visualItems.Length; i++)
         {
             if (visualItems[i] != null) visualItems[i].SetActive(i < productCount);
         }
     }
 
-    
-    public void TakeItemOut(Transform spawnPosition)
-    {
-        if (productCount > 0 && itemData != null && itemData.cratePrefab != null)
-        {
-            productCount--;
-            UpdateVisuals();
-
-            // Sinh ra item thực tế trên tay nhân vật hoặc tại vị trí chỉ định
-            // Thay vì dùng cratePrefab (thùng), ta phải dùng productPrefab (hộp sữa/ngũ cốc thực tế)
-            GameObject spawnedItem = Instantiate(productPrefab, spawnPosition.position, spawnPosition.rotation);
-
-            // Gán lại scale chuẩn từ ItemData
-            spawnedItem.transform.SetParent(null);
-            if (itemData != null)
-            {
-                spawnedItem.transform.localScale = itemData.shelfScale;
-            }
-
-            // Tách khỏi thùng (nếu cần) và gán lại scale chuẩn bằng kích thước gốc (shelfScale)
-            spawnedItem.transform.SetParent(null);
-            spawnedItem.transform.localScale = itemData.shelfScale;
-
-            Debug.Log($"[Crate] Took item out. Remaining count: {productCount}");
-        }
-    }
-
+    // ================= Animation nắp thùng =================
     private IEnumerator OpenFlapsAnimation()
     {
         float elapsed = 0f;
@@ -134,6 +178,11 @@ public class Interactable : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        if (flap1 != null) flap1.localRotation = f1End;
+        if (flap2 != null) flap2.localRotation = f2End;
+        if (flap3 != null) flap3.localRotation = f3End;
+        if (flap4 != null) flap4.localRotation = f4End;
     }
 
     private IEnumerator CloseFlapsAnimation()

@@ -45,7 +45,7 @@ public class ComputerZoom : MonoBehaviour
     public void ToggleComputer()
     {
         isZoomed = !isZoomed;
-        ItemPickup.isComputerOpen = isZoomed;
+        if (isZoomed) UIState.Open(this); else UIState.Close(this);
 
         if (cameraFollowScript != null)
             cameraFollowScript.enabled = !isZoomed;

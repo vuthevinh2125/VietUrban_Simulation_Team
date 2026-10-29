@@ -1,31 +1,30 @@
 using UnityEngine;
 
+/// <summary>
+/// Gắn vào bất kỳ panel UI nào cần dùng chuột. Khi panel bật: hiện chuột + khoá nhân vật.
+/// Không còn đóng băng thời gian (Time.timeScale) nữa, trừ khi bật pauseGame.
+/// </summary>
 public class UIMouseControl : MonoBehaviour
 {
+    [Tooltip("Bật nếu muốn dừng cả game khi panel này mở (ví dụ menu Pause)")]
+    public bool pauseGame = false;
+
     void OnEnable()
     {
-        // 1. Mở khóa chuột
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // 2. khóa nhân vật lại, game tạm dừng
-        Time.timeScale = 0f;
+        UIState.Open(this);
+        if (pauseGame) Time.timeScale = 0f;
     }
 
     void Update()
     {
-        // Ép chuột phải hiện ra liên tục
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // Script khác (CameraFollow...) có thể khoá chuột lại, ép hiện chuột khi panel đang mở
+        if (Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+        if (!Cursor.visible) Cursor.visible = true;
     }
 
     void OnDisable()
     {
-        // 1. Khóa chuột lại
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        // 2. Rã đông thời gian, game chạy tiếp bình thường
-        Time.timeScale = 1f;
+        UIState.Close(this);
+        if (pauseGame) Time.timeScale = 1f;
     }
 }
