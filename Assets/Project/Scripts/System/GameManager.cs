@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
     public KeyCode skipDayKey = KeyCode.T;
     [Tooltip("Khi scene không có biển Open/Closed: bấm phím này để mở / đóng cửa hàng")]
     public KeyCode toggleStoreKey = KeyCode.O;
+    [Tooltip("(Test) Bấm phím này để lên ngay 1 cấp cửa hàng")]
+    public KeyCode levelUpKey = KeyCode.F8;
 
     private static readonly DateTime StartDate = new DateTime(2026, 2, 9);
 
@@ -105,6 +107,7 @@ public class GameManager : MonoBehaviour
         bool uiFree = !UIState.IsBlockingUIOpen;
 
         if (uiFree && Input.GetKeyDown(toggleStoreKey) && StoreSign.All.Count == 0) ToggleStore();
+        if (uiFree && allowSkipDayKey && Input.GetKeyDown(levelUpKey)) StoreProgress.AddXP(StoreProgress.XPToNext - StoreProgress.XP);
 
         if (uiFree && allowSkipDayKey && Input.GetKeyDown(skipDayKey) && !closingTimeReached)
         {
