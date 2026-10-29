@@ -1,0 +1,247 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using UnityEngine;
+
+/// <summary>
+/// Lưu / nạp game (giống Supermarket Simulator: tự lưu khi sang ngày mới).
+/// Lưu: ngày, tiền, cấp cửa hàng, giấy phép, giá bán, hàng trên từng kệ, nội thất đã mua (vị trí + hàng trên đó),
+/// thùng hàng đang nằm trong cửa hàng, thùng nội thất chưa lắp.
+/// Vào game: có file lưu thì tự nạp, cửa hàng bắt đầu ngày đã lưu lúc giờ mở cửa.
+/// [F5] lưu nhanh · [F9] nạp lại · File: Application.persistentDataPath/save.json
+/// </summary>
+public class SaveManager : MonoBehaviour
+{
+    public static SaveManager Instance { get; private set; }
+    public static string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
+
+    // ================= Dữ liệu =================
+    [Serializable] public class PriceEntry { public string item; public float price; }
+    [Serializable] public class ShelfEntry { public string path; public string item; public int count; }
+    [Serializable] public class FurnitureEntry { public string data; public Vector3 pos; public Quaternion rot; public string item; public int count; }
+    [Serializable] public class BoxEntry { public string item; public int count; public Vector3 pos; public Quaternion rot; }
+    [Serializable] public class FurnitureBoxEntry { public string data; public Vector3 pos; public Quaternion rot; }
+
+    [Serializable]
+    public class SaveData
+    {
+        public int version = 1;
+        public string savedAt;
+        public int day;
+        public float money;
+        public int level;
+        public int xp;
+        public List<string> licenses = new List<string>();
+        public List<PriceEntry> prices = new List<PriceEntry>();
+        public List<ShelfEntry> shelves = new List<ShelfEntry>();
+        public List<FurnitureEntry> furniture = new List<FurnitureEntry>();
+        public List<BoxEntry> boxes = new List<BoxEntry>();
+        public List<FurnitureBoxEntry> furnitureBoxes = new List<FurnitureBoxEntry>();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void AutoCreate()
+    {
+        if (Instance == null) new GameObject("SaveManager").AddComponent<SaveManager>();
+    }
+
+    void Awake()
+    {
+        Instance = this;
+        GameManager.OnNewDay += OnNewDay;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnNewDay -= OnNewDay;
+        if (Instance == this) Instance = null;
+    }
+
+    IEnumerator Start()
+    {
+        // Chờ các kệ / máy tính / kinh tế khởi tạo xong
+        yield return null;
+        yield return null;
+        if (File.Exists(SavePath)) Load();
+    }
+
+    void Update()
+    {
+        if (UIState.IsBlockingUIOpen) return;
+        if (Input.GetKeyDown(KeyCode.F5)) Save();
+        if (Input.GetKeyDown(KeyCode.F9) && File.Exists(SavePath)) Load();
+    }
+
+    private void OnNewDay(int day) => Save(); // tự lưu khi sang ngày mới
+
+    // ================= Lưu =================
+    public void Save()
+    {
+        GameManager gm = GameManager.Instance;
+        if (gm != null && gm.IsGameOver) return;
+        EconomyManager eco = EconomyManager.Instance;
+
+        var d = new SaveData
+        {
+            savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            day = gm != null ? gm.currentDay : 1,
+            money = eco.Money,
+            level = StoreProgress.Level,
+            xp = StoreProgress.XP,
+            licenses = LicenseManager.GetOwnedIds()
+        };
+
+        foreach (var kv in PriceManager.AllCustomPrices)
+            if (kv.Key != null) d.prices.Add(new PriceEntry { item = kv.Key.name, price = kv.Value });
+
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            PlacedFurniture pf = shelf.GetComponent<PlacedFurniture>();
+            string item = shelf.Count > 0 && shelf.CurrentItem != null ? shelf.CurrentItem.name : "";
+            if (pf != null)
+            {
+                if (pf.data == null) continue;
+                d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation, item = item, count = shelf.Count });
+            }
+            else if (shelf.Count > 0)
+            {
+                d.shelves.Add(new ShelfEntry { path = PathOf(shelf.transform), item = item, count = shelf.Count });
+            }
+        }
+        // Nội thất đã mua nhưng không có Shelf (phòng hờ)
+        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (pf.data != null && pf.GetComponent<Shelf>() == null)
+                d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation });
+
+        foreach (Interactable box in StockManager.Boxes)
+        {
+            if (box == null || box.itemData == null || box.IsEmpty) continue;
+            d.boxes.Add(new BoxEntry { item = box.itemData.name, count = box.productCount, pos = box.transform.position, rot = box.transform.rotation });
+        }
+
+        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (fb.data != null)
+                d.furnitureBoxes.Add(new FurnitureBoxEntry { data = fb.data.name, pos = fb.transform.position, rot = fb.transform.rotation });
+
+        try
+        {
+            File.WriteAllText(SavePath, JsonUtility.ToJson(d, true), Encoding.UTF8);
+            Debug.Log($"[Save] Đã lưu ngày {d.day}: {EconomyManager.Format(d.money)}, {d.shelves.Count} kệ có hàng, {d.furniture.Count} nội thất, {d.boxes.Count} thùng -> {SavePath}");
+            ProgressHUD.Toast("Game saved");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("[Save] Không ghi được file lưu: " + e.Message);
+        }
+    }
+
+    // ================= Nạp =================
+    public void Load()
+    {
+        SaveData d;
+        try { d = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath, Encoding.UTF8)); }
+        catch (Exception e) { Debug.LogError("[Save] File lưu bị hỏng: " + e.Message); return; }
+        if (d == null) return;
+
+        var items = Registry<ItemData>();
+        var furnitures = Registry<FurnitureData>();
+        int missing = 0;
+
+        // Tiến trình
+        EconomyManager.Instance.LoadState(d.money, d.day);
+        if (GameManager.Instance != null) GameManager.Instance.LoadDay(d.day);
+        StoreProgress.Load(d.level, d.xp);
+        LicenseManager.LoadOwned(d.licenses);
+
+        PriceManager.ClearCustomPrices();
+        foreach (PriceEntry p in d.prices)
+            if (items.TryGetValue(p.item, out ItemData it)) PriceManager.SetSellPrice(it, p.price); else missing++;
+
+        // Xoá trạng thái hiện tại: hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
+        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            Destroy(pf.gameObject);
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (shelf.GetComponent<PlacedFurniture>() == null) shelf.ClearAll();
+        foreach (Interactable box in new List<Interactable>(StockManager.Boxes))
+            if (box != null && !box.IsHeld) Destroy(box.gameObject);
+        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            Destroy(fb.gameObject);
+
+        // Kệ có sẵn trong cửa hàng
+        var shelvesByPath = new Dictionary<string, Shelf>();
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (shelf.GetComponent<PlacedFurniture>() == null) shelvesByPath[PathOf(shelf.transform)] = shelf;
+        foreach (ShelfEntry s in d.shelves)
+        {
+            if (shelvesByPath.TryGetValue(s.path, out Shelf shelf) && items.TryGetValue(s.item, out ItemData it)) shelf.FillInstant(it, s.count);
+            else missing++;
+        }
+
+        // Nội thất đã mua
+        foreach (FurnitureEntry f in d.furniture)
+        {
+            if (!furnitures.TryGetValue(f.data, out FurnitureData fd) || fd.prefab == null) { missing++; continue; }
+            GameObject go = Instantiate(fd.prefab, f.pos, f.rot);
+            go.name = fd.displayName;
+            PlacedFurniture pf = go.GetComponent<PlacedFurniture>();
+            if (pf == null) pf = go.AddComponent<PlacedFurniture>();
+            pf.data = fd;
+            if (!string.IsNullOrEmpty(f.item) && f.count > 0 && items.TryGetValue(f.item, out ItemData it))
+            {
+                Shelf shelf = go.GetComponent<Shelf>();
+                if (shelf != null) shelf.FillInstant(it, f.count);
+            }
+        }
+
+        // Thùng hàng
+        foreach (BoxEntry b in d.boxes)
+        {
+            if (!items.TryGetValue(b.item, out ItemData it) || it.cratePrefab == null) { missing++; continue; }
+            GameObject go = Instantiate(it.cratePrefab, b.pos + Vector3.up * 0.05f, b.rot);
+            Interactable box = go.GetComponent<Interactable>();
+            if (box == null) continue;
+            box.SetItem(it, false);
+            box.productCount = Mathf.Clamp(b.count, 0, box.Capacity);
+            box.UpdateVisuals();
+        }
+
+        foreach (FurnitureBoxEntry fbE in d.furnitureBoxes)
+        {
+            if (furnitures.TryGetValue(fbE.data, out FurnitureData fd)) FurnitureBox.Spawn(fd, fbE.pos - Vector3.up * 0.35f, fbE.rot);
+            else missing++;
+        }
+
+        StockManager.NotifyChanged();
+        Debug.Log($"[Save] Đã nạp ngày {d.day} (lưu lúc {d.savedAt}): {EconomyManager.Format(d.money)}, cấp {d.level}" +
+                  (missing > 0 ? $", {missing} mục không tìm thấy (scene / dữ liệu đã đổi)." : "."));
+        ProgressHUD.Toast($"Welcome back! Day {d.day}");
+    }
+
+    /// <summary>Xoá file lưu (bắt đầu game mới ở lần chơi sau).</summary>
+    public static void DeleteSave()
+    {
+        if (File.Exists(SavePath)) File.Delete(SavePath);
+        Debug.Log("[Save] Đã xoá file lưu.");
+    }
+
+    // ================= Tiện ích =================
+    /// <summary>Đường dẫn ổn định của object trong scene (tên + thứ tự anh em ở mỗi cấp).</summary>
+    private static string PathOf(Transform t)
+    {
+        var sb = new StringBuilder();
+        for (Transform c = t; c != null; c = c.parent)
+            sb.Insert(0, "/" + c.name + "#" + c.GetSiblingIndex());
+        return sb.ToString();
+    }
+
+    /// <summary>Tra asset theo tên (ItemData, FurnitureData đang được scene tham chiếu).</summary>
+    private static Dictionary<string, T> Registry<T>() where T : ScriptableObject
+    {
+        var map = new Dictionary<string, T>();
+        foreach (T a in Resources.FindObjectsOfTypeAll<T>())
+            if (a != null && !map.ContainsKey(a.name)) map[a.name] = a;
+        return map;
+    }
+}
