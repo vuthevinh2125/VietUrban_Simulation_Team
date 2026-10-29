@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Toilet_Paper
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Toilet Paper
+  icon: {fileID: 21300000, guid: 78446f1fb5a12ff44a02463d225968ca, type: 3}
+  description: ToiletPaper_tunz3i
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Shelf
+  unitPrice: 4
+  itemsPerBox: 4
+  shelfCapacity: 8
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 2659972848693163990, guid: fb2f7a88eab07574196dc58c141c9be8, type: 3}

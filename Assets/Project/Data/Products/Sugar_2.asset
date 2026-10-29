@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Sugar_2
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Sugar 2
+  icon: {fileID: 21300000, guid: 0099c85d3ba587d4a9cf5938847c77c9, type: 3}
+  description: Sugar_o0f6pn
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Shelf
+  unitPrice: 1.2
+  itemsPerBox: 6
+  shelfCapacity: 12
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 189822584283905273, guid: 8e356eef40e7f8140a0fc6883563a2db, type: 3}

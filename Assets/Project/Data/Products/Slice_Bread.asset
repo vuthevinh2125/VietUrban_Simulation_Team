@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Slice_Bread
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Slice Bread
+  icon: {fileID: 21300000, guid: 573c46c205915924fb2f10c716d09207, type: 3}
+  description: SliceBread_6zus31
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Shelf
+  unitPrice: 1.5
+  itemsPerBox: 4
+  shelfCapacity: 8
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 2392531097785526440, guid: 461831bbb42b7df49a5a80aaa1d3681e, type: 3}

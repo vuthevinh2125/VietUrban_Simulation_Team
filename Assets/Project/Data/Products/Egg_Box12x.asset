@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Egg_Box12x
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Egg Box12x
+  icon: {fileID: 21300000, guid: a930073dab331394681618a221b45fdb, type: 3}
+  description: EggBox12x_7zw3j2
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Shelf
+  unitPrice: 2
+  itemsPerBox: 8
+  shelfCapacity: 16
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 5505249454099192430, guid: 43e187253bac0784996ec1132de9ecf9, type: 3}

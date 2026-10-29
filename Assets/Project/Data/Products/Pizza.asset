@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Pizza
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Pizza
+  icon: {fileID: 21300000, guid: 89463491b6996ee41ac8d539efa6933b, type: 3}
+  description: Pizza_ehb1pe
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Fresh
+  unitPrice: 4
+  itemsPerBox: 14
+  shelfCapacity: 28
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 58916771646889720, guid: 7f1c69769622e78438ce989bc6d3343f, type: 3}

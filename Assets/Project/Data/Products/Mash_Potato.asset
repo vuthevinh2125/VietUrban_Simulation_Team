@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Mash_Potato
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Mash Potato
+  icon: {fileID: 21300000, guid: 25b78392cd74d5548a4e357eebd33a9c, type: 3}
+  description: MashPotatoe_3n44xc
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Shelf
+  unitPrice: 2
+  itemsPerBox: 16
+  shelfCapacity: 32
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 1516618820366198872, guid: e5da85f5478d52348a78c2d95774c12f, type: 3}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Meat_Tray_3
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Meat Tray 3
+  icon: {fileID: 21300000, guid: 29fe8f8996ac9cd488208567805ba03c, type: 3}
+  description: MeatTray_fbw8xf
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: VietUrban
+  displayType: Fresh
+  unitPrice: 6
+  itemsPerBox: 24
+  shelfCapacity: 48
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 2999192672021499180, guid: 070b6ec138857d74299ee0e067484135, type: 3}
