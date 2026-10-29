@@ -72,10 +72,18 @@ public class Interactable : MonoBehaviour
     void OnDisable() => StockManager.Unregister(this);
 
     // ================= API =================
-    public void SetItem(ItemData data)
+    public void SetItem(ItemData data) => SetItem(data, false);
+
+    /// <summary>Gán mặt hàng cho thùng. fillBox = true: đổ đầy thùng theo sức chứa (thùng mới giao).</summary>
+    public void SetItem(ItemData data, bool fillBox)
     {
-        if (data == null || data == itemData) return;
+        if (data == null) return;
         itemData = data;
+        if (fillBox)
+        {
+            productCount = Capacity;
+            UpdateVisuals();
+        }
         StockManager.NotifyChanged();
     }
 

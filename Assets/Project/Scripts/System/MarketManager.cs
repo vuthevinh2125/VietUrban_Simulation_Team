@@ -185,7 +185,7 @@ public class MarketManager : MonoBehaviour
 
                 GameObject crate = Instantiate(kvp.Key.cratePrefab, pos, deliveryPoint.rotation);
                 Interactable box = crate.GetComponent<Interactable>();
-                if (box != null && box.itemData == null) box.SetItem(kvp.Key);
+                if (box != null && box.itemData == null) box.SetItem(kvp.Key, fillBox: true); // thùng dùng chung
                 spawned++;
             }
         }
