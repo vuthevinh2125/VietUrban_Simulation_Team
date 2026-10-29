@@ -3,195 +3,292 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Khách hàng: vào cửa hàng -> đi tới các kệ còn hàng, lấy hàng THẬT (bỏ qua món quá đắt)
+/// -> xếp hàng ở quầy thu ngân -> chờ người chơi quét -> trả tiền -> ra về.
+/// Không bao giờ kẹt vĩnh viễn: đi không tới thì đi hết mức có thể, quá lâu thì dịch chuyển.
+/// </summary>
+[RequireComponent(typeof(NavMeshAgent))]
 public class NPCShopper : MonoBehaviour
 {
-    /// <summary>Tất cả khách đang có trong scene (AutoDoor dùng để mở cửa).</summary>
+    /// <summary>Tất cả khách đang có trong scene (AutoDoor, CustomerSpawner dùng).</summary>
     public static readonly List<NPCShopper> Active = new List<NPCShopper>();
 
-    void OnEnable() => Active.Add(this);
-    void OnDisable() => Active.Remove(this);
-
-    public enum NPCState { GoToShelf, PickItem, GoToCheckout, Checkout, Leave }
+    public enum NPCState { Entering, Shopping, GoToCheckout, Queueing, Paying, Leaving, Done }
 
     [Header("Trạng thái hiện tại")]
     public NPCState currentState;
 
-    [Header("Bản đồ siêu thị")]
+    [Header("Điểm di chuyển")]
+    [Tooltip("Không còn dùng (khách tự tìm kệ còn hàng). Giữ lại để không mất dữ liệu cũ.")]
     public Transform[] shelves;
+    [Tooltip("Không còn dùng (khách tự tìm CheckoutCounter).")]
     public Transform checkoutCounter;
+    [Tooltip("Chỗ khách đi tới khi ra về")]
     public Transform exitDoor;
+    [Tooltip("Không còn dùng.")]
+    public GameObject checkoutItemsGroup;
+    [Tooltip("(Tuỳ chọn) điểm ngay trong cửa, khách đi qua đây trước khi mua sắm")]
+    public Transform entrancePoint;
 
-    [Header("Đồ trên bàn thanh toán")]
-    public GameObject checkoutItemsGroup; // Kéo nhóm đồ ở quầy thu ngân vào đây
-
-    [Header("Hành vi ngẫu nhiên (Supermarket Simulator)")]
+    [Header("Hành vi")]
     public int minItemsToBuy = 1;
     public int maxItemsToBuy = 4;
-    private int targetItemCount;
-    private int currentItemCount = 0;
+    [Tooltip("Khách bỏ qua món nếu giá bán > giá thị trường x hệ số này")]
+    public float maxPriceRatio = 1.5f;
+    [Tooltip("Thời gian đứng xem mỗi kệ (giây)")]
+    public float browseTime = 1.5f;
+    [Tooltip("Đi quá thời gian này mà chưa tới nơi thì dịch chuyển tới luôn (chống kẹt)")]
+    public float moveTimeout = 25f;
+
+    public IReadOnlyList<ItemData> Basket => basket;
 
     private NavMeshAgent agent;
     private Animator animator;
-    private Transform currentTarget;
+    private bool hasSpeedParam;
+    private readonly List<ItemData> basket = new List<ItemData>();
 
-    // Biến phụ trợ chống kẹt
-    private float stuckTimer = 0f;
-    private Vector3 lastPosition;
+    private CheckoutCounter counter;
+    private Vector3 queueTarget;
+    private bool queueTargetDirty;
+    private bool isFirstInQueue;
+    private bool paid;
 
-    void Start()
+    private static int stuckWarnings;
+
+    void OnEnable() => Active.Add(this);
+    void OnDisable() => Active.Remove(this);
+
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+        hasSpeedParam = animator != null && HasParameter(animator, "Speed");
 
-        targetItemCount = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
-        lastPosition = transform.position;
-
-        // Ban đầu ẩn đồ trên bàn thanh toán đi
-        if (checkoutItemsGroup != null) checkoutItemsGroup.SetActive(false);
-
-        ChangeState(NPCState.GoToShelf);
+        // Rigidbody vật lý đánh nhau với NavMeshAgent -> để kinematic
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
     }
+
+    void Start() => StartCoroutine(Run());
 
     void Update()
     {
-        // Cập nhật animation di chuyển
-        if (animator != null)
+        if (hasSpeedParam) animator.SetFloat("Speed", agent.velocity.magnitude);
+    }
+
+    void OnDestroy()
+    {
+        if (counter != null) counter.LeaveQueue(this);
+    }
+
+    // ================= Kịch bản chính =================
+    private IEnumerator Run()
+    {
+        if (!agent.isOnNavMesh)
         {
-            float speed = agent.velocity.magnitude;
-            animator.SetFloat("Speed", speed);
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas)) agent.Warp(hit.position);
+            else { Debug.LogWarning($"[Customer] {name} không đứng trên NavMesh, huỷ.", this); Destroy(gameObject); yield break; }
         }
 
-        // Xử lý khi đang di chuyển
-        if ((currentState == NPCState.GoToShelf || currentState == NPCState.GoToCheckout || currentState == NPCState.Leave) && currentTarget != null)
+        if (entrancePoint != null)
         {
-            if (!agent.pathPending)
+            currentState = NPCState.Entering;
+            yield return MoveTo(entrancePoint.position);
+        }
+
+        // --- Mua sắm ---
+        currentState = NPCState.Shopping;
+        int wanted = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
+        var visited = new HashSet<Shelf>();
+        int attempts = 0;
+
+        while (basket.Count < wanted && attempts < wanted * 3)
+        {
+            attempts++;
+            Shelf shelf = PickShelf(visited);
+            if (shelf == null) break;
+            visited.Add(shelf);
+
+            yield return MoveTo(ShelfStandPoint(shelf));
+            Face(shelf.transform.position);
+            yield return new WaitForSeconds(browseTime * Random.Range(0.7f, 1.4f));
+
+            if (shelf.IsEmpty) continue;
+            ItemData item = shelf.CurrentItem;
+            if (item != null && PriceManager.GetSellPrice(item) > item.MarketPrice * maxPriceRatio)
             {
-                if (Vector3.Distance(transform.position, lastPosition) < 0.02f)
-                {
-                    stuckTimer += Time.deltaTime;
-                    if (stuckTimer > 2f)
-                    {
-                        Debug.LogError($"[BẮT BỆNH KẸT] PathStatus: {agent.pathStatus} | Khoảng cách đến đích: {Vector3.Distance(transform.position, currentTarget.position):F2}m | Mục tiêu: {currentTarget.name}");
+                Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(PriceManager.GetSellPrice(item))}), bỏ qua.");
+                continue;
+            }
 
-                        agent.SetDestination(currentTarget.position);
-                        stuckTimer = 0f;
-                    }
+            int take = Random.Range(1, 3);
+            for (int i = 0; i < take && basket.Count < wanted; i++)
+                if (shelf.TryTakeForCustomer(out ItemData got) && got != null) basket.Add(got);
+        }
+
+        // --- Thanh toán ---
+        if (basket.Count > 0) yield return CheckoutRoutine();
+
+        // --- Ra về ---
+        currentState = NPCState.Leaving;
+        if (exitDoor != null) yield return MoveTo(exitDoor.position);
+        currentState = NPCState.Done;
+        Destroy(gameObject);
+    }
+
+    private IEnumerator CheckoutRoutine()
+    {
+        currentState = NPCState.GoToCheckout;
+        counter = CheckoutCounter.FindBest(transform.position);
+        if (counter == null)
+        {
+            Debug.LogWarning("[Customer] Không có quầy thu ngân (CheckoutCounter) nào trong scene. Khách bỏ hàng ra về.");
+            basket.Clear();
+            yield break;
+        }
+
+        float waited = 0f;
+        while (!counter.JoinQueue(this))
+        {
+            waited += 1f;
+            if (waited > 20f) { basket.Clear(); counter = null; yield break; } // hàng quá dài, bỏ về
+            yield return new WaitForSeconds(1f);
+        }
+
+        currentState = NPCState.Queueing;
+        float firstSince = -1f;
+
+        while (!paid)
+        {
+            if (queueTargetDirty)
+            {
+                queueTargetDirty = false;
+                if (agent.isOnNavMesh) { agent.isStopped = false; agent.SetDestination(Sample(queueTarget)); }
+            }
+
+            if (isFirstInQueue && counter.Current == null)
+            {
+                if (firstSince < 0f) firstSince = Time.time;
+                bool arrived = Arrived(0.6f) || (Time.time - firstSince > 4f && IsStill());
+                if (!arrived && Time.time - firstSince > moveTimeout)
+                {
+                    WarnStuck("quầy thu ngân");
+                    agent.Warp(Sample(queueTarget));
+                    arrived = true;
                 }
-                else
+                if (arrived)
                 {
-                    stuckTimer = 0f;
-                }
-                lastPosition = transform.position;
-
-                float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
-
-                if (distanceToTarget <= agent.stoppingDistance + 0.5f)
-                {
-                    if (currentState == NPCState.GoToShelf)
-                    {
-                        StartCoroutine(HandlePickItem());
-                    }
-                    else if (currentState == NPCState.GoToCheckout)
-                    {
-                        StartCoroutine(HandleCheckout());
-                    }
-                    else if (currentState == NPCState.Leave)
-                    {
-                        Debug.Log("NPC đã ra đến cửa và rời khỏi siêu thị.");
-                        Destroy(gameObject);
-                    }
+                    currentState = NPCState.Paying;
+                    Face(counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.transform.position);
+                    counter.StartCheckout(this, basket);
                 }
             }
+            else if (!isFirstInQueue) firstSince = -1f;
+
+            yield return null;
         }
     }
 
-    private void ChangeState(NPCState newState)
+    // ================= Gọi từ CheckoutCounter =================
+    public void SetQueueTarget(Vector3 position, bool first)
     {
-        currentState = newState;
-        stuckTimer = 0f;
+        queueTarget = position;
+        isFirstInQueue = first;
+        queueTargetDirty = true;
+    }
 
-        if (agent != null) agent.isStopped = false;
+    public void OnPaid()
+    {
+        paid = true;
+        basket.Clear();
+        counter = null;
+    }
 
-        switch (currentState)
+    // ================= Di chuyển =================
+    private IEnumerator MoveTo(Vector3 target)
+    {
+        if (!agent.isOnNavMesh) yield break;
+
+        Vector3 dest = Sample(target);
+        agent.isStopped = false;
+        agent.SetDestination(dest);
+
+        float elapsed = 0f, still = 0f;
+        while (true)
         {
-            case NPCState.GoToShelf:
-                if (shelves.Length > 0)
-                {
-                    Transform randomShelf = shelves[Random.Range(0, shelves.Length)];
-                    currentTarget = randomShelf;
-                    agent.SetDestination(currentTarget.position);
-                    Debug.Log("NPC đang đi đến kệ hàng: " + randomShelf.name);
-                }
-                break;
+            elapsed += Time.deltaTime;
+            if (!agent.pathPending)
+            {
+                if (agent.remainingDistance <= agent.stoppingDistance + 0.35f) break;
 
-            case NPCState.GoToCheckout:
-                if (checkoutCounter != null)
-                {
-                    currentTarget = checkoutCounter;
-                    agent.SetDestination(currentTarget.position);
-                    Debug.Log("NPC đang đi thẳng ra quầy thu ngân.");
-                }
-                else
-                {
-                    ChangeState(NPCState.Leave);
-                }
+                still = agent.velocity.sqrMagnitude < 0.01f ? still + Time.deltaTime : 0f;
+                if (still > 2f && agent.pathStatus != NavMeshPathStatus.PathComplete) break; // đã đi hết mức có thể
+                if (still > 4f) break;
+            }
+            if (elapsed > moveTimeout)
+            {
+                WarnStuck(target.ToString("F1"));
+                agent.Warp(dest);
                 break;
-
-            case NPCState.Leave:
-                if (checkoutItemsGroup != null) checkoutItemsGroup.SetActive(false);
-
-                if (exitDoor != null)
-                {
-                    currentTarget = exitDoor;
-                    agent.SetDestination(currentTarget.position);
-                    Debug.Log("NPC đã thanh toán xong, đang đi ra cửa.");
-                }
-                else
-                {
-                    Destroy(gameObject);
-                }
-                break;
+            }
+            yield return null;
         }
     }
 
-    private IEnumerator HandlePickItem()
+    private bool Arrived(float tolerance) =>
+        agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + tolerance;
+
+    private bool IsStill() => agent.velocity.sqrMagnitude < 0.01f;
+
+    private static Vector3 Sample(Vector3 p) =>
+        NavMesh.SamplePosition(p, out NavMeshHit hit, 3f, NavMesh.AllAreas) ? hit.position : p;
+
+    /// <summary>Điểm đi bộ được gần các ô hàng của kệ nhất.</summary>
+    private static Vector3 ShelfStandPoint(Shelf shelf)
     {
-        currentState = NPCState.PickItem;
-        currentTarget = null;
-
-        if (agent != null) agent.isStopped = true;
-        if (animator != null) animator.SetFloat("Speed", 0f);
-
-        Debug.Log("NPC đang đứng chọn đồ tại kệ...");
-
-        yield return new WaitForSeconds(Random.Range(2f, 4f));
-
-        currentItemCount++;
-
-        if (currentItemCount < targetItemCount)
-        {
-            ChangeState(NPCState.GoToShelf);
-        }
-        else
-        {
-            ChangeState(NPCState.GoToCheckout);
-        }
+        Vector3 center = Vector3.zero;
+        int n = 0;
+        if (shelf.slots != null)
+            foreach (Transform s in shelf.slots)
+                if (s != null) { center += s.position; n++; }
+        center = n > 0 ? center / n : shelf.transform.position;
+        center.y = shelf.transform.position.y;
+        return Sample(center);
     }
 
-    private IEnumerator HandleCheckout()
+    private static Shelf PickShelf(HashSet<Shelf> visited)
     {
-        currentState = NPCState.Checkout;
-        currentTarget = null;
+        var candidates = new List<Shelf>();
+        foreach (Shelf s in StockManager.Shelves)
+            if (s != null && !s.IsEmpty && !visited.Contains(s)) candidates.Add(s);
+        return candidates.Count > 0 ? candidates[Random.Range(0, candidates.Count)] : null;
+    }
 
-        if (agent != null) agent.isStopped = true;
-        if (animator != null) animator.SetFloat("Speed", 0f);
+    private void Face(Vector3 point)
+    {
+        Vector3 dir = point - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(dir);
+    }
 
-        if (checkoutItemsGroup != null) checkoutItemsGroup.SetActive(true);
+    private void WarnStuck(string where)
+    {
+        if (stuckWarnings++ < 5)
+            Debug.LogWarning($"[Customer] {name} không đi tới được {where}, dịch chuyển tới luôn. Nếu hay gặp: kiểm tra NavMesh (Bake lại) ở khu đó.", this);
+    }
 
-        Debug.Log("NPC đang đứng thanh toán tại quầy...");
+    private static bool HasParameter(Animator a, string paramName)
+    {
+        foreach (AnimatorControllerParameter p in a.parameters)
+            if (p.name == paramName) return true;
+        return false;
+    }
 
-        yield return new WaitForSeconds(Random.Range(3f, 5f));
-
-        ChangeState(NPCState.Leave);
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        Active.Clear();
+        stuckWarnings = 0;
     }
 }
