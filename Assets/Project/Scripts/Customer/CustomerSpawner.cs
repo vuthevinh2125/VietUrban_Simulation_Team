@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 /// <summary>
 /// Sinh khách hàng định kỳ trong giờ mở cửa. Chỉ sinh khi cửa hàng có hàng trên kệ.
@@ -25,11 +26,41 @@ public class CustomerSpawner : MonoBehaviour
     [Range(0f, 1f)] public float stopSpawningAt = 0.9f;
     [Tooltip("Chỉ sinh khách khi có ít nhất một kệ còn hàng")]
     public bool onlyWhenStocked = true;
+    [Tooltip("Khách xuất hiện rải ngẫu nhiên trong bán kính này quanh điểm sinh (mét)")]
+    public float spawnScatter = 1.2f;
+    [Tooltip("Điểm sinh/ra về phải cách đầu cầu nối NavMeshLink ở cửa ít nhất khoảng này (mét)")]
+    public float minDistanceFromLinks = 2f;
 
     private float nextSpawnTime;
     private int spawnedCount;
 
-    void Start() => nextSpawnTime = Time.time + 3f;
+    void Start()
+    {
+        nextSpawnTime = Time.time + 3f;
+        KeepAwayFromLinks(spawnPoint);
+        if (exitPoint != spawnPoint) KeepAwayFromLinks(exitPoint);
+    }
+
+    /// <summary>Đứng ngay đầu cầu nối thì agent không tính được đường -> lùi điểm ra xa cửa.</summary>
+    private void KeepAwayFromLinks(Transform point)
+    {
+        if (point == null) return;
+        foreach (NavMeshLink link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
+        {
+            Vector3 a = link.transform.TransformPoint(link.startPoint);
+            Vector3 b = link.transform.TransformPoint(link.endPoint);
+            Vector3 nearEnd = (point.position - a).sqrMagnitude < (point.position - b).sqrMagnitude ? a : b;
+            Vector3 farEnd = nearEnd == a ? b : a;
+            Vector3 d = point.position - nearEnd; d.y = 0f;
+            if (d.magnitude >= minDistanceFromLinks) continue;
+
+            Vector3 away = nearEnd - farEnd; away.y = 0f; // hướng từ trong ra ngoài
+            Vector3 target = nearEnd + away.normalized * (minDistanceFromLinks + 0.5f);
+            if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas)) target = hit.position;
+            Debug.Log($"[CustomerSpawner] '{point.name}' quá sát cửa, dời tới {target:F1}.", this);
+            point.position = target;
+        }
+    }
 
     void Update()
     {
@@ -58,7 +89,10 @@ public class CustomerSpawner : MonoBehaviour
         if (prefab == null) return null;
 
         Transform from = spawnPoint != null ? spawnPoint : transform;
-        Vector3 pos = NavMesh.SamplePosition(from.position, out NavMeshHit hit, 5f, NavMesh.AllAreas) ? hit.position : from.position;
+        Vector2 r = Random.insideUnitCircle * spawnScatter;
+        Vector3 wanted = from.position + new Vector3(r.x, 0f, r.y);
+        Vector3 pos = NavMesh.SamplePosition(wanted, out NavMeshHit hit, 3f, NavMesh.AllAreas) ? hit.position
+                    : NavMesh.SamplePosition(from.position, out hit, 5f, NavMesh.AllAreas) ? hit.position : from.position;
 
         GameObject go = Instantiate(prefab, pos, from.rotation);
         go.name = $"Customer_{++spawnedCount:00}";
