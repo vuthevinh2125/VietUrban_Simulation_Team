@@ -4,7 +4,12 @@ using TMPro;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Quản lý ngày/giờ và game over. Tiền KHÔNG còn nằm ở đây nữa mà ở EconomyManager.
+/// Ngày làm việc kiểu Supermarket Simulator:
+///  - Đầu ngày cửa hàng ĐÓNG, đồng hồ đứng ở giờ mở cửa. Người chơi chuẩn bị (đặt hàng, xếp kệ, đặt giá).
+///  - Lật biển sang OPEN thì đồng hồ chạy và khách bắt đầu tới. Lật lại CLOSED thì ngừng đón khách, đồng hồ dừng.
+///  - Tới giờ đóng cửa: tự đóng, không đón khách mới; khách cuối cùng ra về thì hiện báo cáo cuối ngày.
+///  - Bấm "Next Day" trên báo cáo: trừ tiền thuê đã tính, sang ngày mới (cửa hàng lại đóng).
+/// Tiền nằm ở EconomyManager.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -12,15 +17,18 @@ public class GameManager : MonoBehaviour
 
     /// <summary>Gọi khi sang ngày mới (tham số = số ngày mới).</summary>
     public static event Action<int> OnNewDay;
+    /// <summary>Cửa hàng mở (true) / đóng (false).</summary>
+    public static event Action<bool> OnStoreOpenChanged;
 
     [Header("Game Progression")]
     public int currentDay = 1;
-    [Tooltip("Một ngày trong game dài bao nhiêu giây ngoài đời")]
-    public float realSecondsPerDay = 60f;
+    [Tooltip("Một ngày làm việc (từ giờ mở tới giờ đóng cửa) dài bao nhiêu PHÚT ngoài đời khi cửa hàng mở")]
+    public float realMinutesPerDay = 10f;
+    [HideInInspector] public float realSecondsPerDay = 60f; // không còn dùng, giữ để không mất dữ liệu cũ
     [Tooltip("Giờ mở cửa (0-23)")]
     public int openingHour = 8;
-    [Tooltip("Giờ đóng cửa (0-23). Hết giờ là sang ngày mới.")]
-    public int closingHour = 18;
+    [Tooltip("Giờ đóng cửa (0-23)")]
+    public int closingHour = 22;
 
     [Header("UI References")]
     public TextMeshProUGUI dayTextUI;
@@ -30,17 +38,31 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI interactTextUI;
 
     [Header("Debug")]
-    [Tooltip("Bấm phím này để qua ngày ngay (chỉ để test)")]
+    [Tooltip("Bấm phím này để nhảy tới giờ đóng cửa (chỉ để test)")]
     public bool allowSkipDayKey = true;
     public KeyCode skipDayKey = KeyCode.T;
+    [Tooltip("Khi scene không có biển Open/Closed: bấm phím này để mở / đóng cửa hàng")]
+    public KeyCode toggleStoreKey = KeyCode.O;
 
     private static readonly DateTime StartDate = new DateTime(2026, 2, 9);
 
-    private bool isGameOver = false;
-    private float dayStartTime;
+    private bool isGameOver;
+    private bool storeOpen;
+    private bool closingTimeReached;
+    private bool dayEnded;
+    private float clockMinutes;
+    private float closingSince;
+
+    [Tooltip("Hết giờ mà khách vẫn kẹt trong cửa hàng quá số giây này thì cho khách biến mất và chốt ngày")]
+    public float maxWaitAfterClosing = 120f;
 
     public bool IsGameOver => isGameOver;
-    public float DayProgress01 => realSecondsPerDay <= 0f ? 0f : Mathf.Clamp01((Time.time - dayStartTime) / realSecondsPerDay);
+    public bool IsStoreOpen => storeOpen;
+    /// <summary>Đã tới giờ đóng cửa, đang chờ khách cuối ra về.</summary>
+    public bool IsClosingTime => closingTimeReached;
+    private float OpenMinutes => openingHour * 60f;
+    private float WorkMinutes => Mathf.Max(1, closingHour - openingHour) * 60f;
+    public float DayProgress01 => Mathf.Clamp01((clockMinutes - OpenMinutes) / WorkMinutes);
 
     private void Awake()
     {
@@ -63,14 +85,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Tự tìm ô hiển thị giờ nếu chưa kéo thả
         if (timeTextUI == null)
         {
             GameObject foundText = GameObject.Find("Text_DateTime");
             if (foundText != null) timeTextUI = foundText.GetComponent<TextMeshProUGUI>();
         }
 
-        dayStartTime = Time.time;
+        clockMinutes = OpenMinutes;
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
         RefreshMoney(EconomyManager.Instance.Money);
@@ -80,35 +101,81 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver) return;
+        if (isGameOver || dayEnded) return;
+        bool uiFree = !UIState.IsBlockingUIOpen;
 
-        bool skipPressed = allowSkipDayKey && !UIState.IsBlockingUIOpen && Input.GetKeyDown(skipDayKey);
-        if (Time.time - dayStartTime >= realSecondsPerDay || skipPressed)
+        if (uiFree && Input.GetKeyDown(toggleStoreKey) && StoreSign.All.Count == 0) ToggleStore();
+
+        if (uiFree && allowSkipDayKey && Input.GetKeyDown(skipDayKey) && !closingTimeReached)
         {
-            EndDay();
+            clockMinutes = OpenMinutes + WorkMinutes;
+            Debug.Log("[GameManager] (Test) Nhảy tới giờ đóng cửa.");
         }
 
+        // Đồng hồ chỉ chạy khi cửa hàng đang mở
+        if (storeOpen)
+            clockMinutes += Time.deltaTime * WorkMinutes / Mathf.Max(1f, realMinutesPerDay * 60f);
+
+        if (!closingTimeReached && clockMinutes >= OpenMinutes + WorkMinutes)
+        {
+            clockMinutes = OpenMinutes + WorkMinutes;
+            closingTimeReached = true;
+            closingSince = Time.time;
+            SetStoreOpen(false, force: true);
+            Debug.Log("[GameManager] Tới giờ đóng cửa. Phục vụ nốt khách trong cửa hàng.");
+        }
+
+        // Hết giờ và khách đã về hết -> báo cáo cuối ngày
+        if (closingTimeReached && NPCShopper.Active.Count > 0 && Time.time - closingSince > maxWaitAfterClosing)
+        {
+            Debug.LogWarning($"[GameManager] {NPCShopper.Active.Count} khách kẹt quá lâu sau giờ đóng cửa, cho về luôn.");
+            for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)
+                if (NPCShopper.Active[i] != null) Destroy(NPCShopper.Active[i].gameObject);
+        }
+        if (closingTimeReached && NPCShopper.Active.Count == 0 && !UIState.IsBlockingUIOpen) EndDay();
+
+        UpdateClockText();
+    }
+
+    // ================= Mở / đóng cửa hàng =================
+    public void ToggleStore() => SetStoreOpen(!storeOpen);
+
+    public bool CanToggleStore => !closingTimeReached && !dayEnded && !isGameOver;
+
+    public void SetStoreOpen(bool open, bool force = false)
+    {
+        if (!force && !CanToggleStore) return;
+        if (storeOpen == open) return;
+        storeOpen = open;
+        Debug.Log(open ? "[GameManager] Cửa hàng MỞ CỬA." : "[GameManager] Cửa hàng ĐÓNG CỬA.");
+        OnStoreOpenChanged?.Invoke(open);
         UpdateClockText();
     }
 
     // ================= Ngày =================
     private void EndDay()
     {
-        EconomyManager economy = EconomyManager.Instance;
-        DailySummary summary = economy.CloseDay();
-
+        dayEnded = true;
+        DailySummary summary = EconomyManager.Instance.CloseDay();
         Debug.Log($"[Day {summary.day}] Income {EconomyManager.Format(summary.income)} | " +
                   $"Expenses {EconomyManager.Format(summary.expenses)} | Profit {EconomyManager.Format(summary.Profit)} | " +
                   $"Balance {EconomyManager.Format(summary.closingBalance)}");
+        DayReportPanel.Show(summary, StartNextDay);
+    }
 
-        if (economy.Money < 0f)
+    private void StartNextDay()
+    {
+        if (EconomyManager.Instance.Money < 0f)
         {
             TriggerGameOver();
             return;
         }
 
         currentDay++;
-        dayStartTime = Time.time;
+        clockMinutes = OpenMinutes;
+        closingTimeReached = false;
+        dayEnded = false;
+        SetStoreOpen(false, force: true);
         UpdateUI();
         OnNewDay?.Invoke(currentDay);
     }
@@ -141,22 +208,25 @@ public class GameManager : MonoBehaviour
         if (moneyTextUI != null) moneyTextUI.text = "Money: " + EconomyManager.Format(money);
     }
 
+    public string ClockString
+    {
+        get
+        {
+            int totalMins = Mathf.FloorToInt(clockMinutes) % 1440;
+            int hour24 = totalMins / 60, minute = totalMins % 60;
+            string ampm = hour24 >= 12 ? "PM" : "AM";
+            int hour12 = hour24 % 12;
+            if (hour12 == 0) hour12 = 12;
+            return $"{hour12:00}:{minute:00} {ampm}";
+        }
+    }
+
     private void UpdateClockText()
     {
         if (timeTextUI == null) return;
-
-        float openMinutes = openingHour * 60f;
-        float workMinutes = Mathf.Max(1, closingHour - openingHour) * 60f;
-        int totalMins = Mathf.FloorToInt(openMinutes + DayProgress01 * workMinutes) % 1440;
-
-        int hour24 = totalMins / 60;
-        int minute = totalMins % 60;
-        string ampm = hour24 >= 12 ? "PM" : "AM";
-        int hour12 = hour24 % 12;
-        if (hour12 == 0) hour12 = 12;
-
         string dateString = StartDate.AddDays(currentDay - 1).ToString("yyyy.MM.dd");
-        timeTextUI.text = $"{hour12:00}:{minute:00} {ampm}\n{dateString}";
+        string status = storeOpen ? "<color=#5BE36B>OPEN</color>" : (closingTimeReached ? "<color=#FFB347>CLOSING</color>" : "<color=#FF6B6B>CLOSED</color>");
+        timeTextUI.text = $"{ClockString}  {status}\n{dateString}";
     }
 
     public void ShowInteractText(string message)
@@ -177,5 +247,6 @@ public class GameManager : MonoBehaviour
     {
         Instance = null;
         OnNewDay = null;
+        OnStoreOpenChanged = null;
     }
 }
