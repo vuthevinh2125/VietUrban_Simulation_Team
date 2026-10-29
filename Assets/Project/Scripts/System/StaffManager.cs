@@ -19,6 +19,8 @@ public class StaffManager : MonoBehaviour
     private readonly List<GameObject> restockers = new List<GameObject>();
 
     public int CashierCount => cashiers.Count;
+    /// <summary>Thu ngân đang làm ở quầy nào (dùng cho công cụ lưu vị trí đứng).</summary>
+    public IReadOnlyList<(CheckoutCounter counter, GameObject body)> Cashiers => cashiers;
     public int RestockerCount => restockers.Count;
     public const int MaxCashierLimit = 4;
     /// <summary>Mỗi quầy đang mở 1 thu ngân, tối đa 4.</summary>
@@ -184,6 +186,14 @@ public class StaffManager : MonoBehaviour
     /// </summary>
     private static Vector3 CashierSpot(CheckoutCounter counter, out Quaternion rot)
     {
+        // Vị trí đã chỉnh tay (CashierPoint) được ưu tiên
+        Transform point = counter.cashierPoint != null ? counter.cashierPoint : counter.transform.Find("CashierPoint");
+        if (point != null)
+        {
+            rot = Quaternion.Euler(0f, point.eulerAngles.y, 0f);
+            return point.position;
+        }
+
         Bounds b = default; bool any = false;
         foreach (Renderer r in counter.GetComponentsInChildren<Renderer>())
         {

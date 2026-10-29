@@ -17,6 +17,9 @@ public class CheckoutCounter : MonoBehaviour
     public Transform customerPoint;
     [Tooltip("Chỗ khách đặt hàng lên mặt quầy")]
     public Transform itemDropPoint;
+    [Tooltip("(Tuỳ chọn) Chỗ thu ngân đứng + hướng quay mặt. Để trống = tự tìm chỗ cạnh quầy. " +
+             "Đặt nhanh: lúc đang Play kéo thu ngân tới chỗ muốn rồi bấm Tools > Store Setup > 14.")]
+    public Transform cashierPoint;
 
     [Header("Queue")]
     [Tooltip("Hướng hàng chờ kéo dài, tính theo trục local của customerPoint (mặc định: sau lưng khách)")]
