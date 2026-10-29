@@ -9993,11 +9993,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1081175144}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &69189617 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1124072637637972654, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+  m_PrefabInstance: {fileID: 1503506614332725958}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &69189618 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9216330496334034840, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1503506614332725958}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &69189622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69189617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &69917516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13314,6 +13339,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &93617635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24294,7 +24325,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 184535176}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
@@ -24317,7 +24348,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 72957cb2c729a9a4d8090fc85d6dd894, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1001 &184930553
 PrefabInstance:
@@ -24976,6 +25007,96 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &187777053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 187777054}
+  - component: {fileID: 187777056}
+  - component: {fileID: 187777055}
+  m_Layer: 0
+  m_Name: Pole
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &187777054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187777053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalScale: {x: 0.05, y: 0.6, z: 0.05}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1112699423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &187777055
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187777053}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &187777056
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187777053}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &188194031
 GameObject:
   m_ObjectHideFlags: 0
@@ -41201,6 +41322,9 @@ MonoBehaviour:
   productPrefab: {fileID: 160590107819149614}
   productCount: 10
   visualItems: []
+  autoGenerateVisuals: 1
+  innerFill: {x: 0.84, y: 0.8, z: 0.84}
+  maxVisualScale: 1.6
   flap1: {fileID: 458665504}
   flap1OpenRot: {x: 0, y: 0, z: 0}
   flap2: {fileID: 564733874}
@@ -41841,6 +41965,8 @@ GameObject:
   - component: {fileID: 321585529}
   - component: {fileID: 321585530}
   - component: {fileID: 321585531}
+  - component: {fileID: 321585532}
+  - component: {fileID: 321585533}
   m_Layer: 5
   m_Name: ComputerUI
   m_TagString: Untagged
@@ -42016,6 +42142,137 @@ MonoBehaviour:
   maxZoom: 1
   mouseSensitivity: 3
   tpsOffset: {x: 0, y: 0, z: -4}
+--- !u!114 &321585532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321585522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0254270761c14c26b32c40665df894e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopCatalog
+  items:
+  - {fileID: 11400000, guid: 75ea3b3ccda797548a1878762a19beca, type: 2}
+  - {fileID: 11400000, guid: b4260ce9d788a364cb0b1bf7f6726a9b, type: 2}
+  - {fileID: 11400000, guid: 670de87d8c8b1a14eb45749281fedd5f, type: 2}
+  - {fileID: 11400000, guid: ce98b41923d25654a8df5be9e7b3db5e, type: 2}
+  - {fileID: 11400000, guid: 94ea2dceeca7e8843a234b45414f6cf0, type: 2}
+  - {fileID: 11400000, guid: 268b495242f6dce428b4fb383e12ded2, type: 2}
+  - {fileID: 11400000, guid: fa6d39615b654904f933bc90f7f7e2c7, type: 2}
+  - {fileID: 11400000, guid: 07a3a5eed853b924e9add9f937f16b18, type: 2}
+  - {fileID: 11400000, guid: 6ff9f5f7f249c3f49968392c30b9ae3b, type: 2}
+  - {fileID: 11400000, guid: 401d36ae9c7a4f840a19bff8e4c746aa, type: 2}
+  - {fileID: 11400000, guid: e11cd918cf9a53642801e9d472865a52, type: 2}
+  - {fileID: 11400000, guid: 540bd4d7d0fc952499cec7b71c3a5167, type: 2}
+  - {fileID: 11400000, guid: 7f10ba6df7a8c894c9499318ce2b1700, type: 2}
+  - {fileID: 11400000, guid: 82eb01725b5ff804cabb76a9efc84d98, type: 2}
+  - {fileID: 11400000, guid: 0d8ffe2a76b5e754b971bd2ae7bff87c, type: 2}
+  - {fileID: 11400000, guid: c733d46c09884c746ba64c27e5d975fd, type: 2}
+  - {fileID: 11400000, guid: 8a21cb4c3afe174438cb6a80b3341901, type: 2}
+  - {fileID: 11400000, guid: 5c6892f4a089f93478c6fa834fd5dd0c, type: 2}
+  - {fileID: 11400000, guid: 276ede0889f260641b5223148cf2eb9f, type: 2}
+  - {fileID: 11400000, guid: e8f2dd70362163d4aa205b32d3e71423, type: 2}
+  - {fileID: 11400000, guid: ef7d3f550dc27264ca4b01ecf8d1af4e, type: 2}
+  - {fileID: 11400000, guid: d6006b9804f9d3344ba5e8f8432576c7, type: 2}
+  - {fileID: 11400000, guid: be2ef6f699e5b0a4cb1993e0dc386bea, type: 2}
+  - {fileID: 11400000, guid: 728ee7d8c8cbdee4691f48a2d75ba38c, type: 2}
+  - {fileID: 11400000, guid: 382207d35a5498547b5d457e0f8597c1, type: 2}
+  - {fileID: 11400000, guid: 2d31aae76da88b243a24e9295a5a7cdc, type: 2}
+  - {fileID: 11400000, guid: ca1d879083d62c84099e4954c8d528d7, type: 2}
+  - {fileID: 11400000, guid: 857df5ab13daa5a4ea37bb20550cfaad, type: 2}
+  - {fileID: 11400000, guid: aacb6d1fb6904ec4fb660ab994d2de9a, type: 2}
+  - {fileID: 11400000, guid: 0b254b20afac8cc42870c12fed164b05, type: 2}
+  - {fileID: 11400000, guid: eb7facb5832c35741a4683a3294cd3e0, type: 2}
+  - {fileID: 11400000, guid: 522e40d574b6ba9419285b3a3e7fe19b, type: 2}
+  - {fileID: 11400000, guid: cb0a8a6213e894242ba6c6487a21efa3, type: 2}
+  - {fileID: 11400000, guid: 2336a7bbdf6603d45a437d1ea17f3a9a, type: 2}
+  - {fileID: 11400000, guid: eb1d1e2bb60d0c1478807e2176655e37, type: 2}
+  - {fileID: 11400000, guid: a27779c107ed41b4b8ec70420535fbe6, type: 2}
+  - {fileID: 11400000, guid: 0878c232debc647408693b5f20ed0c53, type: 2}
+  - {fileID: 11400000, guid: 10b0bbb6f25ae0a4db563b1c54723543, type: 2}
+  - {fileID: 11400000, guid: 53b79e54e4f644345832c195a39a9305, type: 2}
+  - {fileID: 11400000, guid: f1378cb0ad2c55a4db1a6aed0acf9f34, type: 2}
+  - {fileID: 11400000, guid: 0f6e6b84a4d6ef749b7b6811fd01e6f1, type: 2}
+  - {fileID: 11400000, guid: 1b741e951ad6aae42b850327bf591098, type: 2}
+  - {fileID: 11400000, guid: f25bca86378174a4897343ca724bce9f, type: 2}
+  - {fileID: 11400000, guid: a9d5b799f88a99544aacead74364b6ae, type: 2}
+  - {fileID: 11400000, guid: 74742ee4b5f9665468dde3a86d7ed7b0, type: 2}
+  - {fileID: 11400000, guid: 273bc189821054049927cb29e956eeff, type: 2}
+  - {fileID: 11400000, guid: f05481e77bf3ba3448aa521832022e59, type: 2}
+  - {fileID: 11400000, guid: 757dcccc121713d4f91b807a3e51f986, type: 2}
+  - {fileID: 11400000, guid: b0fa03b6099f4ce49a35d5c405c187e2, type: 2}
+  - {fileID: 11400000, guid: 8f38d25d7c6094147a15dc9c95bcfec4, type: 2}
+  - {fileID: 11400000, guid: 3e472dea570910548b5182bfdbafa32a, type: 2}
+  - {fileID: 11400000, guid: 599cb6e6e171afe42b8623aa6fced8db, type: 2}
+  - {fileID: 11400000, guid: ef2dcb124ee760945bf97a00342f19ad, type: 2}
+  - {fileID: 11400000, guid: 0fc0fcef189834f4e9157c955673dd14, type: 2}
+  - {fileID: 11400000, guid: aed64512b77b030458808b501dc06103, type: 2}
+  - {fileID: 11400000, guid: 1848c42e731e0c0468900af2e9f0b09f, type: 2}
+  - {fileID: 11400000, guid: c2817542be90cae40b5a89320fa995e0, type: 2}
+  - {fileID: 11400000, guid: 8b2535ee1a47e1e47beb5199bdf6d5cd, type: 2}
+  - {fileID: 11400000, guid: 0ffb599fda6efb74fbeeba04a2a923ac, type: 2}
+  - {fileID: 11400000, guid: ba11862bc224636438aa4aef3c7f50d0, type: 2}
+  - {fileID: 11400000, guid: 26eb638222be56a4aa3de94bce942df3, type: 2}
+  - {fileID: 11400000, guid: d13777455643a834eb7fb14569b63015, type: 2}
+  - {fileID: 11400000, guid: aae18c8e1ad96974883a06685daac512, type: 2}
+  - {fileID: 11400000, guid: 584b37e7f49ae984c844147ee63f8749, type: 2}
+  - {fileID: 11400000, guid: 9174fb6ff431bb44cad83b17e9015000, type: 2}
+  - {fileID: 11400000, guid: ae3fe595efdf1834aa6067281c6da9ed, type: 2}
+  - {fileID: 11400000, guid: 03493ab8332f76a458dcfd04357bf39d, type: 2}
+  - {fileID: 11400000, guid: 0bbe315796966544e9acf05331828c4b, type: 2}
+  - {fileID: 11400000, guid: d85a9e3baaa93ad4893d5cbeff2ecbe1, type: 2}
+  - {fileID: 11400000, guid: 7fa1a66a0d0074344b7a06c14008f9be, type: 2}
+  - {fileID: 11400000, guid: fcfd3e54b430d3f499e7ab9c6284e2b5, type: 2}
+  - {fileID: 11400000, guid: 9adece8b62ed7f049a90faa35fb77bf1, type: 2}
+  - {fileID: 11400000, guid: 99635ed3d5a153748a715bc9d303eebb, type: 2}
+  - {fileID: 11400000, guid: f9ccfeef83006404a97a4de6a1084f9c, type: 2}
+  - {fileID: 11400000, guid: 85838c5696ef2f9469194119c04dc201, type: 2}
+  - {fileID: 11400000, guid: d64b90b4f3d53f74cb32f756d634601d, type: 2}
+  - {fileID: 11400000, guid: fc3a5db2f65a1e941ba0a28beb1b55cf, type: 2}
+  - {fileID: 11400000, guid: 3781832db4dc8c946aa0c579f8b45747, type: 2}
+  - {fileID: 11400000, guid: 125e9ce460bd80045931cce3c91a9794, type: 2}
+  - {fileID: 11400000, guid: 80be77a601975364d8c6288a0c10210a, type: 2}
+  - {fileID: 11400000, guid: de77a5234965f1940bebcdac66120e42, type: 2}
+  - {fileID: 11400000, guid: ccdb8de4640bf6d4faee57295d8e06e9, type: 2}
+  - {fileID: 11400000, guid: 1a547e6b244e1c2478b92375cd940f4b, type: 2}
+  - {fileID: 11400000, guid: 61c11ea72ed7fa643b31f980aaf6056f, type: 2}
+  - {fileID: 11400000, guid: 0625263eaf34a124bb5c1d35a662177c, type: 2}
+  - {fileID: 11400000, guid: 90a2cd9ea82aad64987fb774b5b72617, type: 2}
+  - {fileID: 11400000, guid: 96286d3090738604a8c5e7c12dce4ca3, type: 2}
+  - {fileID: 11400000, guid: f57fcc59c7beecc4e9d4d2f9ec3dc42e, type: 2}
+  - {fileID: 11400000, guid: 4c7afa4c4eb966e44949fe94d5735ba7, type: 2}
+  - {fileID: 11400000, guid: 5fd85555d3a452f48aa2d42199c6f134, type: 2}
+  - {fileID: 11400000, guid: 39ebe4a3b1636e54b812c5070e8b7220, type: 2}
+  - {fileID: 11400000, guid: 830b0f8540c8c064e8c68a492d166a28, type: 2}
+  - {fileID: 11400000, guid: 8a2a60bc467c01d4f85deb7fcb7b8860, type: 2}
+  - {fileID: 11400000, guid: cb5d322096597f540ae410a99be86293, type: 2}
+  contentParent: {fileID: 0}
+  keepExistingCardItems: 1
+--- !u!114 &321585533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321585522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da000f2e184c496cac634c1cecc9e07f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FurnitureCatalog
+  furniture:
+  - {fileID: 11400000, guid: 98625b92c766c5048b8a684dce611800, type: 2}
+  - {fileID: 11400000, guid: 6e940ee5276c11a49879afc399f1ce58, type: 2}
+  - {fileID: 11400000, guid: 81791b0829ddae14aa3d85061d9cfc66, type: 2}
+  - {fileID: 11400000, guid: 3a18146b8a6ea2b49825aa481de8f187, type: 2}
+  - {fileID: 11400000, guid: 01ff1bf1e752d5e4ab761a51eb387d63, type: 2}
+  - {fileID: 11400000, guid: 01c8ab588d19fe243ac5a396ed87e31d, type: 2}
+  - {fileID: 11400000, guid: 88da2c14a837a1a4486206bbb5c111bc, type: 2}
+  - {fileID: 11400000, guid: e3a61292e7a3fa5428901ac14d6e46b9, type: 2}
+  - {fileID: 11400000, guid: f8875e08e8a7e7d4a8fd20eaf7bbc68d, type: 2}
 --- !u!1001 &321860761
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45342,6 +45599,8 @@ MonoBehaviour:
   spawnInterval: {x: 8, y: 18}
   stopSpawningAt: 0.9
   onlyWhenStocked: 1
+  spawnScatter: 1.2
+  minDistanceFromLinks: 2
 --- !u!4 &350838820
 Transform:
   m_ObjectHideFlags: 0
@@ -47553,11 +47812,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
   m_PrefabInstance: {fileID: 362129435}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &362691230 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5781081890891809666, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
-  m_PrefabInstance: {fileID: 1580056938}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &362741080
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49485,6 +49739,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &378106847
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -68225,6 +68485,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &521210384
 GameObject:
   m_ObjectHideFlags: 0
@@ -73162,6 +73428,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &552366717 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
@@ -75170,6 +75442,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &566811170
 GameObject:
   m_ObjectHideFlags: 0
@@ -78437,6 +78715,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &590028018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1936682535312468874, guid: 0d5df746bb0749449966315e41224d6c, type: 3}
@@ -78781,6 +79065,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &593713433
 GameObject:
   m_ObjectHideFlags: 0
@@ -79327,6 +79617,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &597515523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80527,6 +80823,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &607510082
 GameObject:
   m_ObjectHideFlags: 0
@@ -85735,6 +86037,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &644474237
 GameObject:
   m_ObjectHideFlags: 0
@@ -92460,6 +92768,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &687420624
 GameObject:
   m_ObjectHideFlags: 0
@@ -103517,6 +103831,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &781030310
 GameObject:
   m_ObjectHideFlags: 0
@@ -104240,6 +104560,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &784111307
 GameObject:
   m_ObjectHideFlags: 0
@@ -106144,6 +106470,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &793185255
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -106739,6 +107071,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &796982667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -108737,6 +109075,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &810446452
 GameObject:
   m_ObjectHideFlags: 0
@@ -113489,11 +113833,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3308142984790888638, guid: f2da9aec35a7c4b439f1dbdbe1dcac4f, type: 3}
   m_PrefabInstance: {fileID: 999770817}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &848865212 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5781081890891809666, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
-  m_PrefabInstance: {fileID: 1503506614332725958}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &848999672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -113804,6 +114143,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &849642537 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4737365782299246, guid: adb55fed5a5012b458c398a0b618390c, type: 3}
@@ -114338,6 +114683,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &852379506 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
@@ -116030,6 +116381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   currentDay: 1
+  realMinutesPerDay: 10
   realSecondsPerDay: 60
   openingHour: 8
   closingHour: 18
@@ -116040,6 +116392,8 @@ MonoBehaviour:
   interactTextUI: {fileID: 2274704328668370191}
   allowSkipDayKey: 1
   skipDayKey: 116
+  toggleStoreKey: 111
+  maxWaitAfterClosing: 120
 --- !u!1001 &860870693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118121,6 +118475,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &874212635
 GameObject:
   m_ObjectHideFlags: 0
@@ -119776,6 +120136,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &891111072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -120006,6 +120372,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &891838970
 GameObject:
   m_ObjectHideFlags: 0
@@ -121236,6 +121608,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &900485571
 GameObject:
   m_ObjectHideFlags: 0
@@ -129662,6 +130040,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &964533714 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
@@ -132893,6 +133277,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &994180112 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8798464493410521668, guid: ff833f93911fe224382ad102b43d2c61, type: 3}
@@ -132988,6 +133378,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: 
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &995640581 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7533038090828063015, guid: 0510e29d71c1ad04cab7e1aa4b9b62cc, type: 3}
@@ -133107,6 +133503,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &996022017
 GameObject:
   m_ObjectHideFlags: 0
@@ -134788,6 +135190,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1007101740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -138339,6 +138747,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1025140498
 GameObject:
   m_ObjectHideFlags: 0
@@ -143061,6 +143475,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1055467606 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4973367759857820, guid: ef0db6475b65e3f4caf48f2481a05f13, type: 3}
@@ -144449,6 +144869,187 @@ Transform:
   m_Children: []
   m_Father: {fileID: 613131388}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1069478725
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1069478726}
+  - component: {fileID: 1069478728}
+  - component: {fileID: 1069478727}
+  m_Layer: 0
+  m_Name: Text_Front
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1069478726
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069478725}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.022}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1112699423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 1.36}
+  m_SizeDelta: {x: 0.63, y: 0.288}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1069478727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069478725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshPro
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: CLOSED
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281549042
+  m_fontColor: {r: 0.95, g: 0.25, b: 0.2, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 1.4
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0.1
+  m_fontSizeMax: 3
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 1069478728}
+  m_maskType: 0
+--- !u!23 &1069478728
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069478725}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1070330174
 GameObject:
   m_ObjectHideFlags: 0
@@ -145536,6 +146137,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1078302518
 GameObject:
   m_ObjectHideFlags: 0
@@ -150788,6 +151395,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1307445980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1112699421
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1112699423}
+  - component: {fileID: 1112699422}
+  m_Layer: 0
+  m_Name: StoreSign_OpenClosed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1112699422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112699421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a58f6bed760443b88ca32071511f3b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoreSign
+  buildDefaultVisual: 1
+  boardSize: {x: 0.7, y: 0.32}
+  openColor: {r: 0.2, g: 0.85, b: 0.3, a: 1}
+  closedColor: {r: 0.95, g: 0.25, b: 0.2, a: 1}
+  closingColor: {r: 1, g: 0.65, b: 0.2, a: 1}
+--- !u!4 &1112699423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112699421}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.99971694, z: -0, w: 0.023792604}
+  m_LocalPosition: {x: -120.85, y: 0.211, z: 19.067}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 187777054}
+  - {fileID: 1512178655}
+  - {fileID: 1069478726}
+  - {fileID: 2074471907}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 177.273, z: 0}
 --- !u!1 &1112726997
 GameObject:
   m_ObjectHideFlags: 0
@@ -152969,6 +153629,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1133273011
 GameObject:
   m_ObjectHideFlags: 0
@@ -158163,6 +158829,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1169432851
 GameObject:
   m_ObjectHideFlags: 0
@@ -158932,6 +159604,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1172661806
 GameObject:
   m_ObjectHideFlags: 0
@@ -162654,6 +163332,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1201107879
 GameObject:
   m_ObjectHideFlags: 0
@@ -163673,6 +164357,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1208951061
 GameObject:
   m_ObjectHideFlags: 0
@@ -166723,6 +167413,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1233073829 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 280417331825996322, guid: c9e6632e18b02dc47a30cc834d298ee5, type: 3}
@@ -167831,6 +168527,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1241281679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -168743,6 +169445,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1247349233
 GameObject:
   m_ObjectHideFlags: 0
@@ -170991,6 +171699,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1265289196 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7188143680287112093, guid: 0510e29d71c1ad04cab7e1aa4b9b62cc, type: 3}
@@ -171036,6 +171750,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: 
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!65 &1265289201
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -171884,6 +172604,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1275321152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -173530,6 +174256,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1285653605
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -177926,6 +178658,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1310164225
 GameObject:
   m_ObjectHideFlags: 0
@@ -178789,6 +179527,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1316162754
 GameObject:
   m_ObjectHideFlags: 0
@@ -179444,6 +180188,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1322057855
 GameObject:
   m_ObjectHideFlags: 0
@@ -180430,6 +181180,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1327716690
 GameObject:
   m_ObjectHideFlags: 0
@@ -182964,12 +183720,18 @@ MonoBehaviour:
   queueDirection: {x: 0, y: 0, z: -1}
   queueSpacing: 0.9
   maxQueue: 6
-  itemSpacing: 0.22
-  itemsPerRow: 4
+  dropAreaSize: {x: 0.4, y: 0.3}
+  itemFill: 0.85
+  dropAreaMargin: 0.03
   autoScan: 0
   autoScanInterval: 0.6
   paymentDelay: 1.2
+  cardChance: 0.45
   scanSound: {fileID: 0}
+  paySound: {fileID: 0}
+  autoSnapDropPoint: 1
+  minDropHeight: 0.55
+  maxDropHeight: 1
 --- !u!1 &1343034892 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7206393339055854881, guid: 05e1e92b4e8a9694db8e1a8c69293ed5, type: 3}
@@ -188929,6 +189691,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1379125825
 GameObject:
   m_ObjectHideFlags: 0
@@ -193031,6 +193799,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1405507565
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -198012,6 +198786,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1438726472
 GameObject:
   m_ObjectHideFlags: 0
@@ -198752,6 +199532,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1442305770
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -199211,11 +199997,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 917767169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1446390183 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8123284643979370669, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+  m_PrefabInstance: {fileID: 1503506614332725958}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1446390184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2289075289105685967, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1503506614332725958}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1446390188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1446390183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &1446835799
 GameObject:
   m_ObjectHideFlags: 0
@@ -202806,6 +203617,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1473303477 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5768199022044119569, guid: fd24f13b94586844ea7794c7b8808a56, type: 3}
@@ -204561,9 +205378,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6421468984935518849, guid: bb1d98cd3fcabef438ad2c5f3f21e968, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6421468984935518849, guid: bb1d98cd3fcabef438ad2c5f3f21e968, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: 18c3df3d8a5ce864bbe8a0e3456b0f3a, type: 2}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -207784,6 +208605,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1509662514
 GameObject:
   m_ObjectHideFlags: 0
@@ -208301,6 +209128,118 @@ Transform:
   m_Children: []
   m_Father: {fileID: 877603894}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1512178654
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1512178655}
+  - component: {fileID: 1512178658}
+  - component: {fileID: 1512178657}
+  - component: {fileID: 1512178656}
+  m_Layer: 0
+  m_Name: Board
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1512178655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512178654}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.36, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.32, z: 0.04}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1112699423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1512178656
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512178654}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1512178657
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512178654}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1512178658
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512178654}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1512183200
 GameObject:
   m_ObjectHideFlags: 0
@@ -210803,6 +211742,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1530627904
 GameObject:
   m_ObjectHideFlags: 0
@@ -213353,6 +214298,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1547920527
 GameObject:
   m_ObjectHideFlags: 0
@@ -215115,6 +216066,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1564152703
 GameObject:
   m_ObjectHideFlags: 0
@@ -216835,10 +217792,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1737525915301975172, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1580056940}
-    - targetCorrespondingSourceObject: {fileID: 1737525915301975172, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1580056941}
+    - targetCorrespondingSourceObject: {fileID: 1124072637637972654, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1710860146}
+    - targetCorrespondingSourceObject: {fileID: 8123284643979370669, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1946476540}
     - targetCorrespondingSourceObject: {fileID: 6264725120210534423, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1955087750}
@@ -216848,26 +217808,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1393650992606367294, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1580056938}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1580056940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1451973832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
-  m_SerializedVersion: 0
-  m_OverrideArea: 1
-  m_Area: 1
-  m_OverrideGenerateLinks: 0
-  m_GenerateLinks: 0
-  m_IgnoreFromBuild: 1
-  m_ApplyToChildren: 1
-  m_AffectedAgents: ffffffff
 --- !u!114 &1580056941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216883,11 +217823,9 @@ MonoBehaviour:
   leaves:
   - {fileID: 1710860142}
   - {fileID: 1946476536}
-  - {fileID: 362691230}
   openAngles:
   - 90
   - -90
-  - 90
   detectPadding: {x: 1.5, y: 1, z: 2}
   checkInterval: 0.15
   openSpeed: 3
@@ -219642,6 +220580,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1601161104
 GameObject:
   m_ObjectHideFlags: 0
@@ -220647,6 +221591,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1606055926
 GameObject:
   m_ObjectHideFlags: 0
@@ -221441,6 +222391,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1613311376 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1880032562295647009, guid: aa2a0d13525651b429ef1e12dc3e15f4, type: 3}
@@ -222998,6 +223954,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1622608120 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5054010608147051730, guid: 6ee5422a479fadc4dafea0d217b567ec, type: 3}
@@ -227101,7 +228063,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1654945054}
-  - component: {fileID: 1654945053}
   m_Layer: 0
   m_Name: DeliveryPoint
   m_TagString: Untagged
@@ -227109,33 +228070,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!54 &1654945053
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1654945052}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!4 &1654945054
 Transform:
   m_ObjectHideFlags: 0
@@ -228078,6 +229012,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1661750665 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2624261584767078151, guid: cfeb1ca3472ff614dbf78e77108155bc, type: 3}
@@ -228341,6 +229281,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1661980043
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -228542,6 +229488,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: 
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1662232641 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7533038090828063015, guid: 0510e29d71c1ad04cab7e1aa4b9b62cc, type: 3}
@@ -229487,6 +230439,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1672014994
 GameObject:
   m_ObjectHideFlags: 0
@@ -229874,6 +230832,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1673227646
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -230521,6 +231485,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1677416231
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -231246,6 +232216,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1680851637 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 46116590701799138, guid: f354fb1e81fdf764b8b444d91b097e0a, type: 3}
@@ -231922,6 +232898,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1685740666 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
@@ -232177,6 +233159,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1686777545
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -234709,6 +235697,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1703934000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -235391,11 +236385,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 704966955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1710860141 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1124072637637972654, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+  m_PrefabInstance: {fileID: 1580056938}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1710860142 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9216330496334034840, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1580056938}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1710860146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710860141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &1711083694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -241695,6 +242714,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1757098857 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4737365782299246, guid: adb55fed5a5012b458c398a0b618390c, type: 3}
@@ -242279,6 +243304,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &1761451218 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 46116590701799138, guid: f354fb1e81fdf764b8b444d91b097e0a, type: 3}
@@ -242908,6 +243939,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1764892311
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -244384,6 +245421,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1776216945 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 908469352078288531, guid: 9aac5da4c249fb943b2f58502039d284, type: 3}
@@ -246026,6 +247069,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1788118758
 GameObject:
   m_ObjectHideFlags: 0
@@ -248005,6 +249054,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1799166580
 GameObject:
   m_ObjectHideFlags: 0
@@ -250577,6 +251632,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1815062950
 GameObject:
   m_ObjectHideFlags: 0
@@ -252443,6 +253504,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1827975763 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1317521755811510, guid: f48ca42bbf7370343a33a9e87b1d9fdb, type: 3}
@@ -254657,6 +255724,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1844699929
 GameObject:
   m_ObjectHideFlags: 0
@@ -255157,6 +256230,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1846882951
 GameObject:
   m_ObjectHideFlags: 0
@@ -255702,6 +256781,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1850319951
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -256261,6 +257346,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1856045734
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -257181,6 +258272,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1861713173
 GameObject:
   m_ObjectHideFlags: 0
@@ -258337,6 +259434,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1867851679
 GameObject:
   m_ObjectHideFlags: 0
@@ -260602,6 +261705,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1886520012
 GameObject:
   m_ObjectHideFlags: 0
@@ -262115,6 +263224,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1898582322
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -262745,6 +263860,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1902492656
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -264137,6 +265258,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1914325997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -265163,6 +266290,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1924747204
 GameObject:
   m_ObjectHideFlags: 0
@@ -266845,6 +267978,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1938639444
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268074,11 +269213,36 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!1 &1946476535 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8123284643979370669, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+  m_PrefabInstance: {fileID: 1580056938}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1946476536 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2289075289105685967, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1580056938}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1946476540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946476535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &1947743690
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -269324,6 +270488,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1955289697
 GameObject:
   m_ObjectHideFlags: 0
@@ -270070,6 +271240,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1958170248
 GameObject:
   m_ObjectHideFlags: 0
@@ -270454,6 +271630,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1959745671 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5982988856245560815, guid: aa2a0d13525651b429ef1e12dc3e15f4, type: 3}
@@ -270559,6 +271741,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1960103266
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -272758,6 +273946,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1971597105
 GameObject:
   m_ObjectHideFlags: 0
@@ -273469,6 +274663,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &1976412279 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4831036451404745908, guid: 3c2acea7868ab8144a032fd6d3d8e498, type: 3}
@@ -273525,6 +274725,9 @@ MonoBehaviour:
   maxPriceRatio: 1.5
   browseTime: 1.5
   moveTimeout: 25
+  reachDistance: 2.5
+  debugLogs: 1
+  queueArriveRadius: 0.3
 --- !u!4 &1977253513 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1925855057003444265, guid: 6fd13522c83626746a96076ec3bc23ca, type: 3}
@@ -274672,6 +275875,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &1987188251
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -276480,6 +277689,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2000444840
 GameObject:
   m_ObjectHideFlags: 0
@@ -279930,6 +281145,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &2018584516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -280312,6 +281533,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2019596421
 GameObject:
   m_ObjectHideFlags: 0
@@ -280664,6 +281891,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2020803112
 GameObject:
   m_ObjectHideFlags: 0
@@ -281440,6 +282673,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1001 &2025357198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -281770,6 +283009,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2026539869
 GameObject:
   m_ObjectHideFlags: 0
@@ -282619,6 +283864,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2032817479
 GameObject:
   m_ObjectHideFlags: 0
@@ -284079,6 +285330,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2042182574
 GameObject:
   m_ObjectHideFlags: 0
@@ -284892,6 +286149,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2047665803
 GameObject:
   m_ObjectHideFlags: 0
@@ -288026,6 +289289,187 @@ Transform:
   m_Children: []
   m_Father: {fileID: 481393900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2074471906
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2074471907}
+  - component: {fileID: 2074471909}
+  - component: {fileID: 2074471908}
+  m_Layer: 0
+  m_Name: Text_Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2074471907
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074471906}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  m_LocalPosition: {x: 0, y: 0, z: 0.022}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1112699423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 1.36}
+  m_SizeDelta: {x: 0.63, y: 0.288}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2074471908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074471906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshPro
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: CLOSED
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281549042
+  m_fontColor: {r: 0.95, g: 0.25, b: 0.2, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 1.4
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0.1
+  m_fontSizeMax: 3
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 2074471909}
+  m_maskType: 0
+--- !u!23 &2074471909
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074471906}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &2074603022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -290342,6 +291786,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2093761032
 GameObject:
   m_ObjectHideFlags: 0
@@ -294149,6 +295599,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2125600040 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5982988856245560815, guid: aa2a0d13525651b429ef1e12dc3e15f4, type: 3}
@@ -294251,6 +295707,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2125615221
 GameObject:
   m_ObjectHideFlags: 0
@@ -295464,6 +296926,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2133640128 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 280417331825996322, guid: c9e6632e18b02dc47a30cc834d298ee5, type: 3}
@@ -296896,6 +298364,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!1 &2144866334 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2624261584767078151, guid: cfeb1ca3472ff614dbf78e77108155bc, type: 3}
@@ -297626,6 +299100,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Fresh
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &543450652885700304 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1751685673693690141, guid: f320c266245f11c4d86f4ac0517816e1, type: 3}
@@ -297656,26 +299136,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1393650992606367294, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
   m_PrefabInstance: {fileID: 1503506614332725958}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &543450653250082041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 322260769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
-  m_SerializedVersion: 0
-  m_OverrideArea: 1
-  m_Area: 1
-  m_OverrideGenerateLinks: 0
-  m_GenerateLinks: 0
-  m_IgnoreFromBuild: 1
-  m_ApplyToChildren: 1
-  m_AffectedAgents: ffffffff
 --- !u!114 &543450653250082042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297691,11 +299151,9 @@ MonoBehaviour:
   leaves:
   - {fileID: 69189618}
   - {fileID: 1446390184}
-  - {fileID: 848865212}
   openAngles:
   - 90
   - -90
-  - 90
   detectPadding: {x: 1.5, y: 1, z: 2}
   checkInterval: 0.15
   openSpeed: 3
@@ -297813,7 +299271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7344973465435123832, guid: 542d0ed627cca954eaa67669857d9926, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -95.85
+      value: -109.9
       objectReference: {fileID: 0}
     - target: {fileID: 7344973465435123832, guid: 542d0ed627cca954eaa67669857d9926, type: 3}
       propertyPath: m_LocalPosition.y
@@ -298333,10 +299791,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1737525915301975172, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 543450653250082041}
-    - targetCorrespondingSourceObject: {fileID: 1737525915301975172, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 543450653250082042}
+    - targetCorrespondingSourceObject: {fileID: 1124072637637972654, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 69189622}
+    - targetCorrespondingSourceObject: {fileID: 8123284643979370669, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1446390188}
     - targetCorrespondingSourceObject: {fileID: 6264725120210534423, guid: 43bba63863aef574392b6ce67c1c0961, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1347794580}
@@ -299850,6 +301311,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &3503141395163776483 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 625981378523670680, guid: c9e6632e18b02dc47a30cc834d298ee5, type: 3}
@@ -300249,7 +301716,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8289987184420709094, guid: 78aab99baef1afb41bc3ebe693bd70fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -94.24
+      value: -120.51
       objectReference: {fileID: 0}
     - target: {fileID: 8289987184420709094, guid: 78aab99baef1afb41bc3ebe693bd70fe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -300517,6 +301984,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: Shelf
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!4 &5252618831252063181 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1273298433581576496, guid: 0d5df746bb0749449966315e41224d6c, type: 3}
@@ -301781,6 +303254,12 @@ MonoBehaviour:
   assignedItem: {fileID: 0}
   acceptsDisplayType: 
   placeAnimDuration: 0.25
+  autoFitProducts: 1
+  fillRatio: 0.9
+  heightRatio: 0.8
+  minFitScale: 0.6
+  maxFitScale: 2.5
+  createPriceLabels: 1
 --- !u!65 &8412306326610209252
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -302459,3 +303938,4 @@ SceneRoots:
   - {fileID: 102427013}
   - {fileID: 1295329106}
   - {fileID: 350838820}
+  - {fileID: 1112699423}
