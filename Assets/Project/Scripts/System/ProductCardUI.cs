@@ -48,7 +48,7 @@ public class ProductCardUI : MonoBehaviour
         itemData = data;
 
         // Calculate price per box = unit price * items per box
-        pricePerBox = itemData.unitPrice * itemData.itemsPerBox;
+        pricePerBox = itemData.BoxPrice;
 
         // Fill left UI info
         if (productNameText != null) productNameText.text = itemData.itemName;
@@ -56,7 +56,7 @@ public class ProductCardUI : MonoBehaviour
         if (iconImage != null && itemData.icon != null) iconImage.sprite = itemData.icon;
 
         if (displayTypeText != null) displayTypeText.text = itemData.displayType;
-        if (unitPriceText != null) unitPriceText.text = "$" + itemData.unitPrice.ToString("F2");
+        if (unitPriceText != null) unitPriceText.text = EconomyManager.Format(itemData.unitPrice);
         if (shelfCapacityText != null) shelfCapacityText.text = itemData.shelfCapacity.ToString();
         if (boxCapacityText != null) boxCapacityText.text = itemData.itemsPerBox.ToString();
 
@@ -86,13 +86,13 @@ public class ProductCardUI : MonoBehaviour
         if (amountText != null) amountText.text = currentBoxAmount.ToString();
 
         float total = pricePerBox * currentBoxAmount;
-        if (totalPriceText != null) totalPriceText.text = "$" + total.ToString("F2");
+        if (totalPriceText != null) totalPriceText.text = EconomyManager.Format(total);
     }
 
     // Hook this to the [Add To Cart] Button OnClick()
     public void OnAddToCartClicked()
     {
-        MarketManager manager = FindObjectOfType<MarketManager>();
+        MarketManager manager = MarketManager.Instance != null ? MarketManager.Instance : FindFirstObjectByType<MarketManager>();
         if (manager != null && itemData != null)
         {
             manager.AddToCart(itemData, currentBoxAmount);

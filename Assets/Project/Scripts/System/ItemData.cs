@@ -9,7 +9,8 @@ public enum ItemRarity
     Legendary
 }
 
-[CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
+/// <summary>Dữ liệu của một MẶT HÀNG (sữa, ngũ cốc...).</summary>
+[CreateAssetMenu(fileName = "New Item", menuName = "Supermarket/Product (ItemData)")]
 public class ItemData : ScriptableObject
 {
     public string itemName;
@@ -20,20 +21,34 @@ public class ItemData : ScriptableObject
 
     public ItemRarity rarity;
 
-    public bool isStackable;
-    public int maxStack;
+    // Không còn dùng (đã bỏ Inventory) - giữ lại để không mất dữ liệu cũ
+    [HideInInspector] public bool isStackable;
+    [HideInInspector] public int maxStack;
 
     [Header("Display Settings")]
-    public Vector3 itemScale = Vector3.one; // Tỷ lệ riêng khi hiển thị
-    public Vector3 shelfScale = Vector3.one; // Tỷ lệ chuẩn khi đặt lên kệ (Scale 1,1,1 hoặc to đẹp như gốc)
+    public Vector3 itemScale = Vector3.one;  // Tỷ lệ riêng khi hiển thị
+    public Vector3 shelfScale = Vector3.one; // Tỷ lệ khi đặt lên kệ (1,1,1 = kích thước gốc)
 
     [Header("Market UI Settings")]
-    public string brand;            // Brand name (e.g., Bio, Eco, Bourlait...)
-    public string displayType;      // Shelf type (e.g., "Shelf" or "Fridge")
-    public float unitPrice;         // Unit price for a single box (e.g., 1.99)
-    public int itemsPerBox;         // Number of boxes inside one crate (e.g., 12)
-    public int shelfCapacity;       // Max capacity of boxes on a shelf (e.g., 16)
+    public string brand;            // Thương hiệu (Vinamilk, Calbee...)
+    public string displayType;      // Loại kệ: "Shelf", "Fresh", "Fridge"...
+    [Tooltip("Giá NHẬP 1 món từ nhà cung cấp")]
+    public float unitPrice;
+    public int itemsPerBox;         // Số món trong 1 thùng
+    public int shelfCapacity;       // Sức chứa gợi ý trên kệ
+
+    [Header("Selling Price")]
+    [Tooltip("Giá bán lẻ thị trường cho 1 món. Để 0 = tự tính bằng giá nhập x 1.3")]
+    public float marketPrice;
 
     [Header("Market Delivery Settings")]
-    public GameObject cratePrefab;  // Prefab of the crate spawned when ordered
+    public GameObject cratePrefab;  // Thùng hàng được giao khi đặt mua
+    [Tooltip("(Tuỳ chọn) Prefab 1 món hàng để xếp lên kệ, dùng khi thùng chưa gán productPrefab")]
+    public GameObject productPrefab;
+
+    /// <summary>Giá nhập 1 thùng.</summary>
+    public float BoxPrice => unitPrice * Mathf.Max(1, itemsPerBox);
+
+    /// <summary>Giá bán lẻ thị trường cho 1 món.</summary>
+    public float MarketPrice => marketPrice > 0f ? marketPrice : Mathf.Round(unitPrice * 1.3f * 100f) / 100f;
 }

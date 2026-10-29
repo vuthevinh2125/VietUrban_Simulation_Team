@@ -338,7 +338,6 @@ GameObject:
   - component: {fileID: 7419541411034777463}
   - component: {fileID: 3452787835596037846}
   - component: {fileID: 8348672269077429441}
-  - component: {fileID: 7579912059622369605}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -436,19 +435,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7579912059622369605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2272825017192588710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaa3d64a0fef60841b79c54f7e6a0c8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryController
-  inventoryUI: {fileID: 0}
 --- !u!1 &2405564725590996065
 GameObject:
   m_ObjectHideFlags: 0
@@ -1995,7 +1981,6 @@ GameObject:
   - component: {fileID: 5635958474020109139}
   - component: {fileID: 3575570073364934477}
   - component: {fileID: 7328080714081445331}
-  - component: {fileID: 3332615821608321955}
   - component: {fileID: 4222272489529554248}
   m_Layer: 5
   m_Name: InventoryUI
@@ -2064,26 +2049,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3332615821608321955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6646815946577502056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29d5d7a88b408474fb7fa92bc5df18b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
-  inventoryManager: {fileID: 0}
-  itemsParent: {fileID: 1341358910776743301}
-  slotPrefab: {fileID: 7483718612200922366, guid: 18537ae4088fdbf4a87f4875d29a34dc, type: 3}
-  detailPanel: {fileID: 145905734624705798}
-  detailIcon: {fileID: 4086885354732465377}
-  detailName: {fileID: 8748257991419790052}
-  detailDescription: {fileID: 5868245916207091919}
-  dragIcon: {fileID: 4075630380164797223}
 --- !u!225 &4222272489529554248
 CanvasGroup:
   m_ObjectHideFlags: 0

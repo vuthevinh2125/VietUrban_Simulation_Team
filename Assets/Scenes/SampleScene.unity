@@ -594,19 +594,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 70723106414877125, guid: eb070747f0511a24aad45f57de2b6f51, type: 3}
   m_PrefabInstance: {fileID: 799650749}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5799915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5799911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdf7b41e184ea1348bff01adabceb8fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ComputerInteract
-  computerUI: {fileID: 321585522}
 --- !u!65 &5799916
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27563,6 +27550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dd201d79173cd6488b66a7071520206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIMouseControl
+  pauseGame: 0
+  debugLogs: 1
 --- !u!114 &321585527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27595,6 +27584,7 @@ MonoBehaviour:
   zoomPoint: {fileID: 1157908406}
   cameraFollowScript: {fileID: 321585531}
   uiCanvas: {fileID: 396881484}
+  openOnMouseClick: 0
 --- !u!65 &321585529
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27634,6 +27624,8 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 0
+  repeatStartDelay: 0.35
+  repeatInterval: 0.12
 --- !u!114 &321585531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34202,7 +34194,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &396881483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34258,8 +34250,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 396881481}
   m_LocalRotation: {x: 0.0052998266, y: -0.8732728, z: 0.009501332, w: 0.48711014}
-  m_LocalPosition: {x: 0, y: 0, z: 28.508}
-  m_LocalScale: {x: 0.0005, y: 0.0006, z: 0.0005}
+  m_LocalPosition: {x: 0, y: 0, z: 28.857233}
+  m_LocalScale: {x: 0.000066309454, y: 0.000066309454, z: 0.000066309454}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 321585523}
@@ -34267,7 +34259,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 1.247, y: -121.695, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -75.014, y: 1.477}
+  m_AnchoredPosition: {x: -93.934875, y: 1.4550887}
   m_SizeDelta: {x: 1181, y: 567}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &396881486
@@ -35417,7 +35409,6 @@ GameObject:
   - component: {fileID: 410087041}
   - component: {fileID: 410087040}
   - component: {fileID: 410087042}
-  - component: {fileID: 410087043}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -35534,18 +35525,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &410087043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 410087039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00cc8306567db63459628d92421e621d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
 --- !u!1001 &410250766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42757,8 +42736,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 536392034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.25964484}
-  m_AnchorMax: {x: 1, y: 0.99999917}
+  m_AnchorMin: {x: 0, y: 0.25964344}
+  m_AnchorMax: {x: 1, y: 0.9999968}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -71224,9 +71203,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 70723106414877125, guid: eb070747f0511a24aad45f57de2b6f51, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5799915}
-    - targetCorrespondingSourceObject: {fileID: 70723106414877125, guid: eb070747f0511a24aad45f57de2b6f51, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5799916}
   m_SourcePrefab: {fileID: 100100000, guid: eb070747f0511a24aad45f57de2b6f51, type: 3}
 --- !u!1001 &799896785
@@ -77164,6 +77140,7 @@ MonoBehaviour:
   doorModel: {fileID: 7094374841193013331}
   openRotationOffset: {x: 0, y: 90, z: 0}
   openDuration: 0.5
+  checkInterval: 0.15
 --- !u!1001 &857718742
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77444,17 +77421,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4558070733231408, guid: a9da80f587bbf9046aefc4a4cfb8a7fc, type: 3}
   m_PrefabInstance: {fileID: 859952870}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &860710572 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5037184969495788733, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
-  m_PrefabInstance: {fileID: 2216282967600931364}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603969941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28e680b7d0c2f4247b07d01cbac6e5e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
 --- !u!114 &860710575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77467,11 +77433,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe07ccc75e4c1244783e621fda41885d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarketManager
-  playerMoney: 1000
   moneyText: {fileID: 0}
   cartTotalText: {fileID: 0}
+  statusText: {fileID: 0}
   deliveryPoint: {fileID: 1654945054}
+  snapToGround: 1
   fixedGroundY: 1.5
+  dropHeight: 0.4
+  boxesPerRow: 3
+  rowsPerLayer: 3
+  boxSpacing: 0.7
+  layerHeight: 0.6
 --- !u!114 &860710578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77486,25 +77458,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   currentDay: 1
   realSecondsPerDay: 60
-  currentMoney: 10000
-  dailyCost: 1500
+  openingHour: 8
+  closingHour: 18
   dayTextUI: {fileID: 585513237597887582}
   moneyTextUI: {fileID: 6566579155271609670}
   timeTextUI: {fileID: 267260424}
   gameOverPanel: {fileID: 0}
   interactTextUI: {fileID: 2274704328668370191}
---- !u!114 &860710579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603969941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59d920e3b83436f428c8b34ddd432230, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DailyReportManager
+  allowSkipDayKey: 1
+  skipDayKey: 116
 --- !u!1001 &860870693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89082,6 +89044,9 @@ MonoBehaviour:
   - {fileID: 1607241165}
   - {fileID: 1934413701}
   - {fileID: 1741022775}
+  assignedItem: {fileID: 0}
+  acceptsDisplayType: 
+  placeAnimDuration: 0.25
 --- !u!4 &995640581 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7533038090828063015, guid: 0510e29d71c1ad04cab7e1aa4b9b62cc, type: 3}
@@ -108119,15 +108084,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4472625255097054351, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -75.001
+      value: -93.995
       objectReference: {fileID: 0}
     - target: {fileID: 4472625255097054351, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2555518
+      value: 1.433
       objectReference: {fileID: 0}
     - target: {fileID: 4472625255097054351, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 28.858
+      value: 28.826
       objectReference: {fileID: 0}
     - target: {fileID: 4472625255097054351, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
       propertyPath: m_LocalRotation.w
@@ -108160,6 +108125,10 @@ PrefabInstance:
     - target: {fileID: 4472625255097542831, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
       propertyPath: m_Name
       value: Mouse
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472625255097542831, guid: 98816223f7f24fc47ab1ac9c8efdb1ff, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -110950,8 +110919,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 483881935}
   m_HandleRect: {fileID: 483881934}
   m_Direction: 2
-  m_Value: 0.9999969
-  m_Size: 0.74035436
+  m_Value: 0.9999876
+  m_Size: 0.74035335
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -114681,6 +114650,9 @@ MonoBehaviour:
   - {fileID: 2108490157}
   - {fileID: 169069334}
   - {fileID: 1827710695}
+  assignedItem: {fileID: 0}
+  acceptsDisplayType: 
+  placeAnimDuration: 0.25
 --- !u!65 &1265289201
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -134303,7 +134275,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40, y: 0.00045776367}
+  m_AnchoredPosition: {x: 40, y: 0.0071973186}
   m_SizeDelta: {x: 0, y: 530}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1439627195
@@ -154135,7 +154107,7 @@ Transform:
   m_GameObject: {fileID: 1654945052}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -77.578, y: 0.303, z: 16.83}
+  m_LocalPosition: {x: -117.05, y: 0.303, z: 16.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -155123,6 +155095,9 @@ MonoBehaviour:
   - {fileID: 1881747415}
   - {fileID: 1276981945}
   - {fileID: 983866858}
+  assignedItem: {fileID: 0}
+  acceptsDisplayType: 
+  placeAnimDuration: 0.25
 --- !u!4 &1662232641 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7533038090828063015, guid: 0510e29d71c1ad04cab7e1aa4b9b62cc, type: 3}
@@ -179304,6 +179279,8 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 128
+  repeatStartDelay: 0.35
+  repeatInterval: 0.12
 --- !u!1 &1925645972
 GameObject:
   m_ObjectHideFlags: 0
@@ -187843,7 +187820,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4831036451404745908, guid: 3c2acea7868ab8144a032fd6d3d8e498, type: 3}
       propertyPath: m_TagString
-      value: Thief
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 5206331193645192718, guid: 3c2acea7868ab8144a032fd6d3d8e498, type: 3}
       propertyPath: m_LocalPosition.x
@@ -202405,9 +202382,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7254705416575136036, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 860710578}
-    - targetCorrespondingSourceObject: {fileID: 7254705416575136036, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 860710579}
   m_SourcePrefab: {fileID: 100100000, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
 --- !u!114 &2274704328668370191 stripped
 MonoBehaviour:
@@ -202566,7 +202540,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 176971434410079293, guid: 2062362e31ca4f44caac6a0c267d14fb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -125.67
+      value: -123.38
       objectReference: {fileID: 0}
     - target: {fileID: 176971434410079293, guid: 2062362e31ca4f44caac6a0c267d14fb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -202574,7 +202548,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 176971434410079293, guid: 2062362e31ca4f44caac6a0c267d14fb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 29.284
+      value: 27.478
       objectReference: {fileID: 0}
     - target: {fileID: 176971434410079293, guid: 2062362e31ca4f44caac6a0c267d14fb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -204630,7 +204604,7 @@ PrefabInstance:
     - target: {fileID: 3332615821608321955, guid: 9c02824cfa664f443825f398e57dd2cb, type: 3}
       propertyPath: inventoryManager
       value: 
-      objectReference: {fileID: 860710572}
+      objectReference: {fileID: 0}
     - target: {fileID: 3763743489054870304, guid: 9c02824cfa664f443825f398e57dd2cb, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -204973,6 +204947,9 @@ MonoBehaviour:
   - {fileID: 1208951062}
   - {fileID: 1870112571}
   - {fileID: 1429925862}
+  assignedItem: {fileID: 0}
+  acceptsDisplayType: 
+  placeAnimDuration: 0.25
 --- !u!65 &8412306326610209252
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -661,7 +661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   promptMessage: Pick up box
-  itemData: {fileID: 0}
+  itemData: {fileID: 11400000, guid: 551b38abc70ac754fbc26ff437955b1f, type: 2}
   productPrefab: {fileID: 3716499716123698661}
   productCount: 16
   visualItems:

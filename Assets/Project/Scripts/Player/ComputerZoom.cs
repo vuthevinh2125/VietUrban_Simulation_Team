@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// (Tuỳ chọn) Hiệu ứng đưa camera zoom vào màn hình máy tính.
+/// - Không còn tự bật khi click chuột (trước đây bấm nút trên UI cũng kích hoạt nhầm).
+/// - Nếu object bị tắt giữa chừng, camera luôn được trả về nhân vật ngay lập tức.
+/// </summary>
 public class ComputerZoom : MonoBehaviour
 {
     public Camera playerCam;
@@ -10,48 +15,54 @@ public class ComputerZoom : MonoBehaviour
     [Header("Kéo 3D_Computer_Canvas vào đây")]
     public Canvas uiCanvas;
 
+    [Tooltip("Bật nếu muốn click chuột trực tiếp vào object này để zoom (mặc định TẮT vì dễ bấm nhầm khi dùng UI)")]
+    public bool openOnMouseClick = false;
+
     private Vector3 normalLocalPos;
     private Quaternion normalLocalRot;
     private Transform originalParent;
     private bool isZoomed = false;
 
+    public bool IsZoomed => isZoomed;
+
     void Update()
     {
-        if (isZoomed)
-        {
-            if (uiCanvas != null && playerCam != null)
-            {
-                uiCanvas.worldCamera = playerCam;
-            }
+        if (!isZoomed) return;
 
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+        if (uiCanvas != null && playerCam != null)
+            uiCanvas.worldCamera = playerCam;
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                ToggleComputer();
-            }
-        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            ToggleComputer();
     }
 
     void OnMouseDown()
     {
-        if (!isZoomed)
-        {
+        if (openOnMouseClick && !isZoomed && !UIState.IsBlockingUIOpen)
             ToggleComputer();
-        }
     }
 
     public void ToggleComputer()
     {
+        if (playerCam == null || zoomPoint == null)
+        {
+            Debug.LogWarning("[ComputerZoom] Chưa gán Player Cam hoặc Zoom Point.", this);
+            return;
+        }
+
         isZoomed = !isZoomed;
-        ItemPickup.isComputerOpen = isZoomed;
+        if (isZoomed) UIState.Open(this); else UIState.Close(this);
 
         if (cameraFollowScript != null)
             cameraFollowScript.enabled = !isZoomed;
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = !isZoomed;
+
+        StopAllCoroutines();
 
         if (isZoomed)
         {
@@ -60,18 +71,36 @@ public class ComputerZoom : MonoBehaviour
             normalLocalRot = playerCam.transform.localRotation;
 
             playerCam.transform.SetParent(null);
-
-            StopAllCoroutines();
             StartCoroutine(TransitionToComputer(zoomPoint.position, zoomPoint.rotation));
         }
         else
         {
-            StopAllCoroutines();
             StartCoroutine(TransitionBackToPlayer());
-
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
+    }
+
+    /// <summary>Bị tắt giữa chừng (ví dụ nút X tắt cả ComputerUI): trả camera về ngay.</summary>
+    void OnDisable()
+    {
+        if (!isZoomed) return;
+
+        isZoomed = false;
+        StopAllCoroutines();
+        RestoreCameraInstantly();
+
+        if (cameraFollowScript != null) cameraFollowScript.enabled = true;
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+
+        UIState.Close(this);
+    }
+
+    private void RestoreCameraInstantly()
+    {
+        if (playerCam == null) return;
+        playerCam.transform.SetParent(originalParent);
+        playerCam.transform.localPosition = normalLocalPos;
+        playerCam.transform.localRotation = normalLocalRot;
     }
 
     IEnumerator TransitionToComputer(Vector3 targetPos, Quaternion targetRot)
@@ -82,7 +111,7 @@ public class ComputerZoom : MonoBehaviour
         float t = 0;
         while (t < 1)
         {
-            t += Time.deltaTime * 4f;
+            t += Time.unscaledDeltaTime * 4f;
             playerCam.transform.position = Vector3.Lerp(startPos, targetPos, t);
             playerCam.transform.rotation = Quaternion.Lerp(startRot, targetRot, t);
             yield return null;
@@ -102,13 +131,12 @@ public class ComputerZoom : MonoBehaviour
         float t = 0;
         while (t < 1)
         {
-            t += Time.deltaTime * 4f;
+            t += Time.unscaledDeltaTime * 4f;
             playerCam.transform.localPosition = Vector3.Lerp(startPos, normalLocalPos, t);
             playerCam.transform.localRotation = Quaternion.Lerp(startRot, normalLocalRot, t);
             yield return null;
         }
 
-        playerCam.transform.localPosition = normalLocalPos;
-        playerCam.transform.localRotation = normalLocalRot;
+        RestoreCameraInstantly();
     }
 }

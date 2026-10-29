@@ -65,9 +65,6 @@ PrefabInstance:
       addedObject: {fileID: 8169598827658387770}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ccd6878475db5459f23d862ad30ecf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8004923055108070222}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ccd6878475db5459f23d862ad30ecf, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2516229200808053558}
   m_SourcePrefab: {fileID: 100100000, guid: d8ccd6878475db5459f23d862ad30ecf, type: 3}
 --- !u!1 &2889476164039202934 stripped
@@ -97,21 +94,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 8
   m_ObstacleAvoidanceType: 4
---- !u!114 &8004923055108070222
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2889476164039202934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 550712dabe9bbe54a9646a8edede7598, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NPCWander
-  wanderRadius: 15
-  minWaitTime: 2
-  maxWaitTime: 5
 --- !u!136 &2516229200808053558
 CapsuleCollider:
   m_ObjectHideFlags: 0
