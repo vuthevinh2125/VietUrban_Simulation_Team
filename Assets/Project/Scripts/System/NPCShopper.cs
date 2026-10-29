@@ -41,6 +41,10 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Đi quá thời gian này mà chưa tới nơi thì dịch chuyển tới luôn (chống kẹt)")]
     public float moveTimeout = 25f;
 
+    [Header("Debug")]
+    [Tooltip("Ghi log mỗi khi khách đổi trạng thái / đi tới đâu")]
+    public bool debugLogs = true;
+
     public IReadOnlyList<ItemData> Basket => basket;
 
     private NavMeshAgent agent;
@@ -93,12 +97,12 @@ public class NPCShopper : MonoBehaviour
 
         if (entrancePoint != null)
         {
-            currentState = NPCState.Entering;
+            SetState(NPCState.Entering);
             yield return MoveTo(entrancePoint.position);
         }
 
         // --- Mua sắm ---
-        currentState = NPCState.Shopping;
+        SetState(NPCState.Shopping);
         int wanted = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
         var visited = new HashSet<Shelf>();
         int attempts = 0;
@@ -131,15 +135,15 @@ public class NPCShopper : MonoBehaviour
         if (basket.Count > 0) yield return CheckoutRoutine();
 
         // --- Ra về ---
-        currentState = NPCState.Leaving;
+        SetState(NPCState.Leaving);
         if (exitDoor != null) yield return MoveTo(exitDoor.position);
-        currentState = NPCState.Done;
+        SetState(NPCState.Done);
         Destroy(gameObject);
     }
 
     private IEnumerator CheckoutRoutine()
     {
-        currentState = NPCState.GoToCheckout;
+        SetState(NPCState.GoToCheckout);
         counter = CheckoutCounter.FindBest(transform.position);
         if (counter == null)
         {
@@ -156,7 +160,7 @@ public class NPCShopper : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        currentState = NPCState.Queueing;
+        SetState(NPCState.Queueing);
         float firstSince = -1f;
 
         while (!paid)
@@ -179,7 +183,7 @@ public class NPCShopper : MonoBehaviour
                 }
                 if (arrived)
                 {
-                    currentState = NPCState.Paying;
+                    SetState(NPCState.Paying);
                     Face(counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.transform.position);
                     counter.StartCheckout(this, basket);
                 }
@@ -205,12 +209,25 @@ public class NPCShopper : MonoBehaviour
         counter = null;
     }
 
+    private void SetState(NPCState state)
+    {
+        if (debugLogs && currentState != state)
+            Debug.Log($"[Customer] {name}: {currentState} -> {state} at {transform.position:F1} (basket {basket.Count})", this);
+        currentState = state;
+    }
+
     // ================= Di chuyển =================
     private IEnumerator MoveTo(Vector3 target)
     {
         if (!agent.isOnNavMesh) yield break;
 
         Vector3 dest = Sample(target);
+        if (debugLogs)
+        {
+            var test = new NavMeshPath();
+            agent.CalculatePath(dest, test);
+            Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
+        }
         agent.isStopped = false;
         agent.SetDestination(dest);
 
