@@ -322,6 +322,7 @@ public class CheckoutCounter : MonoBehaviour
         float total = DueCents / 100f;
         EconomyManager.Instance.RecordSale(total, scannedCount, $"Customer paid {scannedCount} item(s) by {Method}");
         if (lostCents > 0) EconomyManager.Instance.Charge(lostCents / 100f, MoneyCategory.Other, "Too much change given");
+        StoreProgress.AddXP(StoreProgress.XPForSale(total, scannedCount));
         Debug.Log($"[Checkout] Khách trả {EconomyManager.Format(total)} cho {scannedCount} món ({Method})" +
                   (lostCents > 0 ? $", thối dư mất {EconomyManager.Format(lostCents / 100f)}." : "."));
         if (paySound != null)
