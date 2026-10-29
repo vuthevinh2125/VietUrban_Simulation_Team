@@ -10,8 +10,22 @@ public class ShoppingCarrier : MonoBehaviour
 {
     [Tooltip("Khách định mua từ chừng này món trở lên thì đẩy xe")]
     public int cartFromItems = 4;
+    [Tooltip("Dùng khi model không phải Humanoid (không tìm được xương bàn tay): vị trí giỏ so với khách")]
     public Vector3 basketOffset = new Vector3(0.26f, 0.5f, 0.12f);
+    [Tooltip("Giỏ treo dưới bàn tay phải: dịch ra ngoài (m) để không cấn chân")]
+    public float basketOutward = 0.06f;
     public float cartGap = 0.35f;
+
+    [Header("Lòng xe đẩy (tỉ lệ theo kích thước xe)")]
+    [Tooltip("Đáy lòng xe ở độ cao bao nhiêu phần chiều cao xe")]
+    [Range(0f, 1f)] public float cartFloor = 0.56f;
+    [Tooltip("Dịch tâm lòng xe theo chiều dài xe (âm = về phía tay đẩy / người)")]
+    [Range(-0.5f, 0.5f)] public float cartCenterZ = -0.06f;
+    [Range(0.1f, 1f)] public float cartWidth = 0.6f;
+    [Range(0.1f, 1f)] public float cartLength = 0.5f;
+
+    private Transform hand;
+    private float basketHeight;
 
     private Transform container;
     private Bounds inner;          // lòng giỏ / xe, toạ độ của container
@@ -34,16 +48,41 @@ public class ShoppingCarrier : MonoBehaviour
         {
             container.localPosition = new Vector3(0f, 0f, cartGap + b.size.z * 0.5f);
             container.localRotation = Quaternion.identity;
+            float floorY = b.min.y + b.size.y * cartFloor;
+            inner = new Bounds(
+                new Vector3(b.center.x, floorY, b.center.z + b.size.z * cartCenterZ),
+                new Vector3(b.size.x * cartWidth, b.size.y * 0.35f, b.size.z * cartLength));
         }
         else
         {
-            container.localPosition = basketOffset;
-            container.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            // Giỏ xách: treo dưới bàn tay phải (cập nhật mỗi frame theo xương tay của animation)
+            Animator anim = GetComponentInChildren<Animator>();
+            if (anim != null && anim.isHuman) hand = anim.GetBoneTransform(HumanBodyBones.RightHand);
+            if (hand != null) container.SetParent(null, true);
+            else
+            {
+                container.localPosition = basketOffset;
+                container.localRotation = Quaternion.identity;
+            }
+            basketHeight = b.size.y;
+            inner = new Bounds(new Vector3(b.center.x, b.min.y + b.size.y * 0.1f, b.center.z),
+                               new Vector3(b.size.x * 0.75f, b.size.y * 0.6f, b.size.z * 0.75f));
+            LateUpdate();
         }
+    }
 
-        // Lòng chứa hàng: phần trên của giỏ / xe, thu vào cho khỏi xuyên thành
-        float floorY = isCart ? b.min.y + b.size.y * 0.45f : b.min.y + b.size.y * 0.12f;
-        inner = new Bounds(new Vector3(b.center.x, floorY, b.center.z), new Vector3(b.size.x * 0.7f, b.size.y * 0.4f, b.size.z * 0.6f));
+    void LateUpdate()
+    {
+        if (container == null || hand == null) return;
+        // Quai giỏ nằm trong lòng bàn tay, giỏ treo thẳng đứng, chiều dài giỏ theo hướng đi
+        container.SetPositionAndRotation(
+            hand.position + Vector3.down * (basketHeight * 1.05f) + transform.right * basketOutward,
+            Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+    }
+
+    void OnDestroy()
+    {
+        if (container != null && hand != null) Destroy(container.gameObject); // giỏ không còn là con của khách
     }
 
     /// <summary>Thêm 1 món vào giỏ / xe (chỉ để nhìn).</summary>
