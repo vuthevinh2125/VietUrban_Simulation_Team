@@ -35,6 +35,9 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Thành phố | Khu phố mới phía đông (gấp đôi bản đồ): 8 tuyến đường có tên, ngã tư vạch qua đường, 12 khu nhà, ~70 toà nhà có số nhà để giao hàng, đèn đường tự bật ban đêm |
 | Bản đồ | Minimap tròn (xoay theo hướng nhìn) + bản đồ lớn **[M]**: đánh dấu cửa hàng, gói hàng / chỗ giao, kẻ trộm, bảo vệ; vẽ lộ trình đường đi tới chỗ giao hàng |
 | Ngày / đêm | Mặt trời mọc / lặn theo giờ trong game, chiều tà ngả cam, tối có ánh trăng, đèn xe tự bật |
+| Thời tiết & 4 mùa | Lịch thật (Xuân / Hạ / Thu / Đông theo tháng); mỗi ngày tung thời tiết theo mùa: nắng, nhiều mây, mưa, bão (sấm chớp), sương mù; mưa không lọt vào trong nhà, cây đổi màu theo mùa; mưa bão ít khách hơn nhưng giao hàng được thưởng thêm; HUD hiện ngày, mùa, thời tiết, nhiệt độ |
+| Giao thông & người đi bộ | ~14 xe máy / ô tô chạy đúng làn bên phải, rẽ ở ngã tư, dừng khi có xe / người phía trước; người đi bộ dạo vỉa hè, vào ra các toà nhà, mưa và ban đêm thì vắng hơn |
+| Thống kê kinh doanh | Tab **Stats** trên máy tính: biểu đồ doanh thu / chi phí / lãi theo **ngày, tuần, tháng**; click cột để xem chi tiết từng khoản, số khách, chi tiêu trung bình, ngày tốt nhất, top 5 sản phẩm; lưu cùng file save |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
 | Menu | Menu chính, tạm dừng, cài đặt (độ nhạy chuột, âm lượng, đồ hoạ, toàn màn hình, bóng đèn), Game Over |
 | Âm thanh | Nhạc nền, tiếng quét mã, tiền, thẻ, cửa tự động, thùng, xếp hàng, click giao diện, lên cấp |
@@ -75,14 +78,14 @@ Phím test (chỉ trong Unity Editor): **F7** +$1000 · **F8** lên 1 cấp · *
 | Thư mục | Nội dung chính |
 |---|---|
 | `Core/` | `UIState` (khoá điều khiển khi mở giao diện), `GameSettings`, `GameSession`, `AudioManager`, `GameDebug` |
-| `Economy/` | `EconomyManager` (ví tiền, sổ sách, báo cáo ngày), `PriceManager`, `MarketPrices`, `StockManager`, `StoreProgress`, `LicenseManager` |
+| `Economy/` | `EconomyManager` (ví tiền, sổ sách, báo cáo ngày), `BusinessStats` (thống kê ngày / tuần / tháng), `PriceManager`, `MarketPrices`, `StockManager`, `StoreProgress`, `LicenseManager` |
 | `System/` | `GameManager` (ngày / giờ / mở cửa), `MarketManager` (đặt hàng), `ShopCatalog`, `ComputerInteract`, `NPCShopper` (AI khách), `StaffManager`, `SaveManager`, `StoreSign`, cửa tự động |
 | `Checkout/` | `CheckoutCounter` (hàng chờ, quét hàng), `PaymentPanel` / `PaymentToken` (tiền mặt, thẻ), `LockedCheckout` (quầy mở rộng) |
 | `item_Building/` | `Shelf` (ô xếp hàng), `ShelfPriceLabels`, `StorageRack` (kệ kho), nội thất: `FurnitureData`, `FurnitureBox`, `FurniturePlacer`, `PlacedFurniture`, `BuiltInFurniture` |
 | `Customer/` | `CustomerSpawner`, `Restocker` (AI nhân viên xếp kệ), `ShoppingCarrier` (giỏ / xe đẩy) |
 | `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng), `PlayerTools` (chổi, gậy) |
-| `System/` (mới) | `StoreExpansion`, `DirtManager`, `StoreGuard`, `DeliveryManager`, `DayNightCycle` |
-| `UI/` | `MinimapSystem`, `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `DayReportPanel`, `UIKit` |
+| `System/` (mới) | `StoreExpansion`, `DirtManager`, `StoreGuard`, `DeliveryManager`, `DayNightCycle`, `WeatherSystem`, `TrafficSystem`, `PedestrianSystem` |
+| `UI/` | `MinimapSystem`, `StatsPanel`, `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `DayReportPanel`, `UIKit` |
 
 Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockChanged`, `OnPriceChanged`, `OnNewDay`…), giao diện bảng phụ được dựng bằng code nên không cần prefab.
 
