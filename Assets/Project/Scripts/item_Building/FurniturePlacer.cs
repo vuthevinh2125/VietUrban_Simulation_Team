@@ -29,7 +29,8 @@ public class FurniturePlacer : MonoBehaviour
 
     private FurnitureData placingData;     // đang lắp món mới
     private FurnitureBox placingBox;
-    private PlacedFurniture moving;        // đang dời món cũ
+    private Transform moving;              // đang dời món cũ (nội thất đã mua hoặc kệ có sẵn)
+    private string movingName;
     private Vector3 movingOldPos;
     private Quaternion movingOldRot;
 
@@ -75,8 +76,21 @@ public class FurniturePlacer : MonoBehaviour
 
     public void BeginMove(PlacedFurniture furniture)
     {
+        if (furniture == null) return;
+        BeginMove(furniture.transform, furniture.data != null ? furniture.data.displayName : furniture.name);
+    }
+
+    public void BeginMove(BuiltInFurniture furniture)
+    {
+        if (furniture == null) return;
+        BeginMove(furniture.transform, furniture.DisplayName);
+    }
+
+    private void BeginMove(Transform furniture, string displayName)
+    {
         if (IsBusy || furniture == null) return;
         moving = furniture;
+        movingName = displayName;
         startFrame = Time.frameCount;
         movingOldPos = furniture.transform.position;
         movingOldRot = furniture.transform.rotation;
@@ -99,7 +113,7 @@ public class FurniturePlacer : MonoBehaviour
 
         UpdateGhost();
 
-        string name = placingData != null ? placingData.displayName : (moving.data != null ? moving.data.displayName : moving.name);
+        string name = placingData != null ? placingData.displayName : movingName;
         string cancel = placingData != null ? "[E] Drop box" : "[F] Cancel";
         string place = valid ? "[Click LMB] Place" : "<color=#FF6B6B>Can't place here</color>";
         hands.SetPrompt($"{name}\n{place}   [Hold LMB + drag] Rotate   [Q/R] 90°   {cancel}");
@@ -198,9 +212,10 @@ public class FurniturePlacer : MonoBehaviour
         }
         else
         {
-            moving.transform.SetPositionAndRotation(ghostPos, rot);
+            moving.SetPositionAndRotation(ghostPos, rot);
             moving.gameObject.SetActive(true);
             RebuildLabels(moving.gameObject);
+            AudioManager.Play("place_item", 0.7f);
         }
         EndMode();
     }
@@ -218,7 +233,7 @@ public class FurniturePlacer : MonoBehaviour
 
     private void CancelMove()
     {
-        moving.transform.SetPositionAndRotation(movingOldPos, movingOldRot);
+        moving.SetPositionAndRotation(movingOldPos, movingOldRot);
         moving.gameObject.SetActive(true);
         EndMode();
     }

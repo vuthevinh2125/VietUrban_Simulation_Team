@@ -23,6 +23,7 @@ public class SaveManager : MonoBehaviour
     [Serializable] public class FurnitureEntry { public string data; public Vector3 pos; public Quaternion rot; public string item; public int count; }
     [Serializable] public class BoxEntry { public string item; public int count; public Vector3 pos; public Quaternion rot; }
     [Serializable] public class FurnitureBoxEntry { public string data; public Vector3 pos; public Quaternion rot; }
+    [Serializable] public class BuiltInEntry { public string id; public Vector3 pos; public Quaternion rot; }
 
     [Serializable]
     public class SaveData
@@ -43,6 +44,8 @@ public class SaveManager : MonoBehaviour
         public List<string> expansions = new List<string>();
         public int cashiers;
         public int restockers;
+        public int guards;
+        public List<BuiltInEntry> builtins = new List<BuiltInEntry>();
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
     }
 
@@ -121,6 +124,7 @@ public class SaveManager : MonoBehaviour
             expansions = StoreExpansion.GetUnlockedIds(),
             cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
             restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
+            guards = StaffManager.Instance != null ? StaffManager.Instance.GuardCount : 0,
             market = MarketPrices.Export()
         };
 
@@ -145,6 +149,15 @@ public class SaveManager : MonoBehaviour
         foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             if (pf.data != null && pf.GetComponent<Shelf>() == null)
                 d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation });
+
+        // Kệ có sẵn đã bị dời (người chơi tự sắp xếp, hoặc phần mở rộng dời ra tường mới)
+        foreach (BuiltInFurniture b in BuiltInFurniture.All)
+        {
+            if (b == null) continue;
+            Transform t = b.transform;
+            if (Vector3.Distance(t.position, b.HomePosition) < 0.01f && Quaternion.Angle(t.rotation, b.HomeRotation) < 0.5f) continue;
+            d.builtins.Add(new BuiltInEntry { id = b.Id, pos = t.position, rot = t.rotation });
+        }
 
         foreach (Interactable box in StockManager.Boxes)
         {
@@ -191,8 +204,18 @@ public class SaveManager : MonoBehaviour
         foreach (PriceEntry p in d.prices)
             if (items.TryGetValue(p.item, out ItemData it)) PriceManager.SetSellPrice(it, p.price); else missing++;
 
+        // Kệ có sẵn về chỗ cũ, mở lại phần mở rộng (dời kệ sát tường ra tường mới), rồi đặt kệ theo vị trí đã lưu
+        foreach (BuiltInFurniture b in BuiltInFurniture.All)
+            if (b != null) b.transform.SetPositionAndRotation(b.HomePosition, b.HomeRotation);
         // Phần mở rộng (nhà kho, phòng mới) mở lại trước, để kệ / thùng trong đó được tìm thấy
         StoreExpansion.LoadUnlocked(d.expansions);
+        if (d.builtins != null)
+            foreach (BuiltInEntry e in d.builtins)
+            {
+                BuiltInFurniture b = BuiltInFurniture.Find(e.id);
+                if (b != null) b.transform.SetPositionAndRotation(e.pos, e.rot);
+                else missing++;
+            }
 
         // Xoá trạng thái hiện tại: khách, hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
         for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)
@@ -206,7 +229,7 @@ public class SaveManager : MonoBehaviour
         foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             Destroy(fb.gameObject);
 
-        // Kệ có sẵn trong cửa hàng: nhận ra bằng VỊ TRÍ (kệ có sẵn không bao giờ di chuyển),
+        // Kệ có sẵn trong cửa hàng: nhận ra bằng VỊ TRÍ (đã đặt lại đúng chỗ đã lưu ở trên),
         // đường dẫn trong Hierarchy chỉ để dự phòng vì thứ tự object có thể đổi khi chơi
         var sceneShelves = new List<Shelf>();
         foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -273,7 +296,11 @@ public class SaveManager : MonoBehaviour
         }
 
         LockedCheckout.LoadUnlocked(d.checkouts); // mở lại các quầy đã mua TRƯỚC khi xếp thu ngân
-        if (StaffManager.Instance != null) StaffManager.Instance.LoadCounts(d.cashiers, d.restockers);
+        if (StaffManager.Instance != null)
+        {
+            StaffManager.Instance.LoadCounts(d.cashiers, d.restockers);
+            StaffManager.Instance.LoadGuards(d.guards);
+        }
 
         StockManager.NotifyChanged();
         Debug.Log($"[Save] Đã nạp ngày {d.day} (lưu lúc {d.savedAt}): {EconomyManager.Format(d.money)}, cấp {d.level}" +

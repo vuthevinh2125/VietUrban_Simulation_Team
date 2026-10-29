@@ -277,6 +277,56 @@ public static class ExpansionBuilderTool
         return m;
     }
 
+    // ================= 18. Kệ có sẵn dời được =================
+    /// <summary>
+    /// Cho phép người chơi dời kệ / tủ có sẵn trong cửa hàng (phím F): gắn BuiltInFurniture, bỏ Batching Static
+    /// (mesh gộp tĩnh không đi theo transform), thay phần NavMesh nướng sẵn bằng NavMeshObstacle. Xong nhớ Bake NavMesh.
+    /// </summary>
+    [MenuItem("Tools/Store Setup/18. Make Built-in Furniture Movable")]
+    public static void MakeBuiltInMovable()
+    {
+        Transform furnitureRoot = GameObject.Find(StoreRoot)?.transform.Find("Furniture");
+        if (furnitureRoot == null) { Dialog("Built-in furniture", $"Không tìm thấy '{StoreRoot}/Furniture' trong scene."); return; }
+        int count = 0;
+        foreach (Transform f in furnitureRoot)
+        {
+            if (f.GetComponentInChildren<CheckoutCounter>(true) != null || f.GetComponentInChildren<LockedCheckout>(true) != null) continue;
+            if (!TryWorldBounds(new[] { f.gameObject }, out _)) continue;
+            if (f.GetComponent<BuiltInFurniture>() == null) Undo.AddComponent<BuiltInFurniture>(f.gameObject);
+            MakeMovable(f);
+            count++;
+        }
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        Dialog("Built-in furniture", $"{count} kệ / tủ có sẵn giờ dời được bằng phím F.\n\nBƯỚC TIẾP: chọn 'NavMesh Manager' > Bake, rồi Ctrl+S.");
+    }
+
+    /// <summary>Bỏ Batching Static, không nướng vào NavMesh mà dùng NavMeshObstacle (dời đi vẫn đúng đường đi).</summary>
+    private static void MakeMovable(Transform f)
+    {
+        foreach (Transform ch in f.GetComponentsInChildren<Transform>(true))
+        {
+            StaticEditorFlags flags = GameObjectUtility.GetStaticEditorFlags(ch.gameObject);
+            if ((flags & StaticEditorFlags.BatchingStatic) != 0)
+            {
+                Undo.RecordObject(ch.gameObject, "Static flags");
+                GameObjectUtility.SetStaticEditorFlags(ch.gameObject, flags & ~StaticEditorFlags.BatchingStatic);
+            }
+        }
+        NavMeshModifier fm = f.GetComponent<NavMeshModifier>();
+        if (fm == null) fm = Undo.AddComponent<NavMeshModifier>(f.gameObject);
+        fm.ignoreFromBuild = true;
+        NavMeshObstacle fo = f.GetComponent<NavMeshObstacle>();
+        if (fo == null) fo = Undo.AddComponent<NavMeshObstacle>(f.gameObject);
+        Bounds flb = LocalBounds(f.gameObject);
+        Vector3 fls = f.lossyScale;
+        fo.shape = NavMeshObstacleShape.Box;
+        fo.center = Div(flb.center, fls);
+        fo.size = Vector3.Max(Div(flb.size, fls), Vector3.one * 0.05f);
+        fo.carving = true;
+        fo.carveOnlyStationary = true;
+        if (PrefabUtility.IsPartOfPrefabInstance(f)) { PrefabUtility.RecordPrefabInstancePropertyModifications(fm); PrefabUtility.RecordPrefabInstancePropertyModifications(fo); }
+    }
+
     // ================= Dựng phòng =================
     /// <summary>Phòng chữ nhật trong toạ độ của root: gốc ở giữa mép trước, +Z vào trong. Sàn ở y = 0.</summary>
     private static void BuildRoom(Transform root, float width, float depth, bool frontWall, bool frontDoor, out float wallHeight)

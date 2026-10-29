@@ -51,6 +51,7 @@ public class ItemPickup : MonoBehaviour
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit, pickupRange, interactableLayer, QueryTriggerInteraction.Ignore);
 
         if (TryCatchThief()) return; // ưu tiên bắt trộm, kể cả khi đang cầm thùng
+        if (currentItem == null && TryMoveBuiltIn(ray, hasHit, hit)) return;
         if (currentItem == null) HandleEmptyHands(hasHit, hit);
         else HandleHoldingBox(hasHit, hit);
     }
@@ -83,6 +84,26 @@ public class ItemPickup : MonoBehaviour
 
         // Tay không thì không bắt được: phải cầm gậy (phím 3) rồi vung trúng kẻ trộm
         SetPrompt("<color=#FF6B6B>Thief! Press [3] to grab the bat, then swing [LMB]!</color>");
+        return true;
+    }
+
+    /// <summary>
+    /// Kệ / tủ có sẵn nằm ở layer thường (không phải Interactable): tia xét mọi layer, trúng kệ có sẵn
+    /// (và không có vật Interactable nào gần hơn) thì cho dời bằng [F].
+    /// </summary>
+    private bool TryMoveBuiltIn(Ray ray, bool hasHit, RaycastHit interactHit)
+    {
+        if (!Physics.Raycast(ray, out RaycastHit any, pickupRange, ~0, QueryTriggerInteraction.Ignore)) return false;
+        if (hasHit && interactHit.distance <= any.distance + 0.05f) return false; // vật Interactable được ưu tiên
+        if (((1 << any.collider.gameObject.layer) & interactableLayer.value) != 0) return false;
+        BuiltInFurniture builtIn = any.collider.GetComponentInParent<BuiltInFurniture>();
+        if (builtIn == null) return false;
+        SetPrompt($"{builtIn.DisplayName}   [F] Move");
+        if (Input.GetKeyDown(KeyCode.F) && FurniturePlacer.Instance != null)
+        {
+            SetPrompt(null);
+            FurniturePlacer.Instance.BeginMove(builtIn);
+        }
         return true;
     }
 
@@ -174,11 +195,13 @@ public class ItemPickup : MonoBehaviour
         // Nhìn vào kệ có hàng: xem giá, bấm để đặt giá bán (như bấm vào nhãn giá trong Supermarket Simulator)
         Shelf shelf = hit.collider.GetComponentInParent<Shelf>();
         PlacedFurniture placed = hit.collider.GetComponentInParent<PlacedFurniture>();
-        string moveText = placed != null ? "   [F] Move" : "";
-        if (placed != null && Input.GetKeyDown(KeyCode.F) && FurniturePlacer.Instance != null)
+        BuiltInFurniture builtIn = placed == null ? hit.collider.GetComponentInParent<BuiltInFurniture>() : null;
+        string moveText = placed != null || builtIn != null ? "   [F] Move" : "";
+        if ((placed != null || builtIn != null) && Input.GetKeyDown(KeyCode.F) && FurniturePlacer.Instance != null)
         {
             SetPrompt(null);
-            FurniturePlacer.Instance.BeginMove(placed);
+            if (placed != null) FurniturePlacer.Instance.BeginMove(placed);
+            else FurniturePlacer.Instance.BeginMove(builtIn);
             return;
         }
         if (shelf != null && shelf.CurrentItem != null)
@@ -196,6 +219,11 @@ public class ItemPickup : MonoBehaviour
         if (placed != null)
         {
             SetPrompt($"{(placed.data != null ? placed.data.displayName : placed.name)}{moveText}");
+            return;
+        }
+        if (builtIn != null)
+        {
+            SetPrompt($"{builtIn.DisplayName}{moveText}");
             return;
         }
 

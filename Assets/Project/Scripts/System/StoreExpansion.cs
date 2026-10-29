@@ -53,7 +53,14 @@ public class StoreExpansion : MonoBehaviour
         if (hideOnUnlock != null) foreach (GameObject g in hideOnUnlock) if (g != null && g != gameObject) g.SetActive(!on);
         if (moveOnUnlock != null && homePositions != null)
             for (int i = 0; i < moveOnUnlock.Length; i++)
-                if (moveOnUnlock[i] != null) moveOnUnlock[i].position = homePositions[i] + (on ? moveOffset : Vector3.zero);
+            {
+                Transform t = moveOnUnlock[i];
+                if (t == null) continue;
+                // Người chơi đã tự dời kệ này đi chỗ khác thì giữ nguyên
+                bool atHome = Vector3.Distance(t.position, homePositions[i]) < 0.05f;
+                bool atMoved = Vector3.Distance(t.position, homePositions[i] + moveOffset) < 0.05f;
+                if (atHome || atMoved) t.position = homePositions[i] + (on ? moveOffset : Vector3.zero);
+            }
     }
 
     public bool CanBuy(out string reason)
