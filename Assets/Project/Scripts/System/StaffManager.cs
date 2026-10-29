@@ -12,20 +12,22 @@ public class StaffManager : MonoBehaviour
 {
     public static StaffManager Instance { get; private set; }
 
-    public const float CashierWage = 60f, RestockerWage = 50f;
-    public const int CashierLevel = 2, RestockerLevel = 3, MaxRestockers = 3;
+    public const float CashierWage = 60f, RestockerWage = 50f, GuardWage = 70f;
+    public const int CashierLevel = 2, RestockerLevel = 3, MaxRestockers = 3, GuardLevel = 4, MaxGuards = 2;
 
     private readonly List<(CheckoutCounter counter, GameObject body)> cashiers = new List<(CheckoutCounter, GameObject)>();
     private readonly List<GameObject> restockers = new List<GameObject>();
+    private readonly List<GameObject> guards = new List<GameObject>();
 
     public int CashierCount => cashiers.Count;
     /// <summary>Thu ngân đang làm ở quầy nào (dùng cho công cụ lưu vị trí đứng).</summary>
     public IReadOnlyList<(CheckoutCounter counter, GameObject body)> Cashiers => cashiers;
     public int RestockerCount => restockers.Count;
+    public int GuardCount => guards.Count;
     public const int MaxCashierLimit = 4;
     /// <summary>Mỗi quầy đang mở 1 thu ngân, tối đa 4.</summary>
     public int MaxCashiers => Mathf.Min(MaxCashierLimit, CheckoutCounter.All.Count);
-    public float DailyWages => cashiers.Count * CashierWage + restockers.Count * RestockerWage;
+    public float DailyWages => cashiers.Count * CashierWage + restockers.Count * RestockerWage + guards.Count * GuardWage;
 
     public static event System.Action OnStaffChanged;
 
@@ -132,11 +134,84 @@ public class StaffManager : MonoBehaviour
         OnStaffChanged?.Invoke();
     }
 
+    // ================= Bảo vệ =================
+    public bool CanHireGuard(out string reason)
+    {
+        reason = "";
+        if (StoreProgress.Level < GuardLevel) { reason = $"Requires level {GuardLevel}"; return false; }
+        if (guards.Count >= MaxGuards) { reason = "Max guards"; return false; }
+        return true;
+    }
+
+    public bool HireGuard(bool ignoreRequirements = false)
+    {
+        if (!ignoreRequirements && !CanHireGuard(out _)) return false;
+        Vector3 pos = GuardPost(guards.Count, out Quaternion rot);
+        GameObject body = SpawnWorker($"Guard_{guards.Count + 1}", "Staff_Worker", pos, rot, new Color(0.55f, 0.65f, 0.9f));
+        if (body == null) return false;
+        NavMeshAgent agent = body.GetComponent<NavMeshAgent>();
+        if (agent == null) agent = body.AddComponent<NavMeshAgent>();
+        agent.enabled = true;
+        StoreGuard guard = body.AddComponent<StoreGuard>();
+        guard.SetPost(pos, rot);
+        guards.Add(body);
+        Debug.Log($"[Staff] Thuê bảo vệ, gác tại {pos:F1}.");
+        OnStaffChanged?.Invoke();
+        return true;
+    }
+
+    public void FireGuard()
+    {
+        if (guards.Count == 0) return;
+        GameObject last = guards[guards.Count - 1];
+        guards.RemoveAt(guards.Count - 1);
+        if (last != null) Destroy(last);
+        OnStaffChanged?.Invoke();
+    }
+
+    public void LoadGuards(int count)
+    {
+        while (guards.Count > 0) FireGuard();
+        for (int i = 0; i < count; i++) HireGuard(true);
+    }
+
+    /// <summary>
+    /// Chỗ gác: ngoài cửa ra vào, lệch sang hai bên cửa (người thứ 2 đứng phía bên kia), quay mặt ra đường.
+    /// </summary>
+    private Vector3 GuardPost(int index, out Quaternion rot)
+    {
+        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        Vector3 exit = spawner != null && spawner.exitPoint != null ? spawner.exitPoint.position
+                     : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint.position : transform.position);
+
+        // Cửa ra vào gần điểm ra về nhất
+        Vector3 door = exit;
+        float best = float.MaxValue;
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None))
+        {
+            float dist = Vector3.Distance(d.transform.position, exit);
+            if (dist < best) { best = dist; door = d.transform.position; }
+        }
+
+        Vector3 store = Vector3.zero; int n = 0;
+        foreach (Shelf sh in StockManager.Shelves) if (sh != null) { store += sh.transform.position; n++; }
+        Vector3 outward = n > 0 ? door - store / n : Vector3.forward;
+        outward.y = 0f;
+        if (outward.sqrMagnitude < 0.01f) outward = Vector3.forward;
+        outward.Normalize();
+        Vector3 side = Vector3.Cross(Vector3.up, outward) * (index % 2 == 0 ? 1f : -1f);
+
+        Vector3 p = door + outward * 2.2f + side * 2.6f;
+        if (NavMesh.SamplePosition(p, out NavMeshHit hit, 3f, NavMesh.AllAreas)) p = hit.position;
+        rot = Quaternion.LookRotation(outward);
+        return p;
+    }
+
     /// <summary>Trả lương cuối ngày (GameManager gọi trước khi chốt sổ).</summary>
     public void PayWages()
     {
         float total = DailyWages;
-        if (total > 0f) EconomyManager.Instance.Charge(total, MoneyCategory.Wages, $"Staff wages ({cashiers.Count} cashier, {restockers.Count} restocker)");
+        if (total > 0f) EconomyManager.Instance.Charge(total, MoneyCategory.Wages, $"Staff wages ({cashiers.Count} cashier, {restockers.Count} restocker, {guards.Count} guard)");
     }
 
     /// <summary>Nạp từ file lưu.</summary>
