@@ -57,9 +57,22 @@ public class ItemPickup : MonoBehaviour
     // ================= Tay không =================
     private void HandleEmptyHands(bool hasHit, RaycastHit hit)
     {
-        if (!hasHit) { SetPrompt(null); return; }
-
         bool pressed = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0);
+
+        // Kẻ trộm đang chạy trốn: nhìn vào và bấm để bắt (tia này xét mọi layer vì khách không nằm ở layer Interactable)
+        Ray look = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        if (Physics.Raycast(look, out RaycastHit npcHit, pickupRange + 1.5f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            NPCShopper thief = npcHit.collider.GetComponentInParent<NPCShopper>();
+            if (thief != null && thief.IsFleeingThief)
+            {
+                SetPrompt("<color=#FF6B6B>[LMB] Catch the thief!</color>");
+                if (pressed) { SetPrompt(null); thief.Catch(); }
+                return;
+            }
+        }
+
+        if (!hasHit) { SetPrompt(null); return; }
 
         // Biển OPEN / CLOSED
         StoreSign sign = hit.collider.GetComponentInParent<StoreSign>();
@@ -108,6 +121,26 @@ public class ItemPickup : MonoBehaviour
         {
             SetPrompt($"[E] Pick up furniture: {(furnitureBox.data != null ? furnitureBox.data.displayName : "?")}");
             if (pressed && FurniturePlacer.Instance != null) { SetPrompt(null); AudioManager.Play("box_pickup", 0.8f); FurniturePlacer.Instance.BeginPlace(furnitureBox); }
+            return;
+        }
+
+        // Kệ kho: tia trúng khung kệ thì lấy thùng đang cất gần điểm nhắm nhất
+        StorageRack rack = hit.collider.GetComponentInParent<StorageRack>();
+        if (rack != null)
+        {
+            Interactable storedBox = rack.NearestStored(hit.point);
+            if (storedBox != null)
+            {
+                SetPrompt($"[E] Take box: {storedBox.DisplayName} ({storedBox.productCount}/{storedBox.Capacity})");
+                if (pressed) PickUp(storedBox);
+                return;
+            }
+            SetPrompt($"Storage rack  {rack.Capacity - rack.FreeSlots}/{rack.Capacity} boxes   [F] Move");
+            if (Input.GetKeyDown(KeyCode.F) && FurniturePlacer.Instance != null)
+            {
+                PlacedFurniture pfRack = rack.GetComponent<PlacedFurniture>();
+                if (pfRack != null) { SetPrompt(null); FurniturePlacer.Instance.BeginMove(pfRack); }
+            }
             return;
         }
 
@@ -160,6 +193,24 @@ public class ItemPickup : MonoBehaviour
         }
 
         string boxInfo = $"{currentItem.DisplayName} ({currentItem.productCount}/{currentItem.Capacity})";
+
+        // Nhìn vào kệ kho: cất thùng
+        StorageRack storage = hasHit ? hit.collider.GetComponentInParent<StorageRack>() : null;
+        if (storage != null)
+        {
+            bool free = storage.HasFreeSlot;
+            SetPrompt($"{boxInfo}\n{(free ? "[LMB] Store on rack" : "<color=#FF6B6B>Rack is full</color>")}   [E] Drop");
+            if (free && Input.GetMouseButtonDown(0))
+            {
+                Interactable b = currentItem;
+                currentItem = null;
+                SetPrompt(null);
+                if (storage.TryStore(b, hit.point)) AudioManager.Play("box_pickup", 0.5f);
+                else { currentItem = b; }
+            }
+            return;
+        }
+
         Shelf shelf = hasHit ? hit.collider.GetComponentInParent<Shelf>() : null;
 
         if (shelf == null)
