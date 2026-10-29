@@ -109,15 +109,16 @@ public class GameManager : MonoBehaviour
         if (isGameOver || dayEnded) return;
         bool uiFree = !UIState.IsBlockingUIOpen;
 
+        bool cheats = allowSkipDayKey && GameDebug.CheatsEnabled; // phím test chỉ chạy trong Editor / Development Build
         if (uiFree && Input.GetKeyDown(toggleStoreKey) && StoreSign.All.Count == 0) ToggleStore();
-        if (uiFree && allowSkipDayKey && Input.GetKeyDown(levelUpKey)) StoreProgress.AddXP(StoreProgress.XPToNext - StoreProgress.XP);
-        if (uiFree && allowSkipDayKey && Input.GetKeyDown(addMoneyKey))
+        if (uiFree && cheats && Input.GetKeyDown(levelUpKey)) StoreProgress.AddXP(StoreProgress.XPToNext - StoreProgress.XP);
+        if (uiFree && cheats && Input.GetKeyDown(addMoneyKey))
         {
             EconomyManager.Instance.AddIncome(addMoneyAmount, MoneyCategory.Other, "(Test) cheat money");
             ProgressHUD.Toast($"+{EconomyManager.Format(addMoneyAmount)} (test)");
         }
 
-        if (uiFree && allowSkipDayKey && Input.GetKeyDown(skipDayKey) && !closingTimeReached)
+        if (uiFree && cheats && Input.GetKeyDown(skipDayKey) && !closingTimeReached)
         {
             clockMinutes = OpenMinutes + WorkMinutes;
             Debug.Log("[GameManager] (Test) Nhảy tới giờ đóng cửa.");
@@ -211,14 +212,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         UIState.Open(this); // hiện chuột để bấm Restart
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        else if (MenuSystem.Instance != null) { UIState.Close(this); MenuSystem.Instance.ShowGameOver(); }
         Debug.Log("[GameManager] GAME OVER - hết tiền.");
     }
 
     public void RestartGame()
     {
-        Time.timeScale = 1f;
         UIState.Close(this);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameSession.ReloadScene();
     }
 
     // ================= UI =================
