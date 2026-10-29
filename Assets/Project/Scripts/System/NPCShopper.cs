@@ -48,7 +48,13 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Ghi log mỗi khi khách đổi trạng thái / đi tới đâu")]
     public bool debugLogs = true;
 
+    [Header("Queue")]
+    [Tooltip("Tới gần chỗ xếp hàng trong khoảng này thì dừng hẳn, đứng yên chờ")]
+    public float queueArriveRadius = 0.3f;
+
     public IReadOnlyList<ItemData> Basket => basket;
+    /// <summary>Bán kính chiếm chỗ của khách (để quầy giãn hàng chờ cho đủ chỗ đứng).</summary>
+    public float Radius => agent != null ? agent.radius : 0.4f;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -174,19 +180,50 @@ public class NPCShopper : MonoBehaviour
 
         SetState(NPCState.Queueing);
         float firstSince = -1f;
+        bool standing = false;
+        int movePriority = agent.avoidancePriority;
 
         while (!paid)
         {
+            Vector3 spot = Sample(queueTarget);
+            float dist = FlatDistance(transform.position, spot);
+
             if (queueTargetDirty)
             {
+                // Người phía trước đã đi -> bước lên chỗ mới
                 queueTargetDirty = false;
-                if (agent.isOnNavMesh) { agent.isStopped = false; agent.SetDestination(Sample(queueTarget)); }
+                standing = false;
             }
+
+            if (!standing)
+            {
+                if (dist <= queueArriveRadius)
+                {
+                    // Tới chỗ: dừng hẳn, đứng yên, quay mặt về phía quầy.
+                    // Ưu tiên tránh cao nhất (0) để người khác đi vòng qua chứ không đẩy mình.
+                    StandStill();
+                    agent.avoidancePriority = 0;
+                    standing = true;
+                    if (counter.customerPoint != null)
+                        Face(isFirstInQueue && counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.customerPoint.position);
+                }
+                else if (agent.isOnNavMesh && !agent.isOnOffMeshLink)
+                {
+                    agent.avoidancePriority = movePriority;
+                    agent.stoppingDistance = 0f;
+                    if (agent.isStopped || !agent.hasPath || FlatDistance(agent.destination, spot) > 0.05f)
+                    {
+                        agent.isStopped = false;
+                        agent.SetDestination(spot);
+                    }
+                }
+            }
+            else if (dist > 0.8f) standing = false; // bị đẩy lệch khỏi chỗ -> đi lại về chỗ
 
             if (isFirstInQueue && counter.Current == null)
             {
                 if (firstSince < 0f) firstSince = Time.time;
-                bool arrived = FlatDistance(transform.position, Sample(queueTarget)) <= 1.0f;
+                bool arrived = standing || dist <= 0.6f;
                 if (!arrived && Time.time - firstSince > moveTimeout)
                 {
                     WarnStuck("quầy thu ngân");
@@ -195,6 +232,8 @@ public class NPCShopper : MonoBehaviour
                 }
                 if (arrived)
                 {
+                    StandStill();
+                    standing = true;
                     SetState(NPCState.Paying);
                     Face(counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.transform.position);
                     counter.StartCheckout(this, basket);
@@ -204,6 +243,15 @@ public class NPCShopper : MonoBehaviour
 
             yield return null;
         }
+        agent.avoidancePriority = movePriority;
+    }
+
+    private void StandStill()
+    {
+        if (!agent.isOnNavMesh) return;
+        agent.isStopped = true;
+        agent.ResetPath();
+        agent.velocity = Vector3.zero;
     }
 
     // ================= Gọi từ CheckoutCounter =================
