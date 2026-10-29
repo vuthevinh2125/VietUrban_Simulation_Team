@@ -1,65 +1,165 @@
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// Tạo model nhân viên (khác với khách) từ Guard.fbx + GuardController, lưu vào Resources/Staff_Worker.prefab
-/// để StaffManager tự dùng khi thuê thu ngân / nhân viên xếp kệ.
-/// Menu: Tools > Store Setup > 10. Build Staff Model
+/// Tools > Store Setup > 10. Build Staff Models & Shopping Props
+///  - Model nhân viên từ 2 nhân vật Mixamo bạn tải về (Ch12 / Ch13): chuyển sang rig Humanoid để dùng chung
+///    bộ chuyển động đứng yên / đi bộ (NPC_Animator, tham số Speed). Model THẤP hơn (thường là nữ) = thu ngân,
+///    model còn lại = nhân viên xếp kệ. Sai thì dùng 10b để đổi.
+///  - Giỏ hàng và xe đẩy cho khách (từ gói ModernSupermarket), đã gỡ va chạm, gốc đặt ở đáy.
+/// Tất cả lưu trong Assets/Project/Resources để game tự nạp, không cần sửa scene.
 /// </summary>
 public static class StaffModelTool
 {
-    private const string ModelPath = "Assets/Project/Prefabs/Characters/Guard.fbx";
-    private const string ControllerPath = "Assets/Project/Prefabs/Characters/GuardController.controller";
+    private const string CharFolder = "Assets/Project/Prefabs/Characters";
+    private const string ControllerPath = "Assets/Assets_ThirdParty/Materials/NPC_Animator.controller";
+    private const string FallbackModel = CharFolder + "/Guard.fbx";
+    private const string FallbackController = CharFolder + "/GuardController.controller";
+    private const string PropsFolder = "Assets/Assets_ThirdParty/ModernSupermarket/Prefabs/Props/Utility";
     private const string OutFolder = "Assets/Project/Resources";
-    private const string OutPath = OutFolder + "/Staff_Worker.prefab";
 
-    [MenuItem("Tools/Store Setup/10. Build Staff Model")]
-    private static void Run()
+    private static readonly string[] StaffModels = { CharFolder + "/Ch12_nonPBR.fbx", CharFolder + "/Ch13_nonPBR.fbx" };
+
+    [MenuItem("Tools/Store Setup/10. Build Staff Models & Shopping Props")]
+    private static void Run() => Build(false);
+
+    [MenuItem("Tools/Store Setup/10b. Swap Cashier and Restocker Models")]
+    private static void Swap() => Build(true);
+
+    private static void Build(bool swap)
     {
-        GameObject model = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
-        RuntimeAnimatorController controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath);
-        if (model == null) { EditorUtility.DisplayDialog("Staff Model", "Không thấy " + ModelPath, "OK"); return; }
+        EnsureFolder(OutFolder);
+        EnsureFolder(OutFolder + "/Props");
+        var log = new List<string>();
 
-        var root = new GameObject("Staff_Worker");
+        // ---------- Nhân viên ----------
+        var models = new List<(string path, float height)>();
+        foreach (string path in StaffModels)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) == null) { log.Add($"Không thấy {path}"); continue; }
+            MakeHumanoid(path);
+            GameObject m = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            models.Add((path, Height(m)));
+        }
+
+        RuntimeAnimatorController ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath);
+        if (models.Count >= 2)
+        {
+            var ordered = models.OrderBy(m => m.height).ToList(); // thấp hơn = nữ = thu ngân
+            if (swap) ordered.Reverse();
+            BuildStaffPrefab(ordered[0].path, ctrl, "Staff_Cashier", log);
+            BuildStaffPrefab(ordered[1].path, ctrl, "Staff_Restocker", log);
+            log.Add($"Thu ngân = {System.IO.Path.GetFileNameWithoutExtension(ordered[0].path)} (cao {ordered[0].height:F2}m), " +
+                    $"xếp kệ = {System.IO.Path.GetFileNameWithoutExtension(ordered[1].path)} (cao {ordered[1].height:F2}m)");
+        }
+        else
+        {
+            RuntimeAnimatorController guardCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(FallbackController);
+            BuildStaffPrefab(FallbackModel, guardCtrl, "Staff_Cashier", log);
+            BuildStaffPrefab(FallbackModel, guardCtrl, "Staff_Restocker", log);
+            log.Add("Không đủ 2 model Ch12/Ch13 -> dùng tạm Guard cho cả hai.");
+        }
+
+        // ---------- Giỏ / xe đẩy ----------
+        BuildProp($"{PropsFolder}/Basket_o52iei.prefab", "Basket", false, log);
+        BuildProp($"{PropsFolder}/Cart_nabnuh.prefab", "Cart", true, log);
+
+        AssetDatabase.SaveAssets();
+        string msg = string.Join("\n", log);
+        Debug.Log("[Staff Model] " + msg);
+        EditorUtility.DisplayDialog("Staff Models & Props", msg + "\n\nBấm Play lại / thuê lại nhân viên để thấy model mới.", "OK");
+    }
+
+    /// <summary>Rig Humanoid (avatar tạo từ chính model) để dùng được chuyển động Mixamo dùng chung.</summary>
+    private static void MakeHumanoid(string path)
+    {
+        var importer = (ModelImporter)AssetImporter.GetAtPath(path);
+        if (importer == null) return;
+        if (importer.animationType == ModelImporterAnimationType.Human && importer.avatarSetup == ModelImporterAvatarSetup.CreateFromThisModel) return;
+        importer.animationType = ModelImporterAnimationType.Human;
+        importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+        importer.SaveAndReimport();
+    }
+
+    private static void BuildStaffPrefab(string modelPath, RuntimeAnimatorController ctrl, string outName, List<string> log)
+    {
+        GameObject model = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+        if (model == null) { log.Add($"Không thấy {modelPath}"); return; }
+
+        var root = new GameObject(outName);
         try
         {
             var body = (GameObject)PrefabUtility.InstantiatePrefab(model);
             body.transform.SetParent(root.transform, false);
-            body.transform.localPosition = Vector3.zero;
-            body.transform.localRotation = Quaternion.identity;
-
-            // Đưa về chiều cao người thật (~1.75m) nếu model bị scale lạ
-            Bounds b = default; bool any = false;
-            foreach (Renderer r in body.GetComponentsInChildren<Renderer>())
-            {
-                if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
-            }
-            if (any && (b.size.y < 1.2f || b.size.y > 2.4f)) body.transform.localScale *= 1.75f / Mathf.Max(0.01f, b.size.y);
+            float h = Height(body);
+            if (h > 0f && (h < 1.2f || h > 2.4f)) body.transform.localScale *= 1.72f / h;
 
             Animator anim = body.GetComponent<Animator>();
             if (anim == null) anim = body.AddComponent<Animator>();
-            if (controller != null) anim.runtimeAnimatorController = controller;
+            if (ctrl != null) anim.runtimeAnimatorController = ctrl;
             anim.applyRootMotion = false;
-            anim.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
 
             NavMeshAgent agent = root.AddComponent<NavMeshAgent>();
             agent.radius = 0.3f;
             agent.height = 1.8f;
-            agent.speed = 1.8f;
+            agent.speed = 1.6f;
             agent.angularSpeed = 360f;
             agent.acceleration = 8f;
             agent.stoppingDistance = 0.1f;
 
-            if (!AssetDatabase.IsValidFolder(OutFolder)) AssetDatabase.CreateFolder("Assets/Project", "Resources");
-            PrefabUtility.SaveAsPrefabAsset(root, OutPath);
-            Debug.Log($"[Staff Model] Đã tạo {OutPath} (controller: {(controller != null ? controller.name : "KHÔNG CÓ")}, cao {(any ? b.size.y : 0f):F2}m).");
-            EditorUtility.DisplayDialog("Staff Model", $"Đã tạo model nhân viên:\n{OutPath}\n\nThuê nhân viên mới (hoặc bấm Play lại) để thấy model mới.", "OK");
+            PrefabUtility.SaveAsPrefabAsset(root, $"{OutFolder}/{outName}.prefab");
+            log.Add($"Đã tạo {outName} từ {System.IO.Path.GetFileName(modelPath)} (avatar: {(anim.avatar != null && anim.avatar.isHuman ? "Humanoid" : "KHÔNG humanoid - chuyển động có thể không chạy")})");
         }
-        finally
+        finally { Object.DestroyImmediate(root); }
+    }
+
+    /// <summary>Giỏ / xe đẩy chỉ để trưng: gỡ va chạm + script, gốc ở giữa đáy, xe đẩy dài theo trục Z.</summary>
+    private static void BuildProp(string srcPath, string outName, bool alongZ, List<string> log)
+    {
+        GameObject src = AssetDatabase.LoadAssetAtPath<GameObject>(srcPath);
+        if (src == null) { log.Add($"Không thấy {srcPath}"); return; }
+        var root = new GameObject(outName);
+        try
         {
-            Object.DestroyImmediate(root);
+            var body = (GameObject)PrefabUtility.InstantiatePrefab(src);
+            PrefabUtility.UnpackPrefabInstance(body, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            body.transform.SetParent(root.transform, false);
+            foreach (Rigidbody rb in body.GetComponentsInChildren<Rigidbody>(true)) Object.DestroyImmediate(rb);
+            foreach (Collider c in body.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
+            foreach (MonoBehaviour mb in body.GetComponentsInChildren<MonoBehaviour>(true)) Object.DestroyImmediate(mb);
+
+            Bounds b = ProductFit.LocalBounds(root.transform);
+            if (alongZ && b.size.x > b.size.z) body.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            b = ProductFit.LocalBounds(root.transform);
+            body.transform.localPosition -= new Vector3(b.center.x, b.min.y, b.center.z);
+
+            PrefabUtility.SaveAsPrefabAsset(root, $"{OutFolder}/Props/{outName}.prefab");
+            log.Add($"Đã tạo {outName} ({b.size.x:F2} x {b.size.y:F2} x {b.size.z:F2} m)");
         }
+        finally { Object.DestroyImmediate(root); }
+    }
+
+    private static float Height(GameObject go)
+    {
+        Bounds b = default; bool any = false;
+        foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true))
+        {
+            Bounds rb = r is SkinnedMeshRenderer smr && smr.sharedMesh != null
+                ? new Bounds(r.transform.TransformPoint(smr.sharedMesh.bounds.center), Vector3.Scale(smr.sharedMesh.bounds.size, r.transform.lossyScale))
+                : r.bounds;
+            if (!any) { b = rb; any = true; } else b.Encapsulate(rb);
+        }
+        return any ? b.size.y : 0f;
+    }
+
+    private static void EnsureFolder(string path)
+    {
+        if (AssetDatabase.IsValidFolder(path)) return;
+        string parent = System.IO.Path.GetDirectoryName(path).Replace('\\', '/');
+        EnsureFolder(parent);
+        AssetDatabase.CreateFolder(parent, System.IO.Path.GetFileName(path));
     }
 }
