@@ -67,6 +67,17 @@ public class MenuSystem : MonoBehaviour
         OpenPause();
     }
 
+    /// <summary>
+    /// Còn giao diện nào mở (menu, máy tính, bảng giá...) thì luôn giữ chuột hiện + tự do,
+    /// kể cả khi script khác hoặc cú click vào cửa sổ Game lỡ khoá chuột lại.
+    /// </summary>
+    void LateUpdate()
+    {
+        if (!UIState.IsBlockingUIOpen) return;
+        if (Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+        if (!Cursor.visible) Cursor.visible = true;
+    }
+
     // ================= Menu chính =================
     private void ShowMain()
     {
