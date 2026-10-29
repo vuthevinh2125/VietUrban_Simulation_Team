@@ -25,6 +25,7 @@ public static class FurnitureSetupTool
     private const float MinClearance = 0.12f;  // khoảng trống tối thiểu phía trên một tầng
     private const float MaxLevelHeight = 1.8f; // không xếp trên nóc kệ
     private const float Inset = 0.05f;         // chừa mép tầng
+    private const float MinNormalY = 0.85f;    // chấp nhận tầng kệ nghiêng tới ~30 độ
 
     private struct Entry
     {
@@ -63,7 +64,7 @@ public static class FurnitureSetupTool
                 if (src == null) { log.AppendLine($"- {e.name}: KHÔNG thấy {e.source}"); continue; }
 
                 GameObject prefab = BuildPrefab(src, e, out int slots, out int levels);
-                log.AppendLine($"- {e.name} ({e.source}): {levels} tầng, {slots} ô, loại {e.type}");
+                log.AppendLine($"- {e.name} ({e.source}): {levels} tầng, {slots} ô, loại {e.type}   [{lastDiag}]");
                 if (prefab == null) continue;
 
                 string dataPath = $"{DataFolder}/{e.name.Replace(' ', '_')}.asset";
@@ -179,63 +180,97 @@ public static class FurnitureSetupTool
     }
 
     /// <summary>
-    /// Bắn tia từ trên xuống khắp món đồ, lấy mọi mặt nằm ngang có khoảng trống phía trên,
-    /// gom theo tầng rồi trải lưới ô xếp hàng trên từng tầng.
+    /// Bắn tia từ trên xuống khắp món đồ, lấy mọi mặt (gần) nằm ngang có khoảng trống phía trên.
+    /// Gom các điểm liền nhau thành từng "tầng" (chấp nhận tầng kệ hơi nghiêng như kệ siêu thị),
+    /// rồi trải lưới ô xếp hàng trên từng tầng, mỗi ô đặt đúng độ cao mặt kệ tại chỗ đó.
     /// </summary>
+    private static string lastDiag = "";
+
     private static List<Vector3> FindSlots(Transform root, Bounds wb, out int levelCount)
     {
         float baseY = wb.min.y;
-        var hits = new List<Vector3>();
-        for (float x = wb.min.x + Step * 0.5f; x < wb.max.x; x += Step)
-            for (float z = wb.min.z + Step * 0.5f; z < wb.max.z; z += Step)
+        int rawHits = 0, flatHits = 0, tooHigh = 0, tooTight = 0;
+        var grid = new Dictionary<Vector2Int, List<Vector3>>(); // mỗi cột lưới có thể có nhiều tầng
+        int cols = Mathf.CeilToInt(wb.size.x / Step), rows = Mathf.CeilToInt(wb.size.z / Step);
+        for (int ix = 0; ix < cols; ix++)
+            for (int iz = 0; iz < rows; iz++)
             {
-                Vector3 origin = new Vector3(x, wb.max.y + 0.5f, z);
+                Vector3 origin = new Vector3(wb.min.x + (ix + 0.5f) * Step, wb.max.y + 0.5f, wb.min.z + (iz + 0.5f) * Step);
                 var column = new List<(Vector3 p, bool openSky)>();
                 foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, wb.size.y + 1f, ~0, QueryTriggerInteraction.Ignore))
                 {
-                    if (!h.transform.IsChildOf(root) || h.normal.y < 0.95f) continue;
+                    if (!h.transform.IsChildOf(root)) continue;
+                    rawHits++;
+                    if (h.normal.y < MinNormalY) continue;
+                    flatHits++;
                     float height = h.point.y - baseY;
-                    if (height < 0.03f || height > MaxLevelHeight) continue;
+                    if (height < 0.03f || height > MaxLevelHeight) { tooHigh++; continue; }
                     float clear = ClearanceAbove(h.point, root);
-                    if (clear < MinClearance) continue; // tầng trên quá sát
+                    if (clear < MinClearance) { tooTight++; continue; } // tầng trên quá sát
                     column.Add((h.point, clear >= 5f));
                 }
                 // Mặt "lộ thiên" (nóc kệ, nóc tủ lạnh, nắp tủ đông) chỉ dùng khi bên dưới không còn tầng nào khác (bàn, sạp)
                 bool hasCovered = column.Any(c => !c.openSky);
-                foreach (var c in column) if (!hasCovered || !c.openSky) hits.Add(c.p);
+                var keep = column.Where(c => !hasCovered || !c.openSky).Select(c => c.p).ToList();
+                if (keep.Count > 0) grid[new Vector2Int(ix, iz)] = keep;
             }
 
-        // Gom theo tầng (lệch < 2cm)
-        var levels = new List<List<Vector3>>();
-        foreach (Vector3 p in hits.OrderBy(p => p.y))
-        {
-            List<Vector3> lv = levels.LastOrDefault();
-            if (lv == null || Mathf.Abs(lv[0].y - p.y) > 0.02f) levels.Add(lv = new List<Vector3>());
-            lv.Add(p);
-        }
+        // Gom thành tầng: điểm ở 2 ô kề nhau lệch độ cao < 4cm thì cùng tầng
+        var visited = new HashSet<(Vector2Int, int)>();
+        Vector2Int[] dirs = { Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down };
+        var levels = new List<Dictionary<Vector2Int, Vector3>>();
+        foreach (var kv in grid)
+            for (int k = 0; k < kv.Value.Count; k++)
+            {
+                if (visited.Contains((kv.Key, k))) continue;
+                var level = new Dictionary<Vector2Int, Vector3>();
+                var stack = new Stack<(Vector2Int, int)>();
+                stack.Push((kv.Key, k));
+                visited.Add((kv.Key, k));
+                while (stack.Count > 0)
+                {
+                    var (cell, idx) = stack.Pop();
+                    Vector3 p = grid[cell][idx];
+                    level[cell] = p;
+                    foreach (Vector2Int d in dirs)
+                    {
+                        Vector2Int nc = cell + d;
+                        if (!grid.TryGetValue(nc, out List<Vector3> list)) continue;
+                        for (int j = 0; j < list.Count; j++)
+                        {
+                            if (visited.Contains((nc, j)) || Mathf.Abs(list[j].y - p.y) > 0.04f) continue;
+                            visited.Add((nc, j));
+                            stack.Push((nc, j));
+                        }
+                    }
+                }
+                levels.Add(level);
+            }
 
         var result = new List<Vector3>();
         levelCount = 0;
-        foreach (List<Vector3> lv in levels)
+        lastDiag = $"tia trúng {rawHits}, mặt phẳng {flatHits}, ngoài độ cao {tooHigh}, quá sát {tooTight}, " +
+                   $"nhóm mặt {levels.Count} (lớn nhất {(levels.Count > 0 ? levels.Max(l => l.Count) : 0)} điểm), cao {wb.size.y:F2}m";
+        foreach (var level in levels)
         {
-            if (lv.Count < 12) continue; // mặt quá nhỏ (tay nắm, viền...)
-            float y = lv.Average(p => p.y);
-            float minX = lv.Min(p => p.x) + Inset, maxX = lv.Max(p => p.x) - Inset;
-            float minZ = lv.Min(p => p.z) + Inset, maxZ = lv.Max(p => p.z) - Inset;
-            if (maxX - minX < 0.12f || maxZ - minZ < 0.12f) continue;
+            if (level.Count < 12) continue; // mặt quá nhỏ (tay nắm, viền...)
+            int minIx = level.Keys.Min(c => c.x), maxIx = level.Keys.Max(c => c.x);
+            int minIz = level.Keys.Min(c => c.y), maxIz = level.Keys.Max(c => c.y);
+            float minX = wb.min.x + (minIx + 0.5f) * Step + Inset, maxX = wb.min.x + (maxIx + 0.5f) * Step - Inset;
+            float minZ = wb.min.z + (minIz + 0.5f) * Step + Inset, maxZ = wb.min.z + (maxIz + 0.5f) * Step - Inset;
+            if (maxX - minX < 0.1f || maxZ - minZ < 0.1f) continue;
 
-            int nx = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / SlotX));
-            int nz = Mathf.Max(1, Mathf.FloorToInt((maxZ - minZ) / SlotZ));
-            var set = new HashSet<Vector2Int>(lv.Select(p => new Vector2Int(Mathf.RoundToInt(p.x / Step), Mathf.RoundToInt(p.z / Step))));
+            int nx = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / SlotX + 0.5f));
+            int nz = Mathf.Max(1, Mathf.FloorToInt((maxZ - minZ) / SlotZ + 0.5f));
             int added = 0;
             for (int ix = 0; ix < nx; ix++)
                 for (int iz = 0; iz < nz; iz++)
                 {
                     float x = minX + (ix + 0.5f) * (maxX - minX) / nx;
                     float z = minZ + (iz + 0.5f) * (maxZ - minZ) / nz;
-                    // chỉ đặt ô nơi thật sự có mặt kệ (bỏ chỗ khuyết)
-                    if (!set.Contains(new Vector2Int(Mathf.RoundToInt(x / Step), Mathf.RoundToInt(z / Step)))) continue;
-                    result.Add(new Vector3(x, y, z));
+                    var cell = new Vector2Int(Mathf.FloorToInt((x - wb.min.x) / Step), Mathf.FloorToInt((z - wb.min.z) / Step));
+                    if (!level.TryGetValue(cell, out Vector3 surface)) continue; // chỗ khuyết, không có mặt kệ
+                    result.Add(new Vector3(x, surface.y, z));
                     added++;
                 }
             if (added > 0) levelCount++;
