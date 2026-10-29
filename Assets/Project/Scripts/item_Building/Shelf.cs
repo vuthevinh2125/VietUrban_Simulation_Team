@@ -51,7 +51,17 @@ public class Shelf : MonoBehaviour
         }
     }
 
+    [Header("Price label")]
+    [Tooltip("Tự tạo nhãn giá ở mép trước mỗi tầng kệ khi chơi")]
+    public bool createPriceLabels = true;
+
     void Awake() => EnsureArray();
+
+    void Start()
+    {
+        if (createPriceLabels && Capacity > 0 && GetComponent<ShelfPriceLabels>() == null)
+            gameObject.AddComponent<ShelfPriceLabels>();
+    }
     void OnEnable() => StockManager.Register(this);
     void OnDisable() => StockManager.Unregister(this);
 
