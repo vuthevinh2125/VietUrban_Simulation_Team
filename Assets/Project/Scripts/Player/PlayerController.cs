@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 2f;
     public Transform playerCamera;
 
+    /// <summary>true = tạm khoá xoay camera bằng chuột (vd. đang kéo chuột để xoay nội thất). Vẫn đi lại được.</summary>
+    public static bool LookLocked;
+
     private float cameraPitch = 0f;
     private Rigidbody rb;
     private Animator animator;
@@ -20,6 +23,9 @@ public class PlayerController : MonoBehaviour
     private float moveZ;
     private bool isSprinting;
     private bool jumpRequested;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => LookLocked = false;
 
     void Start()
     {
@@ -41,8 +47,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        float mouseX = LookLocked ? 0f : Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = LookLocked ? 0f : Input.GetAxis("Mouse Y") * mouseSensitivity;
 
         transform.Rotate(Vector3.up * mouseX);
 
