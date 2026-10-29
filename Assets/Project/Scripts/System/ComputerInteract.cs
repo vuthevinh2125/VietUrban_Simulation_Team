@@ -25,21 +25,47 @@ public class ComputerInteract : MonoBehaviour
     void Awake()
     {
         if (computerUI == null) computerUI = FindComputerUI();
+        if (debugLogs && computerUI != null) Debug.Log($"[Computer] '{name}' dùng giao diện '{computerUI.name}'.", this);
         if (computerUI == null)
             Debug.LogError("[Computer] Không tìm thấy ComputerUI trong scene. Kéo ComputerUI vào ô 'Computer UI'.", this);
 
         if (showAsScreenOverlay) ConvertToScreenOverlay();
     }
 
+    /// <summary>Bật các object cha (Canvas...) nếu lỡ bị tắt trong Hierarchy, nếu không giao diện sẽ không hiện.</summary>
+    private void EnsureParentsActive()
+    {
+        for (Transform p = computerUI.transform.parent; p != null; p = p.parent)
+        {
+            if (!p.gameObject.activeSelf)
+            {
+                Debug.LogWarning($"[Computer] '{p.name}' đang bị tắt nên giao diện không hiện được -> tự bật lại. " +
+                                 "Nên bật nó trong Hierarchy rồi lưu scene.", p);
+                p.gameObject.SetActive(true);
+            }
+        }
+
+        Canvas canvas = computerUI.GetComponentInParent<Canvas>(true);
+        if (canvas != null && !canvas.enabled) canvas.enabled = true;
+    }
+
     /// <summary>Tự tìm panel giao diện máy tính khi ô Computer UI bị trống.</summary>
     public static GameObject FindComputerUI()
     {
-        // Ưu tiên panel có bộ lọc cửa hàng (chính là giao diện mua hàng)
-        ShopFilterManager shop = FindFirstObjectByType<ShopFilterManager>(FindObjectsInactive.Include);
-        if (shop != null) return shop.gameObject;
-
+        // 1) Đúng tên "ComputerUI"
         foreach (RectTransform t in FindObjectsByType<RectTransform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            if (t.name == "ComputerUI") return t.gameObject;
+            if (t.name == "ComputerUI" && t.gameObject.scene.IsValid()) return t.gameObject;
+
+        // 2) Panel có UIMouseControl (panel giao diện chính)
+        UIMouseControl mouse = FindFirstObjectByType<UIMouseControl>(FindObjectsInactive.Include);
+        if (mouse != null) return mouse.gameObject;
+
+        // 3) ShopFilterManager NẰM NGOÀI CÙNG (bỏ qua các panel con như Header_Panel)
+        foreach (ShopFilterManager shop in FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            Transform p = shop.transform.parent;
+            if (p == null || p.GetComponentInParent<ShopFilterManager>(true) == null) return shop.gameObject;
+        }
         return null;
     }
 
@@ -73,6 +99,7 @@ public class ComputerInteract : MonoBehaviour
     public void OpenComputer()
     {
         if (computerUI == null) { Debug.LogError("[Computer] Chưa gán ComputerUI!", this); return; }
+        EnsureParentsActive();
         computerUI.SetActive(true);
         UIState.Open(this);
         if (debugLogs) LogState("OPEN");
