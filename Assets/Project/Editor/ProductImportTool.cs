@@ -43,9 +43,6 @@ public static class ProductImportTool
         ("Teabox", 2.5f), ("TinCan", 1.2f), ("ToiletPaper", 4f), ("Toothpaste", 2f), ("WaterBottle", 0.6f), ("WaterPack", 3f)
     };
 
-    private struct PendingIcon { public GameObject prefab; public ItemData data; public string path; }
-    private static List<PendingIcon> pendingIcons;
-    private static double iconStartTime;
 
     [MenuItem("Tools/Store Setup/7. Import Products (gói ModernSupermarket)")]
     private static void Run()
@@ -74,8 +71,6 @@ public static class ProductImportTool
 
         var usedNames = new Dictionary<string, int>();
         var items = new List<ItemData>();
-        pendingIcons = new List<PendingIcon>();
-        AssetPreview.SetPreviewTextureCacheSize(Mathf.Max(256, prefabs.Count * 2));
 
         try
         {
@@ -114,65 +109,110 @@ public static class ProductImportTool
                 EditorUtility.SetDirty(data);
                 items.Add(data);
 
-                AssetPreview.GetAssetPreview(prefab); // xếp hàng chụp icon
-                pendingIcons.Add(new PendingIcon { prefab = prefab, data = data, path = $"{IconFolder}/{SafeFileName(pretty)}.png" });
             }
         }
         finally { EditorUtility.ClearProgressBar(); }
 
         AssetDatabase.SaveAssets();
         AssignToCatalog(items);
+        int icons = GenerateIcons(items, overwrite: false);
 
-        // Icon được Unity tạo bất đồng bộ -> chờ xong rồi lưu
-        iconStartTime = EditorApplication.timeSinceStartup;
-        EditorApplication.update -= SaveIconsWhenReady;
-        EditorApplication.update += SaveIconsWhenReady;
+        string msg = $"{items.Count} mặt hàng ({items.Count(d => d.displayType == "Fresh")} hàng tươi/lạnh), {icons} icon mới.\n" +
+                     $"Thùng dùng chung: {(crate ? CratePath : "KHÔNG TẠO ĐƯỢC")}.\n\nBấm Ctrl+S để lưu scene.";
+        Debug.Log("[Import Products] " + msg);
+        EditorUtility.DisplayDialog("Import Products", "Xong! " + msg, "OK");
+    }
 
-        Debug.Log($"[Import Products] {items.Count} mặt hàng ({items.Count(d => d.displayType == "Fresh")} hàng tươi/lạnh). " +
-                  $"Thùng dùng chung: {(crate ? CratePath : "KHÔNG TẠO ĐƯỢC")}. Đang chụp icon...");
+    [MenuItem("Tools/Store Setup/7b. Regenerate Product Icons")]
+    private static void RegenerateIcons()
+    {
+        var items = AssetDatabase.FindAssets("t:ItemData", new[] { DataFolder })
+            .Select(g => AssetDatabase.LoadAssetAtPath<ItemData>(AssetDatabase.GUIDToAssetPath(g)))
+            .Where(d => d != null).ToList();
+        int n = GenerateIcons(items, overwrite: true);
+        EditorUtility.DisplayDialog("Product Icons", $"Đã chụp {n} icon.", "OK");
     }
 
     // ================= Icon =================
-    private static void SaveIconsWhenReady()
+    /// <summary>Chụp icon cho từng mặt hàng bằng một "phòng chụp" riêng (camera + đèn), lưu PNG dạng Sprite.</summary>
+    private static int GenerateIcons(List<ItemData> items, bool overwrite)
     {
-        bool timedOut = EditorApplication.timeSinceStartup - iconStartTime > 60.0;
-        if (AssetPreview.IsLoadingAssetPreviews() && !timedOut) return;
-        EditorApplication.update -= SaveIconsWhenReady;
-
+        EnsureFolder(IconFolder);
         int saved = 0;
-        foreach (PendingIcon p in pendingIcons)
+        var studio = new PreviewRenderUtility();
+        try
         {
-            if (p.data == null) continue;
-            if (p.data.icon != null && File.Exists(p.path)) continue; // đã có icon
-            Texture2D preview = AssetPreview.GetAssetPreview(p.prefab);
-            if (preview == null) continue;
+            studio.camera.fieldOfView = 25f;
+            studio.camera.clearFlags = CameraClearFlags.SolidColor;
+            studio.camera.backgroundColor = new Color(0.86f, 0.93f, 0.97f, 1f);
+            studio.lights[0].intensity = 1.3f;
+            studio.lights[0].transform.rotation = Quaternion.Euler(40f, 30f, 0f);
+            studio.lights[1].intensity = 0.6f;
+            studio.ambientColor = new Color(0.45f, 0.45f, 0.45f);
 
-            var rt = RenderTexture.GetTemporary(preview.width, preview.height, 0, RenderTextureFormat.ARGB32);
-            Graphics.Blit(preview, rt);
-            RenderTexture previous = RenderTexture.active;
-            RenderTexture.active = rt;
-            var tex = new Texture2D(preview.width, preview.height, TextureFormat.RGBA32, false);
-            tex.ReadPixels(new Rect(0, 0, preview.width, preview.height), 0, 0);
-            tex.Apply();
-            RenderTexture.active = previous;
-            RenderTexture.ReleaseTemporary(rt);
-
-            File.WriteAllBytes(p.path, tex.EncodeToPNG());
-            Object.DestroyImmediate(tex);
-            AssetDatabase.ImportAsset(p.path);
-            if (AssetImporter.GetAtPath(p.path) is TextureImporter importer)
+            for (int i = 0; i < items.Count; i++)
             {
-                importer.textureType = TextureImporterType.Sprite;
-                importer.spriteImportMode = SpriteImportMode.Single;
-                importer.SaveAndReimport();
+                ItemData data = items[i];
+                GameObject prefab = data != null ? data.ResolveProductPrefab() : null;
+                if (prefab == null) continue;
+                string path = $"{IconFolder}/{SafeFileName(data.itemName)}.png";
+                if (!overwrite && data.icon != null) continue;
+
+                EditorUtility.DisplayProgressBar("Product Icons", data.itemName, (float)i / items.Count);
+                Texture2D tex = RenderIcon(studio, prefab, 256);
+                if (tex == null) continue;
+
+                File.WriteAllBytes(path, tex.EncodeToPNG());
+                Object.DestroyImmediate(tex);
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                if (AssetImporter.GetAtPath(path) is TextureImporter importer)
+                {
+                    importer.textureType = TextureImporterType.Sprite;
+                    importer.spriteImportMode = SpriteImportMode.Single;
+                    importer.alphaIsTransparency = true;
+                    importer.SaveAndReimport();
+                }
+                data.icon = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                EditorUtility.SetDirty(data);
+                saved++;
             }
-            p.data.icon = AssetDatabase.LoadAssetAtPath<Sprite>(p.path);
-            EditorUtility.SetDirty(p.data);
-            saved++;
+        }
+        finally
+        {
+            studio.Cleanup();
+            EditorUtility.ClearProgressBar();
         }
         AssetDatabase.SaveAssets();
-        Debug.Log($"[Import Products] Đã lưu {saved} icon. Bấm Ctrl+S để lưu scene rồi mở máy tính trong game để xem danh mục.");
-        EditorUtility.DisplayDialog("Import Products", $"Xong! {pendingIcons.Count} mặt hàng, {saved} icon mới.\n\nBấm Ctrl+S để lưu scene.", "OK");
+        Debug.Log($"[Import Products] Đã chụp {saved} icon.");
+        return saved;
+    }
+
+    private static Texture2D RenderIcon(PreviewRenderUtility studio, GameObject prefab, int size)
+    {
+        GameObject inst = studio.InstantiatePrefabInScene(prefab);
+        try
+        {
+            Bounds b = default;
+            bool any = false;
+            foreach (Renderer r in inst.GetComponentsInChildren<Renderer>())
+            {
+                if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+            }
+            if (!any) return null;
+
+            float radius = Mathf.Max(0.01f, b.extents.magnitude);
+            float distance = radius / Mathf.Sin(studio.camera.fieldOfView * 0.5f * Mathf.Deg2Rad) * 1.05f;
+            Vector3 dir = Quaternion.Euler(20f, -35f, 0f) * Vector3.back;
+            studio.camera.transform.position = b.center - dir * distance * -1f;
+            studio.camera.transform.LookAt(b.center);
+            studio.camera.nearClipPlane = Mathf.Max(0.001f, distance - radius * 2f);
+            studio.camera.farClipPlane = distance + radius * 2f;
+
+            studio.BeginStaticPreview(new Rect(0, 0, size, size));
+            studio.Render(true);
+            return studio.EndStaticPreview();
+        }
+        finally { Object.DestroyImmediate(inst); }
     }
 
     // ================= Thùng hàng dùng chung =================

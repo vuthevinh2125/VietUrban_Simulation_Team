@@ -53,7 +53,13 @@ public class ProductCardUI : MonoBehaviour
         // Fill left UI info
         if (productNameText != null) productNameText.text = itemData.itemName;
         if (brandText != null) brandText.text = itemData.brand;
-        if (iconImage != null && itemData.icon != null) iconImage.sprite = itemData.icon;
+        if (iconImage != null)
+        {
+            // Không có icon thì ẩn ảnh đi, tránh giữ lại ảnh của thẻ mẫu (mọi thẻ cùng một hình)
+            iconImage.sprite = itemData.icon;
+            iconImage.preserveAspect = true;
+            iconImage.enabled = itemData.icon != null;
+        }
 
         if (displayTypeText != null) displayTypeText.text = itemData.displayType;
         if (unitPriceText != null) unitPriceText.text = EconomyManager.Format(itemData.unitPrice);
