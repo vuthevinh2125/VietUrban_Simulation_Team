@@ -41,7 +41,9 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Tỉ lệ khách lấy hàng rồi bỏ chạy không trả tiền (từ ngày 2 trở đi)")]
     [Range(0f, 1f)] public float thiefChance = 0.07f;
     [Tooltip("Kẻ trộm chạy nhanh gấp bao nhiêu lần")]
-    public float fleeSpeedMultiplier = 1.8f;
+    public float fleeSpeedMultiplier = 1.25f;
+    [Tooltip("Ra khỏi cửa rồi kẻ trộm còn chạy thêm bao xa (m) mới biến mất - thời gian để người chơi đuổi theo")]
+    public float fleeDistance = 30f;
     [Tooltip("Thời gian đứng xem mỗi kệ (giây)")]
     public float browseTime = 1.5f;
     [Tooltip("Đi quá thời gian này mà chưa tới nơi thì dịch chuyển tới luôn (chống kẹt)")]
@@ -303,7 +305,9 @@ public class NPCShopper : MonoBehaviour
         float baseSpeed = agent.speed;
         agent.speed = baseSpeed * fleeSpeedMultiplier;
         agent.acceleration *= 2f;
-        if (exitDoor != null) StartCoroutine(MoveTo(exitDoor.position));
+        // Chạy ra cửa rồi chạy tiếp ra xa cửa hàng (người chơi còn đuổi kịp ngoài vỉa hè)
+        Vector3 escape = EscapePoint();
+        StartCoroutine(MoveTo(escape));
 
         var doors = new List<Transform>();
         foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None)) doors.Add(d.transform);
@@ -316,7 +320,7 @@ public class NPCShopper : MonoBehaviour
             if (!alarmed)
                 foreach (Transform door in doors)
                     if (door != null && FlatDistance(transform.position, door.position) < 3f) { RaiseAlarm(); break; }
-            if (exitDoor != null && FlatDistance(transform.position, exitDoor.position) < 1.2f) break;
+            if (FlatDistance(transform.position, escape) < 1.5f) break;
             yield return null;
         }
         if (caught) yield break; // Catch() lo phần còn lại
@@ -326,6 +330,25 @@ public class NPCShopper : MonoBehaviour
         Debug.Log($"[Customer] {name} trộm {basket.Count} món ({EconomyManager.Format(value)}) và chạy thoát.");
         SetState(NPCState.Done);
         Destroy(gameObject);
+    }
+
+    /// <summary>Điểm cách cửa ra fleeDistance mét, theo hướng từ trong cửa hàng đi ra.</summary>
+    private Vector3 EscapePoint()
+    {
+        Vector3 exit = exitDoor != null ? exitDoor.position : transform.position;
+        Vector3 store = Vector3.zero;
+        int n = 0;
+        foreach (Shelf sh in StockManager.Shelves) if (sh != null) { store += sh.transform.position; n++; }
+        Vector3 dir = n > 0 ? exit - store / n : transform.forward;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.01f) dir = transform.forward;
+        // Lấy điểm đi bộ được gần nhất (vỉa hè), thử gần dần nếu quá xa NavMesh
+        for (float f = 1f; f > 0.2f; f -= 0.2f)
+        {
+            Vector3 p = exit + dir.normalized * fleeDistance * f;
+            if (NavMesh.SamplePosition(p, out NavMeshHit hit, 6f, NavMesh.AllAreas)) return hit.position;
+        }
+        return exit;
     }
 
     private void RaiseAlarm()
