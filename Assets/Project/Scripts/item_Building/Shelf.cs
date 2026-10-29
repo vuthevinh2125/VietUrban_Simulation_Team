@@ -162,6 +162,38 @@ public class Shelf : MonoBehaviour
         return true;
     }
 
+    // ---------- Lưu / nạp ----------
+    /// <summary>Xoá sạch hàng trên kệ (dùng khi nạp file lưu).</summary>
+    public void ClearAll()
+    {
+        EnsureArray();
+        for (int i = 0; i < occupied.Length; i++)
+        {
+            if (occupied[i] != null) Destroy(occupied[i]);
+            occupied[i] = null;
+        }
+        if (assignedItem == null) currentItem = null;
+        StockManager.NotifyChanged();
+    }
+
+    /// <summary>Đặt ngay count món của item lên kệ (không cần người chơi xếp).</summary>
+    public int FillInstant(ItemData item, int count)
+    {
+        if (item == null || count <= 0) return 0;
+        GameObject prefab = item.ResolveProductPrefab();
+        if (prefab == null) return 0;
+        int placed = 0;
+        for (int i = 0; i < count; i++)
+        {
+            int index = FirstFreeSlot();
+            if (index < 0 || slots[index] == null) break;
+            GameObject product = Instantiate(prefab, slots[index].position, slots[index].rotation);
+            if (!TryAddProduct(product, slots[index], item)) { Destroy(product); break; }
+            placed++;
+        }
+        return placed;
+    }
+
     // ---------- Giữ tương thích với code cũ ----------
     public Transform GetAvailableSlot()
     {
