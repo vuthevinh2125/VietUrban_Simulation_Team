@@ -102,5 +102,5 @@ Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockC
 
 ## Thành viên
 
-- Vũ Thế Vinh
-- (thêm tên các thành viên khác trong nhóm)
+- **Vũ Thế Vinh** (Leader)
+- **Nguyễn Hải Nam**
