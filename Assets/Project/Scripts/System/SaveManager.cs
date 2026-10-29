@@ -258,6 +258,9 @@ public class SaveManager : MonoBehaviour
             box.UpdateVisuals();
         }
 
+        // Thùng nằm đúng chỗ trên kệ kho thì cất lại vào kệ (khoá vật lý, không rơi)
+        foreach (StorageRack rack in StorageRack.All) rack.AdoptNearbyBoxes(StockManager.Boxes);
+
         foreach (FurnitureBoxEntry fbE in d.furnitureBoxes)
         {
             if (furnitures.TryGetValue(fbE.data, out FurnitureData fd)) FurnitureBox.Spawn(fd, fbE.pos - Vector3.up * 0.35f, fbE.rot);
