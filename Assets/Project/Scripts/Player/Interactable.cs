@@ -81,9 +81,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // HÀM MỚI: BỐC SẢN PHẨM RA KHỎI THÙNG ĐỂ ĐẶT LÊN KỆ
-    // ==========================================
+    
     public void TakeItemOut(Transform spawnPosition)
     {
         if (productCount > 0 && itemData != null && itemData.cratePrefab != null)
