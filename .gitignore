@@ -48,3 +48,6 @@ Assets/Materials/
 *.tif
 *.psd
 *.tga
+# Texture tách từ model Mixamo (rất nặng, model fbx cũng không lên git)
+Assets/Project/Prefabs/Characters/Textures/
+Assets/Project/Prefabs/Characters/Textures.meta
