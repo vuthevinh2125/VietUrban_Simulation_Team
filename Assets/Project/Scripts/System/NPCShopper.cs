@@ -222,7 +222,7 @@ public class NPCShopper : MonoBehaviour
             {
                 if (agent.remainingDistance <= agent.stoppingDistance + 0.35f) break;
 
-                still = agent.velocity.sqrMagnitude < 0.01f ? still + Time.deltaTime : 0f;
+                still = IsStill() ? still + Time.deltaTime : 0f;
                 if (still > 2f && agent.pathStatus != NavMeshPathStatus.PathComplete) break; // đã đi hết mức có thể
                 if (still > 4f) break;
             }
@@ -239,7 +239,8 @@ public class NPCShopper : MonoBehaviour
     private bool Arrived(float tolerance) =>
         agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + tolerance;
 
-    private bool IsStill() => agent.velocity.sqrMagnitude < 0.01f;
+    // Khi đang đi qua NavMeshLink (cầu nối ở cửa) Unity báo velocity = 0, không tính là đứng yên
+    private bool IsStill() => !agent.isOnOffMeshLink && agent.velocity.sqrMagnitude < 0.01f;
 
     private static Vector3 Sample(Vector3 p) =>
         NavMesh.SamplePosition(p, out NavMeshHit hit, 3f, NavMesh.AllAreas) ? hit.position : p;
