@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
@@ -34,6 +35,11 @@ public class WeatherSystem : MonoBehaviour
     private int temperature, appliedDay = -1;
 
     private ParticleSystem rain;
+    private ParticleSystem.Particle[] rainBuf;
+    // Vùng trong nhà (cửa hàng, phần mở rộng, nhà kho): hạt mưa rơi vào dưới mái thì xoá ngay
+    private readonly List<Bounds> indoor = new List<Bounds>();
+    private float indoorBuiltAt = -999f;
+    private int forcedWeather = -1;
     private TMP_Text hudText;
     private float nextFlash, flashUntil;
     private Light flashLight;
@@ -81,7 +87,14 @@ public class WeatherSystem : MonoBehaviour
     {
         GameManager gm = GameManager.Instance;
         int day = gm != null ? gm.currentDay : 1;
-        if (day != appliedDay) ApplyDay(day);
+        if (day != appliedDay) { forcedWeather = -1; ApplyDay(day); }
+
+        // Phím test F6: đổi thời tiết lần lượt (chỉ Editor / Development Build)
+        if (GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F6))
+        {
+            forcedWeather = ((int)weather + 1) % 5;
+            ApplyDay(day);
+        }
 
         // Hạt mưa đi theo camera đang dùng
         Camera cam = ActiveCamera();
@@ -116,6 +129,7 @@ public class WeatherSystem : MonoBehaviour
         season = SeasonOf(date.Month);
         var rng = new System.Random(day * 7919 + 17);
         weather = Roll(season, rng.NextDouble());
+        if (forcedWeather >= 0) weather = (Weather)forcedWeather;
 
         int baseTemp = season == Season.Spring ? 24 : season == Season.Summer ? 33 : season == Season.Autumn ? 27 : 17;
         temperature = baseTemp + rng.Next(-3, 4) - (weather == Weather.Rain || weather == Weather.Storm ? 3 : 0);
@@ -197,6 +211,74 @@ public class WeatherSystem : MonoBehaviour
             mpb.SetColor("_BaseColor", isGround ? ground : leaf);
             mpb.SetColor("_Color", isGround ? ground : leaf);
             r.SetPropertyBlock(mpb);
+        }
+    }
+
+    // ================= Chặn mưa trong nhà =================
+    void LateUpdate()
+    {
+        if (rain == null || !rain.isPlaying) return;
+        if (Time.time - indoorBuiltAt > 15f) BuildIndoorVolumes();
+        if (indoor.Count == 0) return;
+        int max = rain.main.maxParticles;
+        if (rainBuf == null || rainBuf.Length < max) rainBuf = new ParticleSystem.Particle[max];
+        int n = rain.GetParticles(rainBuf);
+        bool changed = false;
+        for (int i = 0; i < n; i++)
+        {
+            Vector3 p = rainBuf[i].position;
+            for (int k = 0; k < indoor.Count; k++)
+            {
+                Bounds b = indoor[k];
+                if (p.x > b.min.x && p.x < b.max.x && p.z > b.min.z && p.z < b.max.z && p.y < b.max.y)
+                {
+                    rainBuf[i].remainingLifetime = 0f;
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        if (changed) rain.SetParticles(rainBuf, n);
+    }
+
+    private void BuildIndoorVolumes()
+    {
+        indoorBuiltAt = Time.time;
+        indoor.Clear();
+
+        // Siêu thị chính: khung nhà x -127..-103, z 19..51; mái lấy theo vật thể cao nhất trong khung (tối đa 12 m)
+        var store = new Bounds();
+        store.SetMinMax(new Vector3(-127.5f, -5f, 18.5f), new Vector3(-102.5f, 7f, 51.5f));
+        GameObject sm = GameObject.Find("Supermarket_full");
+        if (sm != null)
+        {
+            float top = 0f;
+            foreach (Renderer r in sm.GetComponentsInChildren<Renderer>())
+            {
+                Vector3 c = r.bounds.center;
+                if (c.x > store.min.x && c.x < store.max.x && c.z > store.min.z && c.z < store.max.z && r.bounds.max.y < 12f)
+                    top = Mathf.Max(top, r.bounds.max.y);
+            }
+            if (top > 2f) store.SetMinMax(store.min, new Vector3(store.max.x, top + 0.3f, store.max.z));
+        }
+        indoor.Add(store);
+
+        // Phòng mở rộng / nhà kho dựng bằng tool: lấy khung theo sàn + trần
+        foreach (string name in new[] { "StoreExpansion_1", "StoreExpansion_2", "Warehouse" })
+        {
+            GameObject root = GameObject.Find(name);
+            if (root == null) continue;
+            bool has = false;
+            var b = new Bounds();
+            foreach (Renderer r in root.GetComponentsInChildren<Renderer>(true))
+            {
+                string n = r.gameObject.name;
+                if (n.IndexOf("Floor", StringComparison.OrdinalIgnoreCase) < 0 && n.IndexOf("Ceiling", StringComparison.OrdinalIgnoreCase) < 0) continue;
+                if (!has) { b = r.bounds; has = true; } else b.Encapsulate(r.bounds);
+            }
+            if (!has) continue;
+            b.SetMinMax(new Vector3(b.min.x - 0.3f, b.min.y - 5f, b.min.z - 0.3f), new Vector3(b.max.x + 0.3f, Mathf.Max(b.max.y, b.min.y + 3f) + 0.3f, b.max.z + 0.3f));
+            indoor.Add(b);
         }
     }
 

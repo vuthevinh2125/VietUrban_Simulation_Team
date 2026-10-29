@@ -63,7 +63,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | **Esc** | Đóng bảng đang mở / menu tạm dừng |
 | **H** | Ẩn / hiện hướng dẫn |
 
-Phím test (chỉ trong Unity Editor): **F7** +$1000 · **F8** lên 1 cấp · **T** tới giờ đóng cửa.
+Phím test (chỉ trong Unity Editor): **F7** +$1000 · **F8** lên 1 cấp · **T** tới giờ đóng cửa · **F6** đổi thời tiết.
 
 ## Cài đặt & chạy
 
