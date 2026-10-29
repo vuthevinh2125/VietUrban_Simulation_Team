@@ -54,6 +54,15 @@ public class ItemPickup : MonoBehaviour
 
         bool pressed = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0);
 
+        // Quét hàng khách đặt trên quầy thu ngân
+        CheckoutItem scanItem = hit.collider.GetComponentInParent<CheckoutItem>();
+        if (scanItem != null && scanItem.counter != null)
+        {
+            SetPrompt($"[LMB] Scan {scanItem.DisplayName} {EconomyManager.Format(scanItem.price)}\n{scanItem.counter.GetStatusText()}");
+            if (pressed) scanItem.counter.TryScan(scanItem);
+            return;
+        }
+
         ComputerZoom zoom = hit.collider.GetComponentInParent<ComputerZoom>();
         ComputerInteract computer = hit.collider.GetComponentInParent<ComputerInteract>();
         if (zoom != null || computer != null)
