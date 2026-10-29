@@ -19,8 +19,19 @@ public class Shelf : MonoBehaviour
     [Header("Animation")]
     public float placeAnimDuration = 0.25f;
 
+    [Header("Auto Fit (tự phóng món hàng cho vừa ô kệ)")]
+    public bool autoFitProducts = true;
+    [Tooltip("Món hàng chiếm bao nhiêu phần bề ngang/chiều sâu của một ô")]
+    [Range(0.5f, 1f)] public float fillRatio = 0.9f;
+    [Tooltip("Món hàng cao tối đa bao nhiêu phần khoảng cách giữa 2 tầng kệ")]
+    [Range(0.3f, 1f)] public float heightRatio = 0.8f;
+    public float minFitScale = 0.6f;
+    public float maxFitScale = 2.5f;
+
     private GameObject[] occupied;   // occupied[i] = món đang nằm ở slots[i]
     private ItemData currentItem;
+    private Vector3 cell;            // kích thước 1 ô (x: ngang, y: khoảng tầng, z: sâu), mét
+    private bool cellReady;
 
     // ================= Thông tin =================
     public ItemData CurrentItem => assignedItem != null ? assignedItem : currentItem;
@@ -86,13 +97,23 @@ public class Shelf : MonoBehaviour
         Transform slot = slots[index];
         product.transform.SetParent(slot);
 
-        // Bù trừ độ méo scale của kệ để món hàng giữ đúng kích thước (nhân thêm shelfScale)
+        // Kích thước mong muốn = shelfScale x hệ số cho vừa ô; bù trừ độ méo scale của kệ
         Vector3 wanted = (item != null && item.shelfScale != Vector3.zero) ? item.shelfScale : Vector3.one;
+        product.transform.localRotation = Quaternion.identity;
+        Bounds lb = ProductFit.LocalBounds(product.transform);
+        float k = autoFitProducts ? FitFactor(Vector3.Scale(lb.size, wanted)) : 1f;
+        Vector3 final = wanted * k;
         Vector3 ls = slot.lossyScale;
         product.transform.localScale = new Vector3(
-            wanted.x / SafeScale(ls.x),
-            wanted.y / SafeScale(ls.y),
-            wanted.z / SafeScale(ls.z));
+            final.x / SafeScale(ls.x),
+            final.y / SafeScale(ls.y),
+            final.z / SafeScale(ls.z));
+
+        // Ô kệ nằm ở mặt kệ: đặt đáy món hàng chạm mặt kệ, căn giữa ô
+        Vector3 target = new Vector3(
+            -lb.center.x * final.x / SafeScale(ls.x),
+            -lb.min.y * final.y / SafeScale(ls.y),
+            -lb.center.z * final.z / SafeScale(ls.z));
 
         Rigidbody prb = product.GetComponent<Rigidbody>();
         if (prb != null) prb.isKinematic = true;
@@ -100,7 +121,7 @@ public class Shelf : MonoBehaviour
         occupied[index] = product;
         if (assignedItem == null && currentItem == null) currentItem = item;
 
-        StartCoroutine(MoveItemSmoothly(product.transform, startPoint, placeAnimDuration));
+        StartCoroutine(MoveItemSmoothly(product.transform, startPoint, target, placeAnimDuration));
         StockManager.NotifyChanged();
         return true;
     }
@@ -171,9 +192,62 @@ public class Shelf : MonoBehaviour
         return -1;
     }
 
+    /// <summary>Hệ số phóng để món hàng (kích thước size, mét) vừa một ô kệ.</summary>
+    private float FitFactor(Vector3 size)
+    {
+        EnsureCell();
+        float k = Mathf.Min(
+            cell.x * fillRatio / Mathf.Max(0.001f, size.x),
+            cell.z * fillRatio / Mathf.Max(0.001f, size.z),
+            cell.y * heightRatio / Mathf.Max(0.001f, size.y));
+        return Mathf.Clamp(k, minFitScale, maxFitScale);
+    }
+
+    /// <summary>Đo khoảng cách giữa các ô cạnh nhau (lấy trung vị) để biết 1 ô rộng bao nhiêu.</summary>
+    private void EnsureCell()
+    {
+        if (cellReady) return;
+        cellReady = true;
+        var xs = new System.Collections.Generic.List<float>();
+        var zs = new System.Collections.Generic.List<float>();
+        var ys = new System.Collections.Generic.List<float>();
+        for (int i = 0; i < Capacity; i++)
+        {
+            if (slots[i] == null) continue;
+            Vector3 right = slots[i].right, fwd = slots[i].forward;
+            float bx = float.MaxValue, bz = float.MaxValue, by = float.MaxValue;
+            for (int j = 0; j < Capacity; j++)
+            {
+                if (i == j || slots[j] == null) continue;
+                Vector3 d = slots[j].position - slots[i].position;
+                float dy = Mathf.Abs(d.y);
+                float dx = Mathf.Abs(Vector3.Dot(d, right));
+                float dz = Mathf.Abs(Vector3.Dot(d, fwd));
+                if (dy < 0.05f)
+                {
+                    if (dz < 0.06f && dx > 0.05f) bx = Mathf.Min(bx, dx);
+                    if (dx < 0.06f && dz > 0.05f) bz = Mathf.Min(bz, dz);
+                }
+                else if (dx < 0.3f && dz < 0.3f) by = Mathf.Min(by, dy);
+            }
+            if (bx < float.MaxValue) xs.Add(bx);
+            if (bz < float.MaxValue) zs.Add(bz);
+            if (by < float.MaxValue) ys.Add(by);
+        }
+        cell = new Vector3(Median(xs, 0.22f), Median(ys, 0.4f), Median(zs, 0.3f));
+        cell.y = Mathf.Clamp(cell.y, 0.15f, 0.8f);
+    }
+
+    private static float Median(System.Collections.Generic.List<float> v, float fallback)
+    {
+        if (v.Count == 0) return fallback;
+        v.Sort();
+        return v[v.Count / 2];
+    }
+
     private static float SafeScale(float v) => Mathf.Approximately(v, 0f) ? 1f : v;
 
-    private IEnumerator MoveItemSmoothly(Transform item, Transform startPoint, float duration)
+    private IEnumerator MoveItemSmoothly(Transform item, Transform startPoint, Vector3 targetLocal, float duration)
     {
         if (item == null) yield break;
 
@@ -191,14 +265,14 @@ public class Shelf : MonoBehaviour
         {
             if (item == null) yield break; // khách đã lấy mất trong lúc đang bay
             float t = elapsed / duration;
-            item.localPosition = Vector3.Lerp(startLocalPos, Vector3.zero, t);
+            item.localPosition = Vector3.Lerp(startLocalPos, targetLocal, t);
             item.localRotation = Quaternion.Lerp(startLocalRot, Quaternion.identity, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
         if (item == null) yield break;
-        item.localPosition = Vector3.zero;
+        item.localPosition = targetLocal;
         item.localRotation = Quaternion.identity;
     }
 }
