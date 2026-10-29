@@ -24,7 +24,7 @@ public static class FurnitureSetupTool
     private const float SlotX = 0.22f, SlotZ = 0.25f;
     private const float MinClearance = 0.12f;  // khoảng trống tối thiểu phía trên một tầng
     private const float MaxLevelHeight = 1.8f; // không xếp trên nóc kệ
-    private const float Inset = 0.05f;         // chừa mép tầng
+    private const float Inset = 0.03f;         // chừa mép tầng
     private const float MinNormalY = 0.85f;    // chấp nhận tầng kệ nghiêng tới ~30 độ
 
     private struct Entry
@@ -197,9 +197,8 @@ public static class FurnitureSetupTool
             {
                 Vector3 origin = new Vector3(wb.min.x + (ix + 0.5f) * Step, wb.max.y + 0.5f, wb.min.z + (iz + 0.5f) * Step);
                 var column = new List<(Vector3 p, bool openSky)>();
-                foreach (RaycastHit h in Physics.RaycastAll(origin, Vector3.down, wb.size.y + 1f, ~0, QueryTriggerInteraction.Ignore))
+                foreach (RaycastHit h in CastThrough(origin, Vector3.down, wb.size.y + 1f, root))
                 {
-                    if (!h.transform.IsChildOf(root)) continue;
                     rawHits++;
                     if (h.normal.y < MinNormalY) continue;
                     flatHits++;
@@ -258,7 +257,7 @@ public static class FurnitureSetupTool
             int minIz = level.Keys.Min(c => c.y), maxIz = level.Keys.Max(c => c.y);
             float minX = wb.min.x + (minIx + 0.5f) * Step + Inset, maxX = wb.min.x + (maxIx + 0.5f) * Step - Inset;
             float minZ = wb.min.z + (minIz + 0.5f) * Step + Inset, maxZ = wb.min.z + (maxIz + 0.5f) * Step - Inset;
-            if (maxX - minX < 0.1f || maxZ - minZ < 0.1f) continue;
+            if (maxX - minX < 0.06f || maxZ - minZ < 0.06f) continue;
 
             int nx = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / SlotX + 0.5f));
             int nz = Mathf.Max(1, Mathf.FloorToInt((maxZ - minZ) / SlotZ + 0.5f));
@@ -278,13 +277,33 @@ public static class FurnitureSetupTool
         return result;
     }
 
+    /// <summary>
+    /// Mọi điểm tia chạm vào món đồ theo thứ tự từ gần tới xa.
+    /// (Physics.RaycastAll chỉ trả 1 điểm cho mỗi collider, nên kệ / tủ làm từ 1 mesh liền sẽ mất các tầng bên dưới.
+    /// Ở đây bắn tiếp từ ngay sau điểm vừa chạm cho tới hết.)
+    /// </summary>
+    private static List<RaycastHit> CastThrough(Vector3 origin, Vector3 dir, float distance, Transform root)
+    {
+        var result = new List<RaycastHit>();
+        Vector3 o = origin;
+        float left = distance;
+        for (int i = 0; i < 64 && left > 0f; i++)
+        {
+            if (!Physics.Raycast(o, dir, out RaycastHit h, left, ~0, QueryTriggerInteraction.Ignore)) break;
+            if (h.transform.IsChildOf(root)) result.Add(h);
+            float moved = h.distance + 0.002f;
+            o += dir * moved;
+            left -= moved;
+        }
+        return result;
+    }
+
     /// <summary>Khoảng trống phía trên một điểm, chỉ tính các phần của chính món đồ (tối đa 5m).</summary>
     private static float ClearanceAbove(Vector3 point, Transform root)
     {
-        float best = 5f;
-        foreach (RaycastHit h in Physics.RaycastAll(point + Vector3.up * 0.005f, Vector3.up, 5f, ~0, QueryTriggerInteraction.Ignore))
-            if (h.transform.IsChildOf(root)) best = Mathf.Min(best, h.distance);
-        return best;
+        foreach (RaycastHit h in CastThrough(point + Vector3.up * 0.005f, Vector3.up, 5f, root))
+            return h.distance;
+        return 5f;
     }
 
     private static Bounds WorldBounds(GameObject go)
