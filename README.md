@@ -32,6 +32,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Nhân viên | Thu ngân (tự quét + nhận tiền), nhân viên xếp kệ (tự mang thùng đi xếp), **bảo vệ** gác ngoài cửa tự đuổi bắt kẻ trộm; trả lương cuối ngày |
 | Trộm & dọn dẹp | Kẻ trộm ôm hàng bỏ chạy (còi chống trộm kêu) — cầm **gậy** đuổi theo đánh trúng để lấy lại tiền; vết bẩn xuất hiện trong cửa hàng, cầm **chổi** quét, bẩn nhiều khách mua ít |
 | Giao hàng | Đơn đặt hàng qua điện thoại: nhận đơn, lấy gói hàng, chạy **xe máy / ô tô** tới cột sáng vàng để giao, giao nhanh được tip |
+| Thành phố | Khu phố mới phía đông (gấp đôi bản đồ): 8 tuyến đường có tên, ngã tư vạch qua đường, 12 khu nhà, ~70 toà nhà có số nhà để giao hàng, đèn đường tự bật ban đêm |
 | Bản đồ | Minimap tròn (xoay theo hướng nhìn) + bản đồ lớn **[M]**: đánh dấu cửa hàng, gói hàng / chỗ giao, kẻ trộm, bảo vệ; vẽ lộ trình đường đi tới chỗ giao hàng |
 | Ngày / đêm | Mặt trời mọc / lặn theo giờ trong game, chiều tà ngả cam, tối có ánh trăng, đèn xe tự bật |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
@@ -103,6 +104,7 @@ Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockC
 | 15 / 16 | Dựng nhà kho cạnh siêu thị / phần mở rộng ngoài các mảng tường đã chọn (ẩn tới khi mua) |
 | 17 | Va chạm 2 mặt cho tường, trần, sàn (hết đi xuyên tường từ ngoài vào) |
 | 18 | Cho phép dời kệ / tủ có sẵn (bỏ static batching, NavMeshObstacle) — xong Bake NavMesh |
+| 19 | Dựng khu phố mới phía đông bằng POLYGON City Pack (đường, khu nhà, toà nhà, đèn, cây) — xong Bake NavMesh |
 | `Tools → Save` | Xoá file lưu / mở thư mục chứa file lưu |
 
 ## Tài nguyên sử dụng
