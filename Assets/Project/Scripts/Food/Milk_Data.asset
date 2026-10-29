@@ -13,15 +13,18 @@ MonoBehaviour:
   m_Name: Milk_Data
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Milk
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c9362d67d1ff14f4ca2d333c4738609a, type: 3}
   description: 
   rarity: 0
   isStackable: 0
   maxStack: 0
   itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
   brand: Vinamilk
   displayType: Fresh
   unitPrice: 2
   itemsPerBox: 16
   shelfCapacity: 12
+  marketPrice: 0
   cratePrefab: {fileID: 4984758318327259148, guid: 78aab99baef1afb41bc3ebe693bd70fe, type: 3}
+  productPrefab: {fileID: 0}

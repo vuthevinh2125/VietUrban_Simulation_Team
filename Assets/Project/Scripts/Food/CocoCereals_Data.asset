@@ -13,15 +13,18 @@ MonoBehaviour:
   m_Name: CocoCereals_Data
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: CocoCereals
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 7116417d73d0a114780436e3ff77fd8a, type: 3}
   description: 
   rarity: 0
   isStackable: 0
   maxStack: 0
   itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
   brand: Calbee
   displayType: Shelf
   unitPrice: 3
   itemsPerBox: 16
   shelfCapacity: 7
+  marketPrice: 0
   cratePrefab: {fileID: 5874872850781194382, guid: 542d0ed627cca954eaa67669857d9926, type: 3}
+  productPrefab: {fileID: 0}
