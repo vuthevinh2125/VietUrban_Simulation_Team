@@ -126,10 +126,12 @@ public static class ProductImportTool
     [MenuItem("Tools/Store Setup/7b. Regenerate Product Icons")]
     private static void RegenerateIcons()
     {
-        var items = AssetDatabase.FindAssets("t:ItemData", new[] { DataFolder })
-            .Select(g => AssetDatabase.LoadAssetAtPath<ItemData>(AssetDatabase.GUIDToAssetPath(g)))
-            .Where(d => d != null).ToList();
-        int n = GenerateIcons(items, overwrite: true);
+        // Hàng nhập từ gói: chụp lại hết. Mặt hàng cũ (sữa, ngũ cốc...): chỉ chụp nếu chưa có icon.
+        var all = AssetDatabase.FindAssets("t:ItemData", new[] { "Assets/Project" })
+            .Select(AssetDatabase.GUIDToAssetPath).ToList();
+        var imported = all.Where(p => p.StartsWith(DataFolder + "/")).Select(AssetDatabase.LoadAssetAtPath<ItemData>).Where(d => d != null).ToList();
+        var others = all.Where(p => !p.StartsWith(DataFolder + "/")).Select(AssetDatabase.LoadAssetAtPath<ItemData>).Where(d => d != null).ToList();
+        int n = GenerateIcons(imported, overwrite: true) + GenerateIcons(others, overwrite: false);
         EditorUtility.DisplayDialog("Product Icons", $"Đã chụp {n} icon.", "OK");
     }
 
@@ -155,7 +157,8 @@ public static class ProductImportTool
                 ItemData data = items[i];
                 GameObject prefab = data != null ? data.ResolveProductPrefab() : null;
                 if (prefab == null) continue;
-                string path = $"{IconFolder}/{SafeFileName(data.itemName)}.png";
+                string prefix = AssetDatabase.GetAssetPath(data).StartsWith(DataFolder + "/") ? "" : "Legacy_";
+                string path = $"{IconFolder}/{prefix}{SafeFileName(data.itemName)}.png";
                 if (!overwrite && data.icon != null) continue;
 
                 EditorUtility.DisplayProgressBar("Product Icons", data.itemName, (float)i / items.Count);
