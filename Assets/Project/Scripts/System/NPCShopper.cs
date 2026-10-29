@@ -14,7 +14,7 @@ public class NPCShopper : MonoBehaviour
     /// <summary>Tất cả khách đang có trong scene (AutoDoor, CustomerSpawner dùng).</summary>
     public static readonly List<NPCShopper> Active = new List<NPCShopper>();
 
-    public enum NPCState { Entering, Shopping, GoToCheckout, Queueing, Paying, Leaving, Done }
+    public enum NPCState { Entering, Shopping, GoToCheckout, Queueing, Paying, Leaving, Fleeing, Done }
 
     [Header("Trạng thái hiện tại")]
     public NPCState currentState;
@@ -36,6 +36,12 @@ public class NPCShopper : MonoBehaviour
     public int maxItemsToBuy = 4;
     [Tooltip("Khách bỏ qua món nếu giá bán > giá thị trường x hệ số này")]
     public float maxPriceRatio = 1.5f;
+
+    [Header("Kẻ trộm (giống Supermarket Simulator)")]
+    [Tooltip("Tỉ lệ khách lấy hàng rồi bỏ chạy không trả tiền (từ ngày 2 trở đi)")]
+    [Range(0f, 1f)] public float thiefChance = 0.07f;
+    [Tooltip("Kẻ trộm chạy nhanh gấp bao nhiêu lần")]
+    public float fleeSpeedMultiplier = 1.8f;
     [Tooltip("Thời gian đứng xem mỗi kệ (giây)")]
     public float browseTime = 1.5f;
     [Tooltip("Đi quá thời gian này mà chưa tới nơi thì dịch chuyển tới luôn (chống kẹt)")]
@@ -67,6 +73,11 @@ public class NPCShopper : MonoBehaviour
     private bool queueTargetDirty;
     private bool isFirstInQueue;
     private bool paid;
+    private bool caught;
+    private bool alarmed;
+
+    /// <summary>Đang ôm hàng chạy ra cửa mà chưa bị bắt.</summary>
+    public bool IsFleeingThief => currentState == NPCState.Fleeing && !caught;
 
     private static int stuckWarnings;
 
@@ -171,7 +182,14 @@ public class NPCShopper : MonoBehaviour
                 }
         }
 
-        // --- Thanh toán ---
+        // --- Thanh toán (hoặc ăn trộm) ---
+        GameManager gm = GameManager.Instance;
+        bool canSteal = gm != null && gm.currentDay >= 2;
+        if (basket.Count > 0 && canSteal && Random.value < thiefChance)
+        {
+            yield return FleeRoutine();
+            yield break;
+        }
         if (basket.Count > 0) yield return CheckoutRoutine();
 
         // --- Ra về ---
@@ -275,6 +293,80 @@ public class NPCShopper : MonoBehaviour
         agent.isStopped = true;
         agent.ResetPath();
         agent.velocity = Vector3.zero;
+    }
+
+    // ================= Kẻ trộm =================
+    /// <summary>Ôm hàng chạy thẳng ra cửa. Đi qua cổng chống trộm thì còi kêu; người chơi bấm vào để bắt.</summary>
+    private IEnumerator FleeRoutine()
+    {
+        SetState(NPCState.Fleeing);
+        float baseSpeed = agent.speed;
+        agent.speed = baseSpeed * fleeSpeedMultiplier;
+        agent.acceleration *= 2f;
+        if (exitDoor != null) StartCoroutine(MoveTo(exitDoor.position));
+
+        var doors = new List<Transform>();
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None)) doors.Add(d.transform);
+        foreach (AutoDoor d in FindObjectsByType<AutoDoor>(FindObjectsSortMode.None)) doors.Add(d.transform);
+
+        float t = 0f;
+        while (!caught && t < moveTimeout * 2f)
+        {
+            t += Time.deltaTime;
+            if (!alarmed)
+                foreach (Transform door in doors)
+                    if (door != null && FlatDistance(transform.position, door.position) < 3f) { RaiseAlarm(); break; }
+            if (exitDoor != null && FlatDistance(transform.position, exitDoor.position) < 1.2f) break;
+            yield return null;
+        }
+        if (caught) yield break; // Catch() lo phần còn lại
+
+        float value = StolenValue();
+        ProgressHUD.Toast($"A shoplifter got away with {EconomyManager.Format(value)} of goods!");
+        Debug.Log($"[Customer] {name} trộm {basket.Count} món ({EconomyManager.Format(value)}) và chạy thoát.");
+        SetState(NPCState.Done);
+        Destroy(gameObject);
+    }
+
+    private void RaiseAlarm()
+    {
+        alarmed = true;
+        AudioManager.PlayAt("alarm", transform.position, 1f);
+        SpeechBubble.Show(transform, "THIEF!", new Color(1f, 0.25f, 0.2f), agent.height + 0.4f, 6f);
+        ProgressHUD.Toast("Anti-theft alarm! A shoplifter is running away - catch them!");
+    }
+
+    /// <summary>Người chơi bắt được kẻ trộm: lấy lại tiền hàng, kẻ trộm xin lỗi rồi đi về.</summary>
+    public void Catch()
+    {
+        if (!IsFleeingThief) return;
+        caught = true;
+        StopAllCoroutines();
+        float value = StolenValue();
+        if (value > 0f) EconomyManager.Instance.AddIncome(value, MoneyCategory.Sales, "Recovered stolen goods");
+        basket.Clear();
+        if (carrier != null) carrier.ClearItems();
+        SpeechBubble.Show(transform, "Sorry!", Color.white, agent.height + 0.4f, 3f);
+        ProgressHUD.Toast($"Thief caught! Recovered {EconomyManager.Format(value)}.");
+        AudioManager.Play("cash_register", 0.6f);
+        agent.speed /= fleeSpeedMultiplier;
+        StartCoroutine(LeaveAfterCaught());
+    }
+
+    private IEnumerator LeaveAfterCaught()
+    {
+        SetState(NPCState.Leaving);
+        yield return new WaitForSeconds(1.5f);
+        if (exitDoor != null) yield return MoveTo(exitDoor.position);
+        SetState(NPCState.Done);
+        Destroy(gameObject);
+    }
+
+    private float StolenValue()
+    {
+        float v = 0f;
+        foreach (ItemData it in basket) v += PriceManager.GetSellPrice(it);
+        return Mathf.Round(v * 100f) / 100f;
     }
 
     // ================= Gọi từ CheckoutCounter =================
