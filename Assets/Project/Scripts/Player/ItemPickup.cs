@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// "Đôi tay" của người chơi.
-///  Tay không : [E] / Chuột trái = nhặt thùng, dùng máy tính
+///  Tay không : [E] / Chuột trái = nhặt thùng, dùng máy tính, đặt giá bán khi nhìn vào kệ có hàng
 ///  Cầm thùng : Chuột trái (giữ) = xếp lên kệ · Chuột phải (giữ) = lấy lại vào thùng
 ///              [E] = đặt thùng xuống (thùng rỗng thì vứt đi)
 /// </summary>
@@ -82,6 +82,21 @@ public class ItemPickup : MonoBehaviour
         {
             SetPrompt($"[E] Pick up box: {box.DisplayName} ({box.productCount}/{box.Capacity})");
             if (pressed) PickUp(box);
+            return;
+        }
+
+        // Nhìn vào kệ có hàng: xem giá, bấm để đặt giá bán (như bấm vào nhãn giá trong Supermarket Simulator)
+        Shelf shelf = hit.collider.GetComponentInParent<Shelf>();
+        if (shelf != null && shelf.CurrentItem != null)
+        {
+            ItemData it = shelf.CurrentItem;
+            SetPrompt($"{it.itemName}  {shelf.Count}/{shelf.Capacity}\n" +
+                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(it.MarketPrice)})\n[LMB] Set price");
+            if (pressed)
+            {
+                SetPrompt(null);
+                PriceSetPanel.Open(it);
+            }
             return;
         }
 
