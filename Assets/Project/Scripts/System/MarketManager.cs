@@ -20,8 +20,12 @@ public class MarketManager : MonoBehaviour
 
     [Header("Delivery Settings")]
     public Transform deliveryPoint;
-    [Tooltip("Độ cao (toạ độ Y thế giới) của lớp thùng đầu tiên")]
+    [Tooltip("Tự dò mặt đất ngay dưới DeliveryPoint để đặt thùng (khuyên dùng)")]
+    public bool snapToGround = true;
+    [Tooltip("Chỉ dùng khi tắt Snap To Ground hoặc không dò được mặt đất: độ cao Y thế giới của lớp thùng đầu tiên")]
     public float fixedGroundY = 1.5f;
+    [Tooltip("Thả thùng cao hơn mặt đất một chút để không bị kẹt vào sàn")]
+    public float dropHeight = 0.4f;
     [Tooltip("Số cột thùng theo chiều ngang")]
     public int boxesPerRow = 3;
     [Tooltip("Số hàng thùng theo chiều sâu")]
@@ -174,6 +178,8 @@ public class MarketManager : MonoBehaviour
                 spawned++;
             }
         }
+        Debug.Log($"[Market] {spawned} box(es) spawned at '{deliveryPoint.name}' {deliveryPoint.position:F1}. " +
+                  "Không thấy thùng? Chọn DeliveryPoint trong Hierarchy, bấm F để xem nó ở đâu rồi kéo ra trước cửa hàng.", deliveryPoint);
         return spawned;
     }
 
@@ -187,8 +193,26 @@ public class MarketManager : MonoBehaviour
         float offsetZ = row * boxSpacing;
 
         Vector3 pos = deliveryPoint.position + deliveryPoint.rotation * new Vector3(offsetX, 0f, offsetZ);
-        pos.y = fixedGroundY;
+        pos.y = GroundY(pos) + dropHeight;
         return pos;
+    }
+
+    /// <summary>Độ cao mặt đất tại vị trí này (bỏ qua thùng hàng, người chơi và trigger).</summary>
+    private float GroundY(Vector3 pos)
+    {
+        if (!snapToGround) return fixedGroundY;
+
+        int mask = ~0;
+        int boxLayer = LayerMask.NameToLayer("Interactable");
+        int playerLayer = LayerMask.NameToLayer("Player");
+        if (boxLayer >= 0) mask &= ~(1 << boxLayer);
+        if (playerLayer >= 0) mask &= ~(1 << playerLayer);
+
+        Vector3 origin = new Vector3(pos.x, deliveryPoint.position.y + 3f, pos.z);
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 20f, mask, QueryTriggerInteraction.Ignore))
+            return hit.point.y;
+
+        return fixedGroundY;
     }
 
     private static int LowestColumn(int[] heights)

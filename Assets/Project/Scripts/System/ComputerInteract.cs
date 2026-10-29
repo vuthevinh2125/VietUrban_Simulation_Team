@@ -20,6 +20,14 @@ public class ComputerInteract : MonoBehaviour
     [Tooltip("Giao diện vẽ đè lên các UI khác (HUD...) với thứ tự này")]
     public int overlaySortingOrder = 100;
 
+    [Tooltip("Giao diện chiếm bao nhiêu phần màn hình (0.9 = 90%)")]
+    [Range(0.3f, 1f)] public float screenFill = 0.9f;
+
+    [Tooltip("Độ tối của nền phía sau giao diện (0 = không có nền)")]
+    [Range(0f, 1f)] public float backdropOpacity = 0.6f;
+
+    private GameObject backdrop;
+
     public bool IsOpen => computerUI != null && computerUI.activeSelf;
 
     void Awake()
@@ -80,6 +88,10 @@ public class ComputerInteract : MonoBehaviour
 
     void Update()
     {
+        // Nền tối luôn bật/tắt theo giao diện (kể cả khi đóng bằng nút X)
+        if (backdrop != null && computerUI != null && backdrop.activeSelf != computerUI.activeSelf)
+            backdrop.SetActive(computerUI.activeSelf);
+
         // UI bị tắt từ chỗ khác (ví dụ nút X) thì nhả khoá
         if (UIState.IsOpenedBy(this) && !IsOpen)
         {
@@ -100,6 +112,7 @@ public class ComputerInteract : MonoBehaviour
     {
         if (computerUI == null) { Debug.LogError("[Computer] Chưa gán ComputerUI!", this); return; }
         EnsureParentsActive();
+        if (backdrop != null) backdrop.SetActive(true);
         computerUI.SetActive(true);
         UIState.Open(this);
         if (debugLogs) LogState("OPEN");
@@ -109,6 +122,7 @@ public class ComputerInteract : MonoBehaviour
     public void CloseComputer()
     {
         if (computerUI != null) computerUI.SetActive(false);
+        if (backdrop != null) backdrop.SetActive(false);
         UIState.Close(this);
         if (debugLogs) LogState("CLOSE");
     }
@@ -153,32 +167,60 @@ public class ComputerInteract : MonoBehaviour
         }
         if (debugLogs) Debug.Log($"[Computer] Awake on '{name}': canvas='{(canvas != null ? canvas.name : "none")}' " +
                                  $"mode={(canvas != null ? canvas.renderMode.ToString() : "-")}", this);
-        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay) return;
+        if (canvas == null) return;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            // Một máy tính khác đã chuyển canvas rồi -> dùng chung lớp nền
+            Transform existing = canvas.transform.Find("ComputerBackdrop");
+            if (existing != null) backdrop = existing.gameObject;
+            return;
+        }
 
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        Vector2 designSize = canvasRect != null ? canvasRect.sizeDelta : new Vector2(1920, 1080);
-        if (designSize.x < 100f || designSize.y < 100f) designSize = new Vector2(1920, 1080);
+        // Kích thước thiết kế gốc của giao diện (đo khi canvas còn là World Space)
+        RectTransform uiRect = computerUI.GetComponent<RectTransform>();
+        Vector2 designSize = uiRect != null ? uiRect.rect.size : Vector2.zero;
+        if (designSize.x < 100f || designSize.y < 100f) designSize = new Vector2(1280, 720);
 
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = overlaySortingOrder;
 
+        // Giữ đúng tỉ lệ thiết kế: cả giao diện luôn nằm gọn trong màn hình, chiếm tối đa screenFill
         CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
         if (scaler == null) scaler = canvas.gameObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = designSize;
-        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 0.5f;
+        scaler.referenceResolution = designSize / Mathf.Clamp(screenFill, 0.3f, 1f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
         if (canvas.GetComponent<GraphicRaycaster>() == null)
             canvas.gameObject.AddComponent<GraphicRaycaster>();
 
-        // Bỏ độ nghiêng/lệch sâu dùng cho màn hình 3D
-        RectTransform uiRect = computerUI.GetComponent<RectTransform>();
+        // Panel cố định kích thước thiết kế, đặt giữa màn hình (không kéo giãn theo màn hình nữa)
         if (uiRect != null)
         {
+            uiRect.anchorMin = uiRect.anchorMax = uiRect.pivot = new Vector2(0.5f, 0.5f);
+            uiRect.sizeDelta = designSize;
+            uiRect.anchoredPosition3D = Vector3.zero;
             uiRect.localRotation = Quaternion.identity;
-            Vector3 p = uiRect.localPosition;
-            uiRect.localPosition = new Vector3(p.x, p.y, 0f);
+            uiRect.localScale = Vector3.one;
         }
+
+        CreateBackdrop(canvas.transform);
+    }
+
+    /// <summary>Lớp nền tối phủ toàn màn hình phía sau giao diện, chặn click xuyên ra thế giới.</summary>
+    private void CreateBackdrop(Transform canvasTransform)
+    {
+        if (backdropOpacity <= 0f) return;
+
+        backdrop = new GameObject("ComputerBackdrop", typeof(RectTransform), typeof(Image));
+        backdrop.layer = canvasTransform.gameObject.layer;
+        RectTransform rt = backdrop.GetComponent<RectTransform>();
+        rt.SetParent(canvasTransform, false);
+        rt.SetAsFirstSibling();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = rt.offsetMax = Vector2.zero;
+        backdrop.GetComponent<Image>().color = new Color(0f, 0f, 0f, backdropOpacity);
+        backdrop.SetActive(computerUI.activeSelf);
     }
 }
