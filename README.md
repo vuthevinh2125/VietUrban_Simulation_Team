@@ -27,9 +27,12 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Thu ngân | Quét hàng, trả tiền mặt (thối tiền từng tờ / xu) hoặc thẻ (máy POS), thối dư bị trừ tiền |
 | Ngày làm việc | Đồng hồ chỉ chạy khi mở cửa, biển OPEN / CLOSED, giờ đóng cửa, báo cáo cuối ngày, tiền thuê mặt bằng |
 | Tiến trình | Cấp cửa hàng (XP), 10 giấy phép nhóm hàng, mở khoá theo cấp |
-| Nội thất | 9 loại kệ / tủ lạnh / tủ đông / sạp; mua, lắp đặt có bóng xem trước, xoay 360°, dời chỗ |
-| Mở rộng | 3 quầy thu ngân thêm (tổng tối đa 4 quầy), mở khoá theo cấp + tiền |
-| Nhân viên | Thu ngân (tự quét + nhận tiền), nhân viên xếp kệ (tự mang thùng đi xếp); trả lương cuối ngày |
+| Nội thất | 9 loại kệ / tủ lạnh / tủ đông / sạp / kệ kho; mua, lắp đặt có bóng xem trước, xoay 360°, dời chỗ — kể cả kệ / tủ có sẵn trong cửa hàng |
+| Mở rộng | 3 quầy thu ngân thêm (tối đa 4 quầy); **nhà kho** riêng cạnh siêu thị (Lv3); **2 phần mở rộng** siêu thị (Lv4, Lv6) — mua xong tường mở ra, kệ sát tường tự dời ra tường mới |
+| Nhân viên | Thu ngân (tự quét + nhận tiền), nhân viên xếp kệ (tự mang thùng đi xếp), **bảo vệ** gác ngoài cửa tự đuổi bắt kẻ trộm; trả lương cuối ngày |
+| Trộm & dọn dẹp | Kẻ trộm ôm hàng bỏ chạy (còi chống trộm kêu) — cầm **gậy** đuổi theo đánh trúng để lấy lại tiền; vết bẩn xuất hiện trong cửa hàng, cầm **chổi** quét, bẩn nhiều khách mua ít |
+| Giao hàng | Đơn đặt hàng qua điện thoại: nhận đơn, lấy gói hàng, chạy **xe máy / ô tô** tới cột sáng vàng để giao, giao nhanh được tip |
+| Ngày / đêm | Mặt trời mọc / lặn theo giờ trong game, chiều tà ngả cam, tối có ánh trăng, đèn xe tự bật |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
 | Menu | Menu chính, tạm dừng, cài đặt (độ nhạy chuột, âm lượng, đồ hoạ, toàn màn hình, bóng đèn), Game Over |
 | Âm thanh | Nhạc nền, tiếng quét mã, tiền, thẻ, cửa tự động, thùng, xếp hàng, click giao diện, lên cấp |
@@ -46,7 +49,10 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Giữ **Chuột phải** (cầm thùng) | Lấy hàng từ kệ bỏ lại vào thùng |
 | **E** (cầm thùng) | Đặt thùng xuống / vứt thùng rỗng |
 | **Chuột trái** (tay không, nhìn kệ) | Đặt giá bán |
-| **F** (nhìn nội thất đã mua) | Dời chỗ nội thất |
+| **F** (nhìn kệ / tủ / nội thất) | Dời chỗ (cả kệ có sẵn) · **F** cạnh xe: lên / xuống xe |
+| **1 / 2 / 3** | Tay không / chổi (giữ chuột trái để quét) / gậy (chuột trái để vung) |
+| **J / K** | Nhận / từ chối đơn giao hàng |
+| **V** (đang lái xe) | Đổi góc nhìn thứ nhất / thứ ba |
 | Lắp nội thất | Click = đặt · Giữ chuột trái + kéo = xoay · **Q / R** = xoay 90° |
 | **Esc** | Đóng bảng đang mở / menu tạm dừng |
 | **H** | Ẩn / hiện hướng dẫn |
@@ -69,9 +75,10 @@ Phím test (chỉ trong Unity Editor): **F7** +$1000 · **F8** lên 1 cấp · *
 | `Economy/` | `EconomyManager` (ví tiền, sổ sách, báo cáo ngày), `PriceManager`, `MarketPrices`, `StockManager`, `StoreProgress`, `LicenseManager` |
 | `System/` | `GameManager` (ngày / giờ / mở cửa), `MarketManager` (đặt hàng), `ShopCatalog`, `ComputerInteract`, `NPCShopper` (AI khách), `StaffManager`, `SaveManager`, `StoreSign`, cửa tự động |
 | `Checkout/` | `CheckoutCounter` (hàng chờ, quét hàng), `PaymentPanel` / `PaymentToken` (tiền mặt, thẻ), `LockedCheckout` (quầy mở rộng) |
-| `item_Building/` | `Shelf` (ô xếp hàng), `ShelfPriceLabels`, nội thất: `FurnitureData`, `FurnitureBox`, `FurniturePlacer`, `PlacedFurniture` |
+| `item_Building/` | `Shelf` (ô xếp hàng), `ShelfPriceLabels`, `StorageRack` (kệ kho), nội thất: `FurnitureData`, `FurnitureBox`, `FurniturePlacer`, `PlacedFurniture`, `BuiltInFurniture` |
 | `Customer/` | `CustomerSpawner`, `Restocker` (AI nhân viên xếp kệ), `ShoppingCarrier` (giỏ / xe đẩy) |
-| `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng) |
+| `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng), `PlayerTools` (chổi, gậy) |
+| `System/` (mới) | `StoreExpansion`, `DirtManager`, `StoreGuard`, `DeliveryManager`, `DayNightCycle` |
 | `UI/` | `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `DayReportPanel`, `UIKit` |
 
 Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockChanged`, `OnPriceChanged`, `OnNewDay`…), giao diện bảng phụ được dựng bằng code nên không cần prefab.
@@ -91,6 +98,9 @@ Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockC
 | 12 | Biến nhân vật Mixamo thành khách hàng |
 | 13 | Sửa nhân vật Mixamo bị trắng (tách texture, vật liệu URP) |
 | 14 | Lưu chỗ đứng của thu ngân kéo thả lúc đang chơi |
+| 15 / 16 | Dựng nhà kho cạnh siêu thị / phần mở rộng ngoài các mảng tường đã chọn (ẩn tới khi mua) |
+| 17 | Va chạm 2 mặt cho tường, trần, sàn (hết đi xuyên tường từ ngoài vào) |
+| 18 | Cho phép dời kệ / tủ có sẵn (bỏ static batching, NavMeshObstacle) — xong Bake NavMesh |
 | `Tools → Save` | Xoá file lưu / mở thư mục chứa file lưu |
 
 ## Tài nguyên sử dụng
