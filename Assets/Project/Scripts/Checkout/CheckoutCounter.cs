@@ -261,6 +261,7 @@ public class CheckoutCounter : MonoBehaviour
 
         runningTotal += item.price;
         scannedCount++;
+        BusinessStats.RecordItemSold(item.item, item.price); // thống kê mặt hàng bán chạy
         if (scanSound == null) AudioManager.PlayAt("scan_beep", item.transform.position, 0.9f);
         if (scanSound != null)
         {

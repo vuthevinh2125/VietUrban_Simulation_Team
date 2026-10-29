@@ -105,7 +105,8 @@ public class ComputerInteract : MonoBehaviour
         if (IsOpen && Input.GetKeyDown(KeyCode.Escape) && !LicensePanel.IsOpen && LicensePanel.ClosedFrame != Time.frameCount
             && !FurniturePanel.IsOpen && FurniturePanel.ClosedFrame != Time.frameCount
             && !StaffPanel.IsOpen && StaffPanel.ClosedFrame != Time.frameCount
-            && !ExpansionPanel.IsOpen && ExpansionPanel.ClosedFrame != Time.frameCount) CloseComputer();
+            && !ExpansionPanel.IsOpen && ExpansionPanel.ClosedFrame != Time.frameCount
+            && !StatsPanel.IsOpen && StatsPanel.ClosedFrame != Time.frameCount) CloseComputer();
     }
 
     [Header("Debug")]

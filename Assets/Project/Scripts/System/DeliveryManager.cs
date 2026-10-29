@@ -284,13 +284,14 @@ public class DeliveryManager : MonoBehaviour
     {
         float elapsed = Time.time - order.acceptedAt;
         bool fast = elapsed <= order.allowedTime;
-        float tip = fast ? Mathf.Round(order.fee * 0.5f + 5f) : 0f;
+        float tip = fast ? Mathf.Round((order.fee * 0.5f + 5f) * WeatherSystem.DeliveryTipMultiplier) : 0f; // mưa / giông tip nhiều hơn
         float total = order.goodsValue + order.fee + tip;
+        BusinessStats.RecordDelivery(total);
         EconomyManager.Instance.AddIncome(total, MoneyCategory.Sales, $"Delivery to {order.placeName}");
         StoreProgress.AddXP(fast ? 8 : 4);
         AudioManager.Play("cash_register", 0.8f);
         ProgressHUD.Toast(fast
-            ? $"Delivered on time! +{EconomyManager.Format(total)} (tip {EconomyManager.Format(tip)})"
+            ? $"Delivered on time! +{EconomyManager.Format(total)} (tip {EconomyManager.Format(tip)}{(WeatherSystem.DeliveryTipMultiplier > 1f ? ", rain bonus" : "")})"
             : $"Delivered (late, no tip). +{EconomyManager.Format(total)}");
         Cleanup();
         order = null;

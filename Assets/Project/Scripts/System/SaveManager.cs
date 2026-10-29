@@ -46,6 +46,7 @@ public class SaveManager : MonoBehaviour
         public int restockers;
         public int guards;
         public List<BuiltInEntry> builtins = new List<BuiltInEntry>();
+        public List<BusinessStats.DayRecord> stats = new List<BusinessStats.DayRecord>();
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
     }
 
@@ -125,7 +126,8 @@ public class SaveManager : MonoBehaviour
             cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
             restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
             guards = StaffManager.Instance != null ? StaffManager.Instance.GuardCount : 0,
-            market = MarketPrices.Export()
+            market = MarketPrices.Export(),
+            stats = BusinessStats.Export()
         };
 
         foreach (var kv in PriceManager.AllCustomPrices)
@@ -199,6 +201,7 @@ public class SaveManager : MonoBehaviour
         StoreProgress.Load(d.level, d.xp);
         LicenseManager.LoadOwned(d.licenses);
         MarketPrices.Import(d.market, items);
+        BusinessStats.Import(d.stats);
 
         PriceManager.ClearCustomPrices();
         foreach (PriceEntry p in d.prices)

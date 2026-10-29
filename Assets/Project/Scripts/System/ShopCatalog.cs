@@ -27,6 +27,74 @@ public class ShopCatalog : MonoBehaviour
         HookFurnitureButton();
         HookStaffButton();
         HookExpandButton();
+        HookStatsButton();
+    }
+
+    private static void PlaceInWidestGap(RectTransform rt, RectTransform src)
+    {
+        var parent = (RectTransform)src.parent;
+        var spans = new List<Vector2>();
+        foreach (Transform t in parent)
+        {
+            if (t == rt || !t.gameObject.activeSelf || t.GetComponent<Button>() == null) continue;
+            var r = (RectTransform)t;
+            if (Mathf.Abs(r.localPosition.y - src.localPosition.y) > src.rect.height) continue; // chỉ cùng hàng
+            spans.Add(new Vector2(r.localPosition.x + r.rect.xMin, r.localPosition.x + r.rect.xMax));
+        }
+        spans.Sort((a, b) => a.x.CompareTo(b.x));
+        float bestGap = 0f, bestCenter = 0f;
+        for (int i = 0; i + 1 < spans.Count; i++)
+        {
+            float gap = spans[i + 1].x - spans[i].y;
+            if (gap > bestGap) { bestGap = gap; bestCenter = (spans[i].y + spans[i + 1].x) * 0.5f; }
+        }
+        float width = Mathf.Min(src.rect.width, bestGap - 10f);
+        if (width < 40f)
+        {
+            // Không đủ chỗ: đặt ngay dưới tab Expand
+            rt.localPosition = src.localPosition + new Vector3(0f, -src.rect.height - 6f, 0f);
+            return;
+        }
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+        Vector3 lp = src.localPosition;
+        lp.x = bestCenter - (rt.rect.xMin + rt.rect.xMax) * 0.5f;
+        rt.localPosition = lp;
+    }
+
+    /// <summary>Thêm tab "Stats" (thống kê kinh doanh) cạnh tab Expand trên thanh máy tính.</summary>
+    private void HookStatsButton()
+    {
+        Button expand = null;
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("expand", StringComparison.OrdinalIgnoreCase) >= 0) { expand = b; break; }
+        }
+        if (expand == null) { Debug.LogWarning("[ShopCatalog] Không thấy tab Expand để thêm tab Stats.", this); return; }
+
+        GameObject copy = Instantiate(expand.gameObject, expand.transform.parent);
+        copy.name = "Button_Stats";
+        copy.transform.SetSiblingIndex(expand.transform.GetSiblingIndex() + 1);
+        Button stats = copy.GetComponent<Button>();
+        SetLabel(stats, "Stats");
+        stats.onClick = new Button.ButtonClickedEvent();
+        stats.onClick.AddListener(StatsPanel.Open);
+        stats.interactable = true;
+        // Tab gọn: bỏ icon copy từ Expand, chữ "Stats" căn giữa và tự co cỡ
+        foreach (Image img in copy.GetComponentsInChildren<Image>(true))
+            if (img.gameObject != copy && img.GetComponentInChildren<TMP_Text>(true) == null) img.gameObject.SetActive(false);
+        foreach (TMP_Text label in copy.GetComponentsInChildren<TMP_Text>(true))
+        {
+            label.gameObject.SetActive(true);
+            var lr = label.rectTransform;
+            lr.anchorMin = Vector2.zero; lr.anchorMax = Vector2.one;
+            lr.offsetMin = new Vector2(4f, 0f); lr.offsetMax = new Vector2(-4f, 0f);
+            label.alignment = TextAlignmentOptions.Center;
+            label.enableAutoSizing = true; label.fontSizeMin = 8f; label.fontSizeMax = Mathf.Max(label.fontSize, 12f);
+        }
+        // Không có LayoutGroup thì đặt tab Stats vào khoảng trống rộng nhất trên thanh tab
+        if (expand.transform.parent.GetComponent<LayoutGroup>() == null)
+            PlaceInWidestGap((RectTransform)copy.transform, (RectTransform)expand.transform);
     }
 
     /// <summary>Tab "Floor" (chưa dùng) đổi thành "Expand": mua phòng mở rộng, nhà kho.</summary>
