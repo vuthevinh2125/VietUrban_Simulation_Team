@@ -7,7 +7,7 @@ using UnityEngine;
 
 /// <summary>
 /// Lưu / nạp game (giống Supermarket Simulator: tự lưu khi sang ngày mới).
-/// Lưu: ngày, tiền, cấp cửa hàng, giấy phép, giá bán, hàng trên từng kệ, nội thất đã mua (vị trí + hàng trên đó),
+/// Lưu: ngày, tiền, cấp cửa hàng, giấy phép, giá bán, giá thị trường, nhân viên, hàng trên từng kệ, nội thất đã mua (vị trí + hàng trên đó),
 /// thùng hàng đang nằm trong cửa hàng, thùng nội thất chưa lắp.
 /// Vào game: có file lưu thì tự nạp, cửa hàng bắt đầu ngày đã lưu lúc giờ mở cửa.
 /// [F5] lưu nhanh (chỉ khi không còn khách trong cửa hàng) · [F9] nạp lại · File: Application.persistentDataPath/save.json
@@ -39,6 +39,9 @@ public class SaveManager : MonoBehaviour
         public List<FurnitureEntry> furniture = new List<FurnitureEntry>();
         public List<BoxEntry> boxes = new List<BoxEntry>();
         public List<FurnitureBoxEntry> furnitureBoxes = new List<FurnitureBoxEntry>();
+        public int cashiers;
+        public int restockers;
+        public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -107,7 +110,10 @@ public class SaveManager : MonoBehaviour
             money = eco.Money,
             level = StoreProgress.Level,
             xp = StoreProgress.XP,
-            licenses = LicenseManager.GetOwnedIds()
+            licenses = LicenseManager.GetOwnedIds(),
+            cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
+            restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
+            market = MarketPrices.Export()
         };
 
         foreach (var kv in PriceManager.AllCustomPrices)
@@ -171,6 +177,7 @@ public class SaveManager : MonoBehaviour
         if (GameManager.Instance != null) GameManager.Instance.LoadDay(d.day);
         StoreProgress.Load(d.level, d.xp);
         LicenseManager.LoadOwned(d.licenses);
+        MarketPrices.Import(d.market, items);
 
         PriceManager.ClearCustomPrices();
         foreach (PriceEntry p in d.prices)
@@ -250,6 +257,8 @@ public class SaveManager : MonoBehaviour
             if (furnitures.TryGetValue(fbE.data, out FurnitureData fd)) FurnitureBox.Spawn(fd, fbE.pos - Vector3.up * 0.35f, fbE.rot);
             else missing++;
         }
+
+        if (StaffManager.Instance != null) StaffManager.Instance.LoadCounts(d.cashiers, d.restockers);
 
         StockManager.NotifyChanged();
         Debug.Log($"[Save] Đã nạp ngày {d.day} (lưu lúc {d.savedAt}): {EconomyManager.Format(d.money)}, cấp {d.level}" +
