@@ -20,13 +20,22 @@ public class ProgressHUD : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
+        CreateIfMissing();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => CreateIfMissing();
+
+    private static void CreateIfMissing()
+    {
         if (instance == null) new GameObject("ProgressHUD").AddComponent<ProgressHUD>();
     }
 
     /// <summary>Hiện một dòng thông báo giữa màn hình vài giây.</summary>
     public static void Toast(string message)
     {
-        if (instance == null) AutoCreate();
+        if (instance == null) CreateIfMissing();
         instance.toasts.Enqueue(message);
     }
 
