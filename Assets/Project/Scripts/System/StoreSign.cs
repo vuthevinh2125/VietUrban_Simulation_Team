@@ -87,8 +87,8 @@ public class StoreSign : MonoBehaviour
     private void TintDefaultParts()
     {
         Transform pole = transform.Find("Pole"), board = transform.Find("Board");
-        if (pole != null && pole.TryGetComponent(out Renderer pr)) pr.material.color = new Color(0.25f, 0.25f, 0.28f);
-        if (board != null && board.TryGetComponent(out Renderer br)) br.material.color = new Color(0.08f, 0.08f, 0.1f);
+        if (pole != null && pole.TryGetComponent(out Renderer pr)) RuntimeMaterials.Apply(pr, new Color(0.25f, 0.25f, 0.28f));
+        if (board != null && board.TryGetComponent(out Renderer br)) RuntimeMaterials.Apply(br, new Color(0.08f, 0.08f, 0.1f));
     }
 
     /// <summary>Dựng tấm biển mặc định (gọi được cả trong Editor để dễ đặt vị trí).</summary>

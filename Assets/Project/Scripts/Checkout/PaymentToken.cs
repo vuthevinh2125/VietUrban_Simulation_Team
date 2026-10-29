@@ -28,12 +28,12 @@ public class PaymentToken : MonoBehaviour
         if (method == PaymentMethod.Cash)
         {
             go.transform.localScale = new Vector3(0.16f, 0.012f, 0.075f);
-            go.GetComponent<Renderer>().material.color = new Color(0.45f, 0.75f, 0.45f);
+            RuntimeMaterials.Apply(go.GetComponent<Renderer>(), new Color(0.45f, 0.75f, 0.45f));
         }
         else
         {
             go.transform.localScale = new Vector3(0.086f, 0.006f, 0.054f);
-            go.GetComponent<Renderer>().material.color = new Color(0.15f, 0.35f, 0.85f);
+            RuntimeMaterials.Apply(go.GetComponent<Renderer>(), new Color(0.15f, 0.35f, 0.85f));
         }
         go.transform.position += Vector3.up * go.transform.localScale.y * 0.5f;
 

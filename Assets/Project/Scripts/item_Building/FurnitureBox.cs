@@ -12,7 +12,7 @@ public class FurnitureBox : MonoBehaviour
         go.name = "FurnitureBox_" + data.displayName;
         go.transform.SetPositionAndRotation(position + Vector3.up * 0.35f, rotation);
         go.transform.localScale = new Vector3(0.9f, 0.7f, 0.9f);
-        go.GetComponent<Renderer>().material.color = new Color(0.72f, 0.55f, 0.36f);
+        RuntimeMaterials.Apply(go.GetComponent<Renderer>(), new Color(0.72f, 0.55f, 0.36f));
         int layer = LayerMask.NameToLayer("Interactable");
         if (layer >= 0) go.layer = layer;
 

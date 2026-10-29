@@ -135,7 +135,7 @@ public class ShelfPriceLabels : MonoBehaviour
         bg.transform.localScale = new Vector3(labelSize.x, labelSize.y, 1f);
         Renderer r = bg.GetComponent<Renderer>();
         r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        r.material.color = new Color(1f, 0.98f, 0.85f);
+        RuntimeMaterials.Apply(r, new Color(1f, 0.98f, 0.85f)); // vật liệu URP (không bị hồng khi build)
 
         GameObject textGo = new GameObject("Text");
         textGo.transform.SetParent(label.transform, false);

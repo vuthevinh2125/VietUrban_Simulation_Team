@@ -373,6 +373,7 @@ public class CheckoutCounter : MonoBehaviour
         GameObject prefab = data != null ? data.ResolveProductPrefab() : null;
         GameObject go = prefab != null ? Instantiate(prefab) : GameObject.CreatePrimitive(PrimitiveType.Cube);
         go.name = "Checkout_" + (data != null ? data.itemName : "Item");
+        if (prefab == null) RuntimeMaterials.Apply(go.GetComponent<Renderer>(), Color.gray);
         go.transform.rotation = itemDropPoint.rotation;
 
         // Kích thước như trên kệ, thu nhỏ nếu không vừa ô của khay

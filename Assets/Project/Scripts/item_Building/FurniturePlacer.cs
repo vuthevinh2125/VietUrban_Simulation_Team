@@ -147,7 +147,7 @@ public class FurniturePlacer : MonoBehaviour
         ghost.transform.SetPositionAndRotation(ghostPos, rot);
 
         valid = !Blocked(ghostPos, rot) && Vector3.Distance(cam.transform.position, point) <= placeRange;
-        ghostMat.SetColor("_BaseColor", valid ? new Color(0.2f, 1f, 0.3f, 0.35f) : new Color(1f, 0.2f, 0.2f, 0.35f));
+        RuntimeMaterials.SetColor(ghostMat, valid ? new Color(0.2f, 1f, 0.3f, 0.35f) : new Color(1f, 0.2f, 0.2f, 0.35f));
     }
 
     /// <summary>Mặt sàn dưới tâm ngắm (bỏ qua bóng mờ, người chơi, trigger).</summary>
@@ -286,24 +286,6 @@ public class FurniturePlacer : MonoBehaviour
         localBounds = new Bounds(Vector3.Scale(localBounds.center, source.lossyScale), Vector3.Scale(localBounds.size, source.lossyScale));
     }
 
-    private static Material CreateGhostMaterial()
-    {
-        Shader sh = Shader.Find("Universal Render Pipeline/Unlit");
-        if (sh == null) sh = Shader.Find("Sprites/Default");
-        var m = new Material(sh);
-        if (m.HasProperty("_Surface"))
-        {
-            m.SetFloat("_Surface", 1f);
-            m.SetFloat("_Blend", 0f);
-            m.SetOverrideTag("RenderType", "Transparent");
-            m.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
-            m.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-            m.SetInt("_ZWrite", 0);
-            m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            m.renderQueue = (int)RenderQueue.Transparent;
-        }
-        m.SetColor("_BaseColor", new Color(0.2f, 1f, 0.3f, 0.35f));
-        if (m.HasProperty("_Color")) m.SetColor("_Color", new Color(0.2f, 1f, 0.3f, 0.35f));
-        return m;
-    }
+    /// <summary>Vật liệu trong suốt có sẵn trong Resources (luôn có trong bản build, không bị hồng).</summary>
+    private static Material CreateGhostMaterial() => RuntimeMaterials.Ghost(new Color(0.2f, 1f, 0.3f, 0.35f));
 }
