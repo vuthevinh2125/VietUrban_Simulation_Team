@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
     public KeyCode toggleStoreKey = KeyCode.O;
     [Tooltip("(Test) Bấm phím này để lên ngay 1 cấp cửa hàng")]
     public KeyCode levelUpKey = KeyCode.F8;
+    [Tooltip("(Test) Bấm phím này để cộng tiền")]
+    public KeyCode addMoneyKey = KeyCode.F7;
+    public float addMoneyAmount = 1000f;
 
     private static readonly DateTime StartDate = new DateTime(2026, 2, 9);
 
@@ -108,6 +111,11 @@ public class GameManager : MonoBehaviour
 
         if (uiFree && Input.GetKeyDown(toggleStoreKey) && StoreSign.All.Count == 0) ToggleStore();
         if (uiFree && allowSkipDayKey && Input.GetKeyDown(levelUpKey)) StoreProgress.AddXP(StoreProgress.XPToNext - StoreProgress.XP);
+        if (uiFree && allowSkipDayKey && Input.GetKeyDown(addMoneyKey))
+        {
+            EconomyManager.Instance.AddIncome(addMoneyAmount, MoneyCategory.Other, "(Test) cheat money");
+            ProgressHUD.Toast($"+{EconomyManager.Format(addMoneyAmount)} (test)");
+        }
 
         if (uiFree && allowSkipDayKey && Input.GetKeyDown(skipDayKey) && !closingTimeReached)
         {
