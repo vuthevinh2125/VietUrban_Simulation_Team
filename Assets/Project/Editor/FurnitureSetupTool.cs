@@ -46,6 +46,7 @@ public static class FurnitureSetupTool
         new Entry("Fridge", "Fridge_4ttiif", 500f, 6, "Fresh"),
         new Entry("Double Fridge", "Fridge_f13xen", 700f, 7, "Fresh"),
         new Entry("Freezer", "Freezer_9olxw5", 600f, 8, "Fresh"),
+        new Entry("Storage Rack", "Shelf_hler4q", 300f, 2, "Storage"), // kệ kho chứa thùng
     };
 
     [MenuItem("Tools/Store Setup/9. Build Furniture Catalog")]
@@ -138,9 +139,34 @@ public static class FurnitureSetupTool
                 lastDiag += " (lưới mịn)";
                 Step = CoarseStep;
             }
+            List<Vector3> boxSlots = e.type == "Storage" ? BoxSlotsFrom(slots, inst.transform) : null;
 
             foreach (MeshCollider mc in tempColliders) Object.DestroyImmediate(mc);
             foreach (Collider c in disabled) c.enabled = true;
+
+            if (boxSlots != null)
+            {
+                // Kệ kho: ô đặt THÙNG thay cho ô xếp từng món
+                Transform boxRoot = new GameObject("BoxSlots").transform;
+                boxRoot.SetParent(inst.transform, false);
+                var boxTransforms = new Transform[boxSlots.Count];
+                for (int i = 0; i < boxSlots.Count; i++)
+                {
+                    Transform s = new GameObject($"BoxSlot_{i:00}").transform;
+                    s.SetParent(boxRoot, false);
+                    s.position = boxSlots[i];
+                    s.rotation = inst.transform.rotation;
+                    boxTransforms[i] = s;
+                }
+                StorageRack rack = inst.GetComponent<StorageRack>();
+                if (rack == null) rack = inst.AddComponent<StorageRack>();
+                rack.boxSlots = boxTransforms;
+                Shelf oldShelf = inst.GetComponent<Shelf>();
+                if (oldShelf != null) Object.DestroyImmediate(oldShelf);
+                slots = new List<Vector3>(); // không có ô xếp từng món
+                slotCount = boxSlots.Count;
+                lastDiag += $" | {boxSlots.Count} ô thùng";
+            }
 
             // Ô xếp hàng
             Transform slotsRoot = new GameObject("ShelfSlots").transform;
@@ -154,12 +180,16 @@ public static class FurnitureSetupTool
                 s.rotation = inst.transform.rotation;
                 slotTransforms[i] = s;
             }
-            slotCount = slots.Count;
+            if (boxSlots == null) slotCount = slots.Count;
 
-            Shelf shelf = inst.GetComponent<Shelf>();
-            if (shelf == null) shelf = inst.AddComponent<Shelf>();
-            shelf.slots = slotTransforms;
-            shelf.acceptsDisplayType = e.type;
+            if (boxSlots == null)
+            {
+                Shelf shelf = inst.GetComponent<Shelf>();
+                if (shelf == null) shelf = inst.AddComponent<Shelf>();
+                shelf.slots = slotTransforms;
+                shelf.acceptsDisplayType = e.type;
+            }
+            else Object.DestroyImmediate(slotsRoot.gameObject);
 
             // Vùng ngắm để xếp hàng / đặt giá + chặn người chơi
             Bounds lb = ProductFit.LocalBounds(inst.transform);
@@ -320,6 +350,31 @@ public static class FurnitureSetupTool
             }
             cluster.Clear();
             if (i < rest.Count) cluster.Add(rest[i]);
+        }
+        return result;
+    }
+
+    /// <summary>Kệ kho: mỗi tầng đủ cao (>= 0.42m trống) trải một hàng ô thùng, cách nhau 0.65m theo chiều dài kệ.</summary>
+    private static List<Vector3> BoxSlotsFrom(List<Vector3> productSlots, Transform root)
+    {
+        var result = new List<Vector3>();
+        var levels = new List<List<Vector3>>();
+        foreach (Vector3 p in productSlots.OrderBy(p => p.y))
+        {
+            List<Vector3> lv = levels.LastOrDefault();
+            if (lv == null || Mathf.Abs(lv[0].y - p.y) > 0.04f) levels.Add(lv = new List<Vector3>());
+            lv.Add(p);
+        }
+        foreach (List<Vector3> lv in levels)
+        {
+            float y = lv.Average(p => p.y);
+            float cz = lv.Average(p => p.z);
+            float minX = lv.Min(p => p.x) - SlotX * 0.5f, maxX = lv.Max(p => p.x) + SlotX * 0.5f;
+            Vector3 center = new Vector3((minX + maxX) * 0.5f, y, cz);
+            if (ClearanceAbove(center, root) < 0.42f) continue; // tầng thấp quá, không lọt thùng
+            int n = Mathf.Max(1, Mathf.FloorToInt((maxX - minX) / 0.65f));
+            for (int i = 0; i < n; i++)
+                result.Add(new Vector3(minX + (i + 0.5f) * (maxX - minX) / n, y, cz));
         }
         return result;
     }

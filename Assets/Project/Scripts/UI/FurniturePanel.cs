@@ -151,7 +151,7 @@ public class FurniturePanel : MonoBehaviour
                 if (d == null) continue;
                 GameObject row = NewRect("Row_" + d.displayName, window.transform, new Vector2(840, rowH), new Vector2(0, y));
                 row.AddComponent<Image>().color = RowColor;
-                string type = d.displayType == "Fresh" ? "Fresh / cold products" : "Dry products";
+                string type = d.displayType == "Fresh" ? "Fresh / cold products" : d.displayType == "Storage" ? "Box storage" : "Dry products";
                 Text(row.transform, $"<b>{d.displayName}</b>", 26, new Vector2(280, rowH), new Vector2(-270, 0), TextAlignmentOptions.Left, false);
                 Text(row.transform, $"<size=70%>Lv {d.requiredLevel}  ·  {type}</size>", 26, new Vector2(260, rowH), new Vector2(-10, 0), TextAlignmentOptions.Left, false);
                 TMP_Text status = Text(row.transform, "", 24, new Vector2(200, rowH), new Vector2(210, 0), TextAlignmentOptions.Center, true);
