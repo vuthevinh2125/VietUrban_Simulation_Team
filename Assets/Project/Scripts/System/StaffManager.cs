@@ -67,7 +67,7 @@ public class StaffManager : MonoBehaviour
         if (counter == null) return false;
 
         counter.autoScan = true;
-        GameObject body = SpawnWorker("Cashier", CashierSpot(counter, out Quaternion rot), rot);
+        GameObject body = SpawnWorker("Cashier", CashierSpot(counter, out Quaternion rot), rot, new Color(0.75f, 0.85f, 1f));
         if (body != null)
         {
             NavMeshAgent agent = body.GetComponent<NavMeshAgent>();
@@ -96,7 +96,7 @@ public class StaffManager : MonoBehaviour
         Transform at = spawner != null && spawner.entrancePoint != null ? spawner.entrancePoint
                      : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint : transform);
         Vector3 pos = NavMesh.SamplePosition(at.position, out NavMeshHit hit, 4f, NavMesh.AllAreas) ? hit.position : at.position;
-        GameObject body = SpawnWorker($"Restocker_{restockers.Count + 1}", pos, at.rotation);
+        GameObject body = SpawnWorker($"Restocker_{restockers.Count + 1}", pos, at.rotation, new Color(1f, 0.85f, 0.65f));
         if (body == null) return false;
         body.AddComponent<Restocker>();
         restockers.Add(body);
@@ -136,16 +136,23 @@ public class StaffManager : MonoBehaviour
     }
 
     // ================= Tạo nhân vật =================
-    /// <summary>Dùng chung model với khách (prefab của CustomerSpawner) nhưng bỏ "bộ não" khách hàng.</summary>
-    private GameObject SpawnWorker(string name, Vector3 pos, Quaternion rot)
+    /// <summary>
+    /// Model nhân viên: Resources/Staff_Worker (tạo bằng Tools > Store Setup > 10. Build Staff Model, dùng Guard.fbx),
+    /// khác với khách. Chưa tạo thì tạm dùng model khách. Thu ngân / xếp kệ phân biệt bằng màu áo.
+    /// </summary>
+    private GameObject SpawnWorker(string name, Vector3 pos, Quaternion rot, Color tint)
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
-        GameObject prefab = null;
-        if (spawner != null && spawner.customerPrefabs != null && spawner.customerPrefabs.Length > 0)
-            prefab = spawner.customerPrefabs[Random.Range(0, spawner.customerPrefabs.Length)];
-        if (prefab == null) { Debug.LogWarning("[Staff] Không có prefab nhân vật (CustomerSpawner.customerPrefabs)."); return null; }
+        GameObject prefab = Resources.Load<GameObject>("Staff_Worker");
+        if (prefab == null)
+        {
+            CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+            if (spawner != null && spawner.customerPrefabs != null && spawner.customerPrefabs.Length > 0)
+                prefab = spawner.customerPrefabs[Random.Range(0, spawner.customerPrefabs.Length)];
+            Debug.LogWarning("[Staff] Chưa có model nhân viên riêng - chạy Tools > Store Setup > 10. Build Staff Model. Tạm dùng model khách.");
+        }
+        if (prefab == null) { Debug.LogWarning("[Staff] Không có prefab nhân vật."); return null; }
 
-        // Tạo dưới một gốc đang tắt để gỡ NPCShopper TRƯỚC khi nó kịp chạy
+        // Tạo dưới một gốc đang tắt để gỡ NPCShopper (nếu có) TRƯỚC khi nó kịp chạy
         var holder = new GameObject("_StaffHolder");
         holder.SetActive(false);
         GameObject go = Instantiate(prefab, pos, rot, holder.transform);
@@ -156,21 +163,62 @@ public class StaffManager : MonoBehaviour
 
         Rigidbody rb = go.GetComponent<Rigidbody>();
         if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
+
+        // Màu áo phân biệt thu ngân / xếp kệ
+        foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
+            foreach (Material m in r.materials)
+            {
+                if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", m.GetColor("_BaseColor") * tint);
+                else if (m.HasProperty("_Color")) m.color *= tint;
+            }
         return go;
     }
 
-    /// <summary>Chỗ thu ngân đứng: phía bên kia quầy so với khách, quay mặt về phía khách.</summary>
+    /// <summary>
+    /// Chỗ thu ngân đứng: CẠNH quầy (bên không có khay đặt hàng), ngoài khung quầy, trên NavMesh và không vướng vật gì;
+    /// không được thì ra phía sau quầy. Quay mặt về phía khách.
+    /// </summary>
     private static Vector3 CashierSpot(CheckoutCounter counter, out Quaternion rot)
     {
-        Vector3 center = counter.transform.position;
+        Bounds b = default; bool any = false;
+        foreach (Renderer r in counter.GetComponentsInChildren<Renderer>())
+        {
+            if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+        }
+        Vector3 center = any ? b.center : counter.transform.position;
         Vector3 customer = counter.customerPoint != null ? counter.customerPoint.position : center + counter.transform.forward;
-        Vector3 dir = center - customer;
-        dir.y = 0f;
-        if (dir.sqrMagnitude < 0.01f) dir = -counter.transform.forward;
-        dir.Normalize();
-        Vector3 pos = center + dir * 0.9f;
-        pos.y = customer.y; // điểm khách đứng nằm trên sàn
-        rot = Quaternion.LookRotation(-dir);
-        return pos;
+        float floorY = customer.y;
+
+        Vector3 toCustomer = customer - center; toCustomer.y = 0f;
+        if (toCustomer.sqrMagnitude < 0.01f) toCustomer = counter.transform.forward;
+        toCustomer.Normalize();
+        Vector3 side = Vector3.Cross(Vector3.up, toCustomer);
+        // Bên nào xa khay đặt hàng hơn thì ưu tiên
+        if (counter.itemDropPoint != null && Vector3.Dot(counter.itemDropPoint.position - center, side) > 0f) side = -side;
+
+        float halfSide = any ? Mathf.Abs(Vector3.Dot(b.extents, new Vector3(Mathf.Abs(side.x), 0f, Mathf.Abs(side.z)))) : 0.5f;
+        float halfBack = any ? Mathf.Abs(Vector3.Dot(b.extents, new Vector3(Mathf.Abs(toCustomer.x), 0f, Mathf.Abs(toCustomer.z)))) : 0.5f;
+
+        Vector3[] candidates =
+        {
+            center + side * (halfSide + 0.45f) + toCustomer * 0.2f,
+            center - side * (halfSide + 0.45f) + toCustomer * 0.2f,
+            center - toCustomer * (halfBack + 0.45f),
+            center + side * (halfSide + 0.45f) - toCustomer * 0.3f,
+        };
+        foreach (Vector3 c in candidates)
+        {
+            Vector3 p = new Vector3(c.x, floorY, c.z);
+            if (NavMesh.SamplePosition(p, out NavMeshHit hit, 0.4f, NavMesh.AllAreas)) p = hit.position;
+            bool blocked = Physics.CheckCapsule(p + Vector3.up * 0.35f, p + Vector3.up * 1.6f, 0.22f, ~0, QueryTriggerInteraction.Ignore);
+            if (blocked) continue;
+            Vector3 face = customer - p; face.y = 0f;
+            rot = face.sqrMagnitude > 0.01f ? Quaternion.LookRotation(face) : Quaternion.identity;
+            return p;
+        }
+        Vector3 fallback = new Vector3(candidates[0].x, floorY, candidates[0].z);
+        Vector3 f = customer - fallback; f.y = 0f;
+        rot = f.sqrMagnitude > 0.01f ? Quaternion.LookRotation(f) : Quaternion.identity;
+        return fallback;
     }
 }
