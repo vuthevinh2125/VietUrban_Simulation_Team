@@ -25,6 +25,23 @@ public class ShopCatalog : MonoBehaviour
         BuildCards();
         HookLicenseButton();
         HookFurnitureButton();
+        HookStaffButton();
+    }
+
+    /// <summary>Tab "Paints" (chưa dùng) trên thanh máy tính đổi thành "Staff": thuê nhân viên.</summary>
+    private void HookStaffButton()
+    {
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("paint", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            SetLabel(b, "Staff");
+            b.onClick = new Button.ButtonClickedEvent();
+            b.onClick.AddListener(StaffPanel.Open);
+            b.interactable = true;
+            return;
+        }
+        Debug.LogWarning("[ShopCatalog] Không thấy tab 'Paints' trên máy tính để gắn bảng nhân viên.", this);
     }
 
     /// <summary>Tab "Furnitures" trên thanh máy tính mở bảng mua nội thất (FurnitureCatalog).</summary>
