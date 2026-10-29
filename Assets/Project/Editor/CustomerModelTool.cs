@@ -91,10 +91,13 @@ public static class CustomerModelTool
     {
         var importer = (ModelImporter)AssetImporter.GetAtPath(path);
         if (importer == null) return;
-        if (importer.animationType == ModelImporterAnimationType.Human && importer.avatarSetup == ModelImporterAvatarSetup.CreateFromThisModel) return;
-        importer.animationType = ModelImporterAnimationType.Human;
-        importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-        importer.SaveAndReimport();
+        if (importer.animationType != ModelImporterAnimationType.Human || importer.avatarSetup != ModelImporterAvatarSetup.CreateFromThisModel)
+        {
+            importer.animationType = ModelImporterAnimationType.Human;
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            importer.SaveAndReimport();
+        }
+        MixamoMaterialFixer.Fix(path); // tách texture + vật liệu URP để model không bị trắng
     }
 
     private static void CopyComponent<T>(GameObject from, GameObject to) where T : Component
