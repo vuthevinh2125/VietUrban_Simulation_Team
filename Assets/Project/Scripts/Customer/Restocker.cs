@@ -41,13 +41,13 @@ public class Restocker : MonoBehaviour
         hand.localPosition = new Vector3(0f, 1.0f, 0.45f);
     }
 
-    public bool debugLogs = true;
+    public bool debugLogs = false;
     private float nextIdleNotice;
 
     IEnumerator Start()
     {
         yield return null;
-        if (debugLogs) Debug.Log($"[Restocker] {name} bắt đầu làm việc tại {transform.position:F1} (onNavMesh={agent.isOnNavMesh}).", this);
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Restocker] {name} bắt đầu làm việc tại {transform.position:F1} (onNavMesh={agent.isOnNavMesh}).", this);
         while (true)
         {
             yield return Work();
@@ -80,12 +80,12 @@ public class Restocker : MonoBehaviour
             {
                 nextIdleNotice = Time.time + 20f;
                 SpeechBubble.Show(transform, "No boxes to restock", Color.white, 2.1f, 3f);
-                if (debugLogs) Debug.Log($"[Restocker] {name}: không có việc. Cần thùng còn hàng của mặt hàng ĐANG BÀY trên kệ (kệ chưa đầy).", this);
+                if (debugLogs && GameDebug.Verbose) Debug.Log($"[Restocker] {name}: không có việc. Cần thùng còn hàng của mặt hàng ĐANG BÀY trên kệ (kệ chưa đầy).", this);
             }
             yield break;
         }
         myBox = box; myShelf = shelf;
-        if (debugLogs) Debug.Log($"[Restocker] {name}: lấy thùng {box.DisplayName} ({box.productCount}) tại {box.transform.position:F1} -> kệ {shelf.name} ({shelf.Count}/{shelf.Capacity}).", this);
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Restocker] {name}: lấy thùng {box.DisplayName} ({box.productCount}) tại {box.transform.position:F1} -> kệ {shelf.name} ({shelf.Count}/{shelf.Capacity}).", this);
         claimedBoxes.Add(box);
         claimedShelves.Add(shelf);
 
@@ -94,7 +94,7 @@ public class Restocker : MonoBehaviour
         if (box == null || box.IsHeld || Flat(transform.position, box.transform.position) > 1.6f)
         {
             if (box != null) skipUntil[box] = Time.time + 30f; // không tới được, tạm bỏ qua thùng này
-            if (debugLogs) Debug.LogWarning($"[Restocker] {name}: không tới được thùng (đứng ở {transform.position:F1}). Bỏ qua thùng này 30 giây.", this);
+            if (debugLogs && GameDebug.Verbose) Debug.LogWarning($"[Restocker] {name}: không tới được thùng (đứng ở {transform.position:F1}). Bỏ qua thùng này 30 giây.", this);
             yield break;
         }
         box.OnPickedUp(hand);

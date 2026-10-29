@@ -33,7 +33,7 @@ public class ComputerInteract : MonoBehaviour
     void Awake()
     {
         if (computerUI == null) computerUI = FindComputerUI();
-        if (debugLogs && computerUI != null) Debug.Log($"[Computer] '{name}' dùng giao diện '{computerUI.name}'.", this);
+        if (debugLogs && GameDebug.Verbose && computerUI != null) Debug.Log($"[Computer] '{name}' dùng giao diện '{computerUI.name}'.", this);
         if (computerUI == null)
             Debug.LogError("[Computer] Không tìm thấy ComputerUI trong scene. Kéo ComputerUI vào ô 'Computer UI'.", this);
 
@@ -95,7 +95,7 @@ public class ComputerInteract : MonoBehaviour
         // UI bị tắt từ chỗ khác (ví dụ nút X) thì nhả khoá
         if (UIState.IsOpenedBy(this) && !IsOpen)
         {
-            if (debugLogs) Debug.LogWarning("[Computer] UI đã bị tắt từ chỗ khác -> nhả khoá.", this);
+            if (debugLogs && GameDebug.Verbose) Debug.LogWarning("[Computer] UI đã bị tắt từ chỗ khác -> nhả khoá.", this);
             UIState.Close(this);
             return;
         }
@@ -109,7 +109,7 @@ public class ComputerInteract : MonoBehaviour
 
     [Header("Debug")]
     [Tooltip("Ghi log chi tiết khi mở/đóng máy tính (tắt đi khi đã chạy ổn)")]
-    public bool debugLogs = true;
+    public bool debugLogs = true; // chỉ in khi GameDebug.Verbose = true
 
     public void OpenComputer()
     {
@@ -118,7 +118,7 @@ public class ComputerInteract : MonoBehaviour
         if (backdrop != null) backdrop.SetActive(true);
         computerUI.SetActive(true);
         UIState.Open(this);
-        if (debugLogs) LogState("OPEN");
+        if (debugLogs && GameDebug.Verbose) LogState("OPEN");
     }
 
     /// <summary>Gắn được vào nút X trên giao diện.</summary>
@@ -127,7 +127,7 @@ public class ComputerInteract : MonoBehaviour
         if (computerUI != null) computerUI.SetActive(false);
         if (backdrop != null) backdrop.SetActive(false);
         UIState.Close(this);
-        if (debugLogs) LogState("CLOSE");
+        if (debugLogs && GameDebug.Verbose) LogState("CLOSE");
     }
 
     void OnDisable() => UIState.Close(this);
@@ -135,7 +135,7 @@ public class ComputerInteract : MonoBehaviour
     void LateUpdate()
     {
         // Phát hiện giao diện bị tắt bởi script khác ngay sau khi mở
-        if (debugLogs && wasOpenLastFrame && !IsOpen)
+        if (debugLogs && GameDebug.Verbose && wasOpenLastFrame && !IsOpen)
             Debug.LogWarning($"[Computer] ComputerUI vừa bị TẮT bởi script khác (frame {Time.frameCount}).", this);
         wasOpenLastFrame = IsOpen;
     }
@@ -168,7 +168,7 @@ public class ComputerInteract : MonoBehaviour
             Canvas c = t.GetComponent<Canvas>();
             if (c != null) canvas = c; // lấy canvas gốc trên cùng
         }
-        if (debugLogs) Debug.Log($"[Computer] Awake on '{name}': canvas='{(canvas != null ? canvas.name : "none")}' " +
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Computer] Awake on '{name}': canvas='{(canvas != null ? canvas.name : "none")}' " +
                                  $"mode={(canvas != null ? canvas.renderMode.ToString() : "-")}", this);
         if (canvas == null) return;
         if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)

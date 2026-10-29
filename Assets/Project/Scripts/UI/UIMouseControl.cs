@@ -11,7 +11,7 @@ public class UIMouseControl : MonoBehaviour
 
     void OnEnable()
     {
-        if (debugLogs) Debug.Log($"[Computer] Panel '{name}' được BẬT (frame {Time.frameCount}).", this);
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Computer] Panel '{name}' được BẬT (frame {Time.frameCount}).", this);
         UIState.Open(this);
         if (pauseGame) Time.timeScale = 0f;
     }
@@ -24,11 +24,11 @@ public class UIMouseControl : MonoBehaviour
     }
 
     [Tooltip("Ghi log ai đã bật/tắt panel này (dùng để tìm lỗi)")]
-    public bool debugLogs = true;
+    public bool debugLogs = true; // chỉ in khi GameDebug.Verbose = true
 
     void OnDisable()
     {
-        if (debugLogs)
+        if (debugLogs && GameDebug.Verbose)
             Debug.Log($"[Computer] Panel '{name}' bị TẮT (frame {Time.frameCount}). Ai gọi:\n{System.Environment.StackTrace}", this);
         UIState.Close(this);
         if (pauseGame) Time.timeScale = 1f;

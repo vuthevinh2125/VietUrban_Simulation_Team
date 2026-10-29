@@ -46,7 +46,7 @@ public class NPCShopper : MonoBehaviour
 
     [Header("Debug")]
     [Tooltip("Ghi log mỗi khi khách đổi trạng thái / đi tới đâu")]
-    public bool debugLogs = true;
+    public bool debugLogs = true; // chỉ in khi GameDebug.Verbose = true
 
     [Header("Queue")]
     [Tooltip("Tới gần chỗ xếp hàng trong khoảng này thì dừng hẳn, đứng yên chờ")]
@@ -134,7 +134,7 @@ public class NPCShopper : MonoBehaviour
             yield return MoveTo(stand);
             if (FlatDistance(transform.position, stand) > reachDistance)
             {
-                if (debugLogs) Debug.Log($"[Customer] {name} không tới được kệ {shelf.name}, bỏ qua.", this);
+                if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name} không tới được kệ {shelf.name}, bỏ qua.", this);
                 continue;
             }
             Face(shelf.transform.position);
@@ -151,7 +151,7 @@ public class NPCShopper : MonoBehaviour
                 if (Random.value > PriceManager.BuyChance(item, sell, maxPriceRatio))
                 {
                     SpeechBubble.Show(transform, "Too expensive!", new Color(1f, 0.35f, 0.3f), agent.height + 0.35f);
-                    if (debugLogs) Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(sell)}, thị trường {EconomyManager.Format(item.MarketPrice)}), bỏ qua.", this);
+                    if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(sell)}, thị trường {EconomyManager.Format(item.MarketPrice)}), bỏ qua.", this);
                     continue;
                 }
                 if (ratio <= PriceManager.CheapRatio)
@@ -294,7 +294,7 @@ public class NPCShopper : MonoBehaviour
 
     private void SetState(NPCState state)
     {
-        if (debugLogs && currentState != state)
+        if (debugLogs && GameDebug.Verbose && currentState != state)
             Debug.Log($"[Customer] {name}: {currentState} -> {state} at {transform.position:F1} (basket {basket.Count})", this);
         currentState = state;
     }
@@ -319,7 +319,7 @@ public class NPCShopper : MonoBehaviour
                 agent.Warp(near.position + (near.position - dest).normalized * 0.1f);
             yield return new WaitForSeconds(0.1f);
         }
-        if (debugLogs) Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
+        if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name} -> {dest:F1} path={test.status} corners={test.corners.Length}", this);
         if (test.status == NavMeshPathStatus.PathInvalid)
         {
             WarnStuck(target.ToString("F1") + " (không tính được đường - kiểm tra NavMesh)");
