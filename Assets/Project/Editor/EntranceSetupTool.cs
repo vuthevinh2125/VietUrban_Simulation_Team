@@ -36,23 +36,27 @@ public static class EntranceSetupTool
 
         foreach (Transform root in ignoreRoots)
         {
-            NavMeshModifier mod = root.GetComponent<NavMeshModifier>();
-            if (mod == null) mod = Undo.AddComponent<NavMeshModifier>(root.gameObject);
-            var so = new SerializedObject(mod);
-            SerializedProperty ignore = so.FindProperty("m_IgnoreFromBuild");
-            if (ignore != null) ignore.boolValue = true;
-            SerializedProperty children = so.FindProperty("m_ApplyToChildren");
-            if (children != null) children.boolValue = true;
-            so.ApplyModifiedProperties();
-            log.AppendLine($"- NavMesh ignore: {root.name}");
+            bool isDoor = DoorRootPrefixes.Any(p => root.name.StartsWith(p));
 
-            if (!DoorRootPrefixes.Any(p => root.name.StartsWith(p))) continue;
+            // Các cánh cửa: con có tên chứa "Door" (không phải tấm kính) và có renderer
+            Transform[] leaves = isDoor
+                ? root.Cast<Transform>().Where(t => t.name.Contains("Door") && !t.name.Contains("Glass") && t.GetComponentInChildren<Renderer>(true) != null).ToArray()
+                : new Transform[0];
 
-            // Các cánh cửa: con có tên chứa "Door" (không phải chính nó) và có renderer
-            Transform[] leaves = root.Cast<Transform>()
-                .Where(t => t.name.Contains("Door") && !t.name.Contains("Glass") && t.GetComponentInChildren<Renderer>(true) != null)
-                .ToArray();
-            if (leaves.Length == 0) continue;
+            if (isDoor)
+            {
+                // Cửa: chỉ bỏ qua CÁNH CỬA, khung + vách kính vẫn là vật cản (không cho đi xuyên kính)
+                SetIgnore(root, false);
+                foreach (Transform leaf in leaves) SetIgnore(leaf, true);
+                log.AppendLine($"- NavMesh ignore leaves of {root.name}: {string.Join(", ", leaves.Select(l => l.name))}");
+            }
+            else
+            {
+                SetIgnore(root, true); // cổng chống trộm: bỏ qua cả cụm
+                log.AppendLine($"- NavMesh ignore: {root.name}");
+            }
+
+            if (!isDoor || leaves.Length == 0) continue;
 
             EntranceDoor door = root.GetComponent<EntranceDoor>();
             if (door == null) door = Undo.AddComponent<EntranceDoor>(root.gameObject);
@@ -77,5 +81,24 @@ public static class EntranceSetupTool
         string summary = $"Đã xử lý {ignoreRoots.Count} cửa/cổng.\n\nViệc tiếp theo:\n1. Chọn 'NavMesh Manager' -> Bake\n2. Ctrl+S";
         Debug.Log("[Entrance Setup]\n" + log + summary);
         EditorUtility.DisplayDialog("Entrance Setup", summary, "OK");
+    }
+
+    /// <summary>Bật/tắt "Ignore From Build" cho NavMeshModifier trên object (tạo modifier nếu cần bật).</summary>
+    private static void SetIgnore(Transform t, bool ignore)
+    {
+        NavMeshModifier mod = t.GetComponent<NavMeshModifier>();
+        if (!ignore)
+        {
+            if (mod != null) Undo.DestroyObjectImmediate(mod); // gỡ hẳn để không ghi đè cài đặt của các cánh cửa
+            return;
+        }
+        if (mod == null) mod = Undo.AddComponent<NavMeshModifier>(t.gameObject);
+        var so = new SerializedObject(mod);
+        SerializedProperty p = so.FindProperty("m_IgnoreFromBuild");
+        if (p != null) p.boolValue = ignore;
+        SerializedProperty children = so.FindProperty("m_ApplyToChildren");
+        if (children != null) children.boolValue = true;
+        so.ApplyModifiedProperties();
+        if (PrefabUtility.IsPartOfPrefabInstance(mod)) PrefabUtility.RecordPrefabInstancePropertyModifications(mod);
     }
 }
