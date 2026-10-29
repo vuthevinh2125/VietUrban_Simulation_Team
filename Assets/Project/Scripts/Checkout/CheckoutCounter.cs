@@ -201,7 +201,10 @@ public class CheckoutCounter : MonoBehaviour
     {
         Vector3 dir = customerPoint.TransformDirection(queueDirection.sqrMagnitude > 0.001f ? queueDirection.normalized : Vector3.back);
         dir.y = 0f;
-        return customerPoint.position + dir.normalized * queueSpacing * index;
+        // Giãn đủ chỗ cho người to nhất trong hàng (2 x bán kính + khe hở), tránh đẩy nhau đi vòng vòng
+        float spacing = queueSpacing;
+        foreach (NPCShopper c in queue) if (c != null) spacing = Mathf.Max(spacing, c.Radius * 2f + 0.25f);
+        return customerPoint.position + dir.normalized * spacing * index;
     }
 
     private void RefreshQueue()
