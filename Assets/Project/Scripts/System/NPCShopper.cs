@@ -75,6 +75,9 @@ public class NPCShopper : MonoBehaviour
         // Rigidbody vật lý đánh nhau với NavMeshAgent -> để kinematic
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
+
+        // Prefab NPC dạo phố chỉ được đi vùng "Sidewalks" -> mở thêm vùng sàn trong cửa hàng ("Walkable")
+        agent.areaMask |= AreaBit("Walkable") | AreaBit("Sidewalks") | AreaBit("Jump");
     }
 
     void Start() => StartCoroutine(Run());
@@ -323,6 +326,12 @@ public class NPCShopper : MonoBehaviour
     {
         if (stuckWarnings++ < 5)
             Debug.LogWarning($"[Customer] {name} không đi tới được {where}. Nếu hay gặp: kiểm tra NavMesh ở khu đó.", this);
+    }
+
+    private static int AreaBit(string areaName)
+    {
+        int area = NavMesh.GetAreaFromName(areaName);
+        return area >= 0 ? 1 << area : 0;
     }
 
     private static bool HasParameter(Animator a, string paramName)
