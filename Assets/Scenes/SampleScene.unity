@@ -35417,7 +35417,6 @@ GameObject:
   - component: {fileID: 410087041}
   - component: {fileID: 410087040}
   - component: {fileID: 410087042}
-  - component: {fileID: 410087043}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -35534,18 +35533,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &410087043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 410087039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00cc8306567db63459628d92421e621d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
 --- !u!1001 &410250766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77444,17 +77431,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4558070733231408, guid: a9da80f587bbf9046aefc4a4cfb8a7fc, type: 3}
   m_PrefabInstance: {fileID: 859952870}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &860710572 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5037184969495788733, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
-  m_PrefabInstance: {fileID: 2216282967600931364}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603969941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28e680b7d0c2f4247b07d01cbac6e5e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
 --- !u!114 &860710575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77493,18 +77469,6 @@ MonoBehaviour:
   timeTextUI: {fileID: 267260424}
   gameOverPanel: {fileID: 0}
   interactTextUI: {fileID: 2274704328668370191}
---- !u!114 &860710579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 603969941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59d920e3b83436f428c8b34ddd432230, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DailyReportManager
 --- !u!1001 &860870693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -202405,9 +202369,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7254705416575136036, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 860710578}
-    - targetCorrespondingSourceObject: {fileID: 7254705416575136036, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 860710579}
   m_SourcePrefab: {fileID: 100100000, guid: 538a2ffd0b8da6b4e9eb754a15c89e7c, type: 3}
 --- !u!114 &2274704328668370191 stripped
 MonoBehaviour:
@@ -204630,7 +204591,7 @@ PrefabInstance:
     - target: {fileID: 3332615821608321955, guid: 9c02824cfa664f443825f398e57dd2cb, type: 3}
       propertyPath: inventoryManager
       value: 
-      objectReference: {fileID: 860710572}
+      objectReference: {fileID: 0}
     - target: {fileID: 3763743489054870304, guid: 9c02824cfa664f443825f398e57dd2cb, type: 3}
       propertyPath: m_IsActive
       value: 0
