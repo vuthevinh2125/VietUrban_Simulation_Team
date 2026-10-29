@@ -167,6 +167,7 @@ public class GameManager : MonoBehaviour
     private void EndDay()
     {
         dayEnded = true;
+        if (StaffManager.Instance != null) StaffManager.Instance.PayWages(); // lương nhân viên tính vào ngày hôm nay
         DailySummary summary = EconomyManager.Instance.CloseDay();
         Debug.Log($"[Day {summary.day}] Income {EconomyManager.Format(summary.income)} | " +
                   $"Expenses {EconomyManager.Format(summary.expenses)} | Profit {EconomyManager.Format(summary.Profit)} | " +
@@ -187,6 +188,8 @@ public class GameManager : MonoBehaviour
         closingTimeReached = false;
         dayEnded = false;
         SetStoreOpen(false, force: true);
+        MarketPrices.RollNewDay(); // giá thị trường đổi mỗi sáng
+        ProgressHUD.Toast("A new day! Market prices have changed.");
         UpdateUI();
         OnNewDay?.Invoke(currentDay);
     }
