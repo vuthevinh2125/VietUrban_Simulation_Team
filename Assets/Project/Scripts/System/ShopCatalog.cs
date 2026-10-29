@@ -24,6 +24,26 @@ public class ShopCatalog : MonoBehaviour
     {
         BuildCards();
         HookLicenseButton();
+        HookFurnitureButton();
+    }
+
+    /// <summary>Tab "Furnitures" trên thanh máy tính mở bảng mua nội thất (FurnitureCatalog).</summary>
+    private void HookFurnitureButton()
+    {
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("furnit", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            b.onClick = new Button.ButtonClickedEvent();
+            b.onClick.AddListener(() =>
+            {
+                FurnitureCatalog cat = GetComponent<FurnitureCatalog>();
+                FurniturePanel.Open(cat != null ? cat.furniture : null);
+            });
+            b.interactable = true;
+            return;
+        }
+        Debug.LogWarning("[ShopCatalog] Không thấy tab 'Furnitures' trên máy tính để gắn bảng nội thất.", this);
     }
 
     /// <summary>
