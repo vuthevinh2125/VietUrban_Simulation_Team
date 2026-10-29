@@ -24,7 +24,23 @@ public class ComputerInteract : MonoBehaviour
 
     void Awake()
     {
+        if (computerUI == null) computerUI = FindComputerUI();
+        if (computerUI == null)
+            Debug.LogError("[Computer] Không tìm thấy ComputerUI trong scene. Kéo ComputerUI vào ô 'Computer UI'.", this);
+
         if (showAsScreenOverlay) ConvertToScreenOverlay();
+    }
+
+    /// <summary>Tự tìm panel giao diện máy tính khi ô Computer UI bị trống.</summary>
+    public static GameObject FindComputerUI()
+    {
+        // Ưu tiên panel có bộ lọc cửa hàng (chính là giao diện mua hàng)
+        ShopFilterManager shop = FindFirstObjectByType<ShopFilterManager>(FindObjectsInactive.Include);
+        if (shop != null) return shop.gameObject;
+
+        foreach (RectTransform t in FindObjectsByType<RectTransform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (t.name == "ComputerUI") return t.gameObject;
+        return null;
     }
 
     void Start()
@@ -41,6 +57,7 @@ public class ComputerInteract : MonoBehaviour
         // UI bị tắt từ chỗ khác (ví dụ nút X) thì nhả khoá
         if (UIState.IsOpenedBy(this) && !IsOpen)
         {
+            if (debugLogs) Debug.LogWarning("[Computer] UI đã bị tắt từ chỗ khác -> nhả khoá.", this);
             UIState.Close(this);
             return;
         }
@@ -49,11 +66,16 @@ public class ComputerInteract : MonoBehaviour
         if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) CloseComputer();
     }
 
+    [Header("Debug")]
+    [Tooltip("Ghi log chi tiết khi mở/đóng máy tính (tắt đi khi đã chạy ổn)")]
+    public bool debugLogs = true;
+
     public void OpenComputer()
     {
-        if (computerUI == null) return;
+        if (computerUI == null) { Debug.LogError("[Computer] Chưa gán ComputerUI!", this); return; }
         computerUI.SetActive(true);
         UIState.Open(this);
+        if (debugLogs) LogState("OPEN");
     }
 
     /// <summary>Gắn được vào nút X trên giao diện.</summary>
@@ -61,9 +83,32 @@ public class ComputerInteract : MonoBehaviour
     {
         if (computerUI != null) computerUI.SetActive(false);
         UIState.Close(this);
+        if (debugLogs) LogState("CLOSE");
     }
 
     void OnDisable() => UIState.Close(this);
+
+    void LateUpdate()
+    {
+        // Phát hiện giao diện bị tắt bởi script khác ngay sau khi mở
+        if (debugLogs && wasOpenLastFrame && !IsOpen)
+            Debug.LogWarning($"[Computer] ComputerUI vừa bị TẮT bởi script khác (frame {Time.frameCount}).", this);
+        wasOpenLastFrame = IsOpen;
+    }
+
+    private bool wasOpenLastFrame;
+
+    private void LogState(string action)
+    {
+        Canvas canvas = computerUI != null ? computerUI.GetComponentInParent<Canvas>(true) : null;
+        Canvas root = canvas != null ? canvas.rootCanvas : null;
+        RectTransform rt = computerUI != null ? computerUI.GetComponent<RectTransform>() : null;
+        Debug.Log($"[Computer] {action} frame={Time.frameCount} on '{name}' | uiActiveSelf={computerUI?.activeSelf} " +
+                  $"uiActiveInHierarchy={computerUI?.activeInHierarchy} | rootCanvas='{(root != null ? root.name : "none")}' " +
+                  $"mode={(root != null ? root.renderMode.ToString() : "-")} enabled={(root != null && root.enabled)} " +
+                  $"sort={(root != null ? root.sortingOrder : 0)} | uiRect={(rt != null ? rt.rect.ToString() : "-")} " +
+                  $"uiScale={(rt != null ? rt.lossyScale.ToString("F4") : "-")} | UIState.open={UIState.IsBlockingUIOpen}\n{System.Environment.StackTrace}", this);
+    }
 
     /// <summary>
     /// Đổi canvas chứa ComputerUI từ World Space sang Screen Space Overlay,
@@ -79,6 +124,8 @@ public class ComputerInteract : MonoBehaviour
             Canvas c = t.GetComponent<Canvas>();
             if (c != null) canvas = c; // lấy canvas gốc trên cùng
         }
+        if (debugLogs) Debug.Log($"[Computer] Awake on '{name}': canvas='{(canvas != null ? canvas.name : "none")}' " +
+                                 $"mode={(canvas != null ? canvas.renderMode.ToString() : "-")}", this);
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay) return;
 
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();

@@ -56,9 +56,13 @@ public static class ComputerSetupTool
 
         ComputerInteract interact = target.GetComponent<ComputerInteract>();
         if (interact == null) interact = Undo.AddComponent<ComputerInteract>(target);
-        Undo.RecordObject(interact, "Assign Computer UI");
-        interact.computerUI = computerUI;
-        interact.showAsScreenOverlay = true;
+        // Gán qua SerializedObject để chắc chắn được lưu (kể cả khi object nằm trong prefab)
+        var so = new SerializedObject(interact);
+        so.FindProperty("computerUI").objectReferenceValue = computerUI;
+        so.FindProperty("showAsScreenOverlay").boolValue = true;
+        so.ApplyModifiedProperties();
+        if (PrefabUtility.IsPartOfPrefabInstance(interact))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(interact);
 
         // 2) Vùng bấm: BoxCollider bao trọn máy tính + layer Interactable để tia nhìn bắt được
         BoxCollider box = target.GetComponent<BoxCollider>();
