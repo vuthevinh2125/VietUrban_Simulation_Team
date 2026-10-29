@@ -64,7 +64,7 @@ public static class StaffModelTool
         }
 
         // ---------- Giỏ / xe đẩy ----------
-        BuildProp($"{PropsFolder}/Basket_o52iei.prefab", "Basket", false, log);
+        BuildProp($"{PropsFolder}/Basket_x5gi0j.prefab", "Basket", true, log); // giỏ lưới sắt có quai (ở cửa hàng)
         BuildProp($"{PropsFolder}/Cart_nabnuh.prefab", "Cart", true, log);
 
         AssetDatabase.SaveAssets();
