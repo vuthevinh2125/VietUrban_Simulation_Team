@@ -103,6 +103,9 @@ public class DayNightCycle : MonoBehaviour
         return gm != null ? gm.ClockHours : 12f;
     }
 
+    /// <summary>Tính lại ánh sáng ngay (vd. thời tiết vừa đổi trong lúc đồng hồ đứng).</summary>
+    public void Refresh() => Apply(CurrentHour());
+
     void Update()
     {
         float h = CurrentHour();
@@ -125,7 +128,7 @@ public class DayNightCycle : MonoBehaviour
         {
             sun.transform.rotation = Quaternion.Euler(sunPitch, sunYaw, 0f);
             float k = above ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elevation * 3f)) : 0f;
-            sun.intensity = sunMaxIntensity * k;
+            sun.intensity = sunMaxIntensity * k * (1f - 0.75f * WeatherSystem.Cloudiness); // trời âm u: nắng yếu
             // Sáng/chiều vàng cam, trưa trắng
             sun.color = Color.Lerp(new Color(1f, 0.62f, 0.38f), new Color(1f, 0.97f, 0.92f), Mathf.Clamp01(elevation * 2f));
             sun.enabled = sun.intensity > 0.01f;
@@ -144,13 +147,15 @@ public class DayNightCycle : MonoBehaviour
         float dusk = Mathf.Clamp01(1f - Mathf.Abs(hour - sunsetHour) / 1.2f) + Mathf.Clamp01(1f - Mathf.Abs(hour - sunriseHour) / 1.0f);
         dusk = Mathf.Clamp01(dusk) * (1f - night);
         Color sky = Color.Lerp(Color.Lerp(daySky, duskSky, dusk), nightSky, night);
+        float cloud = WeatherSystem.Cloudiness;
+        sky = Color.Lerp(sky, new Color(0.45f, 0.47f, 0.5f) * (1f - night * 0.8f), cloud * 0.6f); // mây xám
         RenderSettings.ambientSkyColor = sky;
         RenderSettings.ambientEquatorColor = Color.Lerp(dayEquator, nightEquator, night);
         RenderSettings.ambientGroundColor = Color.Lerp(dayGround, nightGround, night);
 
         if (skybox != null)
         {
-            if (hasExposure) skybox.SetFloat("_Exposure", Mathf.Lerp(1.25f, 0.12f, night));
+            if (hasExposure) skybox.SetFloat("_Exposure", Mathf.Lerp(1.25f, 0.12f, night) * (1f - 0.5f * cloud));
             if (hasTint) skybox.SetColor("_SkyTint", Color.Lerp(new Color(0.5f, 0.5f, 0.5f), new Color(0.75f, 0.45f, 0.35f), dusk));
         }
     }

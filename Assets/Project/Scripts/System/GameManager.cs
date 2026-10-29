@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour
     public float addMoneyAmount = 1000f;
 
     private static readonly DateTime StartDate = new DateTime(2026, 2, 9);
+    /// <summary>Ngày tháng (lịch) ứng với ngày thứ 'day' trong game (ngày 1 = 09/02/2026).</summary>
+    public static DateTime DateOfDay(int day) => StartDate.AddDays(Mathf.Max(1, day) - 1);
 
     private bool isGameOver;
     private bool storeOpen;
