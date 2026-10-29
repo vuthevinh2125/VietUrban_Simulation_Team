@@ -32,12 +32,14 @@ public class ItemPickup : MonoBehaviour
     {
         // Chỉ người chơi thật (có camera) mới lắp nội thất (ComputerUI cũng lỡ gắn một ItemPickup thừa)
         if (playerCamera != null && GetComponent<FurniturePlacer>() == null) gameObject.AddComponent<FurniturePlacer>();
+        if (playerCamera != null && GetComponent<PlayerTools>() == null) gameObject.AddComponent<PlayerTools>();
     }
 
     void Update()
     {
         if (playerCamera == null) return;
         if (FurniturePlacer.Instance != null && FurniturePlacer.Instance.IsBusy) return; // đang lắp / dời nội thất
+        if (PlayerTools.Instance != null && PlayerTools.Instance.Current != PlayerTools.Tool.None) return; // đang cầm chổi / gậy
 
         if (UIState.IsBlockingUIOpen)
         {
@@ -79,12 +81,8 @@ public class ItemPickup : MonoBehaviour
                 if (n != null && n.IsFleeingThief && Vector3.Distance(n.transform.position, playerCamera.transform.position) < 2.2f) { thief = n; break; }
         if (thief == null) return false;
 
-        SetPrompt("<color=#FF6B6B>[LMB] Catch the thief!</color>");
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E))
-        {
-            SetPrompt(null);
-            thief.Catch();
-        }
+        // Tay không thì không bắt được: phải cầm gậy (phím 3) rồi vung trúng kẻ trộm
+        SetPrompt("<color=#FF6B6B>Thief! Press [3] to grab the bat, then swing [LMB]!</color>");
         return true;
     }
 

@@ -41,7 +41,7 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Tỉ lệ khách lấy hàng rồi bỏ chạy không trả tiền (từ ngày 2 trở đi)")]
     [Range(0f, 1f)] public float thiefChance = 0.07f;
     [Tooltip("Kẻ trộm chạy nhanh gấp bao nhiêu lần")]
-    public float fleeSpeedMultiplier = 1.25f;
+    public float fleeSpeedMultiplier = 1.05f;
     [Tooltip("Ra khỏi cửa rồi kẻ trộm còn chạy thêm bao xa (m) mới biến mất - thời gian để người chơi đuổi theo")]
     public float fleeDistance = 30f;
     [Tooltip("Thời gian đứng xem mỗi kệ (giây)")]
@@ -161,9 +161,11 @@ public class NPCShopper : MonoBehaviour
                 // So giá trên nhãn với giá thị trường: đắt thì có thể bỏ qua, rẻ thì lấy thêm
                 float sell = PriceManager.GetSellPrice(item);
                 float ratio = PriceManager.PriceRatio(item, sell);
-                if (Random.value > PriceManager.BuyChance(item, sell, maxPriceRatio))
+                float chance = PriceManager.BuyChance(item, sell, maxPriceRatio) * DirtManager.SatisfactionFactor; // cửa hàng bẩn thì ít mua
+                if (Random.value > chance)
                 {
-                    SpeechBubble.Show(transform, "Too expensive!", new Color(1f, 0.35f, 0.3f), agent.height + 0.35f);
+                    bool dirty = DirtManager.Count >= 4 && Random.value < 0.6f;
+                    SpeechBubble.Show(transform, dirty ? "This store is dirty!" : "Too expensive!", new Color(1f, 0.35f, 0.3f), agent.height + 0.35f);
                     if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(sell)}, thị trường {EconomyManager.Format(item.MarketPrice)}), bỏ qua.", this);
                     continue;
                 }

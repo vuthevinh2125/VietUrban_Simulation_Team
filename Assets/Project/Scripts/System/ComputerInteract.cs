@@ -104,7 +104,8 @@ public class ComputerInteract : MonoBehaviour
         // Esc đang dùng để đóng bảng giấy phép thì không đóng luôn máy tính
         if (IsOpen && Input.GetKeyDown(KeyCode.Escape) && !LicensePanel.IsOpen && LicensePanel.ClosedFrame != Time.frameCount
             && !FurniturePanel.IsOpen && FurniturePanel.ClosedFrame != Time.frameCount
-            && !StaffPanel.IsOpen && StaffPanel.ClosedFrame != Time.frameCount) CloseComputer();
+            && !StaffPanel.IsOpen && StaffPanel.ClosedFrame != Time.frameCount
+            && !ExpansionPanel.IsOpen && ExpansionPanel.ClosedFrame != Time.frameCount) CloseComputer();
     }
 
     [Header("Debug")]

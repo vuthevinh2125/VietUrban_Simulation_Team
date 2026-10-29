@@ -14,6 +14,7 @@ public static class GameSession
         PriceManager.ClearCustomPrices();
         MarketPrices.Import(null, new System.Collections.Generic.Dictionary<string, ItemData>());
         LockedCheckout.LoadUnlocked(null);
+        StoreExpansion.LoadUnlocked(null);
         UIState.CloseAll();
         PlayerController.LookLocked = false;
         Time.timeScale = 1f;

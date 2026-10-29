@@ -148,7 +148,7 @@ public class Restocker : MonoBehaviour
     {
         if (carrying == null) yield break;
         if (rack == null || !rack.HasFreeSlot) { DropCarried(); yield break; }
-        yield return MoveTo(rack.StandPoint(), 0.6f);
+        yield return MoveTo(rack.StandPoint(transform.position), 0.6f);
         if (rack == null || carrying == null) { DropCarried(); yield break; }
         Face(rack.transform.position);
         Interactable b = carrying;

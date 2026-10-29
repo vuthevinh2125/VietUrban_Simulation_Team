@@ -77,11 +77,23 @@ public class StorageRack : MonoBehaviour
         }
     }
 
-    /// <summary>Điểm đứng trước kệ để cất / lấy thùng.</summary>
-    public Vector3 StandPoint()
+    /// <summary>Điểm đứng trước kệ để cất / lấy thùng: phía nào của kệ có lối đi và gần người đến hơn.</summary>
+    public Vector3 StandPoint(Vector3 from)
     {
-        Vector3 c = transform.position + transform.forward * 0.9f;
-        return NavMesh.SamplePosition(c, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : c;
+        Bounds b = ProductFit.LocalBounds(transform);
+        bool longX = b.size.x >= b.size.z;
+        Vector3 side = longX ? transform.forward : transform.right;
+        float half = (longX ? b.size.z : b.size.x) * 0.5f * (longX ? transform.lossyScale.z : transform.lossyScale.x);
+        Vector3 center = transform.TransformPoint(b.center);
+        Vector3 best = center + side * (half + 0.6f);
+        float bestD = float.MaxValue;
+        foreach (Vector3 c in new[] { center + side * (half + 0.6f), center - side * (half + 0.6f) })
+        {
+            if (!NavMesh.SamplePosition(c, out NavMeshHit hit, 0.8f, NavMesh.AllAreas)) continue;
+            float d = (hit.position - from).sqrMagnitude;
+            if (d < bestD) { bestD = d; best = hit.position; }
+        }
+        return best;
     }
 
     private void Place(Interactable box, int index)

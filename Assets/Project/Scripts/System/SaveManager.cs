@@ -40,6 +40,7 @@ public class SaveManager : MonoBehaviour
         public List<BoxEntry> boxes = new List<BoxEntry>();
         public List<FurnitureBoxEntry> furnitureBoxes = new List<FurnitureBoxEntry>();
         public List<string> checkouts = new List<string>();
+        public List<string> expansions = new List<string>();
         public int cashiers;
         public int restockers;
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
@@ -117,6 +118,7 @@ public class SaveManager : MonoBehaviour
             xp = StoreProgress.XP,
             licenses = LicenseManager.GetOwnedIds(),
             checkouts = LockedCheckout.GetUnlockedIds(),
+            expansions = StoreExpansion.GetUnlockedIds(),
             cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
             restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
             market = MarketPrices.Export()
@@ -188,6 +190,9 @@ public class SaveManager : MonoBehaviour
         PriceManager.ClearCustomPrices();
         foreach (PriceEntry p in d.prices)
             if (items.TryGetValue(p.item, out ItemData it)) PriceManager.SetSellPrice(it, p.price); else missing++;
+
+        // Phần mở rộng (nhà kho, phòng mới) mở lại trước, để kệ / thùng trong đó được tìm thấy
+        StoreExpansion.LoadUnlocked(d.expansions);
 
         // Xoá trạng thái hiện tại: khách, hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
         for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)

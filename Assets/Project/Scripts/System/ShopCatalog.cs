@@ -26,6 +26,23 @@ public class ShopCatalog : MonoBehaviour
         HookLicenseButton();
         HookFurnitureButton();
         HookStaffButton();
+        HookExpandButton();
+    }
+
+    /// <summary>Tab "Floor" (chưa dùng) đổi thành "Expand": mua phòng mở rộng, nhà kho.</summary>
+    private void HookExpandButton()
+    {
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("floor", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            SetLabel(b, "Expand");
+            b.onClick = new Button.ButtonClickedEvent();
+            b.onClick.AddListener(ExpansionPanel.Open);
+            b.interactable = true;
+            return;
+        }
+        Debug.LogWarning("[ShopCatalog] Không thấy tab 'Floor' trên máy tính để gắn bảng mở rộng.", this);
     }
 
     /// <summary>Tab "Paints" (chưa dùng) trên thanh máy tính đổi thành "Staff": thuê nhân viên.</summary>
