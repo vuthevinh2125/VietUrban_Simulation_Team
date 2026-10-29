@@ -23,7 +23,7 @@ public class MinimapSystem : MonoBehaviour
     public float camHeight = 160f;
     [Header("Big map")]
     public float bigZoom = 110f;
-    public Vector2 bigZoomRange = new Vector2(30f, 260f);
+    public Vector2 bigZoomRange = new Vector2(30f, 400f);
 
     private static readonly Color RouteColor = new Color(1f, 0.78f, 0.1f, 0.95f);
     private static readonly Color PlayerColor = new Color(0.25f, 0.85f, 1f);
@@ -48,6 +48,9 @@ public class MinimapSystem : MonoBehaviour
     private GameObject miniRoot, bigRoot;
     private TMP_Text bigInfo;
     private bool bigOpen;
+    private Vector3 bigCenter;
+    private bool worldKnown;
+    private Bounds world;
     private Transform player;
     private readonly List<Vector3> route = new List<Vector3>();
     private float nextRouteAt;
@@ -97,6 +100,16 @@ public class MinimapSystem : MonoBehaviour
         {
             float scroll = Input.mouseScrollDelta.y;
             if (Mathf.Abs(scroll) > 0.01f) bigZoom = Mathf.Clamp(bigZoom * (scroll > 0 ? 0.85f : 1.18f), bigZoomRange.x, bigZoomRange.y);
+            // Giữ chuột trái + kéo để di chuyển bản đồ
+            if (Input.GetMouseButton(0))
+            {
+                Rect r = big.image.rect;
+                float imagePixels = Mathf.Max(1f, r.height * Screen.height / 1080f);   // chiều cao bản đồ trên màn hình (pixel)
+                float metersPerPixel = bigZoom * 2f / imagePixels;
+                // Mouse X/Y ≈ 0.1 mỗi pixel chuột
+                bigCenter -= new Vector3(Input.GetAxis("Mouse X"), 0f, Input.GetAxis("Mouse Y")) * 10f * metersPerPixel;
+            }
+            if (Input.GetKeyDown(KeyCode.Space) && player != null) bigCenter = player.position; // về chỗ mình đứng
         }
     }
 
@@ -118,7 +131,7 @@ public class MinimapSystem : MonoBehaviour
         if (bigOpen)
         {
             big.cam.orthographicSize = bigZoom;
-            big.cam.transform.SetPositionAndRotation(new Vector3(p.x, p.y + camHeight, p.z), Quaternion.Euler(90f, 0f, 0f));
+            big.cam.transform.SetPositionAndRotation(new Vector3(bigCenter.x, p.y + camHeight, bigCenter.z), Quaternion.Euler(90f, 0f, 0f));
         }
 
         UpdateRoute(p);
@@ -198,7 +211,7 @@ public class MinimapSystem : MonoBehaviour
         if (!isMini && bigInfo != null)
         {
             string goal = DeliveryManager.TryGetTarget(out Vector3 t, out string label, out _) ? $"<color=#FFD54A>Delivery: {label} ({Vector3.Distance(playerPos, t):0} m)</color>   " : "";
-            bigInfo.text = $"{goal}<color=#40D9FF>Arrow = You</color>   <color=#33C05A>S = Store</color>   <color=#FFD54A>P / ! = Delivery</color>   <color=#FF4033>Red = Thief</color>   <color=#5A8CFF>Blue = Guard</color>   ·   Scroll: zoom   [M] Close";
+            bigInfo.text = $"{goal}<color=#40D9FF>Arrow = You</color>   <color=#33C05A>S = Store</color>   <color=#FFD54A>P / ! = Delivery</color>   <color=#FF4033>Red = Thief</color>   <color=#5A8CFF>Blue = Guard</color>   ·   Scroll: zoom   Drag: move   [Space] Me   [M] Close";
         }
     }
 
@@ -248,6 +261,14 @@ public class MinimapSystem : MonoBehaviour
     // ================= Mở / đóng bản đồ lớn =================
     private void SetBigOpen(bool open)
     {
+        if (open)
+        {
+            // Mở ra: thấy toàn bộ thành phố (kể cả khu phố mới)
+            if (!worldKnown) { world = CityBounds(); worldKnown = true; }
+            bigCenter = world.center;
+            float aspect = big.image.rect.width / Mathf.Max(1f, big.image.rect.height);
+            bigZoom = Mathf.Clamp(Mathf.Max(world.extents.z, world.extents.x / aspect) * 1.05f, bigZoomRange.x, bigZoomRange.y);
+        }
         bigOpen = open;
         bigRoot.SetActive(open);
         big.cam.enabled = open;
@@ -379,6 +400,21 @@ public class MinimapSystem : MonoBehaviour
         }
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         return p != null ? p.transform : null;
+    }
+
+    /// <summary>Vùng thành phố: gộp khung các vật phẳng sát mặt đất (đường, vỉa hè, nền khu nhà).</summary>
+    private static Bounds CityBounds()
+    {
+        Bounds b = default; bool any = false;
+        foreach (Renderer r in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+        {
+            Bounds rb = r.bounds;
+            if (rb.size.y > 1f || rb.min.y > 0.5f || rb.min.y < -1f) continue;
+            if (rb.size.x > 400f || rb.size.z > 400f) continue;
+            if (r.GetComponentInParent<Canvas>() != null) continue;
+            if (!any) { b = rb; any = true; } else b.Encapsulate(rb);
+        }
+        return any ? b : new Bounds(Vector3.zero, new Vector3(300f, 1f, 300f));
     }
 
     private static Vector3 StoreCenter(out bool ok)
