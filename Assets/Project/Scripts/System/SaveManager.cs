@@ -48,6 +48,7 @@ public class SaveManager : MonoBehaviour
         public List<BuiltInEntry> builtins = new List<BuiltInEntry>();
         public List<BusinessStats.DayRecord> stats = new List<BusinessStats.DayRecord>();
         public List<ReviewManager.Review> reviews = new List<ReviewManager.Review>();
+        public List<string> vehicles = new List<string>();
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
     }
 
@@ -129,7 +130,8 @@ public class SaveManager : MonoBehaviour
             guards = StaffManager.Instance != null ? StaffManager.Instance.GuardCount : 0,
             market = MarketPrices.Export(),
             stats = BusinessStats.Export(),
-            reviews = ReviewManager.Export()
+            reviews = ReviewManager.Export(),
+            vehicles = VehicleManager.Export()
         };
 
         foreach (var kv in PriceManager.AllCustomPrices)
@@ -205,6 +207,7 @@ public class SaveManager : MonoBehaviour
         MarketPrices.Import(d.market, items);
         BusinessStats.Import(d.stats);
         ReviewManager.Import(d.reviews);
+        VehicleManager.Import(d.vehicles);
 
         PriceManager.ClearCustomPrices();
         foreach (PriceEntry p in d.prices)

@@ -49,7 +49,8 @@ public class MotorcycleInteraction : MonoBehaviour
 
             if (currentSqrDistance <= sqrInteractionDistance)
             {
-                if (Input.GetKeyDown(KeyCode.F))
+                // Chỉ xe gần nhất mới lên (tránh lên 2 xe đỗ sát nhau), không lên khi đang mở bảng giao diện
+                if (Input.GetKeyDown(KeyCode.F) && VehicleManager.IsNearestMountable(transform, player.position))
                 {
                     MountBike();
                 }

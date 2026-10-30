@@ -106,7 +106,8 @@ public class ComputerInteract : MonoBehaviour
             && !FurniturePanel.IsOpen && FurniturePanel.ClosedFrame != Time.frameCount
             && !StaffPanel.IsOpen && StaffPanel.ClosedFrame != Time.frameCount
             && !ExpansionPanel.IsOpen && ExpansionPanel.ClosedFrame != Time.frameCount
-            && !StatsPanel.IsOpen && StatsPanel.ClosedFrame != Time.frameCount) CloseComputer();
+            && !StatsPanel.IsOpen && StatsPanel.ClosedFrame != Time.frameCount
+            && !VehiclePanel.IsOpen && VehiclePanel.ClosedFrame != Time.frameCount) CloseComputer();
     }
 
     [Header("Debug")]

@@ -28,6 +28,7 @@ public class ShopCatalog : MonoBehaviour
         HookStaffButton();
         HookExpandButton();
         HookStatsButton();
+        HookVehiclesButton();
     }
 
     private static void PlaceInWidestGap(RectTransform rt, RectTransform src)
@@ -98,6 +99,21 @@ public class ShopCatalog : MonoBehaviour
     }
 
     /// <summary>Tab "Floor" (chưa dùng) đổi thành "Expand": mua phòng mở rộng, nhà kho.</summary>
+    /// <summary>Tab "Vehicles": mở bảng mua / gọi phương tiện.</summary>
+    private void HookVehiclesButton()
+    {
+        foreach (Button b in GetComponentsInChildren<Button>(true))
+        {
+            if (b.GetComponentInParent<ProductCardUI>() != null) continue;
+            if (LabelOf(b).IndexOf("vehicle", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            b.onClick = new Button.ButtonClickedEvent();
+            b.onClick.AddListener(VehiclePanel.Open);
+            b.interactable = true;
+            return;
+        }
+        Debug.LogWarning("[ShopCatalog] Không thấy tab 'Vehicles' trên máy tính.", this);
+    }
+
     private void HookExpandButton()
     {
         foreach (Button b in GetComponentsInChildren<Button>(true))

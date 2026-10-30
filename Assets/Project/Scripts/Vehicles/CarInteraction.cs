@@ -33,7 +33,8 @@ public class CarInteraction : MonoBehaviour
             {
                 if (!isPlayerInside)
                 {
-                    EnterCar();
+                    // Chỉ xe gần nhất mới lên, không lên khi đang mở bảng giao diện
+                    if (VehicleManager.IsNearestMountable(transform, player.position)) EnterCar();
                 }
                 else
                 {
