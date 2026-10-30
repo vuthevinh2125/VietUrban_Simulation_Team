@@ -16,8 +16,18 @@ public class SpeechBubble : MonoBehaviour
     public static void Show(Transform target, string text, Color color, float height = 2.1f, float duration = 2.5f)
     {
         if (target == null) return;
+        // Gỡ khỏi danh sách trước rồi mới Destroy (Destroy có thể gọi OnDisable -> Active.Remove làm lệch chỉ số)
+        var old = new System.Collections.Generic.List<SpeechBubble>();
         for (int i = Active.Count - 1; i >= 0; i--)
-            if (Active[i] == null || Active[i].target == target) { if (Active[i] != null) Destroy(Active[i].gameObject); Active.RemoveAt(i); }
+        {
+            SpeechBubble other = Active[i];
+            if (other == null || other.target == target)
+            {
+                Active.RemoveAt(i);
+                if (other != null) old.Add(other);
+            }
+        }
+        foreach (SpeechBubble o in old) Destroy(o.gameObject);
 
         GameObject go = new GameObject("SpeechBubble"); // không làm con của khách để khỏi bị méo theo scale nhân vật
         SpeechBubble b = go.AddComponent<SpeechBubble>();

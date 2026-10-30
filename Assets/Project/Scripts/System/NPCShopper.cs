@@ -69,6 +69,7 @@ public class NPCShopper : MonoBehaviour
     private ShoppingCarrier carrier;
     private bool hasSpeedParam;
     private readonly List<ItemData> basket = new List<ItemData>();
+    private readonly ReviewManager.Visit visit = new ReviewManager.Visit(); // ghi lại trải nghiệm để chấm điểm cửa hàng
 
     private CheckoutCounter counter;
     private Vector3 queueTarget;
@@ -130,6 +131,7 @@ public class NPCShopper : MonoBehaviour
         // --- Mua sắm ---
         SetState(NPCState.Shopping);
         int wanted = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
+        visit.wanted = wanted;
         carrier = GetComponent<ShoppingCarrier>();
         if (carrier == null) carrier = gameObject.AddComponent<ShoppingCarrier>();
         carrier.Init(wanted); // xách giỏ hoặc đẩy xe
@@ -140,7 +142,7 @@ public class NPCShopper : MonoBehaviour
         {
             attempts++;
             Shelf shelf = PickShelf(visited);
-            if (shelf == null) break;
+            if (shelf == null) { visit.noStock = basket.Count < wanted; break; }
             visited.Add(shelf);
 
             Vector3 stand = ShelfStandPoint(shelf);
@@ -151,6 +153,7 @@ public class NPCShopper : MonoBehaviour
                 continue;
             }
             Face(shelf.transform.position);
+            visit.maxDirt = Mathf.Max(visit.maxDirt, DirtManager.Count);
             yield return new WaitForSeconds(browseTime * Random.Range(0.7f, 1.4f));
 
             if (shelf.IsEmpty) continue;
@@ -165,6 +168,7 @@ public class NPCShopper : MonoBehaviour
                 if (Random.value > chance)
                 {
                     bool dirty = DirtManager.Count >= 4 && Random.value < 0.6f;
+                    if (dirty) visit.dirtySkips++; else visit.tooExpensive++;
                     SpeechBubble.Show(transform, dirty ? "This store is dirty!" : "Too expensive!", new Color(1f, 0.35f, 0.3f), agent.height + 0.35f);
                     if (debugLogs && GameDebug.Verbose) Debug.Log($"[Customer] {name}: {item.itemName} đắt quá ({EconomyManager.Format(sell)}, thị trường {EconomyManager.Format(item.MarketPrice)}), bỏ qua.", this);
                     continue;
@@ -173,10 +177,14 @@ public class NPCShopper : MonoBehaviour
                 {
                     take++;
                     wanted++;
+                    visit.greatPrice++;
                     SpeechBubble.Show(transform, "Great price!", new Color(0.4f, 1f, 0.45f), agent.height + 0.35f);
                 }
                 else if (ratio > 1.15f)
+                {
+                    visit.pricey++;
                     SpeechBubble.Show(transform, "Pricey...", new Color(1f, 0.8f, 0.3f), agent.height + 0.35f);
+                }
             }
             for (int i = 0; i < take && basket.Count < wanted; i++)
                 if (shelf.TryTakeForCustomer(out ItemData got) && got != null)
@@ -194,7 +202,18 @@ public class NPCShopper : MonoBehaviour
             yield return FleeRoutine();
             yield break;
         }
+        visit.got = basket.Count;
         if (basket.Count > 0) yield return CheckoutRoutine();
+
+        // --- Đánh giá cửa hàng trước khi về ---
+        try
+        {
+            visit.maxDirt = Mathf.Max(visit.maxDirt, DirtManager.Count);
+            ReviewManager.Review review = ReviewManager.Submit(visit);
+            Color rc = review.stars >= 4 ? new Color(0.4f, 1f, 0.45f) : review.stars == 3 ? new Color(1f, 0.85f, 0.35f) : new Color(1f, 0.4f, 0.35f);
+            SpeechBubble.Show(transform, $"{review.stars}/5 stars", rc, agent.height + 0.35f, 3f);
+        }
+        catch (System.Exception e) { Debug.LogException(e, this); } // lỗi đánh giá không được làm khách kẹt lại
 
         // --- Ra về ---
         SetState(NPCState.Leaving);
@@ -218,11 +237,12 @@ public class NPCShopper : MonoBehaviour
         while (!counter.JoinQueue(this))
         {
             waited += 1f;
-            if (waited > 20f) { basket.Clear(); counter = null; yield break; } // hàng quá dài, bỏ về
+            if (waited > 20f) { basket.Clear(); counter = null; visit.gaveUpQueue = true; yield break; } // hàng quá dài, bỏ về
             yield return new WaitForSeconds(1f);
         }
 
         SetState(NPCState.Queueing);
+        visit.queueStart = Time.time;
         float firstSince = -1f;
         bool standing = false;
         int movePriority = agent.avoidancePriority;
@@ -424,6 +444,8 @@ public class NPCShopper : MonoBehaviour
     public void OnPaid()
     {
         paid = true;
+        visit.checkedOut = true;
+        if (visit.queueStart >= 0f) visit.queueSeconds = Time.time - visit.queueStart;
         basket.Clear();
         counter = null;
     }

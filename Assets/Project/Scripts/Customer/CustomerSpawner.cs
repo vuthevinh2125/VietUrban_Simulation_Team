@@ -66,7 +66,7 @@ public class CustomerSpawner : MonoBehaviour
     {
         if (Time.time < nextSpawnTime) return;
         // Trời đẹp khách tới dày hơn, mưa / giông thưa hơn (WeatherSystem)
-        nextSpawnTime = Time.time + Random.Range(spawnInterval.x, spawnInterval.y) / Mathf.Max(0.3f, WeatherSystem.CustomerMultiplier);
+        nextSpawnTime = Time.time + Random.Range(spawnInterval.x, spawnInterval.y) / Mathf.Max(0.3f, WeatherSystem.CustomerMultiplier * ReviewManager.CustomerMultiplier);
 
         GameManager gm = GameManager.Instance;
         if (gm != null && (gm.IsGameOver || !gm.IsStoreOpen || gm.DayProgress01 > stopSpawningAt)) return; // chỉ đón khách khi đang mở cửa

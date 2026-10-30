@@ -334,12 +334,14 @@ public class WeatherSystem : MonoBehaviour
     private void BuildHud()
     {
         Canvas canvas = UIKit.CreateCanvas(transform, 50);
-        GameObject panel = UIKit.Panel("WeatherInfo", canvas.transform, new Vector2(400, 34), Vector2.zero, new Color(0f, 0f, 0f, 0.7f));
+        GameObject panel = UIKit.Panel("WeatherInfo", canvas.transform, new Vector2(300, 30), Vector2.zero, new Color(0f, 0f, 0f, 0.55f));
         var rt = (RectTransform)panel.transform;
         rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
-        rt.anchoredPosition = new Vector2(12f, -172f);
-        hudText = UIKit.Text(panel.transform, "", 17, new Vector2(390, 32), Vector2.zero, TextAlignmentOptions.Center);
+        rt.anchoredPosition = new Vector2(10f, -126f); // ngay dưới khung ngày / giờ / tiền (rộng 300, x 10)
+        hudText = UIKit.Text(panel.transform, "", 16, new Vector2(284, 28), Vector2.zero, TextAlignmentOptions.Left);
+        hudText.enableAutoSizing = true; hudText.fontSizeMin = 11; hudText.fontSizeMax = 16;
+        hudText.textWrappingMode = TextWrappingModes.NoWrap;
     }
 
     private static Camera ActiveCamera()

@@ -18,6 +18,8 @@ public class BusinessStats : MonoBehaviour
         public int day;
         public float income, expenses, sales, supplies, rent, wages, upgrades, other;
         public int customers, items, deliveries;
+        public float rating;   // điểm đánh giá trung bình trong ngày (0 = chưa có)
+        public int reviews;
         public float deliveryRevenue;
         public string weather, season;
         public List<ItemCount> products = new List<ItemCount>();
@@ -102,6 +104,7 @@ public class BusinessStats : MonoBehaviour
             season = WeatherSystem.SeasonName(WeatherSystem.CurrentSeason),
             products = todayItems.Values.OrderByDescending(i => i.revenue).ToList(),
         };
+        ReviewManager.ForDay(s.day, out r.rating, out r.reviews);
         days.RemoveAll(d => d.day == r.day);
         days.Add(r);
         days.Sort((a, b) => a.day.CompareTo(b.day));
@@ -138,6 +141,8 @@ public class BusinessStats : MonoBehaviour
         public int Items => days.Sum(d => d.items);
         public int Deliveries => days.Sum(d => d.deliveries);
         public float DeliveryRevenue => days.Sum(d => d.deliveryRevenue);
+        public int Reviews => days.Sum(d => d.reviews);
+        public float Rating => Reviews > 0 ? days.Sum(d => d.rating * d.reviews) / Reviews : 0f;
         public float Category(Func<DayRecord, float> f) => days.Sum(f);
         public List<ItemCount> TopProducts(int n)
         {

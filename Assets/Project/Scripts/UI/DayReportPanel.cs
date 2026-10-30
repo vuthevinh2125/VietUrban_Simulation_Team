@@ -47,6 +47,9 @@ public class DayReportPanel : MonoBehaviour
             $"Sales:  {F(s.Get(MoneyCategory.Sales))}\n\n" +
             $"Customers served:  {s.customersServed}\n" +
             $"Items sold:  {s.itemsSold}";
+        ReviewManager.ForDay(s.day, out float rating, out int reviewCount);
+        if (reviewCount > 0)
+            leftText.text += $"\nRating:  {rating.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)} / 5  ({reviewCount})";
         rightText.text =
             "<b>Expenses</b>\n" +
             $"Products:  {F(-s.Get(MoneyCategory.Supplies))}\n" +
