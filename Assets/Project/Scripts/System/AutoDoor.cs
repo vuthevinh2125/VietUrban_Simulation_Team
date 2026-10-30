@@ -3,8 +3,8 @@ using UnityEngine.AI;
 using System.Collections;
 
 /// <summary>
-/// Cửa tự động: mở khi người chơi HOẶC khách/NPC (NavMeshAgent) đứng trong vùng collider của object này,
-/// đóng khi không còn ai. Tự quét vùng định kỳ nên không cần Rigidbody, nhiều người đi qua cùng lúc vẫn đúng.
+/// Cửa tự động: mở khi người chơi hoặc khách đứng trong vùng collider của object này (nới thêm detectPadding),
+/// nhân viên / bảo vệ phải vào hẳn vùng collider; người đi bộ ngoài phố bỏ qua. Đóng sau holdOpenTime giây khi không còn ai.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class AutoDoor : MonoBehaviour
@@ -19,6 +19,10 @@ public class AutoDoor : MonoBehaviour
     [Header("Detection")]
     [Tooltip("Bao lâu kiểm tra vùng cửa một lần (giây)")]
     public float checkInterval = 0.15f;
+    [Tooltip("Giữ cửa mở thêm bao lâu sau khi người cuối cùng đi qua (giây)")]
+    public float holdOpenTime = 1.2f;
+    [Tooltip("Nới vùng phát hiện ra mỗi phía (mét) cho người chơi / khách")]
+    public float detectPadding = 0.5f;
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
@@ -26,7 +30,7 @@ public class AutoDoor : MonoBehaviour
     private Coroutine animationCoroutine;
     private Collider area;
     private float nextCheckTime;
-    private readonly Collider[] hits = new Collider[32];
+    private float lastSeen = -999f;
 
     void Start()
     {
@@ -44,29 +48,12 @@ public class AutoDoor : MonoBehaviour
         if (doorModel == null || area == null || Time.time < nextCheckTime) return;
         nextCheckTime = Time.time + checkInterval;
 
-        bool someoneInside = IsAnyoneInside();
-        if (someoneInside != isOpen) SetOpen(someoneInside);
-    }
-
-    private bool IsAnyoneInside()
-    {
-        Bounds b = area.bounds;
-
-        int count = Physics.OverlapBoxNonAlloc(b.center, b.extents, hits, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
-        for (int i = 0; i < count; i++)
-        {
-            Collider c = hits[i];
-            if (c == null) continue;
-            if (c.CompareTag("Player") || c.transform.root.CompareTag("Player")) return true;
-            if (c.GetComponentInParent<NavMeshAgent>() != null) return true;
-        }
-
-        // Khách không có collider vẫn được tính theo vị trí
-        foreach (NPCShopper npc in NPCShopper.Active)
-        {
-            if (npc != null && b.Contains(npc.transform.position)) return true;
-        }
-        return false;
+        Bounds core = area.bounds;
+        Bounds wide = core;
+        wide.Expand(detectPadding * 2f);
+        if (DoorSensor.AnyoneAt(wide, core)) lastSeen = Time.time;
+        bool open = Time.time - lastSeen < holdOpenTime;
+        if (open != isOpen) SetOpen(open);
     }
 
     private void SetOpen(bool open)
