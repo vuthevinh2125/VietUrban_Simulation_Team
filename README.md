@@ -2,7 +2,7 @@
 
 Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **Unity 6 (6000.5.4f1), URP**, lấy cảm hứng và vận hành theo lối chơi của *Supermarket Simulator*: nhập hàng, xếp kệ, đặt giá, thu ngân, mở rộng cửa hàng và thuê nhân viên.
 
-> Final Project – VietUrban_Simulation
+> Final Project - VietUrban_Simulation
 
 ---
 
@@ -27,10 +27,10 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Thu ngân | Quét hàng, trả tiền mặt (thối tiền từng tờ / xu) hoặc thẻ (máy POS), thối dư bị trừ tiền |
 | Ngày làm việc | Đồng hồ chỉ chạy khi mở cửa, biển OPEN / CLOSED, giờ đóng cửa, báo cáo cuối ngày, tiền thuê mặt bằng |
 | Tiến trình | Cấp cửa hàng (XP), 10 giấy phép nhóm hàng, mở khoá theo cấp |
-| Nội thất | 9 loại kệ / tủ lạnh / tủ đông / sạp / kệ kho; mua, lắp đặt có bóng xem trước, xoay 360°, dời chỗ — kể cả kệ / tủ có sẵn trong cửa hàng |
-| Mở rộng | 3 quầy thu ngân thêm (tối đa 4 quầy); **nhà kho** riêng cạnh siêu thị (Lv3); **2 phần mở rộng** siêu thị (Lv4, Lv6) — mua xong tường mở ra, kệ sát tường tự dời ra tường mới |
+| Nội thất | 9 loại kệ / tủ lạnh / tủ đông / sạp / kệ kho; mua, lắp đặt có bóng xem trước, xoay 360°, dời chỗ - kể cả kệ / tủ có sẵn trong cửa hàng |
+| Mở rộng | 3 quầy thu ngân thêm (tối đa 4 quầy); **nhà kho** riêng cạnh siêu thị (Lv3); **2 phần mở rộng** siêu thị (Lv4, Lv6) - mua xong tường mở ra, kệ sát tường tự dời ra tường mới |
 | Nhân viên | Thu ngân (tự quét + nhận tiền), nhân viên xếp kệ (tự mang thùng đi xếp), **bảo vệ** gác ngoài cửa tự đuổi bắt kẻ trộm; trả lương cuối ngày |
-| Trộm & dọn dẹp | Kẻ trộm ôm hàng bỏ chạy (còi chống trộm kêu) — cầm **gậy** đuổi theo đánh trúng để lấy lại tiền; vết bẩn xuất hiện trong cửa hàng, cầm **chổi** quét, bẩn nhiều khách mua ít |
+| Trộm & dọn dẹp | Kẻ trộm ôm hàng bỏ chạy (còi chống trộm kêu) - cầm **gậy** đuổi theo đánh trúng để lấy lại tiền; vết bẩn xuất hiện trong cửa hàng, cầm **chổi** quét, bẩn nhiều khách mua ít |
 | Giao hàng | Đơn đặt hàng qua điện thoại: nhận đơn, lấy gói hàng, chạy **xe máy / ô tô** tới cột sáng vàng để giao, giao nhanh được tip |
 | Thành phố | Khu phố mới phía đông (gấp đôi bản đồ): 8 tuyến đường có tên, ngã tư vạch qua đường, 12 khu nhà, ~70 toà nhà có số nhà để giao hàng, đèn đường tự bật ban đêm |
 | Bản đồ | Minimap tròn (xoay theo hướng nhìn) + bản đồ lớn **[M]**: đánh dấu cửa hàng, gói hàng / chỗ giao, kẻ trộm, bảo vệ; vẽ lộ trình đường đi tới chỗ giao hàng |
@@ -38,7 +38,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Thời tiết & 4 mùa | Lịch thật (Xuân / Hạ / Thu / Đông theo tháng); mỗi ngày tung thời tiết theo mùa: nắng, nhiều mây, mưa, bão (sấm chớp), sương mù; mưa không lọt vào trong nhà, cây đổi màu theo mùa; mưa bão ít khách hơn nhưng giao hàng được thưởng thêm; HUD hiện ngày, mùa, thời tiết, nhiệt độ |
 | Giao thông & người đi bộ | ~14 xe máy / ô tô chạy đúng làn bên phải, rẽ ở ngã tư, dừng khi có xe / người phía trước; người đi bộ dạo vỉa hè, vào ra các toà nhà, mưa và ban đêm thì vắng hơn |
 | Thống kê kinh doanh | Tab **Stats** trên máy tính: biểu đồ doanh thu / chi phí / lãi theo **ngày, tuần, tháng**; click cột để xem chi tiết từng khoản, số khách, chi tiêu trung bình, ngày tốt nhất, top 5 sản phẩm; lưu cùng file save |
-| Đánh giá cửa hàng | Khách chấm 1–5 sao khi ra về theo 4 tiêu chí: đủ hàng, giá, thời gian chờ ở quầy, vệ sinh; kèm lời nhận xét. Điểm trung bình 50 đánh giá gần nhất hiện trên HUD, ảnh hưởng lượng khách (1★ = −30%, 5★ = +30%); xem chi tiết ở máy tính → Stats → **Reviews** |
+| Đánh giá cửa hàng | Khách chấm 1-5 sao khi ra về theo 4 tiêu chí: đủ hàng, giá, thời gian chờ ở quầy, vệ sinh; kèm lời nhận xét. Điểm trung bình 50 đánh giá gần nhất hiện trên HUD, ảnh hưởng lượng khách (1★ = −30%, 5★ = +30%); xem chi tiết ở máy tính → Stats → **Reviews** |
 | Phương tiện | Tab **Vehicles** trên máy tính: Honda Cub có sẵn, mua thêm Honda C125 ($1,500, Lv3) và ô tô Tocus ($4,500, Lv5) nhanh hơn (29 / 36 / 43 km/h); xe chưa mua đỗ ngoài cửa hàng có bảng FOR SALE; nút gọi xe về cửa hàng; F chỉ lên xe gần nhất |
 | Cửa tự động | Cửa kéo trượt sang hai bên, mở khi người chơi / khách tới gần hoặc đang đi về phía cửa, người đi bộ ngoài phố và bảo vệ đứng gác không làm cửa mở |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
@@ -96,9 +96,9 @@ Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockC
 
 | Menu | Việc làm |
 |---|---|
-| 1–2. Store Setup | Biến các kệ trong siêu thị thành kệ xếp hàng được, bỏ hàng trang trí |
+| 1-2. Store Setup | Biến các kệ trong siêu thị thành kệ xếp hàng được, bỏ hàng trang trí |
 | 3. Setup Checkout | Gắn quầy thu ngân, điểm khách đứng, chỗ đặt hàng, CustomerSpawner |
-| 4–6 | Cửa ra vào, cầu nối NavMesh ở cửa, sửa NavMeshSurface trùng |
+| 4-6 | Cửa ra vào, cầu nối NavMesh ở cửa, sửa NavMeshSurface trùng |
 | 7 / 7b | Nhập sản phẩm từ gói ModernSupermarket, chụp icon sản phẩm |
 | 8 | Tạo biển OPEN / CLOSED |
 | 9 | Tạo danh mục nội thất, tự dò tầng kệ |
@@ -109,8 +109,8 @@ Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockC
 | 14 | Lưu chỗ đứng của thu ngân kéo thả lúc đang chơi |
 | 15 / 16 | Dựng nhà kho cạnh siêu thị / phần mở rộng ngoài các mảng tường đã chọn (ẩn tới khi mua) |
 | 17 | Va chạm 2 mặt cho tường, trần, sàn (hết đi xuyên tường từ ngoài vào) |
-| 18 | Cho phép dời kệ / tủ có sẵn (bỏ static batching, NavMeshObstacle) — xong Bake NavMesh |
-| 19 | Dựng khu phố mới phía đông bằng POLYGON City Pack (đường, khu nhà, toà nhà, đèn, cây) — xong Bake NavMesh |
+| 18 | Cho phép dời kệ / tủ có sẵn (bỏ static batching, NavMeshObstacle) - xong Bake NavMesh |
+| 19 | Dựng khu phố mới phía đông bằng POLYGON City Pack (đường, khu nhà, toà nhà, đèn, cây) - xong Bake NavMesh |
 | `Tools → Save` | Xoá file lưu / mở thư mục chứa file lưu |
 
 ## Tài nguyên sử dụng
