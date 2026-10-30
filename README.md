@@ -39,7 +39,7 @@ Game mô phỏng quản lý siêu thị góc nhìn thứ nhất, làm bằng **U
 | Giao thông & người đi bộ | ~14 xe máy / ô tô chạy đúng làn bên phải, rẽ ở ngã tư, dừng khi có xe / người phía trước; người đi bộ dạo vỉa hè, vào ra các toà nhà, mưa và ban đêm thì vắng hơn |
 | Thống kê kinh doanh | Tab **Stats** trên máy tính: biểu đồ doanh thu / chi phí / lãi theo **ngày, tuần, tháng**; click cột để xem chi tiết từng khoản, số khách, chi tiêu trung bình, ngày tốt nhất, top 5 sản phẩm; lưu cùng file save |
 | Đánh giá cửa hàng | Khách chấm 1–5 sao khi ra về theo 4 tiêu chí: đủ hàng, giá, thời gian chờ ở quầy, vệ sinh; kèm lời nhận xét. Điểm trung bình 50 đánh giá gần nhất hiện trên HUD, ảnh hưởng lượng khách (1★ = −30%, 5★ = +30%); xem chi tiết ở máy tính → Stats → **Reviews** |
-| Phương tiện | Tab **Vehicles** trên máy tính: Honda Cub có sẵn, mua thêm Honda C125 ($1,500, Lv3) và ô tô Tocus ($4,500, Lv5) nhanh hơn; xe chưa mua đỗ ngoài cửa hàng có bảng FOR SALE; nút gọi xe về cửa hàng; F chỉ lên xe gần nhất |
+| Phương tiện | Tab **Vehicles** trên máy tính: Honda Cub có sẵn, mua thêm Honda C125 ($1,500, Lv3) và ô tô Tocus ($4,500, Lv5) nhanh hơn (29 / 36 / 43 km/h); xe chưa mua đỗ ngoài cửa hàng có bảng FOR SALE; nút gọi xe về cửa hàng; F chỉ lên xe gần nhất |
 | Cửa tự động | Cửa kéo trượt sang hai bên, mở khi người chơi / khách tới gần hoặc đang đi về phía cửa, người đi bộ ngoài phố và bảo vệ đứng gác không làm cửa mở |
 | Lưu game | Tự lưu khi sang ngày mới, lưu tay trong menu; lưu tiền, cấp, giấy phép, giá, hàng trên kệ, nội thất, nhân viên… |
 | Menu | Menu chính, tạm dừng, cài đặt (độ nhạy chuột, âm lượng, đồ hoạ, toàn màn hình, bóng đèn), Game Over |

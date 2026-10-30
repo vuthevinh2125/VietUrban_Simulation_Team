@@ -30,19 +30,19 @@ public class VehicleManager : MonoBehaviour
         new Entry
         {
             id = "Honda Cub", name = "Honda Cub", type = "Motorbike", starter = true, price = 0f, level = 1,
-            speed = 13f, boost = 20f,
+            speed = 8f, boost = 12f,
             description = "Your trusty starter bike. Cheap, light and easy to park anywhere.",
         },
         new Entry
         {
             id = "C125 - PB", name = "Honda C125", type = "Motorbike", price = 1500f, level = 3,
-            speed = 17f, boost = 27f,
+            speed = 10f, boost = 15f,
             description = "Premium scooter with a stronger engine - finish deliveries before the timer runs out.",
         },
         new Entry
         {
             id = "CarPlayer", name = "Tocus City Car", type = "Car", price = 4500f, level = 5,
-            speed = 20f, boost = 31f,
+            speed = 12f, boost = 18f,
             description = "The fastest way across the city. Stable at high speed on the long avenues.",
         },
     };
