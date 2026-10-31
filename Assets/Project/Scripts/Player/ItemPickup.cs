@@ -69,6 +69,9 @@ public class ItemPickup : MonoBehaviour
     private bool TryCatchThief()
     {
         if (NPCShopper.Active.Count == 0) return false;
+        bool anyThief = false; // hầu hết thời gian không có kẻ trộm: khỏi bắn tia cầu mỗi frame
+        foreach (NPCShopper n in NPCShopper.Active) if (n != null && n.IsFleeingThief) { anyThief = true; break; }
+        if (!anyThief) return false;
         Ray look = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         NPCShopper thief = null;
         foreach (RaycastHit h in Physics.SphereCastAll(look, 0.35f, catchRange, ~0, QueryTriggerInteraction.Ignore))

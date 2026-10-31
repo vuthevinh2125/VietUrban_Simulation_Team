@@ -39,6 +39,11 @@ public class WeatherSystem : MonoBehaviour
     // Vùng trong nhà (cửa hàng, phần mở rộng, nhà kho): hạt mưa rơi vào dưới mái thì xoá ngay
     private readonly List<Bounds> indoor = new List<Bounds>();
     private float indoorBuiltAt = -999f;
+    private bool storeBoundsKnown;          // khung siêu thị chính chỉ cần đo một lần (quét hàng nghìn renderer)
+    private Bounds storeBounds;
+    private int hudDay = -1, hudTemp = int.MinValue; // chỉ dựng lại chữ HUD khi giá trị đổi (tránh tạo chuỗi mỗi frame)
+    private Season hudSeason;
+    private Weather hudWeather;
     private int forcedWeather = -1;
     private TMP_Text hudText;
     private float nextFlash, flashUntil;
@@ -114,8 +119,9 @@ public class WeatherSystem : MonoBehaviour
         }
         else if (flashLight.enabled) flashLight.enabled = false;
 
-        if (gm != null && hudText != null)
+        if (gm != null && hudText != null && (day != hudDay || season != hudSeason || weather != hudWeather || Mathf.RoundToInt(temperature) != hudTemp))
         {
+            hudDay = day; hudSeason = season; hudWeather = weather; hudTemp = Mathf.RoundToInt(temperature);
             DateTime d = GameManager.DateOfDay(day);
             hudText.text = $"{d.ToString("ddd dd/MM/yyyy", CultureInfo.InvariantCulture)}  ·  {SeasonName(season)}  ·  {WeatherName(weather)} {temperature}°C";
         }
@@ -246,7 +252,9 @@ public class WeatherSystem : MonoBehaviour
         indoorBuiltAt = Time.time;
         indoor.Clear();
 
-        // Siêu thị chính: khung nhà x -127..-103, z 19..51; mái lấy theo vật thể cao nhất trong khung (tối đa 12 m)
+        // Siêu thị chính: khung nhà x -127..-103, z 19..51; mái lấy theo vật thể cao nhất trong khung (tối đa 12 m).
+        // Toà nhà không đổi trong lúc chơi nên chỉ đo một lần; phòng mở rộng / nhà kho thì đo lại vì có thể vừa mở khoá.
+        if (storeBoundsKnown) { indoor.Add(storeBounds); AddExpansionVolumes(); return; }
         var store = new Bounds();
         store.SetMinMax(new Vector3(-127.5f, -5f, 18.5f), new Vector3(-102.5f, 7f, 51.5f));
         GameObject sm = GameObject.Find("Supermarket_full");
@@ -260,9 +268,15 @@ public class WeatherSystem : MonoBehaviour
                     top = Mathf.Max(top, r.bounds.max.y);
             }
             if (top > 2f) store.SetMinMax(store.min, new Vector3(store.max.x, top + 0.3f, store.max.z));
+            storeBounds = store;
+            storeBoundsKnown = true;
         }
         indoor.Add(store);
+        AddExpansionVolumes();
+    }
 
+    private void AddExpansionVolumes()
+    {
         // Phòng mở rộng / nhà kho dựng bằng tool: lấy khung theo sàn + trần
         foreach (string name in new[] { "StoreExpansion_1", "StoreExpansion_2", "Warehouse" })
         {

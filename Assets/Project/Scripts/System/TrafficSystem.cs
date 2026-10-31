@@ -29,10 +29,18 @@ public class TrafficSystem : MonoBehaviour
         public readonly List<Vector3> path = new List<Vector3>();
         public int seg;
         public float speed, blockedFor, ignoreUntil;
+        public float gap = 999f, nextGapCheck; // khoảng trống phía trước, đo lại ~10 lần/giây thay vì mỗi frame
     }
     private readonly List<Car> cars = new List<Car>();
     private readonly List<GameObject> templates = new List<GameObject>();
     private static readonly HashSet<Transform> carRoots = new HashSet<Transform>();
+
+    // Bộ đệm dùng chung cho tia / cầu quét (không tạo mảng mới mỗi lần -> không sinh rác cho GC)
+    private static readonly RaycastHit[] hitBuf = new RaycastHit[32];
+    // Collider nào là vật xe phải dừng (xe khác, người chơi, người đi bộ): nhớ kết quả để khỏi GetComponentInParent lặp lại
+    private readonly Dictionary<Collider, bool> stopForCache = new Dictionary<Collider, bool>();
+    private float nextCacheClear;
+    private const float GapCheckInterval = 0.1f;
 
     public static bool IsTrafficCar(Transform t)
     {
@@ -76,6 +84,8 @@ public class TrafficSystem : MonoBehaviour
         FindTemplates();
         if (templates.Count == 0) { Debug.LogWarning("[Traffic] Không có mẫu xe trong scene."); return; }
         for (int i = 0; i < carCount; i++) SpawnCar(i);
+        // Chia đều thời điểm đo khoảng trống của các xe để không dồn vào cùng một frame
+        for (int i = 0; i < cars.Count; i++) cars[i].nextGapCheck = Time.time + GapCheckInterval * i / Mathf.Max(1, cars.Count);
     }
 
     /// <summary>Lưới ngã tư khu mới (3 đường dọc x 5 đường ngang) + đường dọc cũ x=22 + đại lộ cũ chạy về phía tây.</summary>
@@ -217,19 +227,25 @@ public class TrafficSystem : MonoBehaviour
 
     private static float GroundY(Vector3 p, float fallback)
     {
-        // Mặt đường: bỏ qua xe, người
-        foreach (RaycastHit h in Physics.RaycastAll(new Vector3(p.x, p.y + 6f, p.z), Vector3.down, 12f, ~0, QueryTriggerInteraction.Ignore))
+        // Mặt đường: bỏ qua xe, người; lấy mặt hợp lệ gần nhất từ trên xuống (kết quả của Physics không xếp theo khoảng cách)
+        int count = Physics.RaycastNonAlloc(new Vector3(p.x, p.y + 6f, p.z), Vector3.down, hitBuf, 12f, ~0, QueryTriggerInteraction.Ignore);
+        float bestDist = float.MaxValue, y = fallback;
+        for (int i = 0; i < count; i++)
         {
+            RaycastHit h = hitBuf[i];
+            if (h.distance >= bestDist) continue;
             if (h.normal.y < 0.8f || IsTrafficCar(h.collider.transform) || h.collider.GetComponentInParent<CharacterController>() != null) continue;
             if (h.collider.attachedRigidbody != null && !h.collider.attachedRigidbody.isKinematic) continue;
-            return h.point.y;
+            bestDist = h.distance;
+            y = h.point.y;
         }
-        return fallback;
+        return y;
     }
 
     void Update()
     {
         float dt = Time.deltaTime;
+        if (Time.time >= nextCacheClear) { nextCacheClear = Time.time + 30f; stopForCache.Clear(); } // người đi bộ sinh / huỷ liên tục
         foreach (Car car in cars)
         {
             if (car.t == null) continue;
@@ -243,7 +259,12 @@ public class TrafficSystem : MonoBehaviour
             // Tốc độ mong muốn: đoạn rẽ chậm, có vật cản phía trước thì giảm / dừng
             bool turning = car.seg < 8 && car.path.Count > 9 && car.seg > 0;
             float want = turning ? turnSpeed : cruiseSpeed;
-            float gap = ObstacleAhead(car);
+            if (Time.time >= car.nextGapCheck)
+            {
+                car.nextGapCheck = Time.time + GapCheckInterval;
+                car.gap = ObstacleAhead(car);
+            }
+            float gap = car.gap;
             if (Time.time >= car.ignoreUntil && gap < 12f) want = Mathf.Min(want, Mathf.Max(0f, (gap - 3.5f) * 1.6f));
             car.blockedFor = want < 0.3f ? car.blockedFor + dt : 0f;
             if (car.blockedFor > 8f) { car.ignoreUntil = Time.time + 2.5f; car.blockedFor = 0f; } // kẹt lâu thì nhích qua
@@ -280,14 +301,21 @@ public class TrafficSystem : MonoBehaviour
         Vector3 fwd = car.t.forward; fwd.y = 0f; fwd.Normalize();
         Vector3 origin = car.t.position + Vector3.up * 0.8f;
         float best = 999f;
-        foreach (RaycastHit h in Physics.SphereCastAll(origin, 0.9f, fwd, 14f, ~0, QueryTriggerInteraction.Ignore))
+        int count = Physics.SphereCastNonAlloc(origin, 0.9f, fwd, hitBuf, 14f, ~0, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < count; i++)
         {
-            Transform t = h.collider.transform;
-            if (t.IsChildOf(car.t)) continue;
-            bool stopFor = IsTrafficCar(t) || h.collider.GetComponentInParent<CharacterController>() != null
-                           || h.collider.GetComponentInParent<PedestrianWalker>() != null
-                           || h.collider.GetComponentInParent<PlayerCarController>() != null;
-            if (stopFor && h.distance < best) best = h.distance;
+            RaycastHit h = hitBuf[i];
+            if (h.distance >= best) continue;
+            Collider col = h.collider;
+            if (col.transform.IsChildOf(car.t)) continue;
+            if (!stopForCache.TryGetValue(col, out bool stopFor))
+            {
+                stopFor = IsTrafficCar(col.transform) || col.GetComponentInParent<CharacterController>() != null
+                          || col.GetComponentInParent<PedestrianWalker>() != null
+                          || col.GetComponentInParent<PlayerCarController>() != null;
+                stopForCache[col] = stopFor;
+            }
+            if (stopFor) best = h.distance;
         }
         return best;
     }

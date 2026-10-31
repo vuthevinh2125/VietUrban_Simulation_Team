@@ -46,6 +46,17 @@ public class DeliveryManager : MonoBehaviour
     private Stage stage = Stage.Idle;
     private Order order;
     private float nextOfferAt, offerExpiresAt;
+    private float nextHudAt;          // chữ HUD (đếm giờ, khoảng cách) dựng lại 5 lần/giây thay vì mỗi frame
+    private Stage hudStage = Stage.Idle;
+
+    /// <summary>true khi tới lúc cập nhật chữ HUD (hoặc vừa đổi giai đoạn đơn hàng).</summary>
+    private bool HudTick()
+    {
+        if (stage == hudStage && Time.unscaledTime < nextHudAt) return false;
+        hudStage = stage;
+        nextHudAt = Time.unscaledTime + 0.2f;
+        return true;
+    }
     private GameObject package, beacon, carried;
     private TMP_Text hudText;
     private GameObject hudPanel;
@@ -130,7 +141,7 @@ public class DeliveryManager : MonoBehaviour
 
             case Stage.Offer:
                 float left = offerExpiresAt - Time.time;
-                ShowHud($"<b><color=#FFD54A>DELIVERY ORDER</color></b>  <size=80%>({left:0}s)</size>\n{order.Summary}\nTo: <b>{order.placeName}</b>  ·  {order.distance:0} m\n" +
+                if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY ORDER</color></b>  <size=80%>({left:0}s)</size>\n{order.Summary}\nTo: <b>{order.placeName}</b>  ·  {order.distance:0} m\n" +
                         $"Pay {EconomyManager.Format(order.goodsValue)} + delivery fee {EconomyManager.Format(order.fee)}\n<color=#8CFF8C>[J] Accept</color>   <color=#FF8A7A>[K] Decline</color>");
                 if (left <= 0f || (uiFree && Input.GetKeyDown(KeyCode.K))) { order = null; stage = Stage.Idle; }
                 else if (uiFree && Input.GetKeyDown(KeyCode.J)) Accept();
@@ -139,7 +150,7 @@ public class DeliveryManager : MonoBehaviour
             case Stage.PickUp:
                 Transform player = PlayerTransform();
                 bool near = player != null && package != null && Vector3.Distance(player.position, package.transform.position) <= pickupRange;
-                ShowHud($"<b><color=#FFD54A>DELIVERY</color></b>  {order.Summary}\n" +
+                if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY</color></b>  {order.Summary}\n" +
                         (near ? "<color=#8CFF8C>[E] Pick up the package</color>" : $"Pick up the package at the delivery spot  {Arrow(package != null ? package.transform.position : Vector3.zero)}") +
                         $"\nTime left {TimeLeft()}");
                 if (near && uiFree && Input.GetKeyDown(KeyCode.E)) PickUpPackage();
@@ -149,7 +160,7 @@ public class DeliveryManager : MonoBehaviour
             case Stage.Delivering:
                 Transform p = PlayerTransform();
                 float dist = p != null ? Flat(p.position - order.destination) : 999f;
-                ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>");
+                if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>");
                 if (dist <= arriveRadius) Complete();
                 else CheckLate();
                 break;

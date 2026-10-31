@@ -54,6 +54,11 @@ public class MinimapSystem : MonoBehaviour
     private Transform player;
     private readonly List<Vector3> route = new List<Vector3>();
     private float nextRouteAt;
+    // Camera bản đồ vẽ lại cả thành phố: chỉ vẽ ~20 lần/giây (minimap) / ~30 lần/giây (bản đồ lớn) thay vì mỗi frame.
+    // Giữa hai lần vẽ, camera đứng yên nên các dấu (Project dùng camera) vẫn khớp với ảnh bản đồ.
+    [Tooltip("Số lần vẽ lại minimap mỗi giây")] public float miniFps = 20f;
+    [Tooltip("Số lần vẽ lại bản đồ lớn mỗi giây")] public float bigFps = 30f;
+    private float nextMiniRender, nextBigRender;
     private Vector3 routeTarget;
     private bool hasTarget;
     private static Sprite circleSprite, arrowSprite, squareSprite;
@@ -125,13 +130,27 @@ public class MinimapSystem : MonoBehaviour
         Vector3 p = player.position;
         float yaw = player.eulerAngles.y;
 
-        // Camera minimap: trên đầu người chơi, xoay để hướng người chơi đang nhìn luôn là phía trên
-        mini.cam.orthographicSize = miniZoom;
-        mini.cam.transform.SetPositionAndRotation(new Vector3(p.x, p.y + camHeight, p.z), Quaternion.Euler(90f, yaw, 0f));
+        // Camera minimap: trên đầu người chơi, xoay để hướng người chơi đang nhìn luôn là phía trên.
+        // Chỉ dời camera ở frame được vẽ, để ảnh và các dấu luôn dùng cùng một vị trí camera.
+        float now = Time.unscaledTime;
+        bool renderMini = showMini && now >= nextMiniRender;
+        if (renderMini)
+        {
+            nextMiniRender = now + 1f / Mathf.Max(1f, miniFps);
+            mini.cam.orthographicSize = miniZoom;
+            mini.cam.transform.SetPositionAndRotation(new Vector3(p.x, p.y + camHeight, p.z), Quaternion.Euler(90f, yaw, 0f));
+        }
+        if (mini.cam.enabled != renderMini) mini.cam.enabled = renderMini;
         if (bigOpen)
         {
-            big.cam.orthographicSize = bigZoom;
-            big.cam.transform.SetPositionAndRotation(new Vector3(bigCenter.x, p.y + camHeight, bigCenter.z), Quaternion.Euler(90f, 0f, 0f));
+            bool renderBig = now >= nextBigRender;
+            if (renderBig)
+            {
+                nextBigRender = now + 1f / Mathf.Max(1f, bigFps);
+                big.cam.orthographicSize = bigZoom;
+                big.cam.transform.SetPositionAndRotation(new Vector3(bigCenter.x, p.y + camHeight, bigCenter.z), Quaternion.Euler(90f, 0f, 0f));
+            }
+            if (big.cam.enabled != renderBig) big.cam.enabled = renderBig;
         }
 
         UpdateRoute(p);
@@ -200,8 +219,8 @@ public class MinimapSystem : MonoBehaviour
         if (hasStore) Marker(v, store, StoreColor, 26f, "S", circleSprite, 0f, true, radius);
         foreach (NPCShopper n in NPCShopper.Active)
             if (n != null && n.IsFleeingThief) Marker(v, n.transform.position, ThiefColor, 16f, null, circleSprite, 0f, true, radius);
-        foreach (StoreGuard g in FindObjectsByType<StoreGuard>(FindObjectsSortMode.None))
-            Marker(v, g.transform.position, GuardColor, 12f, null, circleSprite, 0f, false, radius);
+        foreach (StoreGuard g in StoreGuard.All)
+            if (g != null) Marker(v, g.transform.position, GuardColor, 12f, null, circleSprite, 0f, false, radius);
         if (DeliveryManager.TryGetTarget(out Vector3 target, out _, out bool isPackage))
             Marker(v, target, TargetColor, isPackage ? 22f : 30f, isPackage ? "P" : "!", isPackage ? squareSprite : circleSprite, 0f, true, radius);
         // Người chơi: minimap luôn hướng lên; bản đồ lớn quay theo hướng nhìn
@@ -272,6 +291,7 @@ public class MinimapSystem : MonoBehaviour
         bigOpen = open;
         bigRoot.SetActive(open);
         big.cam.enabled = open;
+        nextBigRender = 0f; // vẽ ngay khi mở
         if (open) UIState.Open(this);
         else { UIState.Close(this); ClosedFrame = Time.frameCount; }
     }

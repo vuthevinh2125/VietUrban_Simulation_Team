@@ -8,6 +8,9 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class StoreGuard : MonoBehaviour
 {
+    /// <summary>Các bảo vệ đang có trong scene (minimap đọc danh sách này thay vì tìm mỗi frame).</summary>
+    public static readonly System.Collections.Generic.List<StoreGuard> All = new System.Collections.Generic.List<StoreGuard>();
+
     public float detectRadius = 28f;
     public float catchDistance = 1.4f;
     public float chaseSpeed = 4.2f;
@@ -26,6 +29,9 @@ public class StoreGuard : MonoBehaviour
         post = position;
         postRot = rotation;
     }
+
+    void OnEnable() { if (!All.Contains(this)) All.Add(this); }
+    void OnDisable() => All.Remove(this);
 
     void Awake()
     {

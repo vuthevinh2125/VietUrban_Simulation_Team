@@ -44,7 +44,8 @@ public class LightShadowBudget : MonoBehaviour
     {
         if (Time.unscaledTime >= nextScan)
         {
-            nextScan = Time.unscaledTime + 3f; // đèn mới (xe giao thông sinh ra...) được nhận sau vài giây
+            // Quét toàn scene khá tốn (tạo mảng mới, có thể gây khựng); đèn mới hiếm khi xuất hiện nên 10 giây quét một lần là đủ
+            nextScan = Time.unscaledTime + 10f;
             Scan();
         }
         if (Time.unscaledTime < nextUpdate) return;
