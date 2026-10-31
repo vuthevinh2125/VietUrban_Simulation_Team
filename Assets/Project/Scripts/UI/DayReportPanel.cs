@@ -50,6 +50,8 @@ public class DayReportPanel : MonoBehaviour
         ReviewManager.ForDay(s.day, out float rating, out int reviewCount);
         if (reviewCount > 0)
             leftText.text += $"\nRating:  {rating.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)} / 5  ({reviewCount})";
+        string mix = ReviewManager.VisitorMix(s.day);
+        if (mix.Length > 0) leftText.text += $"\n<size=80%>Visitors: {mix}</size>";
         rightText.text =
             "<b>Expenses</b>\n" +
             $"Products:  {F(-s.Get(MoneyCategory.Supplies))}\n" +

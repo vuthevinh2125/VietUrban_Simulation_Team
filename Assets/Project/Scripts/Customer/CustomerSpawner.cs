@@ -105,6 +105,8 @@ public class CustomerSpawner : MonoBehaviour
         if (customer == null) customer = go.AddComponent<NPCShopper>();
         customer.exitDoor = exitPoint != null ? exitPoint : from;
         customer.entrancePoint = entrancePoint;
+        customer.ApplyProfile(CustomerProfile.PickNow()); // sinh viên / văn phòng / nội trợ / người già / shipper theo giờ cao điểm
+        go.name += "_" + customer.customerType;
         return customer;
     }
 

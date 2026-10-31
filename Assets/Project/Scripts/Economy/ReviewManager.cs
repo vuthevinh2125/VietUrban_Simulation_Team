@@ -21,6 +21,7 @@ public class ReviewManager : MonoBehaviour
     {
         public int day;
         public string name;
+        public string type; // kiểu khách (Student, Office worker...), trống với đánh giá cũ
         public int stars;
         public float stock, price, checkout, clean; // điểm từng tiêu chí 1..5, 0 = không áp dụng
         public string comment;
@@ -32,6 +33,8 @@ public class ReviewManager : MonoBehaviour
         public int wanted, got, tooExpensive, dirtySkips, pricey, greatPrice, maxDirt;
         public bool noStock, checkedOut, gaveUpQueue;
         public float queueStart = -1f, queueSeconds;
+        public string customerType = "";
+        public float queueTolerance = 35f; // xếp hàng lâu hơn mức này mới bắt đầu bực (dân văn phòng / shipper ít kiên nhẫn hơn)
     }
 
     public const int WindowSize = 50;     // số đánh giá gần nhất tính điểm cửa hàng
@@ -60,6 +63,15 @@ public class ReviewManager : MonoBehaviour
     {
         var vals = Recent.Select(f).Where(v => v > 0f).ToList();
         return vals.Count > 0 ? vals.Average() : 0f;
+    }
+
+    /// <summary>Ba kiểu khách đông nhất trong ngày (theo đánh giá), vd. "Student 4 · Homemaker 3 · Retiree 1".</summary>
+    public static string VisitorMix(int day)
+    {
+        var top = All.Where(r => r.day == day && !string.IsNullOrEmpty(r.type))
+                     .GroupBy(r => r.type).OrderByDescending(g => g.Count()).Take(3)
+                     .Select(g => $"{g.Key} {g.Count()}").ToList();
+        return top.Count > 0 ? string.Join(" · ", top) : "";
     }
 
     public static void ForDay(int day, out float average, out int count)
@@ -107,6 +119,7 @@ public class ReviewManager : MonoBehaviour
         {
             day = GameManager.Instance != null ? GameManager.Instance.currentDay : 1,
             name = RandomName(),
+            type = v.customerType,
         };
 
         // Hàng hoá
@@ -119,7 +132,7 @@ public class ReviewManager : MonoBehaviour
 
         // Thanh toán
         if (v.gaveUpQueue) r.checkout = 1f;
-        else if (v.checkedOut) r.checkout = Mathf.Clamp(5f - Mathf.Max(0f, v.queueSeconds - 35f) / 25f, 1f, 5f);
+        else if (v.checkedOut) r.checkout = Mathf.Clamp(5f - Mathf.Max(0f, v.queueSeconds - v.queueTolerance) / 25f, 1f, 5f);
         else r.checkout = 0f;
 
         // Vệ sinh

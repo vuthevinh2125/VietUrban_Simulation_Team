@@ -363,7 +363,7 @@ public class StatsPanel : MonoBehaviour
             }
             var r = all[idx];
             ReviewManager.SetStars(rows[i].stars, r.stars);
-            rows[i].text.text = $"<b>{r.name}</b>  <size=85%><color=#9FB0C4>Day {r.day}</color></size>\n<color=#DDE6F0>\"{r.comment}\"</color>";
+            rows[i].text.text = $"<b>{r.name}</b>{(string.IsNullOrEmpty(r.type) ? "" : $" <size=85%><color=#C9D6E3>({r.type})</color></size>")}  <size=85%><color=#9FB0C4>Day {r.day}</color></size>\n<color=#DDE6F0>\"{r.comment}\"</color>";
         }
     }
 

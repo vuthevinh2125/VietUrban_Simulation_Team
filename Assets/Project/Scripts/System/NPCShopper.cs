@@ -60,6 +60,27 @@ public class NPCShopper : MonoBehaviour
     [Tooltip("Tới gần chỗ xếp hàng trong khoảng này thì dừng hẳn, đứng yên chờ")]
     public float queueArriveRadius = 0.3f;
 
+    [Header("Kiểu khách (CustomerSpawner gán khi sinh ra)")]
+    public CustomerType customerType = CustomerType.Homemaker;
+    private CustomerProfile profile;
+    public CustomerProfile Profile => profile;
+
+    /// <summary>Áp hồ sơ kiểu khách: số món, độ nhạy giá, tốc độ, thời gian xem kệ, độ kiên nhẫn xếp hàng (gọi trước Start).</summary>
+    public void ApplyProfile(CustomerProfile p)
+    {
+        if (p == null) return;
+        profile = p;
+        customerType = p.type;
+        minItemsToBuy = p.minItems;
+        maxItemsToBuy = Mathf.Max(p.minItems, p.maxItems);
+        maxPriceRatio *= p.priceFactor;
+        browseTime *= p.browseFactor;
+        NavMeshAgent a = agent != null ? agent : GetComponent<NavMeshAgent>();
+        if (a != null) a.speed *= p.speedFactor;
+        visit.customerType = p.label;
+        visit.queueTolerance = p.queueTolerance;
+    }
+
     public IReadOnlyList<ItemData> Basket => basket;
     /// <summary>Bán kính chiếm chỗ của khách (để quầy giãn hàng chờ cho đủ chỗ đứng).</summary>
     public float Radius => agent != null ? agent.radius : 0.4f;
@@ -141,7 +162,7 @@ public class NPCShopper : MonoBehaviour
         while (basket.Count < wanted && attempts < wanted * 3)
         {
             attempts++;
-            Shelf shelf = PickShelf(visited);
+            Shelf shelf = PickShelf(visited, profile);
             if (shelf == null) { visit.noStock = basket.Count < wanted; break; }
             visited.Add(shelf);
 
@@ -241,7 +262,7 @@ public class NPCShopper : MonoBehaviour
         while (!counter.JoinQueue(this))
         {
             waited += 1f;
-            if (waited > 20f) { basket.Clear(); counter = null; visit.gaveUpQueue = true; yield break; } // hàng quá dài, bỏ về
+            if (waited > (profile != null ? profile.queueGiveUp : 20f)) { basket.Clear(); counter = null; visit.gaveUpQueue = true; yield break; } // hàng quá dài, bỏ về
             yield return new WaitForSeconds(1f);
         }
 
@@ -543,8 +564,10 @@ public class NPCShopper : MonoBehaviour
     private static readonly List<Shelf> pickCandidates = new List<Shelf>();
     private static readonly List<float> pickWeights = new List<float>();
 
-    /// <summary>Chọn kệ còn hàng, kệ của nhóm hàng đang có nhu cầu cao được chọn nhiều hơn (DemandModel).</summary>
-    private static Shelf PickShelf(HashSet<Shelf> visited)
+    /// <summary>
+    /// Chọn kệ còn hàng: trọng số = nhu cầu lúc này (DemandModel) x độ ưa thích nhóm hàng của kiểu khách (CustomerProfile).
+    /// </summary>
+    private static Shelf PickShelf(HashSet<Shelf> visited, CustomerProfile who)
     {
         pickCandidates.Clear();
         pickWeights.Clear();
@@ -553,6 +576,7 @@ public class NPCShopper : MonoBehaviour
         {
             if (s == null || s.IsEmpty || visited.Contains(s)) continue;
             float w = DemandModel.Current(s.CurrentItem);
+            if (who != null) w *= who.Preference(DemandModel.GroupOf(s.CurrentItem));
             pickCandidates.Add(s);
             pickWeights.Add(w);
             total += w;
