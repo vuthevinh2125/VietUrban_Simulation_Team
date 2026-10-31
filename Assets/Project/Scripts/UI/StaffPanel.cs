@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-/// <summary>Tab NHÂN VIÊN trên máy tính: thuê / cho nghỉ thu ngân, nhân viên xếp kệ, bảo vệ. Esc / X để đóng.</summary>
+/// <summary>Tab NHÂN VIÊN trên máy tính: thuê / cho nghỉ thu ngân, nhân viên xếp kệ, bảo vệ, nhân viên lau nhà. Esc / X để đóng.</summary>
 public class StaffPanel : MonoBehaviour
 {
     private static StaffPanel instance;
@@ -11,8 +11,8 @@ public class StaffPanel : MonoBehaviour
     public static int ClosedFrame { get; private set; } = -1;
 
     private GameObject root;
-    private TMP_Text headerInfo, cashierStatus, restockerStatus, guardStatus;
-    private Button hireCashier, fireCashier, hireRestocker, fireRestocker, hireGuard, fireGuard, unlockCounter;
+    private TMP_Text headerInfo, cashierStatus, restockerStatus, guardStatus, janitorStatus;
+    private Button hireCashier, fireCashier, hireRestocker, fireRestocker, hireGuard, fireGuard, hireJanitor, fireJanitor, unlockCounter;
     private TMP_Text counterStatus;
 
     private static readonly Color WindowColor = new Color(0.13f, 0.16f, 0.21f, 0.98f);
@@ -82,6 +82,11 @@ public class StaffPanel : MonoBehaviour
         hireGuard.interactable = canG;
         fireGuard.interactable = sm.GuardCount > 0;
 
+        bool canJ = sm.CanHireJanitor(out string rj);
+        janitorStatus.text = $"Hired {sm.JanitorCount}/{StaffManager.MaxJanitors}" + (canJ ? "" : $"\n<size=80%><color=#FF8A7A>{rj}</color></size>");
+        hireJanitor.interactable = canJ;
+        fireJanitor.interactable = sm.JanitorCount > 0;
+
         int total = 1 + LockedCheckout.All.Count;
         int open = 1 + LockedCheckout.UnlockedCount;
         LockedCheckout next = LockedCheckout.Next();
@@ -113,36 +118,40 @@ public class StaffPanel : MonoBehaviour
         rrt.anchorMin = Vector2.zero; rrt.anchorMax = Vector2.one; rrt.offsetMin = rrt.offsetMax = Vector2.zero;
         root.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.45f);
 
-        GameObject window = NewRect("Window", root.transform, new Vector2(960, 760));
+        GameObject window = NewRect("Window", root.transform, new Vector2(960, 890));
         window.AddComponent<Image>().color = WindowColor;
-        GameObject header = NewRect("Header", window.transform, new Vector2(960, 70), new Vector2(0, 345));
+        GameObject header = NewRect("Header", window.transform, new Vector2(960, 70), new Vector2(0, 410));
         header.AddComponent<Image>().color = HeaderColor;
         Text(header.transform, "STAFF", 34, new Vector2(900, 60), Vector2.zero, TextAlignmentOptions.Center, true);
         Btn(header.transform, "X", new Vector2(50, 50), new Vector2(445, 0), Close, new Color(0.9f, 0.2f, 0.2f));
-        headerInfo = Text(window.transform, "", 24, new Vector2(900, 36), new Vector2(0, 285), TextAlignmentOptions.Center, false);
+        headerInfo = Text(window.transform, "", 24, new Vector2(900, 36), new Vector2(0, 350), TextAlignmentOptions.Center, false);
 
-        Row(window.transform, 195, "Cashier",
+        Row(window.transform, 260, "Cashier",
             $"Scans items and takes payment at a counter.\n{EconomyManager.Format(StaffManager.CashierWage)}/day  ·  Lv {StaffManager.CashierLevel}",
             out cashierStatus, out hireCashier, out fireCashier,
             () => StaffManager.Instance.HireCashier(), () => StaffManager.Instance.FireCashier());
-        Row(window.transform, 65, "Restocker",
+        Row(window.transform, 130, "Restocker",
             $"Carries boxes to shelves that sell that product and refills them.\n{EconomyManager.Format(StaffManager.RestockerWage)}/day  ·  Lv {StaffManager.RestockerLevel}",
             out restockerStatus, out hireRestocker, out fireRestocker,
             () => StaffManager.Instance.HireRestocker(), () => StaffManager.Instance.FireRestocker());
-        Row(window.transform, -65, "Guard",
+        Row(window.transform, 0, "Guard",
             $"Stands outside the entrance and chases down shoplifters for you.\n{EconomyManager.Format(StaffManager.GuardWage)}/day  ·  Lv {StaffManager.GuardLevel}",
             out guardStatus, out hireGuard, out fireGuard,
             () => StaffManager.Instance.HireGuard(), () => StaffManager.Instance.FireGuard());
+        Row(window.transform, -130, "Janitor",
+            $"Finds dirty spots on the floor and sweeps them, so customers stay happy.\n{EconomyManager.Format(StaffManager.JanitorWage)}/day  ·  Lv {StaffManager.JanitorLevel}",
+            out janitorStatus, out hireJanitor, out fireJanitor,
+            () => StaffManager.Instance.HireJanitor(), () => StaffManager.Instance.FireJanitor());
 
         // Mở thêm quầy thu ngân (tối đa 4 quầy = 4 thu ngân)
-        GameObject crow = NewRect("Row_Counter", window.transform, new Vector2(900, 120), new Vector2(0, -195));
+        GameObject crow = NewRect("Row_Counter", window.transform, new Vector2(900, 120), new Vector2(0, -260));
         crow.AddComponent<Image>().color = RowColor;
         Text(crow.transform, "<b>Checkout counter</b>", 30, new Vector2(320, 50), new Vector2(-270, 25), TextAlignmentOptions.Left, false);
         Text(crow.transform, "<size=75%>Open another checkout so more customers can pay at once.\nEach open counter can have 1 cashier (max 4).</size>", 26, new Vector2(460, 70), new Vector2(-200, -22), TextAlignmentOptions.Left, false);
         counterStatus = Text(crow.transform, "", 24, new Vector2(220, 110), new Vector2(170, 0), TextAlignmentOptions.Center, true);
         unlockCounter = Btn(crow.transform, "Unlock", new Vector2(150, 46), new Vector2(360, 0), () => LockedCheckout.TryUnlockNext(), new Color(0.2f, 0.6f, 0.9f));
 
-        Text(window.transform, "<size=80%>Wages are paid at the end of each day.</size>", 24, new Vector2(900, 36), new Vector2(0, -330), TextAlignmentOptions.Center, false);
+        Text(window.transform, "<size=80%>Wages are paid at the end of each day.</size>", 24, new Vector2(900, 36), new Vector2(0, -390), TextAlignmentOptions.Center, false);
         root.SetActive(false);
     }
 

@@ -76,6 +76,29 @@ public class CustomerSpawner : MonoBehaviour
         Spawn();
     }
 
+    /// <summary>
+    /// Model khách ngẫu nhiên, bỏ model dành riêng cho nhân viên lau nhà (StaffManager.JanitorModel)
+    /// để khách / người đi bộ không trùng mặt với nhân viên. Người đi bộ (PedestrianSystem) cũng dùng hàm này.
+    /// </summary>
+    public GameObject RandomCustomerPrefab()
+    {
+        if (customerPrefabs == null || customerPrefabs.Length == 0) return null;
+        for (int i = 0; i < 10; i++)
+        {
+            GameObject p = customerPrefabs[Random.Range(0, customerPrefabs.Length)];
+            if (p != null && p.name != StaffManager.JanitorModel) return p;
+        }
+        foreach (GameObject p in customerPrefabs) if (p != null && p.name != StaffManager.JanitorModel) return p;
+        return null;
+    }
+
+    /// <summary>Model dành riêng cho nhân viên lau nhà (một trong các model khách, không dùng cho khách nữa).</summary>
+    public GameObject FindPrefab(string prefabName)
+    {
+        if (customerPrefabs != null) foreach (GameObject p in customerPrefabs) if (p != null && p.name == prefabName) return p;
+        return null;
+    }
+
     /// <summary>Sinh ngay một khách (gọi được từ nút test).</summary>
     [ContextMenu("Spawn Customer Now")]
     public NPCShopper Spawn()
@@ -86,7 +109,7 @@ public class CustomerSpawner : MonoBehaviour
             return null;
         }
 
-        GameObject prefab = customerPrefabs[Random.Range(0, customerPrefabs.Length)];
+        GameObject prefab = RandomCustomerPrefab();
         if (prefab == null) return null;
 
         Transform from = spawnPoint != null ? spawnPoint : transform;

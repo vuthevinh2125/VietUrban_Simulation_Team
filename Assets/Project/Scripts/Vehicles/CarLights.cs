@@ -29,6 +29,30 @@ public class CarLights : MonoBehaviour
             GameObject sunObj = GameObject.Find("Directional Light");
             if (sunObj != null) sun = sunObj.transform; // Assigning to the 'sun' variable correctly
         }
+
+        ValidateHeadlights();
+    }
+
+    /// <summary>
+    /// Danh sách đèn pha có thể chứa tham chiếu hỏng (trong scene từng lưu GameObject thay vì Light ->
+    /// Unity cảnh báo "Serialized reference type mismatch" và bật đèn thì lỗi MissingReferenceException).
+    /// Gặp tham chiếu hỏng thì tự lấy lại các đèn spot / point nằm trong xe.
+    /// </summary>
+    private void ValidateHeadlights()
+    {
+        bool broken = headLights == null || headLights.Length == 0;
+        if (!broken)
+            foreach (Light l in headLights)
+            {
+                try { if (l == null) continue; var _ = l.type; }
+                catch (System.Exception) { broken = true; break; }
+            }
+        if (!broken) return;
+
+        var found = new System.Collections.Generic.List<Light>();
+        foreach (Light l in GetComponentsInChildren<Light>(true))
+            if (l.type == LightType.Spot || l.type == LightType.Point) found.Add(l);
+        headLights = found.ToArray();
     }
 
     void Update()
@@ -67,10 +91,9 @@ public class CarLights : MonoBehaviour
     {
         foreach (Light lightComponent in headLights)
         {
-            if (lightComponent != null)
-            {
-                lightComponent.enabled = turnOn;
-            }
+            if (lightComponent == null) continue;
+            try { lightComponent.enabled = turnOn; }
+            catch (MissingReferenceException) { } // tham chiếu hỏng còn sót: bỏ qua thay vì báo lỗi mỗi lần đổi ngày / đêm
         }
     }   
 }

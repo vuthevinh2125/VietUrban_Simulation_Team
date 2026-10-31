@@ -45,6 +45,7 @@ public class SaveManager : MonoBehaviour
         public int cashiers;
         public int restockers;
         public int guards;
+        public int janitors;
         public List<BuiltInEntry> builtins = new List<BuiltInEntry>();
         public List<BusinessStats.DayRecord> stats = new List<BusinessStats.DayRecord>();
         public List<ReviewManager.Review> reviews = new List<ReviewManager.Review>();
@@ -128,6 +129,7 @@ public class SaveManager : MonoBehaviour
             cashiers = StaffManager.Instance != null ? StaffManager.Instance.CashierCount : 0,
             restockers = StaffManager.Instance != null ? StaffManager.Instance.RestockerCount : 0,
             guards = StaffManager.Instance != null ? StaffManager.Instance.GuardCount : 0,
+            janitors = StaffManager.Instance != null ? StaffManager.Instance.JanitorCount : 0,
             market = MarketPrices.Export(),
             stats = BusinessStats.Export(),
             reviews = ReviewManager.Export(),
@@ -309,6 +311,7 @@ public class SaveManager : MonoBehaviour
         {
             StaffManager.Instance.LoadCounts(d.cashiers, d.restockers);
             StaffManager.Instance.LoadGuards(d.guards);
+            StaffManager.Instance.LoadJanitors(d.janitors);
         }
 
         StockManager.NotifyChanged();

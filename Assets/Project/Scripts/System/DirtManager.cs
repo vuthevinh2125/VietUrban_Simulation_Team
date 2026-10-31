@@ -20,6 +20,8 @@ public class DirtManager : MonoBehaviour
     private Material material;
 
     public static int Count { get { spots.RemoveAll(s => s == null); return spots.Count; } }
+    /// <summary>Các vết bẩn hiện có (nhân viên lau nhà đọc danh sách này).</summary>
+    public static IReadOnlyList<DirtSpot> Spots { get { spots.RemoveAll(s => s == null); return spots; } }
 
     /// <summary>Hệ số khách chịu mua: mỗi vết bẩn trừ 3%, thấp nhất 60%.</summary>
     public static float SatisfactionFactor => Mathf.Clamp(1f - Count * 0.03f, 0.6f, 1f);

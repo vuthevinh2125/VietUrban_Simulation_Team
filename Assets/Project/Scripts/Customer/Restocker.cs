@@ -36,6 +36,9 @@ public class Restocker : MonoBehaviour
             foreach (AnimatorControllerParameter p in animator.parameters)
                 if (p.name == "Speed") hasSpeed = true;
 
+        agent.avoidancePriority = StaffManager.StaffAvoidancePriority; // nhường đường cho khách
+        idleIndex = Random.Range(0, 100);
+
         hand = new GameObject("Hand").transform;
         hand.SetParent(transform, false);
         hand.localPosition = new Vector3(0f, 1.0f, 0.45f);
@@ -43,6 +46,15 @@ public class Restocker : MonoBehaviour
 
     public bool debugLogs = false;
     private float nextIdleNotice;
+    private int idleIndex;
+
+    /// <summary>Hết việc: về chỗ nghỉ của nhân viên (kệ kho / chỗ nhận hàng) thay vì đứng giữa lối đi.</summary>
+    private IEnumerator GoIdle()
+    {
+        if (!StaffManager.TryIdleSpot(transform.position, idleIndex, out Vector3 spot)) yield break;
+        if (Flat(transform.position, spot) < 1.5f) yield break;
+        yield return MoveTo(spot, 0.6f);
+    }
 
     IEnumerator Start()
     {
@@ -98,6 +110,7 @@ public class Restocker : MonoBehaviour
                 SpeechBubble.Show(transform, "No boxes to restock", Color.white, 2.1f, 3f);
                 if (debugLogs && GameDebug.Verbose) Debug.Log($"[Restocker] {name}: không có việc. Cần thùng còn hàng của mặt hàng ĐANG BÀY trên kệ (kệ chưa đầy).", this);
             }
+            yield return GoIdle();
             yield break;
         }
         myBox = box; myShelf = shelf;

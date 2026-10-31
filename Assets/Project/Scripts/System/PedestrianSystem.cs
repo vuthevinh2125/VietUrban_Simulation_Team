@@ -115,7 +115,7 @@ public class PedestrianSystem : MonoBehaviour
     {
         CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
         if (spawner == null || spawner.customerPrefabs == null || spawner.customerPrefabs.Length == 0) return;
-        GameObject prefab = spawner.customerPrefabs[Random.Range(0, spawner.customerPrefabs.Length)];
+        GameObject prefab = spawner.RandomCustomerPrefab(); // bỏ model dành riêng cho nhân viên lau nhà
         if (prefab == null) return;
         Vector3 at = targets[Random.Range(0, targets.Count)];
 

@@ -16,13 +16,13 @@ public class DirtSpot : MonoBehaviour
         Apply();
     }
 
-    /// <summary>Quét bớt một phần. Trả về true khi đã sạch hẳn.</summary>
-    public bool Clean(float delta)
+    /// <summary>Quét bớt một phần. Trả về true khi đã sạch hẳn. giveXp = false khi nhân viên lau nhà quét.</summary>
+    public bool Clean(float delta, bool giveXp = true)
     {
         amount -= delta;
         if (amount <= 0f)
         {
-            StoreProgress.AddXP(2);
+            if (giveXp) StoreProgress.AddXP(2);
             Destroy(gameObject);
             return true;
         }
