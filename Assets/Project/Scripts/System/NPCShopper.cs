@@ -161,10 +161,14 @@ public class NPCShopper : MonoBehaviour
             int take = Random.Range(1, 3);
             if (item != null)
             {
-                // So giá trên nhãn với giá thị trường: đắt thì có thể bỏ qua, rẻ thì lấy thêm
+                // So giá trên nhãn với giá thị trường: đắt thì có thể bỏ qua, rẻ thì lấy thêm.
+                // Nhu cầu cao (vd. nước ngọt ngày nắng 35°C) thì khách chịu giá cao hơn và mua thêm (DemandModel).
+                float demand = DemandModel.Current(item);
                 float sell = PriceManager.GetSellPrice(item);
                 float ratio = PriceManager.PriceRatio(item, sell);
-                float chance = PriceManager.BuyChance(item, sell, maxPriceRatio) * DirtManager.SatisfactionFactor; // cửa hàng bẩn thì ít mua
+                float felt = sell / DemandModel.PriceTolerance(demand);
+                float chance = PriceManager.BuyChance(item, felt, maxPriceRatio) * DirtManager.SatisfactionFactor; // cửa hàng bẩn thì ít mua
+                if (demand >= 1.5f && Random.value < 0.5f) take++;
                 if (Random.value > chance)
                 {
                     bool dirty = DirtManager.Count >= 4 && Random.value < 0.6f;
@@ -536,12 +540,31 @@ public class NPCShopper : MonoBehaviour
         return Sample(center);
     }
 
+    private static readonly List<Shelf> pickCandidates = new List<Shelf>();
+    private static readonly List<float> pickWeights = new List<float>();
+
+    /// <summary>Chọn kệ còn hàng, kệ của nhóm hàng đang có nhu cầu cao được chọn nhiều hơn (DemandModel).</summary>
     private static Shelf PickShelf(HashSet<Shelf> visited)
     {
-        var candidates = new List<Shelf>();
+        pickCandidates.Clear();
+        pickWeights.Clear();
+        float total = 0f;
         foreach (Shelf s in StockManager.Shelves)
-            if (s != null && !s.IsEmpty && !visited.Contains(s)) candidates.Add(s);
-        return candidates.Count > 0 ? candidates[Random.Range(0, candidates.Count)] : null;
+        {
+            if (s == null || s.IsEmpty || visited.Contains(s)) continue;
+            float w = DemandModel.Current(s.CurrentItem);
+            pickCandidates.Add(s);
+            pickWeights.Add(w);
+            total += w;
+        }
+        if (pickCandidates.Count == 0) return null;
+        float r = Random.value * total;
+        for (int i = 0; i < pickCandidates.Count; i++)
+        {
+            r -= pickWeights[i];
+            if (r <= 0f) return pickCandidates[i];
+        }
+        return pickCandidates[pickCandidates.Count - 1];
     }
 
     private void Face(Vector3 point)

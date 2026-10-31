@@ -43,6 +43,53 @@ public class ProductCardUI : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        DemandModel.OnChanged += RefreshDemand;
+        RefreshDemand();
+    }
+
+    void OnDisable() => DemandModel.OnChanged -= RefreshDemand;
+
+    // Nhãn tạo lúc chạy: mức nhu cầu ở bên phải tên sản phẩm
+    private TextMeshProUGUI demandText;
+
+    /// <summary>
+    /// Dòng thương hiệu kèm nhóm hàng ("VietUrban · Breakfast", chữ được tràn sang phải vì khung gốc vừa khít)
+    /// và mức nhu cầu lúc này (HOT / high / low / LOW; bình thường thì để trống).
+    /// </summary>
+    private void RefreshDemand()
+    {
+        if (itemData == null) return;
+        if (brandText != null)
+        {
+            brandText.richText = true;
+            brandText.textWrappingMode = TextWrappingModes.NoWrap;
+            brandText.overflowMode = TextOverflowModes.Overflow;
+            brandText.text = $"{itemData.brand}  <color=#9FB0C0>· {DemandModel.GroupName(DemandModel.GroupOf(itemData))}</color>";
+        }
+        TextMeshProUGUI d = Badge(ref demandText, productNameText, "DemandTag");
+        if (d != null) d.text = DemandModel.CardTag(DemandModel.Current(itemData));
+    }
+
+    /// <summary>Nhân bản một dòng chữ có sẵn (cùng vị trí, cùng font), căn phải. Thẻ được nhân bản từ thẻ mẫu nên tìm lại theo tên trước.</summary>
+    private TextMeshProUGUI Badge(ref TextMeshProUGUI field, TextMeshProUGUI source, string objName)
+    {
+        if (field != null) return field;
+        if (source == null) return null;
+        Transform existing = source.transform.parent.Find(objName);
+        GameObject go = existing != null ? existing.gameObject : Instantiate(source.gameObject, source.transform.parent);
+        go.name = objName;
+        field = go.GetComponent<TextMeshProUGUI>();
+        field.alignment = TextAlignmentOptions.Right;
+        field.textWrappingMode = TextWrappingModes.NoWrap;
+        field.overflowMode = TextOverflowModes.Overflow;
+        field.richText = true;
+        field.raycastTarget = false;
+        field.text = "";
+        return field;
+    }
+
     public void SetupCard(ItemData data)
     {
         itemData = data;
@@ -52,7 +99,6 @@ public class ProductCardUI : MonoBehaviour
 
         // Fill left UI info
         if (productNameText != null) productNameText.text = itemData.itemName;
-        if (brandText != null) brandText.text = itemData.brand;
         if (iconImage != null)
         {
             // Không có icon thì ẩn ảnh đi, tránh giữ lại ảnh của thẻ mẫu (mọi thẻ cùng một hình)
@@ -62,6 +108,7 @@ public class ProductCardUI : MonoBehaviour
         }
 
         if (displayTypeText != null) displayTypeText.text = itemData.displayType;
+        RefreshDemand();
         if (unitPriceText != null) unitPriceText.text = EconomyManager.Format(itemData.unitPrice);
         if (shelfCapacityText != null) shelfCapacityText.text = itemData.shelfCapacity.ToString();
         if (boxCapacityText != null) boxCapacityText.text = itemData.itemsPerBox.ToString();
