@@ -32,11 +32,14 @@ public class Shelf : MonoBehaviour
     private double[] placedAt;       // thời điểm (ngày game, Freshness.Now) món ở slots[i] được xếp lên kệ
     private bool[] spoiled;          // món ở slots[i] đã quá hạn (hàng tươi)
     private ItemData currentItem;
+    private ItemData lastItem;       // mặt hàng bày gần nhất (kệ bán hết vẫn nhớ để nhân viên xếp lại đúng món)
     private Vector3 cell;            // kích thước 1 ô (x: ngang, y: khoảng tầng, z: sâu), mét
     private bool cellReady;
 
     // ================= Thông tin =================
     public ItemData CurrentItem => assignedItem != null ? assignedItem : currentItem;
+    /// <summary>Mặt hàng đang bày, hoặc món bày gần nhất nếu kệ đã bán hết (để restocker xếp lại).</summary>
+    public ItemData LastItem => CurrentItem != null ? CurrentItem : lastItem;
     public int Capacity => slots != null ? slots.Length : 0;
     public bool IsFull => Count >= Capacity;
     public bool IsEmpty => Count == 0;
@@ -260,6 +263,7 @@ public class Shelf : MonoBehaviour
         placedAt[index] = Freshness.Now;
         spoiled[index] = false;
         if (assignedItem == null && currentItem == null) currentItem = item;
+        if (item != null) lastItem = item;
 
         StartCoroutine(MoveItemSmoothly(product.transform, startPoint, target, placeAnimDuration));
         StockManager.NotifyChanged();
@@ -312,6 +316,7 @@ public class Shelf : MonoBehaviour
             spoiled[i] = false;
         }
         if (assignedItem == null) currentItem = null;
+        lastItem = null;
         StockManager.NotifyChanged();
     }
 

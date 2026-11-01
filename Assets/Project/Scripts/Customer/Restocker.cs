@@ -134,6 +134,15 @@ public class Restocker : MonoBehaviour
         yield return MoveTo(stand, 0.5f);
         if (shelf == null) { DropCarried(); yield break; }
         Face(shelf.transform.position);
+        // Có hàng hết hạn thì vứt đi trước khi xếp mới
+        if (shelf.SpoiledCount > 0)
+        {
+            int thrown = FreshnessManager.ThrowAway(shelf);
+            if (thrown > 0) SpeechBubble.Show(transform, $"Threw away {thrown} expired", new Color(1f, 0.7f, 0.5f), 2.1f, 2.5f);
+            yield return new WaitForSeconds(0.6f);
+        }
+        else if (box != null && box.itemData != null && DemandModel.Current(box.itemData) >= 1.5f)
+            SpeechBubble.Show(transform, $"Restocking {box.itemData.itemName} (HOT)", new Color(1f, 0.85f, 0.3f), 2.1f, 2.5f);
 
         // 3) Xếp từng món
         while (box != null && !box.IsEmpty && shelf.CanPlace(box.itemData, out _))
@@ -208,29 +217,40 @@ public class Restocker : MonoBehaviour
         myBox = null; myShelf = null;
     }
 
-    /// <summary>Thùng gần nhất có kệ (đang bán đúng mặt hàng đó, chưa đầy, chưa ai nhận) để xếp.</summary>
+    /// <summary>
+    /// Chọn việc xếp kệ theo ĐỘ CẤP BÁCH thay vì thùng gần nhất (trước 1/11):
+    ///   điểm = (1 - tỉ lệ còn hàng bán được)^1.5 x nhu cầu lúc này (DemandModel) / (1 + quãng đường / 20 m)
+    ///  - Kệ đã bán HẾT vẫn được xếp lại đúng món cũ (Shelf.LastItem); trước đây kệ trống bị bỏ quên.
+    ///  - Hàng hết hạn trên kệ không tính là còn hàng (nhân viên vứt đi rồi xếp mới).
+    ///  - Hàng tươi chỉ xếp thêm khi kệ còn dưới 60% (bày ít, bán nhanh, tránh hỏng).
+    /// </summary>
     private bool FindJob(out Interactable bestBox, out Shelf bestShelf)
     {
         bestBox = null; bestShelf = null;
-        float bestDist = float.MaxValue;
+        float bestScore = 0f;
+        Vector3 me = transform.position;
         foreach (Interactable box in StockManager.Boxes)
         {
             if (box == null || box.IsHeld || box.IsEmpty || box.itemData == null || claimedBoxes.Contains(box)) continue;
             if (skipUntil.TryGetValue(box, out float until) && Time.time < until) continue;
+            ItemData item = box.itemData;
+            float demand = DemandModel.Current(item);
+            bool perishable = Freshness.ShelfLifeDays(item) > 0f;
+            Vector3 boxPos = box.transform.position;
+            float toBox = Flat(me, boxPos);
 
-            Shelf target = null;
-            float bestFill = 1f;
             foreach (Shelf shelf in StockManager.Shelves)
             {
-                if (shelf == null || shelf.IsEmpty || shelf.CurrentItem != box.itemData || claimedShelves.Contains(shelf)) continue;
-                if (!shelf.CanPlace(box.itemData, out _)) continue;
-                float fill = shelf.Count / (float)Mathf.Max(1, shelf.Capacity);
-                if (fill < bestFill) { bestFill = fill; target = shelf; }
+                if (shelf == null || claimedShelves.Contains(shelf) || shelf.LastItem != item) continue;
+                if (shelf.Capacity == 0) continue;
+                float fill = shelf.SellableCount / (float)shelf.Capacity;
+                if (fill >= 1f) continue;
+                if (perishable && fill >= 0.6f) continue;
+                if (shelf.SpoiledCount == 0 && !shelf.CanPlace(item, out _)) continue;
+                float urgency = Mathf.Pow(1f - fill, 1.5f) * demand;
+                float score = urgency / (1f + (toBox + Flat(boxPos, shelf.transform.position)) / 20f);
+                if (score > bestScore) { bestScore = score; bestBox = box; bestShelf = shelf; }
             }
-            if (target == null) continue;
-
-            float d = (box.transform.position - transform.position).sqrMagnitude;
-            if (d < bestDist) { bestDist = d; bestBox = box; bestShelf = target; }
         }
         return bestBox != null;
     }
