@@ -21,6 +21,8 @@ public class StoreExpansion : MonoBehaviour
     public int order = 1;
     public int requiredLevel = 3;
     public float price = 2000f;
+    [Tooltip("id của phần mở rộng phải mua trước (để trống = không cần)")]
+    public string requires = "";
     public GameObject[] showOnUnlock;
     public GameObject[] hideOnUnlock;
     [Tooltip("Kệ/tủ kê sát bức tường được mở: mua xong dời ra sát tường mới (hàng trên kệ đi theo).")]
@@ -67,6 +69,12 @@ public class StoreExpansion : MonoBehaviour
     {
         reason = "";
         if (IsUnlocked) { reason = "Owned"; return false; }
+        if (!string.IsNullOrEmpty(requires) && !unlocked.Contains(requires))
+        {
+            StoreExpansion pre = All.Find(x => x != null && x.id == requires);
+            reason = $"Buy {(pre != null ? pre.displayName : requires)} first";
+            return false;
+        }
         if (StoreProgress.Level < requiredLevel) { reason = $"Requires level {requiredLevel}"; return false; }
         if (EconomyManager.Instance == null || !EconomyManager.Instance.CanAfford(price)) { reason = "Not enough money"; return false; }
         return true;

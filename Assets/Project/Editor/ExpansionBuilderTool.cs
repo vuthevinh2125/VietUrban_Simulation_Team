@@ -388,7 +388,7 @@ public static class ExpansionBuilderTool
 
     /// <summary>Dựng tường dọc một cạnh (a -> b), chia đều thành các mảng; mảng giữa có thể là cửa.
     /// Mặt chính của mảng tường (trục Z của nó) quay vào trong phòng; thêm một mảng quay lưng ra ngoài để nhìn từ ngoài cũng thấy tường.</summary>
-    private static void Edge(Transform root, GameObject wall, GameObject middle, Vector3 a, Vector3 b, Vector3 roomCenter)
+    internal static void Edge(Transform root, GameObject wall, GameObject middle, Vector3 a, Vector3 b, Vector3 roomCenter)
     {
         Vector3 d = b - a;
         float length = d.magnitude;
@@ -462,10 +462,10 @@ public static class ExpansionBuilderTool
         Dialog("Expansion", full);
     }
 
-    private static GameObject Load(string name) => AssetDatabase.LoadAssetAtPath<GameObject>($"{Arch}/{name}.prefab");
+    internal static GameObject Load(string name) => AssetDatabase.LoadAssetAtPath<GameObject>($"{Arch}/{name}.prefab");
 
     /// <summary>Khung bao renderer của prefab / object theo trục của chính nó (đơn vị mét thật, đã gồm scale hiện tại).</summary>
-    private static Bounds LocalBounds(GameObject go)
+    internal static Bounds LocalBounds(GameObject go)
     {
         bool isAsset = EditorUtility.IsPersistent(go);
         GameObject inst = isAsset ? (GameObject)PrefabUtility.InstantiatePrefab(go) : go;

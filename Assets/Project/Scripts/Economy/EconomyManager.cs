@@ -61,6 +61,7 @@ public class EconomyManager : MonoBehaviour
     [Tooltip("Tiền thuê mặt bằng trừ vào cuối mỗi ngày")]
     public float dailyRent = 40f;            // cân bằng 01/11: 100 -> 40
     public float rentPerExpansion = 20f;     // mỗi phần mở rộng sàn đã mua +20/ngày
+    public float rentPerHall = 10f;          // mỗi gian trong siêu thị đã mở thêm +10/ngày
 
     /// <summary>Tiền thuê hôm nay: thuê cơ bản + phần diện tích mở rộng đã mua.</summary>
     public float CurrentRent
@@ -68,8 +69,13 @@ public class EconomyManager : MonoBehaviour
         get
         {
             int n = 0;
-            foreach (string id in StoreExpansion.GetUnlockedIds()) if (id.StartsWith("expansion_storeexpansion")) n++;
-            return dailyRent + rentPerExpansion * n;
+            int halls = 0;
+            foreach (string id in StoreExpansion.GetUnlockedIds())
+            {
+                if (id.StartsWith("expansion_storeexpansion")) n++;
+                else if (id.StartsWith("section_")) halls++;
+            }
+            return dailyRent + rentPerExpansion * n + rentPerHall * halls;
         }
     }
 
