@@ -21,6 +21,8 @@ using UnityEngine.AI;
 /// Chế độ đo cố định (benchmark) để các lần đo so sánh được với nhau:
 ///  - Shift + F11: "bench-store"  - trong cửa hàng nhìn vào các dãy kệ, trời nắng, 12:00.
 ///  - Ctrl + F11:  "bench-street" - ngoài phố nhìn về mặt tiền cửa hàng và đường, giông, 21:00 (cảnh nặng nhất).
+///  - Ctrl + Shift + F11: "bench-crowd" - như bench-store nhưng mở cửa và giữ đúng CrowdSize khách trong cửa hàng suốt 60 s
+///    (đo tải AI khách: NavMesh, chọn kệ, animation). Kệ đang bày hàng được bổ sung đầy (chỉ là công cụ thử).
 /// Game đưa người chơi tới vị trí / hướng nhìn cố định, khoá điều khiển, đặt thời tiết + giờ, chờ 3 giây cho
 /// ánh sáng / bóng ổn định rồi mới đo 60 giây; xong trả lại điều khiển. Muốn tự chọn chỗ đứng: đặt GameObject rỗng
 /// tên "BenchmarkPoint_Store" / "BenchmarkPoint_Street" trong scene (vị trí + hướng của nó được dùng thay mặc định).
@@ -42,6 +44,11 @@ public class FpsLogger : MonoBehaviour
     private bool measuring, preparing;
     private float started;
     private string mode = "free";
+    public const int CrowdSize = 15;     // số khách giữ trong cửa hàng khi đo bench-crowd (game thường tối đa 4-7)
+    private bool keepCrowd;
+    private float nextCrowdSpawn;
+    private CustomerSpawner crowdSpawner;
+    private long crowdSum; private int crowdSamples;
     private PlayerController frozenPlayer;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -61,14 +68,16 @@ public class FpsLogger : MonoBehaviour
             {
                 bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                 bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-                if (shift) StartCoroutine(Benchmark(true));
-                else if (ctrl) StartCoroutine(Benchmark(false));
+                if (shift && ctrl) StartCoroutine(Benchmark(2));
+                else if (shift) StartCoroutine(Benchmark(0));
+                else if (ctrl) StartCoroutine(Benchmark(1));
                 else { mode = "free"; Begin(); }
             }
             return;
         }
 
         frameTimes.Add(Time.unscaledDeltaTime);
+        if (keepCrowd) { KeepCrowd(); crowdSum += NPCShopper.Active.Count; crowdSamples++; }
         if (mainThread.Valid && mainThread.LastValue > 0) mainMs.Add(mainThread.LastValue * 1e-6f); // ns -> ms
         if (gcAlloc.Valid)
         {
@@ -89,8 +98,9 @@ public class FpsLogger : MonoBehaviour
     }
 
     // ================= Chế độ đo cố định =================
-    private IEnumerator Benchmark(bool store)
+    private IEnumerator Benchmark(int kind)
     {
+        bool store = kind != 1, crowd = kind == 2;
         PlayerController pc = FindAnyObjectByType<PlayerController>();
         if (pc == null || !pc.isActiveAndEnabled)
         {
@@ -103,7 +113,7 @@ public class FpsLogger : MonoBehaviour
             yield break;
         }
         preparing = true;
-        mode = store ? "bench-store" : "bench-street";
+        mode = crowd ? "bench-crowd" : store ? "bench-store" : "bench-street";
         frozenPlayer = pc;
         PlayerController.InputFrozen = true;
 
@@ -116,13 +126,37 @@ public class FpsLogger : MonoBehaviour
         ProgressHUD.Toast($"Benchmark ({mode}): settling 3 s, then measuring 60 s - don't touch anything.");
 
         float until = Time.unscaledTime + 3f;
+        if (crowd)
+        {
+            // Mở cửa, bổ sung đầy các kệ đang bày hàng, rồi cho khách vào dần (1 người / 0.5 s) và chờ 20 s cho họ vào trong
+            crowdSpawner = FindAnyObjectByType<CustomerSpawner>();
+            if (crowdSpawner == null) { ProgressHUD.Toast("Benchmark: no CustomerSpawner in the scene."); preparing = false; PlayerController.InputFrozen = false; frozenPlayer = null; DayNightCycle.DebugHourOverride = -1f; yield break; }
+            if (GameManager.Instance != null && !GameManager.Instance.IsStoreOpen) GameManager.Instance.SetStoreOpen(true, force: true);
+            int topped = 0;
+            foreach (Shelf sh in StockManager.Shelves)
+                if (sh != null && sh.LastItem != null && sh.SpoiledCount == 0) topped += sh.FillInstant(sh.LastItem, sh.Capacity - sh.Count);
+            keepCrowd = true;
+            crowdSum = 0; crowdSamples = 0;
+            until = Time.unscaledTime + 20f;
+            ProgressHUD.Toast($"Benchmark (bench-crowd): {CrowdSize} customers coming in ({topped} items topped up). Measuring starts in 20 s.");
+        }
         while (Time.unscaledTime < until)
         {
             pc.SetPose(pos, yaw, pitch); // giữ nguyên chỗ (vật lý có thể đẩy nhẹ)
+            if (keepCrowd) KeepCrowd();
             yield return null;
         }
         preparing = false;
         Begin();
+    }
+
+    /// <summary>bench-crowd: luôn giữ đủ CrowdSize khách (khách mua xong ra về thì cho người mới vào), tối đa 2 người / giây.</summary>
+    private void KeepCrowd()
+    {
+        if (crowdSpawner == null || Time.unscaledTime < nextCrowdSpawn) return;
+        if (NPCShopper.Active.Count >= CrowdSize) return;
+        nextCrowdSpawn = Time.unscaledTime + 0.5f;
+        crowdSpawner.Spawn();
     }
 
     /// <summary>Vị trí đo: BenchmarkPoint_* nếu có trong scene, nếu không thì tính từ cửa ra vào và tâm các dãy kệ.</summary>
@@ -189,6 +223,8 @@ public class FpsLogger : MonoBehaviour
         measuring = false;
         StopRecorders();
         if (frozenPlayer != null) { PlayerController.InputFrozen = false; frozenPlayer = null; }
+        float avgCrowd = crowdSamples > 0 ? crowdSum / (float)crowdSamples : -1f;
+        keepCrowd = false; crowdSamples = 0;
         float lightHour = DayNightCycle.DebugHourOverride; // giờ ánh sáng bị ép trong chế độ đo cố định (nếu có)
         DayNightCycle.DebugHourOverride = -1f;
         if (frameTimes.Count == 0) return;
@@ -228,7 +264,8 @@ public class FpsLogger : MonoBehaviour
         string clock = lightHour >= 0f ? lightHour.ToString("0.00", inv)
                      : GameManager.Instance != null ? GameManager.Instance.ClockHours.ToString("0.00", inv) : "";
         string weather = WeatherSystem.WeatherName(WeatherSystem.CurrentWeather);
-        int customers = NPCShopper.Active.Count;
+        // bench-crowd: số khách TRUNG BÌNH trong lúc đo; chế độ khác: số khách lúc kết thúc
+        string customers = avgCrowd >= 0f ? avgCrowd.ToString("0.0", CultureInfo.InvariantCulture) : NPCShopper.Active.Count.ToString(CultureInfo.InvariantCulture);
         var budget = FindAnyObjectByType<LightShadowBudget>();
         string shadows = budget != null ? budget.maxShadowLights.ToString(inv) : "";
 
@@ -246,7 +283,7 @@ public class FpsLogger : MonoBehaviour
                 w.WriteLine(string.Join(",",
                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", inv),
                     avgFps.ToString("0.0", inv), lowFps.ToString("0.0", inv), frameTimes.Count.ToString(inv),
-                    clock, weather, customers.ToString(inv), shadows,
+                    clock, weather, customers, shadows,
                     $"{Screen.width}x{Screen.height}", QualitySettings.names[QualitySettings.GetQualityLevel()],
                     cpuAvg, cpuP99, gcKb, gcPct, dc, sp, mode, F(maxMs, "0.0"), spikes.ToString(inv)));
             }
