@@ -159539,7 +159539,7 @@ MonoBehaviour:
   description: More floor space for shelves and fridges
   order: 11
   requiredLevel: 4
-  price: 2500
+  price: 1500
   showOnUnlock:
   - {fileID: 1282702954}
   hideOnUnlock:
@@ -204818,7 +204818,7 @@ MonoBehaviour:
   description: A storage building next to the store for your boxes
   order: 1
   requiredLevel: 3
-  price: 1500
+  price: 900
   showOnUnlock:
   - {fileID: 1648653180}
   hideOnUnlock: []
@@ -207032,7 +207032,7 @@ MonoBehaviour:
   id: checkout_3
   order: 2
   requiredLevel: 5
-  price: 1500
+  price: 900
   displayName: Checkout counter #3
 --- !u!114 &926738073
 MonoBehaviour:
@@ -304035,7 +304035,7 @@ MonoBehaviour:
   id: checkout_4
   order: 3
   requiredLevel: 7
-  price: 2500
+  price: 1500
   displayName: Checkout counter #4
 --- !u!114 &1343034902
 MonoBehaviour:
@@ -352448,7 +352448,7 @@ MonoBehaviour:
   id: checkout_2
   order: 1
   requiredLevel: 3
-  price: 800
+  price: 500
   displayName: Checkout counter #2
 --- !u!114 &1541474881
 MonoBehaviour:
@@ -368765,7 +368765,7 @@ MonoBehaviour:
   description: More floor space for shelves and fridges
   order: 12
   requiredLevel: 6
-  price: 4000
+  price: 2400
   showOnUnlock:
   - {fileID: 93075300}
   hideOnUnlock:

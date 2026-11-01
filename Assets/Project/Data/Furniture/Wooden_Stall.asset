@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wooden_Stall
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Wooden Stall
-  price: 160
+  price: 110
   requiredLevel: 3
   prefab: {fileID: 8005813048183696209, guid: 0b4eba6c12b95f74491ce98d3aa1d06c, type: 3}
   displayType: Shelf

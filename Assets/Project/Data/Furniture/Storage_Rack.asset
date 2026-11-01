@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Storage_Rack
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Storage Rack
-  price: 300
+  price: 200
   requiredLevel: 2
   prefab: {fileID: 4430268316711374885, guid: 6c5dc7b484f0c254cb87aae9ff616cb8, type: 3}
   displayType: Storage

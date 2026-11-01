@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Display_Table
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Display Table
-  price: 100
+  price: 70
   requiredLevel: 1
   prefab: {fileID: 7421662383459057419, guid: e78792f514d39b74f8390f2346ae0ab0, type: 3}
   displayType: Shelf

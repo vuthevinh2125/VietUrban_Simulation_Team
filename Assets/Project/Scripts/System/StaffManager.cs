@@ -7,7 +7,7 @@ public class StaffManager : MonoBehaviour
 {
     public static StaffManager Instance { get; private set; }
 
-    public const float CashierWage = 60f, RestockerWage = 50f, GuardWage = 70f, JanitorWage = 40f;
+    public const float CashierWage = 30f, RestockerWage = 25f, GuardWage = 35f, JanitorWage = 20f; // cân bằng 01/11: 60/50/70/40 -> 30/25/35/20
     public const int CashierLevel = 2, RestockerLevel = 3, MaxRestockers = 3, GuardLevel = 4, MaxGuards = 2, JanitorLevel = 2, MaxJanitors = 2;
     /// <summary>Độ ưu tiên tránh va chạm của nhân viên đi lại (số lớn = kém ưu tiên): khách mặc định 50 nên nhân viên nhường đường.</summary>
     public const int StaffAvoidancePriority = 70;

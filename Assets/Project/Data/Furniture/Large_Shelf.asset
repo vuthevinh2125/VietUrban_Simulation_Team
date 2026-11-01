@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Large_Shelf
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Large Shelf
-  price: 350
+  price: 250
   requiredLevel: 2
   prefab: {fileID: 6192472675588437949, guid: 2973d6a902a0d0142879664430d3b60f, type: 3}
   displayType: Shelf

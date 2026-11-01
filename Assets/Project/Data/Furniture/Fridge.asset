@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fridge
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Fridge
-  price: 500
+  price: 350
   requiredLevel: 6
   prefab: {fileID: 3031126743232665865, guid: 751b89648152f8d4f9720af89103570e, type: 3}
   displayType: Fresh

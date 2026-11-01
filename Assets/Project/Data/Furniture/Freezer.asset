@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Freezer
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Freezer
-  price: 600
+  price: 420
   requiredLevel: 8
   prefab: {fileID: 9147604058553419807, guid: f665793eee447584690401e06d6d33fb, type: 3}
   displayType: Fresh

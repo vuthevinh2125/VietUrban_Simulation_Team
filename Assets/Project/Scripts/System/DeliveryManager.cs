@@ -26,6 +26,7 @@ public class DeliveryManager : MonoBehaviour
         public readonly List<(ItemData item, int count)> lines = new List<(ItemData, int)>();
         public string placeName;
         public Vector3 destination;
+        public Vector3 homeDir;   // hướng từ điểm giao vào toà nhà (người nhận đi vào sau khi nhận hàng)
         public float distance;
         public float goodsValue;
         public float fee;
@@ -58,6 +59,7 @@ public class DeliveryManager : MonoBehaviour
         return true;
     }
     private GameObject package, beacon, carried;
+    private DeliveryRecipient recipient; // người dân đứng chờ ở điểm giao
     private TMP_Text hudText;
     private GameObject hudPanel;
 
@@ -160,8 +162,15 @@ public class DeliveryManager : MonoBehaviour
             case Stage.Delivering:
                 Transform p = PlayerTransform();
                 float dist = p != null ? Flat(p.position - order.destination) : 999f;
-                if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>");
-                if (dist <= arriveRadius) Complete();
+                // Có người nhận đứng chờ: tới gần người đó và bấm [E] để trao hàng. Không tạo được người nhận: tới vòng sáng là xong (như cũ).
+                float toRecipient = recipient != null && p != null ? Flat(p.position - recipient.transform.position) : 999f;
+                bool canHand = recipient != null && toRecipient <= DeliveryRecipient.HandOverRange;
+                if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY</color></b> to <b>{order.placeName}</b>" + (recipient != null ? $"  <size=80%>({recipient.DisplayName})</size>" : "") +
+                        $"\n{dist:0} m  {Arrow(order.destination)}   ·   Time left {TimeLeft()}\n" +
+                        (canHand ? $"<color=#8CFF8C>[E] Hand over the package to {recipient.DisplayName}</color>"
+                                 : recipient != null && dist <= arriveRadius * 2f ? $"<size=80%>Walk up to {recipient.DisplayName} to hand over the package</size>"
+                                 : "<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>"));
+                if (recipient == null ? dist <= arriveRadius : canHand && uiFree && Input.GetKeyDown(KeyCode.E)) Complete();
                 else CheckLate();
                 break;
         }
@@ -182,9 +191,9 @@ public class DeliveryManager : MonoBehaviour
         var items = new List<ItemData>();
         foreach (var kv in stock) if (kv.Value >= 2) items.Add(kv.Key);
         if (items.Count == 0) return false;
-        if (!PickDestination(out string place, out Vector3 dest, out float dist)) return false;
+        if (!PickDestination(out string place, out Vector3 dest, out float dist, out Vector3 home)) return false;
 
-        o = new Order { placeName = place, destination = dest, distance = dist };
+        o = new Order { placeName = place, destination = dest, distance = dist, homeDir = home };
         int kinds = Mathf.Min(items.Count, Random.Range(1, 3));
         for (int i = 0; i < kinds; i++)
         {
@@ -201,11 +210,11 @@ public class DeliveryManager : MonoBehaviour
     }
 
     /// <summary>Chọn một toà nhà quanh khu (nhà dân, bệnh viện, đồn công an...) đủ xa cửa hàng, lấy điểm trên mặt đất trước toà nhà.</summary>
-    private bool PickDestination(out string place, out Vector3 point, out float distance)
+    private bool PickDestination(out string place, out Vector3 point, out float distance, out Vector3 home)
     {
-        place = null; point = default; distance = 0f;
+        place = null; point = default; distance = 0f; home = Vector3.zero;
         Vector3 store = StoreCenter();
-        var candidates = new List<(string, Vector3, float)>();
+        var candidates = new List<(string, Vector3, float, Vector3)>();
         foreach (GameObject root in gameObject.scene.GetRootGameObjects())
         {
             if (!root.activeInHierarchy) continue;
@@ -223,20 +232,20 @@ public class DeliveryManager : MonoBehaviour
             if (hit.normal.y < 0.7f) continue;
             float d = Flat(hit.point - store);
             if (d < minDistance) continue;
-            candidates.Add((Pretty(root.name), hit.point, d));
+            candidates.Add((Pretty(root.name), hit.point, d, -outDir));
         }
         // Địa chỉ ở khu phố mới (có số nhà + tên đường): ưu tiên để đi giao xa hơn, đa dạng hơn
-        var addresses = new List<(string, Vector3, float)>();
+        var addresses = new List<(string, Vector3, float, Vector3)>();
         foreach (DeliveryAddress a in DeliveryAddress.All)
         {
             if (a == null || !a.isActiveAndEnabled) continue;
             float d = Flat(a.doorPoint - store);
-            if (d >= minDistance) addresses.Add((a.address, a.doorPoint, d));
+            if (d >= minDistance) addresses.Add((a.address, a.doorPoint, d, a.transform.position - a.doorPoint));
         }
         if (addresses.Count > 0 && (candidates.Count == 0 || Random.value < 0.75f)) candidates = addresses;
         if (candidates.Count == 0) return false;
         var c = candidates[Random.Range(0, candidates.Count)];
-        place = c.Item1; point = c.Item2; distance = c.Item3;
+        place = c.Item1; point = c.Item2; distance = c.Item3; home = c.Item4;
         return true;
     }
 
@@ -287,6 +296,7 @@ public class DeliveryManager : MonoBehaviour
             carried.transform.localScale = Vector3.one * 0.6f;
         }
         beacon = CreateBeacon(order.destination);
+        recipient = DeliveryRecipient.Spawn(order.destination, order.homeDir);
         stage = Stage.Delivering;
         AudioManager.Play("box_pickup", 0.8f);
     }
@@ -301,6 +311,7 @@ public class DeliveryManager : MonoBehaviour
         EconomyManager.Instance.AddIncome(total, MoneyCategory.Sales, $"Delivery to {order.placeName}");
         StoreProgress.AddXP(fast ? 8 : 4);
         AudioManager.Play("cash_register", 0.8f);
+        if (recipient != null) { recipient.Receive(fast); recipient = null; } // tự đi vào nhà rồi biến mất
         ProgressHUD.Toast(fast
             ? $"Delivered on time! +{EconomyManager.Format(total)} (tip {EconomyManager.Format(tip)}{(WeatherSystem.DeliveryTipMultiplier > 1f ? ", rain bonus" : "")})"
             : $"Delivered (late, no tip). +{EconomyManager.Format(total)}");
@@ -332,11 +343,16 @@ public class DeliveryManager : MonoBehaviour
         if (beacon != null) Destroy(beacon);
         if (carried != null) Destroy(carried);
         package = beacon = carried = null;
+        if (recipient != null && !recipient.Leaving) Destroy(recipient.gameObject); // huỷ đơn: người nhận về luôn
+        recipient = null;
         if (hudPanel != null) hudPanel.SetActive(false);
     }
 
     // ================= Vị trí =================
     private static Transform cachedPlayer;
+
+    /// <summary>Cho DeliveryRecipient biết người chơi ở đâu (để quay mặt về phía người chơi).</summary>
+    public static Transform PlayerForRecipient() => PlayerTransform();
 
     /// <summary>Người chơi (đang ngồi xe thì bị ẩn nhưng vẫn là con của xe -> vị trí đi theo xe).</summary>
     private static Transform PlayerTransform()

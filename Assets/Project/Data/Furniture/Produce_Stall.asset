@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Produce_Stall
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Produce Stall
-  price: 120
+  price: 85
   requiredLevel: 2
   prefab: {fileID: 531125502956354896, guid: cc4ae8340bfe02447b4788dff984b130, type: 3}
   displayType: Shelf

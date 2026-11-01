@@ -42,6 +42,7 @@ public class MinimapSystem : MonoBehaviour
         public readonly List<RectTransform> markerPool = new List<RectTransform>();
         public int usedMarkers;
         public bool circular;
+        public Vector2 center;           // điểm (trong toạ độ ảnh) đang nằm giữa khung: minimap = vị trí người chơi
     }
 
     private MapView mini, big;
@@ -128,17 +129,19 @@ public class MinimapSystem : MonoBehaviour
         if (miniRoot.activeSelf != showMini) miniRoot.SetActive(showMini);
 
         Vector3 p = player.position;
-        float yaw = player.eulerAngles.y;
+        float yaw = HeadingYaw();
 
-        // Camera minimap: trên đầu người chơi, xoay để hướng người chơi đang nhìn luôn là phía trên.
-        // Chỉ dời camera ở frame được vẽ, để ảnh và các dấu luôn dùng cùng một vị trí camera.
+        // Camera minimap: trên đầu người chơi, LUÔN hướng bắc (không xoay camera).
+        // Việc xoay theo hướng nhìn làm bằng cách xoay ảnh + lộ trình + dấu trên giao diện MỖI FRAME (MiniFollow),
+        // nên bản đồ xoay / trượt mượt dù camera chỉ vẽ lại 20 lần/giây.
+        // (Trước: xoay camera theo yaw ở 20 lần/giây -> bản đồ xoay giật, lệch so với hướng nhìn giữa hai lần vẽ.)
         float now = Time.unscaledTime;
         bool renderMini = showMini && now >= nextMiniRender;
         if (renderMini)
         {
             nextMiniRender = now + 1f / Mathf.Max(1f, miniFps);
             mini.cam.orthographicSize = miniZoom;
-            mini.cam.transform.SetPositionAndRotation(new Vector3(p.x, p.y + camHeight, p.z), Quaternion.Euler(90f, yaw, 0f));
+            mini.cam.transform.SetPositionAndRotation(new Vector3(p.x, p.y + camHeight, p.z), Quaternion.Euler(90f, 0f, 0f));
         }
         if (mini.cam.enabled != renderMini) mini.cam.enabled = renderMini;
         if (bigOpen)
@@ -154,7 +157,7 @@ public class MinimapSystem : MonoBehaviour
         }
 
         UpdateRoute(p);
-        if (showMini) DrawView(mini, p, yaw, true);
+        if (showMini) { MiniFollow(p, yaw); DrawView(mini, p, yaw, true); }
         if (bigOpen) DrawView(big, p, yaw, false);
     }
 
@@ -215,16 +218,17 @@ public class MinimapSystem : MonoBehaviour
 
         // Đánh dấu
         v.usedMarkers = 0;
+        float up = isMini ? -yaw : 0f; // minimap: lớp dấu xoay +yaw, xoay ngược để chữ S / P / ! luôn đứng thẳng
         Vector3 store = StoreCenter(out bool hasStore);
-        if (hasStore) Marker(v, store, StoreColor, 26f, "S", circleSprite, 0f, true, radius);
+        if (hasStore) Marker(v, store, StoreColor, 26f, "S", circleSprite, up, true, radius);
         foreach (NPCShopper n in NPCShopper.Active)
-            if (n != null && n.IsFleeingThief) Marker(v, n.transform.position, ThiefColor, 16f, null, circleSprite, 0f, true, radius);
+            if (n != null && n.IsFleeingThief) Marker(v, n.transform.position, ThiefColor, 16f, null, circleSprite, up, true, radius);
         foreach (StoreGuard g in StoreGuard.All)
-            if (g != null) Marker(v, g.transform.position, GuardColor, 12f, null, circleSprite, 0f, false, radius);
+            if (g != null) Marker(v, g.transform.position, GuardColor, 12f, null, circleSprite, up, false, radius);
         if (DeliveryManager.TryGetTarget(out Vector3 target, out _, out bool isPackage))
-            Marker(v, target, TargetColor, isPackage ? 22f : 30f, isPackage ? "P" : "!", isPackage ? squareSprite : circleSprite, 0f, true, radius);
-        // Người chơi: minimap luôn hướng lên; bản đồ lớn quay theo hướng nhìn
-        Marker(v, playerPos, PlayerColor, isMini ? 26f : 30f, null, arrowSprite, isMini ? 0f : -yaw, true, radius);
+            Marker(v, target, TargetColor, isPackage ? 22f : 30f, isPackage ? "P" : "!", isPackage ? squareSprite : circleSprite, up, true, radius);
+        // Người chơi: mũi tên quay theo hướng nhìn (trên minimap cả lớp dấu đã xoay +yaw nên mũi tên luôn chỉ lên)
+        Marker(v, playerPos, PlayerColor, isMini ? 26f : 30f, null, arrowSprite, -yaw, true, radius);
         for (int i = v.usedMarkers; i < v.markerPool.Count; i++) if (v.markerPool[i].gameObject.activeSelf) v.markerPool[i].gameObject.SetActive(false);
 
         if (!isMini && bigInfo != null)
@@ -242,8 +246,9 @@ public class MinimapSystem : MonoBehaviour
         if (v.circular)
         {
             float max = radius - size * 0.5f - 2f;
-            outside = pos.magnitude > max;
-            if (outside) { if (!clampToEdge) return; pos = pos.normalized * max; }
+            Vector2 rel = pos - v.center;  // đo từ giữa khung (người chơi), không phải tâm ảnh
+            outside = rel.magnitude > max;
+            if (outside) { if (!clampToEdge) return; pos = v.center + rel.normalized * max; }
         }
         else
         {
@@ -275,6 +280,48 @@ public class MinimapSystem : MonoBehaviour
         Vector3 vp = v.cam.WorldToViewportPoint(world);
         Rect r = v.image.rect;
         return new Vector2((vp.x - 0.5f) * r.width, (vp.y - 0.5f) * r.height);
+    }
+
+    /// <summary>
+    /// Minimap: xoay ảnh bản đồ, lộ trình và lớp dấu quanh vị trí người chơi để hướng nhìn luôn ở phía trên,
+    /// và trượt theo vị trí hiện tại (camera chỉ vẽ lại 20 lần/giây nên giữa hai lần vẽ bù phần đã đi được).
+    /// </summary>
+    private void MiniFollow(Vector3 playerPos, float yaw)
+    {
+        mini.center = Project(mini, playerPos);
+        Quaternion rot = Quaternion.Euler(0f, 0f, yaw);
+        Vector2 offset = -(Vector2)(rot * mini.center);
+        mini.image.localRotation = mini.routeLayer.localRotation = mini.markerLayer.localRotation = rot;
+        mini.image.anchoredPosition = mini.routeLayer.anchoredPosition = mini.markerLayer.anchoredPosition = offset;
+    }
+
+    private static readonly Camera[] camBuf = new Camera[32];
+
+    /// <summary>
+    /// Hướng nhìn (độ, 0 = bắc / +Z, theo chiều kim đồng hồ) lấy từ camera đang dùng để chơi.
+    /// Trước đây lấy player.eulerAngles.y: khi lên xe, người chơi bị gắn vào xe với góc xoay lúc lên xe
+    /// nên hướng mũi tên / bản đồ lệch đúng bằng góc đó (và model xe có trục trước khác nhau).
+    /// </summary>
+    private float HeadingYaw()
+    {
+        Camera c = Camera.main;
+        if (c == null || !c.isActiveAndEnabled)
+        {
+            c = null;
+            int n = Camera.allCamerasCount <= camBuf.Length ? Camera.GetAllCameras(camBuf) : 0;
+            for (int i = 0; i < n; i++)
+            {
+                Camera k = camBuf[i];
+                if (k == null || k == mini.cam || k == big.cam || k.targetTexture != null) continue;
+                if (c == null || k.depth > c.depth) c = k;
+            }
+        }
+        if (c != null)
+        {
+            Vector3 f = c.transform.forward; f.y = 0f;
+            if (f.sqrMagnitude > 1e-4f) return Mathf.Atan2(f.x, f.z) * Mathf.Rad2Deg;
+        }
+        return player.eulerAngles.y;
     }
 
     // ================= Mở / đóng bản đồ lớn =================

@@ -50,7 +50,9 @@ public class ItemData : ScriptableObject
     public float BoxPrice => unitPrice * Mathf.Max(1, itemsPerBox);
 
     /// <summary>Giá bán lẻ thị trường cho 1 món.</summary>
-    public float MarketPrice => marketPrice > 0f ? marketPrice : Mathf.Round(unitPrice * 1.3f * 100f) / 100f;
+    /// <summary>Giá thị trường mặc định = giá nhập x hệ số này (cân bằng 01/11: 1.3 -> 1.6, lãi gộp 23% -> 37.5%).</summary>
+    public const float DefaultMarkup = 1.6f;
+    public float MarketPrice => marketPrice > 0f ? marketPrice : Mathf.Round(unitPrice * DefaultMarkup * 100f) / 100f;
 
     /// <summary>Prefab 1 món hàng: lấy productPrefab, nếu trống thì lấy từ thùng hàng (cratePrefab).</summary>
     public GameObject ResolveProductPrefab()

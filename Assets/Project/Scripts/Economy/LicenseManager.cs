@@ -27,27 +27,28 @@ public static class LicenseManager
 {
     public const string StarterId = "basic";
 
+    // Cân bằng 01/11: giá giấy phép giảm ~40% (200/300/400/500/600/800/700/1200/1500 -> 120/180/250/300/350/450/400/700/900)
     public static readonly List<ProductLicense> All = new List<ProductLicense>
     {
         new ProductLicense(StarterId, "Basic Groceries", 1, 0f,
             "Cereals", "Pasta", "RicePack", "FlourPack", "Sugar", "Salt", "WaterBottle", "Soda", "SliceBread", "SlicedBread", "TinCan"),
-        new ProductLicense("snacks", "Snacks & Sweets", 2, 200f,
+        new ProductLicense("snacks", "Snacks & Sweets", 2, 120f,
             "Chips", "CandyPack", "SweetJar", "ChocolateSpread", "ChocolateBox", "Cake"),
-        new ProductLicense("pantry", "Pantry", 3, 300f,
+        new ProductLicense("pantry", "Pantry", 3, 180f,
             "Oil", "Sauce", "Pepper", "MashPotatoe", "PotatoeBag", "OldMetalBox"),
-        new ProductLicense("drinks", "Hot & Cold Drinks", 4, 400f,
+        new ProductLicense("drinks", "Hot & Cold Drinks", 4, 250f,
             "JuiceBrick", "MilkBrick", "Milk", "WaterPack", "CansPack", "Coffee", "Capsule", "Teabox", "ChocolatePowder"),
-        new ProductLicense("cleaning", "Cleaning", 5, 500f,
+        new ProductLicense("cleaning", "Cleaning", 5, 300f,
             "Bleach", "Cleanser", "Laundry", "PaperTowel", "ToiletPaper"),
-        new ProductLicense("care", "Personal Care", 6, 600f,
+        new ProductLicense("care", "Personal Care", 6, 350f,
             "Shampoo", "Soap", "Toothpaste"),
-        new ProductLicense("dairy", "Dairy & Deli", 7, 800f,
+        new ProductLicense("dairy", "Dairy & Deli", 7, 450f,
             "Butter", "Cheese", "Cream", "Ham", "CrabSticks", "EggBox", "Yoghurt"),
-        new ProductLicense("pet", "Pet Supplies", 8, 700f,
+        new ProductLicense("pet", "Pet Supplies", 8, 400f,
             "PetFood"),
-        new ProductLicense("frozen", "Frozen & Meat", 9, 1200f,
+        new ProductLicense("frozen", "Frozen & Meat", 9, 700f,
             "FrozenPack", "Frozen", "Pizza", "Sushis", "Chicken", "MeatTray"),
-        new ProductLicense("alcohol", "Alcohol", 10, 1500f,
+        new ProductLicense("alcohol", "Alcohol", 10, 900f,
             "BeerKeg", "BeerPack", "Beer", "Alcohol", "WineBottle"),
     };
 

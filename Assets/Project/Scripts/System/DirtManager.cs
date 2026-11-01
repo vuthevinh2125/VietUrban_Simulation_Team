@@ -13,7 +13,7 @@ public class DirtManager : MonoBehaviour
     private static readonly List<DirtSpot> spots = new List<DirtSpot>();
 
     public int maxSpots = 14;
-    public Vector2 spawnInterval = new Vector2(18f, 35f);
+    public Vector2 spawnInterval = new Vector2(40f, 70f); // cân bằng 01/11: 18-35 s -> 40-70 s (x1.5 ở Lv1, giảm dần về x1 ở Lv7)
     public Color dirtColor = new Color(0.28f, 0.2f, 0.12f, 0.85f);
 
     private float nextSpawn;
@@ -44,6 +44,16 @@ public class DirtManager : MonoBehaviour
         nextSpawn = Time.time + Random.Range(spawnInterval.x, spawnInterval.y);
     }
 
+    /// <summary>Cấp thấp ít bẩn hơn: khoảng cách x1.5 ở Lv1 giảm dần về x1 ở Lv7.</summary>
+    private float NextInterval()
+    {
+        float f = Mathf.Lerp(1.5f, 1f, (StoreProgress.Level - 1) / 6f);
+        return Random.Range(spawnInterval.x, spawnInterval.y) * f;
+    }
+
+    /// <summary>Số vết bẩn tối đa cùng lúc: Lv1 4, mỗi cấp +1, tối đa maxSpots.</summary>
+    private int MaxSpotsNow => Mathf.Clamp(3 + StoreProgress.Level, 4, maxSpots);
+
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
@@ -53,8 +63,8 @@ public class DirtManager : MonoBehaviour
     {
         GameManager gm = GameManager.Instance;
         if (gm == null || !gm.IsStoreOpen || Time.time < nextSpawn) return;
-        nextSpawn = Time.time + Random.Range(spawnInterval.x, spawnInterval.y);
-        if (Count >= maxSpots) return;
+        nextSpawn = Time.time + NextInterval();
+        if (Count >= MaxSpotsNow) return;
         if (TryPickPoint(out Vector3 p)) Spawn(p);
     }
 

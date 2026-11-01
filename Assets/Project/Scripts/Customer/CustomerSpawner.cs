@@ -20,6 +20,9 @@ public class CustomerSpawner : MonoBehaviour
 
     [Header("Rules")]
     public int maxCustomers = 4;
+
+    /// <summary>Cửa hàng lớn dần thì đông khách hơn: +1 khách mỗi 2 cấp, tối đa +3 (Lv7 trở lên).</summary>
+    public int MaxCustomersNow => maxCustomers + Mathf.Min(3, (StoreProgress.Level - 1) / 2);
     [Tooltip("Khoảng thời gian giữa 2 khách (giây, ngẫu nhiên trong khoảng)")]
     public Vector2 spawnInterval = new Vector2(8f, 18f);
     [Tooltip("Ngừng đón khách khi ngày đã trôi qua quá tỉ lệ này (0.9 = 90% ngày)")]
@@ -70,7 +73,7 @@ public class CustomerSpawner : MonoBehaviour
 
         GameManager gm = GameManager.Instance;
         if (gm != null && (gm.IsGameOver || !gm.IsStoreOpen || gm.DayProgress01 > stopSpawningAt)) return; // chỉ đón khách khi đang mở cửa
-        if (NPCShopper.Active.Count >= maxCustomers) return;
+        if (NPCShopper.Active.Count >= MaxCustomersNow) return;
         if (onlyWhenStocked && StockManager.GetRandomStockedShelf() == null) return;
 
         Spawn();

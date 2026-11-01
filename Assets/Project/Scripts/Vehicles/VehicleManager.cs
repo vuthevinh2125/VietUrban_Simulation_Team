@@ -35,13 +35,13 @@ public class VehicleManager : MonoBehaviour
         },
         new Entry
         {
-            id = "C125 - PB", name = "Honda C125", type = "Motorbike", price = 1500f, level = 3,
+            id = "C125 - PB", name = "Honda C125", type = "Motorbike", price = 900f, level = 3,
             speed = 10f, boost = 15f,
             description = "Premium scooter with a stronger engine - finish deliveries before the timer runs out.",
         },
         new Entry
         {
-            id = "CarPlayer", name = "Tocus City Car", type = "Car", price = 4500f, level = 5,
+            id = "CarPlayer", name = "Tocus City Car", type = "Car", price = 2800f, level = 5,
             speed = 12f, boost = 18f,
             description = "The fastest way across the city. Stable at high speed on the long avenues.",
         },

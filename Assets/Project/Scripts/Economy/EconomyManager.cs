@@ -59,7 +59,19 @@ public class EconomyManager : MonoBehaviour
 
     [Header("Daily Costs")]
     [Tooltip("Tiền thuê mặt bằng trừ vào cuối mỗi ngày")]
-    public float dailyRent = 100f;
+    public float dailyRent = 40f;            // cân bằng 01/11: 100 -> 40
+    public float rentPerExpansion = 20f;     // mỗi phần mở rộng sàn đã mua +20/ngày
+
+    /// <summary>Tiền thuê hôm nay: thuê cơ bản + phần diện tích mở rộng đã mua.</summary>
+    public float CurrentRent
+    {
+        get
+        {
+            int n = 0;
+            foreach (string id in StoreExpansion.GetUnlockedIds()) if (id.StartsWith("expansion_storeexpansion")) n++;
+            return dailyRent + rentPerExpansion * n;
+        }
+    }
 
     public float Money { get; private set; }
     public DailySummary Today { get; private set; }
@@ -131,7 +143,7 @@ public class EconomyManager : MonoBehaviour
     /// <summary>Chốt sổ cuối ngày: trừ tiền thuê, lưu báo cáo, mở sổ ngày mới.</summary>
     public DailySummary CloseDay()
     {
-        Charge(dailyRent, MoneyCategory.Rent, "Daily rent");
+        Charge(CurrentRent, MoneyCategory.Rent, "Daily rent");
         Today.closingBalance = Money;
 
         DailySummary closed = Today;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shelf
   m_EditorClassIdentifier: Assembly-CSharp::FurnitureData
   displayName: Shelf
-  price: 250
+  price: 175
   requiredLevel: 1
   prefab: {fileID: 1273919749994917257, guid: f7a4c2de1788cb74fbb2c651c499139d, type: 3}
   displayType: Shelf
