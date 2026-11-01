@@ -52,6 +52,7 @@ public class DayReportPanel : MonoBehaviour
             leftText.text += $"\nRating:  {rating.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)} / 5  ({reviewCount})";
         string mix = ReviewManager.VisitorMix(s.day);
         if (mix.Length > 0) leftText.text += $"\n<size=80%>Visitors: {mix}</size>";
+        if (s.spoiledItems > 0) leftText.text += $"\n<color=#FF8A7A>Spoiled: {s.spoiledItems} item(s), {F(s.spoiledValue)} lost</color>";
         rightText.text =
             "<b>Expenses</b>\n" +
             $"Products:  {F(-s.Get(MoneyCategory.Supplies))}\n" +

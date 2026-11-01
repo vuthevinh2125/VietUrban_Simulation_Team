@@ -19,6 +19,7 @@ public class Janitor : MonoBehaviour
     public float moveTimeout = 30f;
 
     private static readonly HashSet<DirtSpot> claimed = new HashSet<DirtSpot>();
+    private static readonly HashSet<Shelf> claimedShelves = new HashSet<Shelf>(); // kệ có hàng hết hạn đang có người đi dọn
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int SweepingHash = Animator.StringToHash("Sweeping");
 
@@ -34,7 +35,7 @@ public class Janitor : MonoBehaviour
     private Quaternion sweepBaseRot;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics() => claimed.Clear();
+    private static void ResetStatics() { claimed.Clear(); claimedShelves.Clear(); }
 
     void Awake()
     {
@@ -120,6 +121,22 @@ public class Janitor : MonoBehaviour
         target = FindDirt();
         if (target == null)
         {
+            // Hết vết bẩn: đi dọn hàng hết hạn trên kệ (nếu có), không thì về chỗ nghỉ
+            Shelf bad = FindSpoiledShelf();
+            if (bad != null)
+            {
+                claimedShelves.Add(bad);
+                yield return MoveTo(bad.transform.position, 1.6f);
+                if (bad != null && Flat(transform.position, bad.transform.position) <= 2.5f)
+                {
+                    Face(bad.transform.position);
+                    yield return new WaitForSeconds(1.5f);
+                    if (bad != null) FreshnessManager.ThrowAway(bad);
+                }
+                claimedShelves.Remove(bad);
+                claimedShelves.RemoveWhere(x => x == null);
+                yield break;
+            }
             yield return GoIdle();
             yield return new WaitForSeconds(2f);
             yield break;
@@ -154,6 +171,20 @@ public class Janitor : MonoBehaviour
         foreach (DirtSpot s in DirtManager.Spots)
         {
             if (s == null || claimed.Contains(s)) continue;
+            float d = (s.transform.position - transform.position).sqrMagnitude;
+            if (d < bestD) { bestD = d; best = s; }
+        }
+        return best;
+    }
+
+    /// <summary>Kệ gần nhất có hàng hết hạn, chưa có nhân viên khác nhận.</summary>
+    private Shelf FindSpoiledShelf()
+    {
+        Shelf best = null;
+        float bestD = float.MaxValue;
+        foreach (Shelf s in StockManager.Shelves)
+        {
+            if (s == null || claimedShelves.Contains(s) || !s.Perishable || s.SpoiledCount == 0) continue;
             float d = (s.transform.position - transform.position).sqrMagnitude;
             if (d < bestD) { bestD = d; best = s; }
         }

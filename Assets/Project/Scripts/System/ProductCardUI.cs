@@ -66,7 +66,9 @@ public class ProductCardUI : MonoBehaviour
             brandText.richText = true;
             brandText.textWrappingMode = TextWrappingModes.NoWrap;
             brandText.overflowMode = TextOverflowModes.Overflow;
-            brandText.text = $"{itemData.brand}  <color=#9FB0C0>· {DemandModel.GroupName(DemandModel.GroupOf(itemData))}</color>";
+            string life = Freshness.CardTag(itemData);
+            brandText.text = $"{itemData.brand}  <color=#9FB0C0>· {DemandModel.GroupName(DemandModel.GroupOf(itemData))}</color>" +
+                             (life.Length > 0 ? $"  <color=#FFB36B>· {life}</color>" : "");
         }
         TextMeshProUGUI d = Badge(ref demandText, productNameText, "DemandTag");
         if (d != null) d.text = DemandModel.CardTag(DemandModel.Current(itemData));

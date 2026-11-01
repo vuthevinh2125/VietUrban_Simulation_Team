@@ -178,6 +178,13 @@ public class NPCShopper : MonoBehaviour
             yield return new WaitForSeconds(browseTime * Random.Range(0.7f, 1.4f));
 
             if (shelf.IsEmpty) continue;
+            // Hàng hết hạn trên kệ: khách không lấy, và thấy là bực (trừ điểm sạch sẽ khi đánh giá)
+            if (shelf.SpoiledCount > 0)
+            {
+                if (visit.sawSpoiled == 0) SpeechBubble.Show(transform, "Expired food?!", new Color(1f, 0.45f, 0.3f), agent.height + 0.35f);
+                visit.sawSpoiled++;
+            }
+            if (shelf.SellableCount <= 0) continue;
             ItemData item = shelf.CurrentItem;
             int take = Random.Range(1, 3);
             if (item != null)

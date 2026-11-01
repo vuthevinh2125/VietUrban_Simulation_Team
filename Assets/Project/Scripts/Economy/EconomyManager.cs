@@ -24,6 +24,8 @@ public class DailySummary
     public float expenses;          // số dương
     public int customersServed;
     public int itemsSold;
+    public int spoiledItems;        // hàng tươi quá hạn trong ngày (FreshnessManager)
+    public float spoiledValue;      // giá nhập của số hàng đó (hao hụt)
 
     public readonly Dictionary<MoneyCategory, float> byCategory = new Dictionary<MoneyCategory, float>();
 

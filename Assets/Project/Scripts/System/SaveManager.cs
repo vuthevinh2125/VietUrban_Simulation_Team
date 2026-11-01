@@ -19,8 +19,8 @@ public class SaveManager : MonoBehaviour
 
     // ================= Dữ liệu =================
     [Serializable] public class PriceEntry { public string item; public float price; }
-    [Serializable] public class ShelfEntry { public string path; public string name; public Vector3 pos; public string item; public int count; }
-    [Serializable] public class FurnitureEntry { public string data; public Vector3 pos; public Quaternion rot; public string item; public int count; }
+    [Serializable] public class ShelfEntry { public string path; public string name; public Vector3 pos; public string item; public int count; public List<float> ages; }
+    [Serializable] public class FurnitureEntry { public string data; public Vector3 pos; public Quaternion rot; public string item; public int count; public List<float> ages; }
     [Serializable] public class BoxEntry { public string item; public int count; public Vector3 pos; public Quaternion rot; }
     [Serializable] public class FurnitureBoxEntry { public string data; public Vector3 pos; public Quaternion rot; }
     [Serializable] public class BuiltInEntry { public string id; public Vector3 pos; public Quaternion rot; }
@@ -146,11 +146,11 @@ public class SaveManager : MonoBehaviour
             if (pf != null)
             {
                 if (pf.data == null) continue;
-                d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation, item = item, count = shelf.Count });
+                d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation, item = item, count = shelf.Count, ages = shelf.GetAges(Freshness.Now) });
             }
             else if (shelf.Count > 0)
             {
-                d.shelves.Add(new ShelfEntry { path = PathOf(shelf.transform), name = shelf.name, pos = shelf.transform.position, item = item, count = shelf.Count });
+                d.shelves.Add(new ShelfEntry { path = PathOf(shelf.transform), name = shelf.name, pos = shelf.transform.position, item = item, count = shelf.Count, ages = shelf.GetAges(Freshness.Now) });
             }
         }
         // Nội thất đã mua nhưng không có Shelf (phòng hờ)
@@ -260,6 +260,7 @@ public class SaveManager : MonoBehaviour
             if (target != null && items.TryGetValue(s.item, out ItemData it))
             {
                 target.FillInstant(it, s.count);
+                target.SetAges(s.ages, Freshness.Now); // hàng tươi giữ nguyên tuổi (save cũ không có thì coi như mới xếp)
                 filled.Add(target);
             }
             else
@@ -281,7 +282,7 @@ public class SaveManager : MonoBehaviour
             if (!string.IsNullOrEmpty(f.item) && f.count > 0 && items.TryGetValue(f.item, out ItemData it))
             {
                 Shelf shelf = go.GetComponent<Shelf>();
-                if (shelf != null) shelf.FillInstant(it, f.count);
+                if (shelf != null) { shelf.FillInstant(it, f.count); shelf.SetAges(f.ages, Freshness.Now); }
             }
         }
 

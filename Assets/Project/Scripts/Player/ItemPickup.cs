@@ -210,8 +210,22 @@ public class ItemPickup : MonoBehaviour
         if (shelf != null && shelf.CurrentItem != null)
         {
             ItemData it = shelf.CurrentItem;
+            // Hàng tươi: còn tươi bao lâu / bao nhiêu món đã hết hạn ([R] vứt đi)
+            int bad = shelf.SpoiledCount;
+            string fresh = "";
+            if (bad > 0) fresh = $"\n<color=#FF8A7A>{bad} expired</color>   [R] Throw away";
+            else if (shelf.Perishable)
+            {
+                float left = shelf.DaysLeft(Freshness.Now);
+                if (left >= 0f) fresh = left < 1f ? $"\n<color=#FFD54A>Expires in {left * 24f:0} h</color>" : $"\n<size=85%>Fresh for {left:0.0} more days</size>";
+            }
+            if (bad > 0 && Input.GetKeyDown(KeyCode.R))
+            {
+                int n = FreshnessManager.ThrowAway(shelf);
+                if (n > 0) ProgressHUD.Toast($"Threw away {n} expired {it.itemName}.");
+            }
             SetPrompt($"{it.itemName}  {shelf.Count}/{shelf.Capacity}\n" +
-                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(MarketPrices.Get(it))})\n[LMB] Set price{moveText}");
+                      $"Price {EconomyManager.Format(PriceManager.GetSellPrice(it))}  (Market {EconomyManager.Format(MarketPrices.Get(it))})\n[LMB] Set price{moveText}{fresh}");
             if (pressed)
             {
                 SetPrompt(null);

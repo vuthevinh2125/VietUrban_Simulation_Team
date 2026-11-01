@@ -30,7 +30,7 @@ public class ReviewManager : MonoBehaviour
     /// <summary>Những gì khách gặp trong một lần ghé (NPCShopper ghi lại).</summary>
     public class Visit
     {
-        public int wanted, got, tooExpensive, dirtySkips, pricey, greatPrice, maxDirt;
+        public int wanted, got, tooExpensive, dirtySkips, pricey, greatPrice, maxDirt, sawSpoiled;
         public bool noStock, checkedOut, gaveUpQueue;
         public float queueStart = -1f, queueSeconds;
         public string customerType = "";
@@ -136,7 +136,7 @@ public class ReviewManager : MonoBehaviour
         else r.checkout = 0f;
 
         // Vệ sinh
-        r.clean = Mathf.Clamp(5f - v.maxDirt * 0.4f - v.dirtySkips * 0.8f, 1f, 5f);
+        r.clean = Mathf.Clamp(5f - v.maxDirt * 0.4f - v.dirtySkips * 0.8f - v.sawSpoiled * 0.6f, 1f, 5f); // thấy hàng hết hạn trên kệ cũng bị chê
 
         float sum = 0f, weight = 0f;
         void Add(float score, float w) { if (score > 0f) { sum += score * w; weight += w; } }

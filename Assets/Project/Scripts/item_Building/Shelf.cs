@@ -29,6 +29,8 @@ public class Shelf : MonoBehaviour
     public float maxFitScale = 2.5f;
 
     private GameObject[] occupied;   // occupied[i] = món đang nằm ở slots[i]
+    private double[] placedAt;       // thời điểm (ngày game, Freshness.Now) món ở slots[i] được xếp lên kệ
+    private bool[] spoiled;          // món ở slots[i] đã quá hạn (hàng tươi)
     private ItemData currentItem;
     private Vector3 cell;            // kích thước 1 ô (x: ngang, y: khoảng tầng, z: sâu), mét
     private bool cellReady;
@@ -39,6 +41,131 @@ public class Shelf : MonoBehaviour
     public bool IsFull => Count >= Capacity;
     public bool IsEmpty => Count == 0;
     public string DisplayName => CurrentItem != null ? CurrentItem.itemName : "Empty";
+
+    // ================= Hạn dùng (hàng tươi) =================
+    /// <summary>Số ngày hàng trên kệ còn tươi (0 = không hỏng).</summary>
+    public float ShelfLife => Freshness.ShelfLifeDays(CurrentItem);
+    public bool Perishable => ShelfLife > 0f;
+
+    /// <summary>Số món đã quá hạn đang nằm trên kệ.</summary>
+    public int SpoiledCount
+    {
+        get
+        {
+            EnsureArray();
+            int n = 0;
+            for (int i = 0; i < occupied.Length; i++) if (occupied[i] != null && spoiled[i]) n++;
+            return n;
+        }
+    }
+
+    /// <summary>Số món khách còn mua được (chưa quá hạn).</summary>
+    public int SellableCount => Count - SpoiledCount;
+
+    /// <summary>Số ngày còn lại của món cũ nhất chưa hỏng (-1 nếu không có / không hỏng).</summary>
+    public float DaysLeft(double now)
+    {
+        float life = ShelfLife;
+        int i = OldestFreshSlot();
+        if (life <= 0f || i < 0) return -1f;
+        return Mathf.Max(0f, life - (float)(now - placedAt[i]));
+    }
+
+    /// <summary>Đánh dấu các món vừa quá hạn (đổi màu); trả về số món vừa hỏng.</summary>
+    public int UpdateFreshness(double now)
+    {
+        float life = ShelfLife;
+        if (life <= 0f) return 0;
+        EnsureArray();
+        int n = 0;
+        for (int i = 0; i < occupied.Length; i++)
+        {
+            if (occupied[i] == null || spoiled[i] || now - placedAt[i] < life) continue;
+            spoiled[i] = true;
+            TintSpoiled(occupied[i]);
+            n++;
+        }
+        if (n > 0) StockManager.NotifyChanged();
+        return n;
+    }
+
+    /// <summary>Vứt bỏ mọi món đã quá hạn; trả về số món đã vứt.</summary>
+    public int RemoveSpoiled()
+    {
+        EnsureArray();
+        int n = 0;
+        for (int i = 0; i < occupied.Length; i++)
+        {
+            if (occupied[i] == null || !spoiled[i]) continue;
+            Destroy(occupied[i]);
+            occupied[i] = null;
+            spoiled[i] = false;
+            n++;
+        }
+        if (n > 0)
+        {
+            if (IsEmpty && assignedItem == null) currentItem = null;
+            StockManager.NotifyChanged();
+        }
+        return n;
+    }
+
+    /// <summary>Tuổi (ngày) của từng món theo thứ tự ô, để lưu file.</summary>
+    public System.Collections.Generic.List<float> GetAges(double now)
+    {
+        EnsureArray();
+        var ages = new System.Collections.Generic.List<float>();
+        for (int i = 0; i < occupied.Length; i++) if (occupied[i] != null) ages.Add((float)(now - placedAt[i]));
+        return ages;
+    }
+
+    /// <summary>Đặt lại tuổi từng món sau khi nạp file (cùng thứ tự ô với GetAges).</summary>
+    public void SetAges(System.Collections.Generic.List<float> ages, double now)
+    {
+        if (ages == null) return;
+        EnsureArray();
+        int k = 0;
+        for (int i = 0; i < occupied.Length && k < ages.Count; i++)
+        {
+            if (occupied[i] == null) continue;
+            placedAt[i] = now - ages[k++];
+        }
+        UpdateFreshness(now);
+    }
+
+    /// <summary>Thử nghiệm (phím F10): làm mọi món trên kệ già thêm days ngày.</summary>
+    public void DebugAge(float days)
+    {
+        EnsureArray();
+        for (int i = 0; i < occupied.Length; i++) if (occupied[i] != null) placedAt[i] -= days;
+    }
+
+    private int OldestFreshSlot()
+    {
+        EnsureArray();
+        int best = -1;
+        for (int i = 0; i < occupied.Length; i++)
+            if (occupied[i] != null && !spoiled[i] && (best < 0 || placedAt[i] < placedAt[best])) best = i;
+        return best;
+    }
+
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor"), ColorId = Shader.PropertyToID("_Color");
+
+    /// <summary>Món hỏng: tối màu, ngả nâu (MaterialPropertyBlock, không tạo material mới).</summary>
+    private static void TintSpoiled(GameObject product)
+    {
+        var block = new MaterialPropertyBlock();
+        Color tint = new Color(0.55f, 0.45f, 0.3f);
+        foreach (Renderer r in product.GetComponentsInChildren<Renderer>())
+        {
+            Material m = r.sharedMaterial;
+            Color baseC = m != null && m.HasProperty(BaseColorId) ? m.GetColor(BaseColorId) : m != null && m.HasProperty(ColorId) ? m.color : Color.white;
+            r.GetPropertyBlock(block);
+            block.SetColor(BaseColorId, baseC * tint);
+            block.SetColor(ColorId, baseC * tint);
+            r.SetPropertyBlock(block);
+        }
+    }
 
     public int Count
     {
@@ -86,6 +213,7 @@ public class Shelf : MonoBehaviour
         reason = "";
         if (box == null) return false;
         if (IsEmpty) { reason = "Shelf is empty"; return false; }
+        if (SellableCount <= 0) { reason = "Only expired items left"; return false; }
         if (box.IsFull) { reason = "Box is full"; return false; }
         if (box.itemData != CurrentItem && !(box.itemData == null && box.IsEmpty))
         {
@@ -129,6 +257,8 @@ public class Shelf : MonoBehaviour
         if (prb != null) prb.isKinematic = true;
 
         occupied[index] = product;
+        placedAt[index] = Freshness.Now;
+        spoiled[index] = false;
         if (assignedItem == null && currentItem == null) currentItem = item;
 
         StartCoroutine(MoveItemSmoothly(product.transform, startPoint, target, placeAnimDuration));
@@ -140,11 +270,12 @@ public class Shelf : MonoBehaviour
     public bool TryTakeProduct(out GameObject product)
     {
         product = null;
-        int index = LastUsedSlot();
+        int index = LastUsedSlot(skipSpoiled: true); // món hỏng không lấy lại vào thùng được (chỉ vứt đi)
         if (index < 0) return false;
 
         product = occupied[index];
         occupied[index] = null;
+        spoiled[index] = false;
         product.transform.SetParent(null);
         product.transform.localScale = Vector3.one;
 
@@ -154,11 +285,18 @@ public class Shelf : MonoBehaviour
     }
 
     /// <summary>Khách lấy 1 món: món bị xoá khỏi kệ, trả về loại hàng để tính tiền.</summary>
+    /// <summary>Lấy món CŨ NHẤT chưa hỏng (xoay vòng hàng kiểu FIFO), món hỏng thì khách không lấy.</summary>
     public bool TryTakeForCustomer(out ItemData item)
     {
         item = CurrentItem;
-        if (!TryTakeProduct(out GameObject product)) { item = null; return false; }
+        int index = OldestFreshSlot();
+        if (index < 0) { item = null; return false; }
+        GameObject product = occupied[index];
+        occupied[index] = null;
+        spoiled[index] = false;
         Destroy(product);
+        if (IsEmpty && assignedItem == null) currentItem = null;
+        StockManager.NotifyChanged();
         return true;
     }
 
@@ -171,6 +309,7 @@ public class Shelf : MonoBehaviour
         {
             if (occupied[i] != null) Destroy(occupied[i]);
             occupied[i] = null;
+            spoiled[i] = false;
         }
         if (assignedItem == null) currentItem = null;
         StockManager.NotifyChanged();
@@ -214,9 +353,17 @@ public class Shelf : MonoBehaviour
         if (occupied == null || occupied.Length != Capacity)
         {
             var old = occupied;
+            var oldT = placedAt; var oldS = spoiled;
             occupied = new GameObject[Capacity];
+            placedAt = new double[Capacity];
+            spoiled = new bool[Capacity];
             if (old != null)
-                for (int i = 0; i < Mathf.Min(old.Length, occupied.Length); i++) occupied[i] = old[i];
+                for (int i = 0; i < Mathf.Min(old.Length, occupied.Length); i++)
+                {
+                    occupied[i] = old[i];
+                    if (oldT != null && i < oldT.Length) placedAt[i] = oldT[i];
+                    if (oldS != null && i < oldS.Length) spoiled[i] = oldS[i];
+                }
         }
     }
 
@@ -227,10 +374,10 @@ public class Shelf : MonoBehaviour
         return -1;
     }
 
-    private int LastUsedSlot()
+    private int LastUsedSlot(bool skipSpoiled = false)
     {
         EnsureArray();
-        for (int i = occupied.Length - 1; i >= 0; i--) if (occupied[i] != null) return i;
+        for (int i = occupied.Length - 1; i >= 0; i--) if (occupied[i] != null && !(skipSpoiled && spoiled[i])) return i;
         return -1;
     }
 
