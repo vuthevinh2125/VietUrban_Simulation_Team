@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Unity.Profiling;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Đo hiệu năng cho phần đánh giá trong report (chỉ trong Editor / Development Build).
@@ -15,13 +17,21 @@ using UnityEngine;
 ///  - gc_kb_frame: bộ nhớ cấp phát (rác cho GC) trung bình mỗi frame; gc_frames_pct: % số frame có cấp phát.
 ///  - draw_calls / setpass: số lệnh vẽ trung bình mỗi frame (minimap, bóng đèn ảnh hưởng trực tiếp chỉ số này).
 /// Bộ đếm nào không có trong bản đang chạy (vd. bản Release) thì để trống.
+///
+/// Chế độ đo cố định (benchmark) để các lần đo so sánh được với nhau:
+///  - Shift + F11: "bench-store"  - trong cửa hàng nhìn vào các dãy kệ, trời nắng, 12:00.
+///  - Ctrl + F11:  "bench-street" - ngoài phố nhìn về mặt tiền cửa hàng và đường, giông, 21:00 (cảnh nặng nhất).
+/// Game đưa người chơi tới vị trí / hướng nhìn cố định, khoá điều khiển, đặt thời tiết + giờ, chờ 3 giây cho
+/// ánh sáng / bóng ổn định rồi mới đo 60 giây; xong trả lại điều khiển. Muốn tự chọn chỗ đứng: đặt GameObject rỗng
+/// tên "BenchmarkPoint_Store" / "BenchmarkPoint_Street" trong scene (vị trí + hướng của nó được dùng thay mặc định).
+/// Cột "mode" trong csv ghi free / bench-store / bench-street.
 /// </summary>
 public class FpsLogger : MonoBehaviour
 {
     private const float Duration = 60f;
     private const string Header =
         "time,avg_fps,low1_fps,frames,clock,weather,customers,max_shadow_lights,resolution,quality," +
-        "cpu_main_ms_avg,cpu_main_ms_p99,gc_kb_frame_avg,gc_frames_pct,draw_calls_avg,setpass_avg";
+        "cpu_main_ms_avg,cpu_main_ms_p99,gc_kb_frame_avg,gc_frames_pct,draw_calls_avg,setpass_avg,mode,max_frame_ms,frames_over_50ms";
 
     private static FpsLogger instance;
     private readonly List<float> frameTimes = new List<float>(8000);
@@ -29,8 +39,10 @@ public class FpsLogger : MonoBehaviour
     private double gcBytes, drawCalls, setPass;
     private int gcFrames, gcSamples, drawSamples, setPassSamples;
     private ProfilerRecorder mainThread, gcAlloc, drawCallsRec, setPassRec;
-    private bool measuring;
+    private bool measuring, preparing;
     private float started;
+    private string mode = "free";
+    private PlayerController frozenPlayer;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -45,7 +57,14 @@ public class FpsLogger : MonoBehaviour
     {
         if (!measuring)
         {
-            if (Input.GetKeyDown(KeyCode.F11)) Begin();
+            if (!preparing && Input.GetKeyDown(KeyCode.F11))
+            {
+                bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+                if (shift) StartCoroutine(Benchmark(true));
+                else if (ctrl) StartCoroutine(Benchmark(false));
+                else { mode = "free"; Begin(); }
+            }
             return;
         }
 
@@ -63,7 +82,86 @@ public class FpsLogger : MonoBehaviour
         if (Time.unscaledTime - started >= Duration) Finish();
     }
 
-    void OnDestroy() => StopRecorders();
+    void OnDestroy()
+    {
+        StopRecorders();
+        PlayerController.InputFrozen = false;
+    }
+
+    // ================= Chế độ đo cố định =================
+    private IEnumerator Benchmark(bool store)
+    {
+        PlayerController pc = FindAnyObjectByType<PlayerController>();
+        if (pc == null || !pc.isActiveAndEnabled)
+        {
+            ProgressHUD.Toast("Benchmark: get off the vehicle and stand in the city first.");
+            yield break;
+        }
+        if (!BenchmarkPose(store, out Vector3 pos, out float yaw, out float pitch))
+        {
+            ProgressHUD.Toast("Benchmark: could not find the store entrance.");
+            yield break;
+        }
+        preparing = true;
+        mode = store ? "bench-store" : "bench-street";
+        frozenPlayer = pc;
+        PlayerController.InputFrozen = true;
+
+        WeatherSystem.ForceWeather(store ? WeatherSystem.Weather.Sunny : WeatherSystem.Weather.Storm);
+        // Giờ làm việc của cửa hàng có thể kết thúc trước khi trời tối hẳn (vd. đóng cửa 18:00) nên cảnh đêm
+        // chỉ ép giờ của ánh sáng (DayNightCycle) là 21:00, còn đồng hồ game đặt trong giờ làm việc.
+        if (GameManager.Instance != null) GameManager.Instance.DebugSetClock(12f);
+        DayNightCycle.DebugHourOverride = store ? 12f : 21f;
+        pc.SetPose(pos, yaw, pitch);
+        ProgressHUD.Toast($"Benchmark ({mode}): settling 3 s, then measuring 60 s - don't touch anything.");
+
+        float until = Time.unscaledTime + 3f;
+        while (Time.unscaledTime < until)
+        {
+            pc.SetPose(pos, yaw, pitch); // giữ nguyên chỗ (vật lý có thể đẩy nhẹ)
+            yield return null;
+        }
+        preparing = false;
+        Begin();
+    }
+
+    /// <summary>Vị trí đo: BenchmarkPoint_* nếu có trong scene, nếu không thì tính từ cửa ra vào và tâm các dãy kệ.</summary>
+    private static bool BenchmarkPose(bool store, out Vector3 pos, out float yaw, out float pitch)
+    {
+        pos = default; yaw = 0f; pitch = 0f;
+        GameObject marker = GameObject.Find(store ? "BenchmarkPoint_Store" : "BenchmarkPoint_Street");
+        if (marker != null)
+        {
+            pos = marker.transform.position;
+            Vector3 e = marker.transform.eulerAngles;
+            yaw = e.y;
+            pitch = e.x > 180f ? e.x - 360f : e.x;
+            return true;
+        }
+
+        Vector3 center = Vector3.zero; int n = 0;
+        foreach (Shelf sh in StockManager.Shelves) if (sh != null) { center += sh.transform.position; n++; }
+        EntranceDoor door = null; float best = float.MaxValue;
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None))
+        {
+            float dist = n > 0 ? Vector3.Distance(d.transform.position, center / n) : 0f;
+            if (dist < best) { best = dist; door = d; }
+        }
+        if (door == null || n == 0) return false;
+        center /= n;
+        Vector3 doorPos = door.transform.position;
+        Vector3 inward = center - doorPos; inward.y = 0f;
+        if (inward.sqrMagnitude < 0.01f) return false;
+        inward.Normalize();
+
+        Vector3 want = store ? doorPos + inward * 3f : doorPos - inward * 10f;
+        if (!NavMesh.SamplePosition(want, out NavMeshHit hit, 4f, NavMesh.AllAreas)) return false;
+        pos = hit.position + Vector3.up * 0.05f;
+        // Trong nhà: nhìn vào các dãy kệ. Ngoài phố: đứng cách cửa 10 m, quay lại nhìn mặt tiền (cả hai đều nhìn theo hướng "vào trong")
+        yaw = Mathf.Atan2(inward.x, inward.z) * Mathf.Rad2Deg;
+        pitch = store ? 8f : 0f;
+        return true;
+    }
 
     private void Begin()
     {
@@ -90,6 +188,9 @@ public class FpsLogger : MonoBehaviour
     {
         measuring = false;
         StopRecorders();
+        if (frozenPlayer != null) { PlayerController.InputFrozen = false; frozenPlayer = null; }
+        float lightHour = DayNightCycle.DebugHourOverride; // giờ ánh sáng bị ép trong chế độ đo cố định (nếu có)
+        DayNightCycle.DebugHourOverride = -1f;
         if (frameTimes.Count == 0) return;
 
         float total = 0f;
@@ -103,6 +204,9 @@ public class FpsLogger : MonoBehaviour
         float worst = 0f;
         for (int i = 0; i < n; i++) worst += sorted[i];
         float lowFps = n / Mathf.Max(0.0001f, worst);
+        int spikes = 0;
+        foreach (float t in frameTimes) if (t > 0.05f) spikes++;   // frame lâu hơn 50 ms = khựng thấy rõ
+        float maxMs = sorted[0] * 1000f;
 
         var inv = CultureInfo.InvariantCulture;
         string F(double v, string fmt = "0.00") => v.ToString(fmt, inv);
@@ -121,13 +225,14 @@ public class FpsLogger : MonoBehaviour
         string dc = drawSamples > 0 ? F(drawCalls / drawSamples, "0") : "";
         string sp = setPassSamples > 0 ? F(setPass / setPassSamples, "0") : "";
 
-        string clock = GameManager.Instance != null ? GameManager.Instance.ClockHours.ToString("0.00", inv) : "";
+        string clock = lightHour >= 0f ? lightHour.ToString("0.00", inv)
+                     : GameManager.Instance != null ? GameManager.Instance.ClockHours.ToString("0.00", inv) : "";
         string weather = WeatherSystem.WeatherName(WeatherSystem.CurrentWeather);
         int customers = NPCShopper.Active.Count;
         var budget = FindAnyObjectByType<LightShadowBudget>();
         string shadows = budget != null ? budget.maxShadowLights.ToString(inv) : "";
 
-        ProgressHUD.Toast($"FPS test: average {avgFps.ToString("0.0", inv)}, 1% low {lowFps.ToString("0.0", inv)} ({frameTimes.Count} frames)" +
+        ProgressHUD.Toast($"FPS test [{mode}]: average {avgFps.ToString("0.0", inv)}, 1% low {lowFps.ToString("0.0", inv)} ({frameTimes.Count} frames)" +
                           (cpuAvg.Length > 0 ? $"  ·  CPU {cpuAvg} ms" : "") + (gcKb.Length > 0 ? $"  ·  GC {gcKb} KB/frame" : ""));
 
         try
@@ -143,7 +248,7 @@ public class FpsLogger : MonoBehaviour
                     avgFps.ToString("0.0", inv), lowFps.ToString("0.0", inv), frameTimes.Count.ToString(inv),
                     clock, weather, customers.ToString(inv), shadows,
                     $"{Screen.width}x{Screen.height}", QualitySettings.names[QualitySettings.GetQualityLevel()],
-                    cpuAvg, cpuP99, gcKb, gcPct, dc, sp));
+                    cpuAvg, cpuP99, gcKb, gcPct, dc, sp, mode, F(maxMs, "0.0"), spikes.ToString(inv)));
             }
             Debug.Log($"[FpsLogger] Saved to {path}");
         }

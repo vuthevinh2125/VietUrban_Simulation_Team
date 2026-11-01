@@ -113,8 +113,10 @@ public class WeatherSystem : MonoBehaviour
                 nextFlash = Time.time + UnityEngine.Random.Range(6f, 16f);
                 flashUntil = Time.time + 0.18f;
             }
+            // Đèn chớp luôn BẬT suốt cơn giông, chỉ đổi cường độ: bật / tắt một đèn directional làm đổi số đèn
+            // trong cảnh -> URP đổi biến thể shader mỗi lần chớp (gây khựng). Đổi cường độ thì không.
             bool on = Time.time < flashUntil;
-            flashLight.enabled = on;
+            if (!flashLight.enabled) flashLight.enabled = true;
             flashLight.intensity = on ? 2.2f : 0f;
         }
         else if (flashLight.enabled) flashLight.enabled = false;
@@ -128,6 +130,15 @@ public class WeatherSystem : MonoBehaviour
     }
 
     // ================= Tính thời tiết của ngày =================
+    /// <summary>Đặt thời tiết cho hôm nay (như phím F6; dùng cho chế độ đo hiệu năng cố định).</summary>
+    public static void ForceWeather(Weather w)
+    {
+        if (Instance == null) return;
+        Instance.forcedWeather = (int)w;
+        GameManager gm = GameManager.Instance;
+        Instance.ApplyDay(gm != null ? gm.currentDay : Mathf.Max(1, Instance.appliedDay));
+    }
+
     private void ApplyDay(int day)
     {
         appliedDay = day;

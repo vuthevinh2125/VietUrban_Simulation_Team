@@ -97,8 +97,15 @@ public class DayNightCycle : MonoBehaviour
         return sunLight;
     }
 
+    /// <summary>(Chỉ dùng khi đo hiệu năng) ép giờ hiển thị ánh sáng, không đổi đồng hồ của game. Âm = tắt.</summary>
+    public static float DebugHourOverride = -1f;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetDebugHour() => DebugHourOverride = -1f;
+
     private static float CurrentHour()
     {
+        if (DebugHourOverride >= 0f) return DebugHourOverride;
         GameManager gm = GameManager.Instance;
         return gm != null ? gm.ClockHours : 12f;
     }

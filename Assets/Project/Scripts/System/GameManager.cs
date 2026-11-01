@@ -156,6 +156,17 @@ public class GameManager : MonoBehaviour
     // ================= Mở / đóng cửa hàng =================
     public void ToggleStore() => SetStoreOpen(!storeOpen);
 
+    /// <summary>
+    /// (Chỉ dùng khi thử nghiệm) đặt giờ trong ngày, giới hạn trong giờ làm việc, không áp dụng khi đã tới giờ đóng cửa.
+    /// Dùng cho chế độ đo hiệu năng cố định để ánh sáng ngày / đêm giống nhau giữa các lần đo.
+    /// </summary>
+    public void DebugSetClock(float hours)
+    {
+        if (closingTimeReached || dayEnded || isGameOver) return;
+        clockMinutes = Mathf.Clamp(hours * 60f, OpenMinutes, OpenMinutes + WorkMinutes - 5f);
+        UpdateUI();
+    }
+
     public bool CanToggleStore => !closingTimeReached && !dayEnded && !isGameOver;
 
     public void SetStoreOpen(bool open, bool force = false)
