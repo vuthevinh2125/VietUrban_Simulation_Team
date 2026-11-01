@@ -251,9 +251,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private int clockTextKey = int.MinValue; // phút + ngày + trạng thái lần dựng chữ trước
+
+    /// <summary>Chữ đồng hồ chỉ dựng lại khi sang phút mới / đổi ngày / đổi trạng thái (trước đây dựng mỗi frame -> rác cho GC).</summary>
     private void UpdateClockText()
     {
         if (timeTextUI == null) return;
+        int state = storeOpen ? 1 : (closingTimeReached ? 2 : 0);
+        int key = (currentDay * 1440 + Mathf.FloorToInt(clockMinutes) % 1440) * 3 + state;
+        if (key == clockTextKey) return;
+        clockTextKey = key;
         string dateString = StartDate.AddDays(currentDay - 1).ToString("yyyy.MM.dd");
         string status = storeOpen ? "<color=#5BE36B>OPEN</color>" : (closingTimeReached ? "<color=#FFB347>CLOSING</color>" : "<color=#FF6B6B>CLOSED</color>");
         timeTextUI.text = $"{ClockString}  {status}\n{dateString}";
