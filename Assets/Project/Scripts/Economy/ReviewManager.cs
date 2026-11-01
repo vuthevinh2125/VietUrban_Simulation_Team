@@ -122,6 +122,24 @@ public class ReviewManager : MonoBehaviour
             type = v.customerType,
         };
 
+        float overall = Score(v, r);
+        overall += UnityEngine.Random.Range(-0.35f, 0.35f); // mỗi người một tính
+        r.stars = Mathf.Clamp(Mathf.RoundToInt(overall), 1, 5);
+        r.comment = Comment(r, v);
+
+        Instance.reviews.Add(r);
+        if (Instance.reviews.Count > KeepMax) Instance.reviews.RemoveRange(0, Instance.reviews.Count - KeepMax);
+        Instance.RefreshHud();
+        OnChanged?.Invoke();
+        return r;
+    }
+
+    /// <summary>
+    /// Chấm điểm từng tiêu chí (ghi vào r.stock / price / checkout / clean, 1..5, 0 = không áp dụng) và trả về điểm chung
+    /// (trung bình có trọng số 0.3 / 0.3 / 0.25 / 0.15, CHƯA cộng độ ngẫu nhiên). Hàm thuần -> test EditMode.
+    /// </summary>
+    public static float Score(Visit v, Review r)
+    {
         // Hàng hoá
         int shortfall = Mathf.Max(0, v.wanted - v.got - v.tooExpensive - v.dirtySkips);
         r.stock = v.got == 0 && v.noStock ? 1f : Mathf.Clamp(5f - shortfall * 1.2f, 1f, 5f);
@@ -144,16 +162,7 @@ public class ReviewManager : MonoBehaviour
         Add(r.price, 0.3f);
         Add(r.checkout, 0.25f);
         Add(r.clean, 0.15f);
-        float overall = weight > 0f ? sum / weight : 3f;
-        overall += UnityEngine.Random.Range(-0.35f, 0.35f); // mỗi người một tính
-        r.stars = Mathf.Clamp(Mathf.RoundToInt(overall), 1, 5);
-        r.comment = Comment(r, v);
-
-        Instance.reviews.Add(r);
-        if (Instance.reviews.Count > KeepMax) Instance.reviews.RemoveRange(0, Instance.reviews.Count - KeepMax);
-        Instance.RefreshHud();
-        OnChanged?.Invoke();
-        return r;
+        return weight > 0f ? sum / weight : 3f;
     }
 
     private static readonly string[] Names =
