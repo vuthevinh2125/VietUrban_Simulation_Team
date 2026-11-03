@@ -35,6 +35,7 @@ public class VehicleManager : MonoBehaviour
         public Vector4 glassUv;
         public Vector2 glassZ;
         public float glassMinH;
+        public string plateTexture;  // thay biển số kiểu Mỹ bằng biển Việt Nam (Resources), vật liệu "Car_Number_Mat"
     }
 
     public static readonly Entry[] Catalog =
@@ -54,7 +55,7 @@ public class VehicleManager : MonoBehaviour
         new Entry
         {
             id = "SedanPlayer", name = "Classic Sedan", type = "Car", price = 1800f, level = 4,
-            speed = 11f, boost = 16f, template = "CarPlayer", model = "Vehicles/Sedan", parkSlot = 1,
+            speed = 11f, boost = 16f, template = "CarPlayer", model = "Vehicles/Sedan", parkSlot = 1, plateTexture = "Vehicles/PlateVN",
             description = "A roomy family sedan. The cheapest way to drive a car on deliveries.",
         },
         new Entry
@@ -157,6 +158,7 @@ public class VehicleManager : MonoBehaviour
         go.name = e.id;
         ModelFit.HideMeshes(go.transform);
         Transform skin = ModelFit.Attach(go.transform, model, body, e.modelYaw);
+        if (!string.IsNullOrEmpty(e.plateTexture)) VehicleLivery.Swap(skin, "Car_Number_Mat", e.plateTexture);
         if (e.glassUv != Vector4.zero)
         {
             int n = VehicleGlass.Apply(skin, e.glassUv, e.glassZ, e.glassMinH);

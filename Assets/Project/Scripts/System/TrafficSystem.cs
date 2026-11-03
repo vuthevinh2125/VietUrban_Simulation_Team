@@ -35,6 +35,8 @@ public class TrafficSystem : MonoBehaviour
     private readonly List<GameObject> templates = new List<GameObject>();
     private GameObject ambulanceTemplate;     // xe cứu thương (Resources/Vehicles/Ambulance) dựng trên khung "Simple Retro Car"
     [Range(0f, 1f)] public float ambulanceChance = 0.08f;
+    private GameObject policeTemplate;        // xe tuần tra CSGT Việt Nam (xe cảnh sát Mỹ đổi áo, VehicleLivery)
+    [Range(0f, 1f)] public float policeChance = 0.05f;
     private static readonly HashSet<Transform> carRoots = new HashSet<Transform>();
 
     // Bộ đệm dùng chung cho tia / cầu quét (không tạo mảng mới mỗi lần -> không sinh rác cho GC)
@@ -133,27 +135,41 @@ public class TrafficSystem : MonoBehaviour
             GameObject g = VehicleManager.FindObject(n); // xe người chơi chưa mua bị ẩn nhưng vẫn làm mẫu được
             if (g != null) templates.Add(g);
         }
-        // Xe cứu thương: nhân bản khung ô tô mẫu (đang tắt, cùng chỗ nên tính độ cao như ô tô), thay vỏ bằng model xe cứu thương
+        // Xe đặc biệt: nhân bản khung ô tô mẫu (đang tắt, cùng chỗ nên tính độ cao như ô tô), thay vỏ bằng model khác
         GameObject carBase = GameObject.Find("Simple Retro Car");
-        GameObject amb = Resources.Load<GameObject>("Vehicles/Ambulance");
-        if (carBase != null && amb != null && ModelFit.MeshBounds(carBase.transform, carBase.transform, out Bounds body))
+        // Xe cứu thương: model quay mặt về -Z nên xoay 180°; dài hơn ô tô con ~25%
+        ambulanceTemplate = SkinTemplate(carBase, "Vehicles/Ambulance", "Ambulance", 180f, 1.25f);
+        // Xe tuần tra CSGT: thân trắng, dải xanh, chữ "CẢNH SÁT GIAO THÔNG" (Thông tư 65/2020/TT-BCA), biển nền xanh
+        policeTemplate = SkinTemplate(carBase, "Vehicles/Police", "PoliceVN", 0f, 1.15f);
+        if (policeTemplate != null)
         {
-            var holder = new GameObject("_AmbulanceHolder");
-            holder.SetActive(false);
-            ambulanceTemplate = Instantiate(carBase, carBase.transform.position, carBase.transform.rotation, holder.transform);
-            ambulanceTemplate.SetActive(false);
-            ambulanceTemplate.transform.SetParent(transform, true);
-            Destroy(holder);
-            ambulanceTemplate.name = "Ambulance";
-            ModelFit.HideMeshes(ambulanceTemplate.transform);
-            ModelFit.Attach(ambulanceTemplate.transform, amb, body, 180f, 1.25f); // model quay mặt về -Z nên xoay 180°; dài hơn ô tô con ~25%
+            VehicleLivery.Swap(policeTemplate.transform, "Police_Mat", "Vehicles/PoliceVN");
+            VehicleLivery.Swap(policeTemplate.transform, "Car_Number_Mat", "Vehicles/PlatePoliceVN");
         }
+    }
+
+    private GameObject SkinTemplate(GameObject carBase, string modelResource, string name, float yaw, float lengthScale)
+    {
+        GameObject model = Resources.Load<GameObject>(modelResource);
+        if (carBase == null || model == null || !ModelFit.MeshBounds(carBase.transform, carBase.transform, out Bounds body)) return null;
+        var holder = new GameObject("_SkinHolder");
+        holder.SetActive(false);
+        GameObject t = Instantiate(carBase, carBase.transform.position, carBase.transform.rotation, holder.transform);
+        t.SetActive(false);
+        t.transform.SetParent(transform, true);
+        Destroy(holder);
+        t.name = name;
+        ModelFit.HideMeshes(t.transform);
+        ModelFit.Attach(t.transform, model, body, yaw, lengthScale);
+        return t;
     }
 
     private void SpawnCar(int index)
     {
         // Xe máy nhiều hơn ô tô (đường phố Việt Nam)
-        GameObject template = ambulanceTemplate != null && Random.value < ambulanceChance ? ambulanceTemplate
+        float roll = Random.value;
+        GameObject template = ambulanceTemplate != null && roll < ambulanceChance ? ambulanceTemplate
+            : policeTemplate != null && roll < ambulanceChance + policeChance ? policeTemplate
             : templates[Random.value < 0.65f ? Random.Range(0, Mathf.Max(1, templates.Count - 1)) : templates.Count - 1];
         float yOffset = template.transform.position.y - GroundY(template.transform.position, 0.1f);
 
