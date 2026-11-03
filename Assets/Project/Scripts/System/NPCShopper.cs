@@ -40,6 +40,8 @@ public class NPCShopper : MonoBehaviour
     [Header("Kẻ trộm (giống Supermarket Simulator)")]
     [Tooltip("Tỉ lệ khách lấy hàng rồi bỏ chạy không trả tiền (từ ngày 2 trở đi)")]
     [Range(0f, 1f)] public float thiefChance = 0.07f;
+    [Tooltip("Đi tay không (không lấy giỏ / xe đẩy) - vd. khách du lịch chỉ mua vài món lưu niệm")]
+    public bool handsFree;
     [Tooltip("Kẻ trộm chạy nhanh gấp bao nhiêu lần")]
     public float fleeSpeedMultiplier = 1.05f;
     [Tooltip("Ra khỏi cửa rồi kẻ trộm còn chạy thêm bao xa (m) mới biến mất - thời gian để người chơi đuổi theo")]
@@ -153,9 +155,12 @@ public class NPCShopper : MonoBehaviour
         SetState(NPCState.Shopping);
         int wanted = Random.Range(minItemsToBuy, maxItemsToBuy + 1);
         visit.wanted = wanted;
-        carrier = GetComponent<ShoppingCarrier>();
-        if (carrier == null) carrier = gameObject.AddComponent<ShoppingCarrier>();
-        carrier.Init(wanted); // xách giỏ hoặc đẩy xe
+        if (!handsFree)
+        {
+            carrier = GetComponent<ShoppingCarrier>();
+            if (carrier == null) carrier = gameObject.AddComponent<ShoppingCarrier>();
+            carrier.Init(wanted); // xách giỏ hoặc đẩy xe
+        }
         var visited = new HashSet<Shelf>();
         int attempts = 0;
 
@@ -222,7 +227,7 @@ public class NPCShopper : MonoBehaviour
                 if (shelf.TryTakeForCustomer(out ItemData got) && got != null)
                 {
                     basket.Add(got);
-                    carrier.AddItem(got);
+                    if (carrier != null) carrier.AddItem(got);
                 }
         }
 

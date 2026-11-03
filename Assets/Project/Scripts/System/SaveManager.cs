@@ -50,6 +50,7 @@ public class SaveManager : MonoBehaviour
         public List<BusinessStats.DayRecord> stats = new List<BusinessStats.DayRecord>();
         public List<ReviewManager.Review> reviews = new List<ReviewManager.Review>();
         public List<string> vehicles = new List<string>();
+        public List<string> seenCutscenes = new List<string>(); // đoạn phim sự kiện đã chiếu (StoreEvents) - chỉ chiếu 1 lần
         public List<MarketPrices.Entry> market = new List<MarketPrices.Entry>();
     }
 
@@ -133,7 +134,8 @@ public class SaveManager : MonoBehaviour
             market = MarketPrices.Export(),
             stats = BusinessStats.Export(),
             reviews = ReviewManager.Export(),
-            vehicles = VehicleManager.Export()
+            vehicles = VehicleManager.Export(),
+            seenCutscenes = StoreEvents.ExportSeen()
         };
 
         foreach (var kv in PriceManager.AllCustomPrices)
@@ -210,6 +212,7 @@ public class SaveManager : MonoBehaviour
         BusinessStats.Import(d.stats);
         ReviewManager.Import(d.reviews);
         VehicleManager.Import(d.vehicles);
+        StoreEvents.ImportSeen(d.seenCutscenes);
 
         PriceManager.ClearCustomPrices();
         foreach (PriceEntry p in d.prices)
@@ -325,6 +328,7 @@ public class SaveManager : MonoBehaviour
     public static void DeleteSave()
     {
         if (File.Exists(SavePath)) File.Delete(SavePath);
+        StoreEvents.ResetSeen(); // New Game: các đoạn phim sự kiện được xem lại từ đầu
         Debug.Log("[Save] Đã xoá file lưu.");
     }
 
