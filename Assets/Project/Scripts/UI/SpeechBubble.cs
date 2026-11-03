@@ -13,6 +13,9 @@ public class SpeechBubble : MonoBehaviour
     void OnEnable() => Active.Add(this);
     void OnDisable() => Active.Remove(this);
 
+    /// <summary>Camera mà bong bóng quay mặt về (cảnh mở đầu dùng camera riêng); null = Camera.main.</summary>
+    public static Camera ViewCamera;
+
     public static void Show(Transform target, string text, Color color, float height = 2.1f, float duration = 2.5f)
     {
         if (target == null) return;
@@ -50,7 +53,7 @@ public class SpeechBubble : MonoBehaviour
     {
         if (target == null || Time.time > endTime) { Destroy(gameObject); return; }
         transform.position = target.position + Vector3.up * (height + Mathf.Sin(Time.time * 3f) * 0.03f);
-        Camera cam = Camera.main;
+        Camera cam = ViewCamera != null ? ViewCamera : Camera.main;
         if (cam != null) transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
     }
 }

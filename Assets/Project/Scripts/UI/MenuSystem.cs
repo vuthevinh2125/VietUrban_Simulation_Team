@@ -115,10 +115,14 @@ public class MenuSystem : MonoBehaviour
         StartTutorial();
     }
 
+    /// <summary>New Game: chiếu cảnh mở đầu (cốt truyện, [Space] bỏ qua) rồi mới bắt đầu hướng dẫn.</summary>
     private static void StartTutorial()
     {
-        ProgressHUD.Toast("Welcome to your new supermarket!");
-        if (TutorialManager.Instance != null) TutorialManager.Instance.Begin();
+        IntroCutscene.Play(() =>
+        {
+            ProgressHUD.Toast("Welcome to your new supermarket!");
+            if (TutorialManager.Instance != null) TutorialManager.Instance.Begin();
+        });
     }
 
     private static string SaveSummary()
