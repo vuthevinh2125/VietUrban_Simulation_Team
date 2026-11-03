@@ -191,13 +191,73 @@ public class PlayerTools : MonoBehaviour
         return root;
     }
 
-    /// <summary>Gậy bóng chày to bản: cán quấn băng đen, núm chặn, thân gỗ sẫm phình to, đai thép + đinh tán.</summary>
+    /// <summary>
+    /// Gậy bóng chày: dùng model "baseball_bat_001" của gói Weapons FREE (ithappy, Standard Unity Asset Store EULA),
+    /// bản sao ở Resources/Tools/PlayerBat. Thiếu file thì quay về gậy dựng bằng khối hình học như trước.
+    /// Gốc toạ độ của gậy: trục Y chạy từ cán (dưới, y = -0.28) lên đầu gậy, dài 0.86 m (giống gậy cũ nên động tác vung giữ nguyên).
+    /// </summary>
     private static Transform BuildBat(Transform parent)
     {
         var root = new GameObject("Bat").transform;
         root.SetParent(parent, false);
         root.localPosition = new Vector3(0.48f, -0.42f, 0.85f);
         root.localScale = Vector3.one * 0.9f;
+
+        GameObject model = Resources.Load<GameObject>("Tools/PlayerBat");
+        if (model != null && FitAlongY(root, model, -0.28f, 0.86f)) return root;
+        return BuildPrimitiveBat(root);
+    }
+
+    /// <summary>
+    /// Đặt model dài (gậy, chổi...) vào root: trục dài của model quay theo +Y, đầu gần gốc pivot của model (cán) ở dưới,
+    /// co giãn cho dài đúng length, đáy ở y = bottomY. Dùng khung mesh (không cần mesh Read/Write).
+    /// </summary>
+    private static bool FitAlongY(Transform root, GameObject prefab, float bottomY, float length)
+    {
+        var holder = new GameObject("Model").transform;
+        holder.SetParent(root, false);
+        GameObject m = Object.Instantiate(prefab, holder, false);
+        foreach (Collider c in m.GetComponentsInChildren<Collider>()) Object.Destroy(c);
+        foreach (Rigidbody rb in m.GetComponentsInChildren<Rigidbody>()) Object.Destroy(rb);
+
+        // Khung bao của mọi mesh trong toạ độ holder
+        bool any = false;
+        Vector3 min = Vector3.zero, max = Vector3.zero;
+        Matrix4x4 toHolder = holder.worldToLocalMatrix;
+        foreach (MeshFilter mf in m.GetComponentsInChildren<MeshFilter>())
+        {
+            if (mf.sharedMesh == null) continue;
+            Bounds b = mf.sharedMesh.bounds;
+            Matrix4x4 mtx = toHolder * mf.transform.localToWorldMatrix;
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 corner = b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                Vector3 q = mtx.MultiplyPoint3x4(corner);
+                if (!any) { min = max = q; any = true; } else { min = Vector3.Min(min, q); max = Vector3.Max(max, q); }
+            }
+            Renderer r = mf.GetComponent<Renderer>();
+            if (r != null) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+        if (!any) { Object.Destroy(holder.gameObject); return false; }
+
+        Vector3 size = max - min;
+        int k = size.x >= size.y && size.x >= size.z ? 0 : size.y >= size.z ? 1 : 2;
+        // Pivot của model (gốc holder) nằm gần đầu cán: đầu nào gần 0 hơn là cán
+        bool handleAtMin = Mathf.Abs(min[k]) <= Mathf.Abs(max[k]);
+        Vector3 axis = Vector3.zero; axis[k] = handleAtMin ? 1f : -1f;   // hướng từ cán lên đầu gậy
+        Vector3 handle = (min + max) * 0.5f; handle[k] = handleAtMin ? min[k] : max[k];
+
+        float scale = length / Mathf.Max(0.001f, size[k]);
+        Quaternion rot = Quaternion.FromToRotation(axis, Vector3.up);
+        holder.localRotation = rot;
+        holder.localScale = Vector3.one * scale;
+        holder.localPosition = new Vector3(0f, bottomY, 0f) - rot * (handle * scale);
+        return true;
+    }
+
+    /// <summary>Gậy bóng chày to bản dựng bằng khối hình học (dự phòng khi thiếu model): cán quấn băng đen, thân gỗ sẫm, đai thép + đinh tán.</summary>
+    private static Transform BuildPrimitiveBat(Transform root)
+    {
         Color wood = new Color(0.36f, 0.2f, 0.1f), woodLight = new Color(0.5f, 0.3f, 0.15f), tape = new Color(0.08f, 0.08f, 0.09f),
               steel = new Color(0.62f, 0.64f, 0.68f), red = new Color(0.78f, 0.1f, 0.08f);
 

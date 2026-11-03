@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5073c6c842e775d40a00802b8727513e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 2200
+  packageName: Modern Sports Car 4
+  packageVersion: 1.4
+  assetPath: Assets/Car4/FBX/Materials/Car4-lambert2.mat
+  uploadId: 25933

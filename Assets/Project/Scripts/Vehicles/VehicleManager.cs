@@ -23,6 +23,18 @@ public class VehicleManager : MonoBehaviour
         public int level;
         public float speed, boost; // tốc độ thường / tăng tốc (đơn vị của PlayerCarController)
         public bool starter;
+        // Xe "thay vỏ": nhân bản xe mẫu trong scene (template) để có sẵn phần lái / camera / va chạm,
+        // rồi thay hình bằng model trong Resources (model). parkSlot: đỗ nối đuôi xe mẫu dọc lề đường
+        // (1 = phía sau, 2 = phía trước, mỗi ô 5.5 m); có GameObject "ParkingSpot_<id>" trong scene thì đỗ ở đó.
+        public string template, model;
+        public int parkSlot;
+        public float modelYaw;     // xoay thêm nếu model quay ngược
+        // Vị trí mắt góc thứ nhất theo tỉ lệ khung thân xe (x: trái 0 -> phải 1, y: đáy -> nóc, z: đuôi -> đầu); zero = tự tính
+        public Vector3 fpEye;
+        // Model làm cả thân một vật liệu đục: tách kính theo ô màu trên texture (uMin, vMin, uMax, vMax) + vùng khoang lái (VehicleGlass)
+        public Vector4 glassUv;
+        public Vector2 glassZ;
+        public float glassMinH;
     }
 
     public static readonly Entry[] Catalog =
@@ -41,9 +53,28 @@ public class VehicleManager : MonoBehaviour
         },
         new Entry
         {
+            id = "SedanPlayer", name = "Classic Sedan", type = "Car", price = 1800f, level = 4,
+            speed = 11f, boost = 16f, template = "CarPlayer", model = "Vehicles/Sedan", parkSlot = 1,
+            description = "A roomy family sedan. The cheapest way to drive a car on deliveries.",
+        },
+        new Entry
+        {
             id = "CarPlayer", name = "Tocus City Car", type = "Car", price = 2800f, level = 5,
             speed = 12f, boost = 18f,
-            description = "The fastest way across the city. Stable at high speed on the long avenues.",
+            description = "Quick and nimble city car. Stable at high speed on the long avenues.",
+        },
+        new Entry
+        {
+            id = "SportsPlayer", name = "Sports Coupe", type = "Car", price = 6000f, level = 8,
+            speed = 14f, boost = 22f, template = "CarPlayer", model = "Vehicles/SportsCar", parkSlot = 2,
+            // Model làm cả thân một vật liệu đục, kính là ô ĐEN trên texture (u 0.148-0.232, v 0.261-0.313).
+            // Đọc Car4.fbx: khoang lái từ 19% đến 65% chiều dài (tính từ đuôi), nắp capo cao 71% -> kính = tam giác đen
+            // trong vùng đó và cao hơn 72%; tách ra submesh kính trong suốt để nhìn được từ ghế lái như các xe khác.
+            glassUv = new Vector4(0.14f, 0.25f, 0.24f, 0.32f), glassZ = new Vector2(0.17f, 0.66f), glassMinH = 0.72f,
+            // Model không có nội thất (ngồi trong xe thấy cả lòng vỏ và lốp) -> góc thứ nhất đặt ngay trước chân kính chắn gió,
+            // trên nắp capo ("hood cam" như game đua xe): nắp capo từ 65% chiều dài, cao 71% -> mắt ở 68% / 86%, giữa xe
+            fpEye = new Vector3(0.5f, 0.86f, 0.68f),
+            description = "The fastest car in the city. A reward for a successful store owner.",
         },
     };
 
@@ -77,6 +108,7 @@ public class VehicleManager : MonoBehaviour
     {
         Instance = this;
         foreach (Entry e in Catalog) if (e.starter) owned.Add(e.id);
+        foreach (Entry e in Catalog) if (!string.IsNullOrEmpty(e.template)) BuildSkinnedVehicle(e);
         // Tìm xe ngay (trước khi giao thông nhân bản mẫu xe) và ghi lại chỗ đỗ ban đầu
         foreach (Entry e in Catalog)
         {
@@ -99,10 +131,56 @@ public class VehicleManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    /// <summary>
+    /// Tạo xe mới từ xe mẫu trong scene: nhân bản (giữ PlayerCarController, CarInteraction, camera xe, va chạm, đèn),
+    /// ẩn vỏ cũ, gắn model mới (Resources/model) co giãn cho vừa khung xe mẫu. Đỗ nối đuôi xe mẫu dọc lề (không lấn ra làn xe).
+    /// </summary>
+    private static void BuildSkinnedVehicle(Entry e)
+    {
+        if (GameObject.Find(e.id) != null) return;
+        GameObject template = GameObject.Find(e.template);
+        GameObject model = Resources.Load<GameObject>(e.model);
+        if (template == null || model == null) { Debug.LogWarning($"[Vehicles] Không tạo được {e.name}: thiếu xe mẫu '{e.template}' hoặc model 'Resources/{e.model}'."); return; }
+
+        Transform t = template.transform;
+        if (!ModelFit.MeshBounds(t, t, out Bounds body)) return;
+        Vector3 pos; Quaternion rot;
+        GameObject spot = GameObject.Find("ParkingSpot_" + e.id);
+        if (spot != null) { pos = spot.transform.position; rot = Quaternion.Euler(0f, spot.transform.eulerAngles.y, 0f); }
+        else
+        {
+            float len = body.size.z + 1.2f;                                   // chiều dài xe + 1.2 m khoảng hở
+            pos = t.position + t.forward * (e.parkSlot % 2 == 1 ? -len : len) * ((e.parkSlot + 1) / 2);
+            rot = t.rotation;
+        }
+        GameObject go = Instantiate(template, pos, rot);
+        go.name = e.id;
+        ModelFit.HideMeshes(go.transform);
+        Transform skin = ModelFit.Attach(go.transform, model, body, e.modelYaw);
+        if (e.glassUv != Vector4.zero)
+        {
+            int n = VehicleGlass.Apply(skin, e.glassUv, e.glassZ, e.glassMinH);
+            if (n == 0) Debug.LogWarning($"[Vehicles] {e.name}: không tách được kính (mesh cần bật Read/Write).");
+        }
+    }
+
     // ================= Tra cứu =================
     public static bool Owns(string id) => Instance != null && Instance.owned.Contains(id);
 
+    public static Entry Get(string id)
+    {
+        foreach (Entry e in Catalog) if (e.id == id) return e;
+        return null;
+    }
+
     public static bool Exists(string id) => Instance != null && Instance.objects.ContainsKey(id) && Instance.objects[id] != null;
+
+    /// <summary>Object của xe theo id, kể cả khi đang ẩn (xe chưa mua) - giao thông dùng làm mẫu.</summary>
+    public static GameObject FindObject(string id)
+    {
+        if (Instance != null && Instance.objects.TryGetValue(id, out GameObject go) && go != null) return go;
+        return GameObject.Find(id);
+    }
 
     public static bool IsBeingDriven(string id)
     {
@@ -172,13 +250,10 @@ public class VehicleManager : MonoBehaviour
         foreach (MotorcycleInteraction m in go.GetComponents<MotorcycleInteraction>()) m.enabled = own;
         foreach (CarInteraction c in go.GetComponents<CarInteraction>()) c.enabled = own;
 
+        // Xe chưa mua thì ẩn hẳn (không đỗ chắn đường); mua xong mới hiện ở chỗ đỗ. Xem / mua ở máy tính > Vehicles.
         VehicleForSale sign = go.GetComponent<VehicleForSale>();
-        if (!own && sign == null) sign = go.AddComponent<VehicleForSale>();
-        if (sign != null)
-        {
-            if (own) Destroy(sign);
-            else sign.Setup(e);
-        }
+        if (sign != null) Destroy(sign);
+        if (go.activeSelf != own) go.SetActive(own);
     }
 
     /// <summary>

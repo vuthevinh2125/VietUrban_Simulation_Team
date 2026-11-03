@@ -312,7 +312,7 @@ public class MinimapSystem : MonoBehaviour
             for (int i = 0; i < n; i++)
             {
                 Camera k = camBuf[i];
-                if (k == null || k == mini.cam || k == big.cam || k.targetTexture != null) continue;
+                if (k == null || !k.isActiveAndEnabled || k.targetTexture != null) continue; // camera bản đồ vẽ vào RenderTexture -> bị loại ở đây
                 if (c == null || k.depth > c.depth) c = k;
             }
         }

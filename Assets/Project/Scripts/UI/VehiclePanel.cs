@@ -129,10 +129,14 @@ public class VehiclePanel : MonoBehaviour
     {
         Transform canvas = UIKit.CreateCanvas(transform, 550).transform;
         root = UIKit.FullScreen("Root", canvas, new Color(0f, 0f, 0f, 0.5f));
-        GameObject window = UIKit.Panel("Window", root.transform, new Vector2(1300, 760), Vector2.zero, UIKit.Window);
-        GameObject header = UIKit.Panel("Header", window.transform, new Vector2(1300, 64), new Vector2(0, 348), UIKit.Header);
-        UIKit.Text(header.transform, "VEHICLES", 32, new Vector2(1100, 60), Vector2.zero, TextAlignmentOptions.Center, true);
-        UIKit.Btn(header.transform, "X", new Vector2(48, 48), new Vector2(620, 0), Close, UIKit.Red);
+        int n = VehicleManager.Catalog.Length;
+        const float gap = 24f;
+        float W = Mathf.Clamp(n * 314f + (n - 1) * gap + 60f, 1300f, 1860f);   // 3 xe: 1300; 5 xe: 1726
+        float cardW = Mathf.Min(390f, (W - 60f - (n - 1) * gap) / n);
+        GameObject window = UIKit.Panel("Window", root.transform, new Vector2(W, 760), Vector2.zero, UIKit.Window);
+        GameObject header = UIKit.Panel("Header", window.transform, new Vector2(W, 64), new Vector2(0, 348), UIKit.Header);
+        UIKit.Text(header.transform, "VEHICLES", 32, new Vector2(W - 200, 60), Vector2.zero, TextAlignmentOptions.Center, true);
+        UIKit.Btn(header.transform, "X", new Vector2(48, 48), new Vector2(W / 2f - 30f, 0), Close, UIKit.Red);
 
         headerInfo = UIKit.Text(window.transform, "", 20, new Vector2(1200, 30), new Vector2(0, 288), TextAlignmentOptions.Center, false, new Color(0.8f, 0.85f, 0.9f));
         UIKit.Text(window.transform, "Owned vehicles are parked outside the store - walk up and press <b>[F]</b> to ride. Faster vehicles make deliveries easier.",
@@ -141,8 +145,7 @@ public class VehiclePanel : MonoBehaviour
         float maxBoost = 1f;
         foreach (var e in VehicleManager.Catalog) maxBoost = Mathf.Max(maxBoost, e.boost);
 
-        int n = VehicleManager.Catalog.Length;
-        const float cardW = 390f, cardH = 560f, gap = 24f;
+        const float cardH = 560f;
         float total = n * cardW + (n - 1) * gap;
         for (int i = 0; i < n; i++)
         {

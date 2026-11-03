@@ -33,6 +33,8 @@ public class TrafficSystem : MonoBehaviour
     }
     private readonly List<Car> cars = new List<Car>();
     private readonly List<GameObject> templates = new List<GameObject>();
+    private GameObject ambulanceTemplate;     // xe cứu thương (Resources/Vehicles/Ambulance) dựng trên khung "Simple Retro Car"
+    [Range(0f, 1f)] public float ambulanceChance = 0.08f;
     private static readonly HashSet<Transform> carRoots = new HashSet<Transform>();
 
     // Bộ đệm dùng chung cho tia / cầu quét (không tạo mảng mới mỗi lần -> không sinh rác cho GC)
@@ -128,15 +130,31 @@ public class TrafficSystem : MonoBehaviour
     {
         foreach (string n in new[] { "Honda Cub", "C125 - PB", "Simple Retro Car" })
         {
-            GameObject g = GameObject.Find(n);
+            GameObject g = VehicleManager.FindObject(n); // xe người chơi chưa mua bị ẩn nhưng vẫn làm mẫu được
             if (g != null) templates.Add(g);
+        }
+        // Xe cứu thương: nhân bản khung ô tô mẫu (đang tắt, cùng chỗ nên tính độ cao như ô tô), thay vỏ bằng model xe cứu thương
+        GameObject carBase = GameObject.Find("Simple Retro Car");
+        GameObject amb = Resources.Load<GameObject>("Vehicles/Ambulance");
+        if (carBase != null && amb != null && ModelFit.MeshBounds(carBase.transform, carBase.transform, out Bounds body))
+        {
+            var holder = new GameObject("_AmbulanceHolder");
+            holder.SetActive(false);
+            ambulanceTemplate = Instantiate(carBase, carBase.transform.position, carBase.transform.rotation, holder.transform);
+            ambulanceTemplate.SetActive(false);
+            ambulanceTemplate.transform.SetParent(transform, true);
+            Destroy(holder);
+            ambulanceTemplate.name = "Ambulance";
+            ModelFit.HideMeshes(ambulanceTemplate.transform);
+            ModelFit.Attach(ambulanceTemplate.transform, amb, body, 180f, 1.25f); // model quay mặt về -Z nên xoay 180°; dài hơn ô tô con ~25%
         }
     }
 
     private void SpawnCar(int index)
     {
         // Xe máy nhiều hơn ô tô (đường phố Việt Nam)
-        GameObject template = templates[Random.value < 0.65f ? Random.Range(0, Mathf.Max(1, templates.Count - 1)) : templates.Count - 1];
+        GameObject template = ambulanceTemplate != null && Random.value < ambulanceChance ? ambulanceTemplate
+            : templates[Random.value < 0.65f ? Random.Range(0, Mathf.Max(1, templates.Count - 1)) : templates.Count - 1];
         float yOffset = template.transform.position.y - GroundY(template.transform.position, 0.1f);
 
         var holder = new GameObject("_TrafficHolder");
