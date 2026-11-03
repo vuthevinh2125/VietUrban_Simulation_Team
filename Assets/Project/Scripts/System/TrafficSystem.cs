@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Xe chạy trên phố (xe máy + ô tô) theo mạng đường khu phố mới phía đông và đại lộ / đường dọc của thành phố cũ.
+/// Xe chạy trên phố (ô tô; bỏ xe máy từ 3/11 vì mẫu xe máy không có người lái, chạy trống trông kỳ) theo mạng đường khu phố mới phía đông và đại lộ / đường dọc của thành phố cũ.
 ///  - Đi bên phải đường, tới ngã tư rẽ ngẫu nhiên (cuối đường cụt thì quay đầu).
 ///  - Chậm lại / dừng khi phía trước có xe khác, người chơi hoặc người đi bộ.
-///  - Mẫu xe lấy từ xe có sẵn trong scene (Honda Cub, C125, Simple Retro Car), bỏ hết script lái của người chơi.
+///  - Mẫu xe lấy từ ô tô có sẵn trong scene (Simple Retro Car) + xe cứu thương / xe CSGT thay vỏ, bỏ hết script lái của người chơi.
 /// Tự tạo khi vào game (chỉ khi có khu phố mới "CityExpansion_East").
 /// </summary>
 public class TrafficSystem : MonoBehaviour
@@ -130,7 +130,7 @@ public class TrafficSystem : MonoBehaviour
     // ================= Xe =================
     private void FindTemplates()
     {
-        foreach (string n in new[] { "Honda Cub", "C125 - PB", "Simple Retro Car" })
+        foreach (string n in new[] { "Simple Retro Car" }) // không lấy xe máy (Honda Cub, C125): không có người ngồi trên xe
         {
             GameObject g = VehicleManager.FindObject(n); // xe người chơi chưa mua bị ẩn nhưng vẫn làm mẫu được
             if (g != null) templates.Add(g);
@@ -166,11 +166,10 @@ public class TrafficSystem : MonoBehaviour
 
     private void SpawnCar(int index)
     {
-        // Xe máy nhiều hơn ô tô (đường phố Việt Nam)
         float roll = Random.value;
         GameObject template = ambulanceTemplate != null && roll < ambulanceChance ? ambulanceTemplate
             : policeTemplate != null && roll < ambulanceChance + policeChance ? policeTemplate
-            : templates[Random.value < 0.65f ? Random.Range(0, Mathf.Max(1, templates.Count - 1)) : templates.Count - 1];
+            : templates[Random.Range(0, templates.Count)];
         float yOffset = template.transform.position.y - GroundY(template.transform.position, 0.1f);
 
         var holder = new GameObject("_TrafficHolder");
