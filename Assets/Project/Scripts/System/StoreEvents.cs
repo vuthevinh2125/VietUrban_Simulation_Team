@@ -65,7 +65,14 @@ public class StoreEvents : MonoBehaviour
         GameManager gm = GameManager.Instance;
         if (gm == null || IntroCutscene.Playing) return;
 
-        if (GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F10) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        if (GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F10) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+        {
+            // Ctrl + Shift + F10: xem lại phim sự kiện (xoá danh sách đã chiếu)
+            ResetSeen();
+            ProgressHUD.Toast("[Debug] Event cutscenes will play again.");
+        }
+        else if (GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F10) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
             Kind k = (Kind)(debugIndex++ % 3);
             StartEvent(k);
@@ -342,13 +349,16 @@ public class StoreEvents : MonoBehaviour
         if (seenCutscenes.Contains(title))
         {
             // Đã xem đoạn phim này rồi -> chỉ báo bằng thông báo, lời thoại đầu tiên hiện thành bong bóng trên đầu
-            ProgressHUD.Toast($"<b>{title}</b> {subtitle}");
-            shots[0].onStart?.Invoke();
+            NoFilm(title, subtitle, shots[0], "đã chiếu trước đó (lưu trong save)");
             yield break;
         }
-        if (CutsceneRunning || Time.timeScale <= 0f) yield break;
+        // Đang có phim khác / cảnh mở đầu / cửa sổ máy tính đang mở / game tạm dừng -> chờ tới khi rảnh (tối đa 15 s)
+        // thay vì bỏ qua luôn (trước đây phim bị bỏ qua lặng lẽ nên "lúc có lúc không")
+        float waitUntil = Time.unscaledTime + 15f;
+        while (Busy() && Time.unscaledTime < waitUntil) yield return null;
+        if (Busy()) { NoFilm(title, subtitle, shots[0], "đang bận quá 15 s (phim khác / cửa sổ / tạm dừng)"); yield break; }
         var first = shots[0].frame();
-        if (!first.ok) yield break;
+        if (!first.ok) { NoFilm(title, subtitle, shots[0], "nhân vật chính của cảnh đã biến mất"); yield break; }
         seenCutscenes.Add(title);
         CutsceneRunning = true;
 
@@ -425,6 +435,17 @@ public class StoreEvents : MonoBehaviour
     }
 
     private static TMP_Text subLine;
+
+    private static bool Busy() =>
+        CutsceneRunning || IntroCutscene.Playing || Time.timeScale <= 0f || UIState.IsBlockingUIOpen;
+
+    /// <summary>Không chiếu phim: vẫn báo sự kiện bằng thông báo + bong bóng thoại, và ghi lý do ra Console.</summary>
+    private static void NoFilm(string title, string subtitle, Shot first, string reason)
+    {
+        ProgressHUD.Toast($"<b>{title}</b> {subtitle}");
+        first.onStart?.Invoke();
+        if (GameDebug.CheatsEnabled) Debug.Log($"[StoreEvents] {title}: không chiếu phim - {reason}.");
+    }
 
     private static (Vector3, Vector3, bool) Track(Transform t, float back, float sideOff, float up, float lookUp = 1.4f)
     {
