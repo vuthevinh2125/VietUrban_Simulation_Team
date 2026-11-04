@@ -22,6 +22,13 @@ public class BusinessStats : MonoBehaviour
         public int reviews;
         public float deliveryRevenue;
         public string weather, season;
+        public int tempC;
+        /// <summary>
+        /// Số món bán ra theo nhóm hàng x giờ: chỉ số = (int)ProductGroup * 24 + giờ (0-23). Là dữ liệu lịch sử để
+        /// bộ dự báo nhu cầu (gợi ý nhập hàng) học, thay vì đọc thẳng công thức nhu cầu của game.
+        /// Save cũ không có -> null (bộ dự báo bỏ qua ngày đó).
+        /// </summary>
+        public int[] groupHour;
         public List<ItemCount> products = new List<ItemCount>();
         public float Profit => income - expenses;
         public DateTime Date => GameManager.DateOfDay(day);
@@ -33,6 +40,8 @@ public class BusinessStats : MonoBehaviour
 
     private readonly List<DayRecord> days = new List<DayRecord>();
     private readonly Dictionary<string, ItemCount> todayItems = new Dictionary<string, ItemCount>();
+    public const int GroupCount = 10; // số giá trị của ProductGroup
+    private int[] todayGroupHour = new int[GroupCount * 24];
     private int todayDeliveries;
     private float todayDeliveryRevenue;
 
@@ -74,6 +83,11 @@ public class BusinessStats : MonoBehaviour
         if (!Instance.todayItems.TryGetValue(key, out ItemCount c)) Instance.todayItems[key] = c = new ItemCount { item = key };
         c.count++;
         c.revenue += price;
+
+        GameManager gm = GameManager.Instance;
+        int hour = Mathf.Clamp(Mathf.FloorToInt(gm != null ? gm.ClockHours : 12f), 0, 23);
+        int g = (int)DemandModel.GroupOf(item);
+        if (g >= 0 && g < GroupCount) Instance.todayGroupHour[g * 24 + hour]++;
     }
 
     public static void RecordDelivery(float amount)
@@ -102,6 +116,8 @@ public class BusinessStats : MonoBehaviour
             deliveryRevenue = todayDeliveryRevenue,
             weather = WeatherSystem.WeatherName(WeatherSystem.CurrentWeather),
             season = WeatherSystem.SeasonName(WeatherSystem.CurrentSeason),
+            tempC = WeatherSystem.TemperatureC,
+            groupHour = todayGroupHour,
             products = todayItems.Values.OrderByDescending(i => i.revenue).ToList(),
         };
         ReviewManager.ForDay(s.day, out r.rating, out r.reviews);
@@ -109,6 +125,7 @@ public class BusinessStats : MonoBehaviour
         days.Add(r);
         days.Sort((a, b) => a.day.CompareTo(b.day));
         todayItems.Clear();
+        todayGroupHour = new int[GroupCount * 24];
         todayDeliveries = 0;
         todayDeliveryRevenue = 0f;
         OnChanged?.Invoke();
@@ -124,6 +141,7 @@ public class BusinessStats : MonoBehaviour
         if (list != null) Instance.days.AddRange(list.Where(d => d != null));
         Instance.days.Sort((a, b) => a.day.CompareTo(b.day));
         Instance.todayItems.Clear();
+        Instance.todayGroupHour = new int[GroupCount * 24];
         Instance.todayDeliveries = 0;
         Instance.todayDeliveryRevenue = 0f;
         OnChanged?.Invoke();

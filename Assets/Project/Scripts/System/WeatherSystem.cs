@@ -139,17 +139,64 @@ public class WeatherSystem : MonoBehaviour
         Instance.ApplyDay(gm != null ? gm.currentDay : Mathf.Max(1, Instance.appliedDay));
     }
 
+    // ================= Dự báo thời tiết (dùng cho gợi ý nhập hàng) =================
+    /// <summary>Thời tiết một ngày: loại, mùa, nhiệt độ.</summary>
+    public struct DayWeather
+    {
+        public Weather weather;
+        public Season season;
+        public int tempC;
+        public override string ToString() => $"{WeatherName(weather)} {tempC}°C";
+    }
+
+    /// <summary>Độ chính xác của bản tin dự báo (xác suất đoán đúng loại thời tiết của ngày mai).</summary>
+    public const float ForecastAccuracy = 0.8f;
+
+    /// <summary>
+    /// Thời tiết THẬT của một ngày. Hàm thuần: cùng ngày luôn ra cùng kết quả (hạt giống theo số ngày), không đọc
+    /// trạng thái game -> ApplyDay dùng chung và test EditMode kiểm tra được.
+    /// </summary>
+    public static DayWeather Actual(int day, int forced = -1)
+    {
+        DateTime date = GameManager.DateOfDay(day);
+        Season s = SeasonOf(date.Month);
+        var rng = new System.Random(day * 7919 + 17);
+        Weather w = Roll(s, rng.NextDouble());
+        if (forced >= 0) w = (Weather)forced;
+        int baseTemp = s == Season.Spring ? 24 : s == Season.Summer ? 33 : s == Season.Autumn ? 27 : 17;
+        int t = baseTemp + rng.Next(-3, 4) - (w == Weather.Rain || w == Weather.Storm ? 3 : 0);
+        return new DayWeather { weather = w, season = s, tempC = t };
+    }
+
+    /// <summary>
+    /// Bản tin dự báo cho một ngày: như ngoài đời, đúng khoảng 80% (ForecastAccuracy). Sai thì ra một loại thời tiết
+    /// khác theo xác suất của mùa đó; nhiệt độ lệch ±2°C. Hạt giống riêng -> dự báo cố định, xem lại không đổi.
+    /// Gợi ý nhập hàng dựa trên bản tin này, nên sai số dự báo thời tiết là một phần sai số của gợi ý (đo được).
+    /// </summary>
+    public static DayWeather Forecast(int day)
+    {
+        DayWeather real = Actual(day);
+        var rng = new System.Random(day * 104729 + 3);
+        DayWeather f = real;
+        if (rng.NextDouble() >= ForecastAccuracy)
+        {
+            for (int i = 0; i < 8 && f.weather == real.weather; i++) f.weather = Roll(real.season, rng.NextDouble());
+            if (f.weather == real.weather) f.weather = real.weather == Weather.Sunny ? Weather.Cloudy : Weather.Sunny;
+            bool wasWet = real.weather == Weather.Rain || real.weather == Weather.Storm;
+            bool isWet = f.weather == Weather.Rain || f.weather == Weather.Storm;
+            f.tempC += (wasWet ? 3 : 0) - (isWet ? 3 : 0);
+        }
+        f.tempC += rng.Next(-2, 3);
+        return f;
+    }
+
     private void ApplyDay(int day)
     {
         appliedDay = day;
-        DateTime date = GameManager.DateOfDay(day);
-        season = SeasonOf(date.Month);
-        var rng = new System.Random(day * 7919 + 17);
-        weather = Roll(season, rng.NextDouble());
-        if (forcedWeather >= 0) weather = (Weather)forcedWeather;
-
-        int baseTemp = season == Season.Spring ? 24 : season == Season.Summer ? 33 : season == Season.Autumn ? 27 : 17;
-        temperature = baseTemp + rng.Next(-3, 4) - (weather == Weather.Rain || weather == Weather.Storm ? 3 : 0);
+        DayWeather today = Actual(day, forcedWeather);
+        season = today.season;
+        weather = today.weather;
+        temperature = today.tempC;
 
         switch (weather)
         {
