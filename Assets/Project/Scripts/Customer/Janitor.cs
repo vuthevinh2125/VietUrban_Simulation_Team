@@ -275,10 +275,8 @@ public class Janitor : MonoBehaviour
         go.transform.localScale = scale;
         Renderer r = go.GetComponent<Renderer>();
         r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        var block = new MaterialPropertyBlock();
-        block.SetColor("_BaseColor", color);
-        block.SetColor("_Color", color);
-        r.SetPropertyBlock(block);
+        // Vật liệu URP có sẵn trong Resources (vật liệu mặc định của primitive bị HỒNG trong bản build .exe)
+        RuntimeMaterials.Apply(r, color);
         return go.transform;
     }
 }
