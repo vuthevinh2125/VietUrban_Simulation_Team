@@ -150,6 +150,12 @@ public class NPCShopper : MonoBehaviour
             SetState(NPCState.Entering);
             yield return MoveTo(entrancePoint.position);
         }
+        else if (StoreFlow.EntryRoute(out Vector3[] entryRoute))
+        {
+            // Vào bằng cửa phía cổng vào, không đi xuyên khu thu ngân (StoreFlow)
+            SetState(NPCState.Entering);
+            foreach (Vector3 wpIn in entryRoute) yield return MoveTo(wpIn);
+        }
 
         // --- Mua sắm ---
         SetState(NPCState.Shopping);
@@ -233,7 +239,7 @@ public class NPCShopper : MonoBehaviour
 
         // --- Thanh toán (hoặc ăn trộm) ---
         GameManager gm = GameManager.Instance;
-        bool canSteal = gm != null && gm.currentDay >= 2;
+        bool canSteal = gm != null && (gm.currentDay >= 2 || thiefChance >= 1f); // băng trộm (StoreEvents) trộm cả ngày 1
         if (basket.Count > 0 && canSteal && Random.value < thiefChance)
         {
             yield return FleeRoutine();
@@ -254,6 +260,9 @@ public class NPCShopper : MonoBehaviour
 
         // --- Ra về ---
         SetState(NPCState.Leaving);
+        // Ra bằng cửa ra phía sau làn thu ngân rồi đi đường ngoài vỉa hè (StoreFlow), không quay lại lối vào
+        if (StoreFlow.ExitRoute(out Vector3[] exitRoute))
+            foreach (Vector3 wpOut in exitRoute) yield return MoveTo(wpOut);
         if (exitDoor != null) yield return MoveTo(exitDoor.position);
         SetState(NPCState.Done);
         Destroy(gameObject);
