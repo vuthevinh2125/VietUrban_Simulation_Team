@@ -149,6 +149,13 @@ public class WeatherSystem : MonoBehaviour
         public override string ToString() => $"{WeatherName(weather)} {tempC}°C";
     }
 
+    /// <summary>Hệ số số khách theo thời tiết và mùa (hàm thuần; ApplyDay và mô phỏng đánh giá dự báo dùng chung).</summary>
+    public static float CustomerMultiplierFor(Weather w, Season s)
+    {
+        float m = w switch { Weather.Sunny => 1.15f, Weather.Cloudy => 1f, Weather.Rain => 0.75f, Weather.Storm => 0.55f, _ => 0.85f };
+        return m * (s == Season.Summer ? 1.1f : s == Season.Winter ? 0.9f : 1f);
+    }
+
     /// <summary>Độ chính xác của bản tin dự báo (xác suất đoán đúng loại thời tiết của ngày mai).</summary>
     public const float ForecastAccuracy = 0.8f;
 
@@ -193,6 +200,7 @@ public class WeatherSystem : MonoBehaviour
     private void ApplyDay(int day)
     {
         appliedDay = day;
+        DateTime date = GameManager.DateOfDay(day);
         DayWeather today = Actual(day, forcedWeather);
         season = today.season;
         weather = today.weather;
@@ -206,7 +214,7 @@ public class WeatherSystem : MonoBehaviour
             case Weather.Storm: cloudiness = 0.95f; rainIntensity = 1f; fogDensity = 0.01f; customerMul = 0.55f; break;
             case Weather.Fog: cloudiness = 0.55f; rainIntensity = 0f; fogDensity = 0.022f; customerMul = 0.85f; break;
         }
-        customerMul *= season == Season.Summer ? 1.1f : season == Season.Winter ? 0.9f : 1f;
+        customerMul = CustomerMultiplierFor(weather, season);
 
         // Mưa
         var emission = rain.emission;
