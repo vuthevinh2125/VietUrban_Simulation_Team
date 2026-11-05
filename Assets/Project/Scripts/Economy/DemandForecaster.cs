@@ -31,6 +31,8 @@ public class DemandForecaster
         public int weather, tempC;
         public DayOfWeek dayOfWeek;
         public int[] groupHour;
+        /// <summary>true = chỉ biết tổng cả ngày (save cũ trước khi ghi theo giờ): học mức nền / hệ số, không học tỉ trọng giờ.</summary>
+        public bool noHours;
     }
 
     private readonly float[] level = new float[Groups];
@@ -81,7 +83,7 @@ public class DemandForecaster
             {
                 int n = o.groupHour[g * Hours + h];
                 total += n;
-                hourCount[g, h] += n;
+                if (!o.noHours) hourCount[g, h] += n;
             }
             if (total <= 0f && !seen[g]) continue; // nhóm chưa bán bao giờ (chưa có giấy phép / chưa bày)
 

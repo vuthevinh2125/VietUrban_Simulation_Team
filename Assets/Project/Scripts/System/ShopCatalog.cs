@@ -28,6 +28,7 @@ public class ShopCatalog : MonoBehaviour
         HookStaffButton();
         HookExpandButton();
         HookStatsButton();
+        HookAdvisorButton();
         HookVehiclesButton();
     }
 
@@ -96,6 +97,22 @@ public class ShopCatalog : MonoBehaviour
         // Không có LayoutGroup thì đặt tab Stats vào khoảng trống rộng nhất trên thanh tab
         if (expand.transform.parent.GetComponent<LayoutGroup>() == null)
             PlaceInWidestGap((RectTransform)copy.transform, (RectTransform)expand.transform);
+    }
+
+    /// <summary>Tab "Advisor" (gợi ý nhập hàng theo dự báo nhu cầu): nhân bản tab Stats vừa tạo.</summary>
+    private void HookAdvisorButton()
+    {
+        Transform stats = null;
+        foreach (Button b in GetComponentsInChildren<Button>(true)) if (b.name == "Button_Stats") { stats = b.transform; break; }
+        if (stats == null) { Debug.LogWarning("[ShopCatalog] Không thấy tab Stats để thêm tab Advisor.", this); return; }
+        GameObject copy = Instantiate(stats.gameObject, stats.parent);
+        copy.name = "Button_Advisor";
+        copy.transform.SetSiblingIndex(stats.GetSiblingIndex() + 1);
+        Button advisor = copy.GetComponent<Button>();
+        SetLabel(advisor, "Advisor");
+        advisor.onClick = new Button.ButtonClickedEvent();
+        advisor.onClick.AddListener(AdvisorPanel.Open);
+        advisor.interactable = true;
     }
 
     /// <summary>Tab "Floor" (chưa dùng) đổi thành "Expand": mua phòng mở rộng, nhà kho.</summary>

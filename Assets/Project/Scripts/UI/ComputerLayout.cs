@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Sắp xếp lại thanh trên cùng của màn hình máy tính (MARKET) cho gọn và đều:
 ///  - Hàng tab: các tab cùng kích thước, cách đều nhau, icon bên trái + chữ căn giữa,
-///    thứ tự: Products · Furniture · Staff · Expand · Licenses · Vehicles · Stats; nút Buy (xanh) tách riêng bên phải.
+///    thứ tự: Products · Furniture · Staff · Expand · Licenses · Vehicles · Stats · Advisor; nút Buy (xanh) tách riêng bên phải.
 ///  - Hàng lọc: ô tìm kiếm thẳng mép trái với tab đầu, bộ lọc Category thẳng mép phải với nút Buy, Display đứng ngay trước Category.
 ///  - Nút đóng (X) thẳng mép phải.
 /// Tự gắn vào object có ShopCatalog (ComputerUI) khi vào game; chạy lại mỗi lần mở máy tính.
@@ -19,7 +19,7 @@ public class ComputerLayout : MonoBehaviour
     private const float TabH = 30f;
     private const float BuyW = 132f, BuyH = 34f;
 
-    private static readonly string[] Order = { "product", "furniture", "staff", "expand", "license", "vehicle", "stats" };
+    private static readonly string[] Order = { "product", "furniture", "staff", "expand", "license", "vehicle", "stats", "advisor" };
     private static Sprite chartIcon;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
