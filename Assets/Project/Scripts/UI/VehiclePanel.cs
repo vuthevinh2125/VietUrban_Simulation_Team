@@ -205,17 +205,6 @@ public class VehiclePanel : MonoBehaviour
 
     private static string Kmh(float speed) => Mathf.RoundToInt(speed * 3.6f).ToString(CultureInfo.InvariantCulture) + " km/h";
 
-    private static Sprite white;
-
-    private static Image Bar(Transform parent, Vector2 leftCenter, float width, Color color)
-    {
-        GameObject bg = UIKit.Rect("BarBg", parent, new Vector2(width, 12f), leftCenter + new Vector2(width / 2f, 0f));
-        Image b = bg.AddComponent<Image>(); b.color = new Color(1f, 1f, 1f, 0.08f); b.raycastTarget = false;
-        GameObject fg = UIKit.Rect("Bar", bg.transform, new Vector2(width, 12f), Vector2.zero);
-        Image f = fg.AddComponent<Image>();
-        if (white == null) white = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, Texture2D.whiteTexture.width, Texture2D.whiteTexture.height), new Vector2(0.5f, 0.5f));
-        f.sprite = white; f.color = color; f.raycastTarget = false;
-        f.type = Image.Type.Filled; f.fillMethod = Image.FillMethod.Horizontal; f.fillOrigin = (int)Image.OriginHorizontal.Left;
-        return f;
-    }
+    private static Image Bar(Transform parent, Vector2 leftCenter, float width, Color color) =>
+        UIKit.HBar(parent, leftCenter, width, 12f, color);
 }

@@ -152,15 +152,13 @@ public static class StoreSetupTool
             }
         }
 
-        // ---------- 4) Gỡ script AI gắn nhầm (vật không có Animator mà có NavMeshAgent/SecurityGuard) ----------
+        // ---------- 4) Gỡ NavMeshAgent gắn nhầm lên đồ vật (vật không có Animator) ----------
         sb.AppendLine("\n## Gỡ AI gắn nhầm lên đồ vật");
         foreach (NavMeshAgent agent in Object.FindObjectsByType<NavMeshAgent>(FindObjectsInactive.Include))
         {
             if (agent.GetComponentInChildren<Animator>(true) != null) continue;
-            sb.AppendLine($"- {agent.name}: gỡ NavMeshAgent{(agent.GetComponent<SecurityGuard>() ? " + SecurityGuard" : "")}");
+            sb.AppendLine($"- {agent.name}: gỡ NavMeshAgent");
             if (!apply) continue;
-            var guard = agent.GetComponent<SecurityGuard>();
-            if (guard != null) Undo.DestroyObjectImmediate(guard);
             Undo.DestroyObjectImmediate(agent);
         }
 

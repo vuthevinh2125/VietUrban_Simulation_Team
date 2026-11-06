@@ -84,4 +84,29 @@ public static class UIKit
         TMP_Text t = b.GetComponentInChildren<TMP_Text>();
         if (t != null) t.text = label;
     }
+
+    private static Sprite white;
+    /// <summary>Sprite trắng 1 màu dùng chung (Image kiểu Filled cần có sprite).</summary>
+    public static Sprite WhiteSprite
+    {
+        get
+        {
+            if (white == null)
+                white = Sprite.Create(Texture2D.whiteTexture, new UnityEngine.Rect(0, 0, Texture2D.whiteTexture.width, Texture2D.whiteTexture.height), new Vector2(0.5f, 0.5f));
+            return white;
+        }
+    }
+
+    /// <summary>Thanh ngang có nền mờ (thống kê, thông số xe); trả về lớp màu để chỉnh độ dài bằng fillAmount.</summary>
+    public static Image HBar(Transform parent, Vector2 leftCenter, float width, float height, Color color)
+    {
+        GameObject bg = Rect("BarBg", parent, new Vector2(width, height), leftCenter + new Vector2(width / 2f, 0f));
+        Image b = bg.AddComponent<Image>(); b.color = new Color(1f, 1f, 1f, 0.08f); b.raycastTarget = false;
+        GameObject fg = Rect("Bar", bg.transform, new Vector2(width, height), Vector2.zero);
+        Image f = fg.AddComponent<Image>();
+        f.sprite = WhiteSprite; f.color = color; f.raycastTarget = false;
+        f.type = Image.Type.Filled; f.fillMethod = Image.FillMethod.Horizontal; f.fillOrigin = (int)Image.OriginHorizontal.Left;
+        f.fillAmount = 0f;
+        return f;
+    }
 }

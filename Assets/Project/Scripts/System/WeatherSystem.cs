@@ -39,6 +39,8 @@ public class WeatherSystem : MonoBehaviour
     // Vùng trong nhà (cửa hàng, phần mở rộng, nhà kho): hạt mưa rơi vào dưới mái thì xoá ngay
     private readonly List<Bounds> indoor = new List<Bounds>();
     private float indoorBuiltAt = -999f;
+    // Khung siêu thị mặc định (toạ độ thế giới) khi scene không có RainShelter nào
+    public static readonly Vector3 DefaultStoreMin = new Vector3(-127.5f, -5f, 18.5f), DefaultStoreMax = new Vector3(-102.5f, 7f, 51.5f);
     private bool storeBoundsKnown;          // khung siêu thị chính chỉ cần đo một lần (quét hàng nghìn renderer)
     private Bounds storeBounds;
     private int hudDay = -1, hudTemp = int.MinValue; // chỉ dựng lại chữ HUD khi giá trị đổi (tránh tạo chuỗi mỗi frame)
@@ -318,11 +320,19 @@ public class WeatherSystem : MonoBehaviour
         indoorBuiltAt = Time.time;
         indoor.Clear();
 
+        // Có hộp RainShelter đặt trong scene thì dùng chúng thay cho khung siêu thị mặc định bên dưới
+        if (RainShelter.All.Count > 0)
+        {
+            foreach (RainShelter s in RainShelter.All) indoor.Add(s.WorldBounds);
+            AddExpansionVolumes();
+            return;
+        }
+
         // Siêu thị chính: khung nhà x -127..-103, z 19..51; mái lấy theo vật thể cao nhất trong khung (tối đa 12 m).
         // Toà nhà không đổi trong lúc chơi nên chỉ đo một lần; phòng mở rộng / nhà kho thì đo lại vì có thể vừa mở khoá.
         if (storeBoundsKnown) { indoor.Add(storeBounds); AddExpansionVolumes(); return; }
         var store = new Bounds();
-        store.SetMinMax(new Vector3(-127.5f, -5f, 18.5f), new Vector3(-102.5f, 7f, 51.5f));
+        store.SetMinMax(DefaultStoreMin, DefaultStoreMax);
         GameObject sm = GameObject.Find("Supermarket_full");
         if (sm != null)
         {
