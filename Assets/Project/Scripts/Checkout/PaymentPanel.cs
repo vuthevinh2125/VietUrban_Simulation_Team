@@ -143,15 +143,13 @@ public class PaymentPanel : MonoBehaviour
 
         if (counter.Method == PaymentMethod.Cash)
         {
-            int change = counter.CashGivenCents - counter.DueCents;
             int giving = Giving;
-            if (giving < change) return;
-            counter.FinishPayment(giving - change);
+            if (!CashMath.CanConfirm(counter.CashGivenCents, counter.DueCents, giving)) return;
+            counter.FinishPayment(CashMath.LossFromChange(counter.CashGivenCents, counter.DueCents, giving));
         }
         else
         {
-            if (!float.TryParse(cardEntry, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v) ||
-                Mathf.RoundToInt(v * 100f) != counter.DueCents)
+            if (!CashMath.CardEntryMatches(cardEntry, counter.DueCents))
             {
                 cardEntry = "";
                 Refresh();
@@ -177,7 +175,7 @@ public class PaymentPanel : MonoBehaviour
     // ================= Dựng giao diện =================
     private void Build()
     {
-        if (FindFirstObjectByType<EventSystem>() == null)
+        if (FindAnyObjectByType<EventSystem>() == null)
             new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
 
         var canvasGo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));

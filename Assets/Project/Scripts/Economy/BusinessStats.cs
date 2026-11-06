@@ -214,9 +214,12 @@ public class BusinessStats : MonoBehaviour
     private static string F(DateTime d, string format) => d.ToString(format, CultureInfo.InvariantCulture);
 
     /// <summary>Từng ngày (nhãn = thứ + ngày).</summary>
-    public static List<Period> ByDay(int last)
+    public static List<Period> ByDay(int last) => ByDay(Days, last);
+
+    /// <summary>Gom theo ngày từ một danh sách bất kỳ (hàm thuần, dùng cho test).</summary>
+    public static List<Period> ByDay(IReadOnlyList<DayRecord> source, int last)
     {
-        return Days.Skip(Math.Max(0, Days.Count - last)).Select(d =>
+        return source.Skip(Math.Max(0, source.Count - last)).Select(d =>
         {
             var p = new Period { label = $"{F(d.Date, "ddd")}\n{F(d.Date, "dd/MM")}", title = $"Day {d.day} · {F(d.Date, "dddd dd/MM/yyyy")} · {d.season}, {d.weather}" };
             p.days.Add(d);
@@ -225,10 +228,13 @@ public class BusinessStats : MonoBehaviour
     }
 
     /// <summary>Theo tuần (thứ Hai -> Chủ nhật).</summary>
-    public static List<Period> ByWeek(int last)
+    public static List<Period> ByWeek(int last) => ByWeek(Days, last);
+
+    /// <summary>Gom theo tuần (thứ Hai -> Chủ nhật) từ một danh sách bất kỳ (hàm thuần, dùng cho test).</summary>
+    public static List<Period> ByWeek(IReadOnlyList<DayRecord> source, int last)
     {
         var groups = new SortedDictionary<DateTime, Period>();
-        foreach (DayRecord d in Days)
+        foreach (DayRecord d in source)
         {
             DateTime date = d.Date;
             int offset = ((int)date.DayOfWeek + 6) % 7; // Thứ Hai = 0
@@ -241,10 +247,13 @@ public class BusinessStats : MonoBehaviour
     }
 
     /// <summary>Theo tháng dương lịch.</summary>
-    public static List<Period> ByMonth(int last)
+    public static List<Period> ByMonth(int last) => ByMonth(Days, last);
+
+    /// <summary>Gom theo tháng dương lịch từ một danh sách bất kỳ (hàm thuần, dùng cho test).</summary>
+    public static List<Period> ByMonth(IReadOnlyList<DayRecord> source, int last)
     {
         var groups = new SortedDictionary<DateTime, Period>();
-        foreach (DayRecord d in Days)
+        foreach (DayRecord d in source)
         {
             DateTime m = new DateTime(d.Date.Year, d.Date.Month, 1);
             if (!groups.TryGetValue(m, out Period p))

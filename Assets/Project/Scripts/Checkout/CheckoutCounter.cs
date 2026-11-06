@@ -289,7 +289,7 @@ public class CheckoutCounter : MonoBehaviour
         paying = true;
         yield return new WaitForSeconds(paymentDelay);
 
-        DueCents = Mathf.RoundToInt(runningTotal * 100f);
+        DueCents = CashMath.ToCents(runningTotal);
         Method = Random.value < cardChance ? PaymentMethod.Card : PaymentMethod.Cash;
         CashGivenCents = Method == PaymentMethod.Cash ? PickCashAmount(DueCents) : 0;
         awaitingPayment = true;
@@ -348,13 +348,7 @@ public class CheckoutCounter : MonoBehaviour
     /// <summary>Khách trả tiền mặt như ngoài đời: đưa vừa đủ, hoặc làm tròn lên tờ 5/10/20/50/100.</summary>
     private static int PickCashAmount(int due)
     {
-        var options = new List<int>();
-        foreach (int step in new[] { 100, 500, 1000, 2000, 5000, 10000 })
-        {
-            int v = Mathf.CeilToInt(due / (float)step) * step;
-            if (v >= due && !options.Contains(v)) options.Add(v);
-        }
-        if (options.Count == 0) return due;
+        List<int> options = CashMath.CashOptions(due);
         // Ưu tiên các mức nhỏ (khách hay đưa tờ gần với số tiền)
         int pick = Mathf.Min(options.Count - 1, Mathf.FloorToInt(Mathf.Pow(Random.value, 1.6f) * Mathf.Min(options.Count, 4)));
         return options[pick];
