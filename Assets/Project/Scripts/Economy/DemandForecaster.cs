@@ -24,6 +24,8 @@ public class DemandForecaster
     public float Alpha = 0.2f;          // tốc độ cập nhật mức nền
     public float Shrink = 5f;           // số "ngày giả" có hệ số 1 (co hệ số về 1 khi ít dữ liệu)
     public float ColdStartLevel = 4f;   // món / ngày / nhóm khi chưa có dữ liệu
+    public int OpenHour = 8, CloseHour = 18; // giờ mở cửa (làm mịn tỉ trọng giờ khi chưa có dữ liệu)
+    public float MinAvailableShare = 0.25f;  // còn hàng dưới 25% thời gian bán trong ngày thì bỏ ngày đó (quá ít thông tin)
 
     /// <summary>Một ngày đã bán: thời tiết thật, nhiệt độ, thứ, số món theo nhóm x giờ (chỉ số g * 24 + giờ).</summary>
     public struct Observation
@@ -33,6 +35,12 @@ public class DemandForecaster
         public int[] groupHour;
         /// <summary>true = chỉ biết tổng cả ngày (save cũ trước khi ghi theo giờ): học mức nền / hệ số, không học tỉ trọng giờ.</summary>
         public bool noHours;
+        /// <summary>
+        /// Giờ nào nhóm hàng CÒN HÀNG trên kệ: mỗi nhóm một số nguyên, bit h = 1 nếu đầu giờ h còn hàng. null = không biết.
+        /// Dùng để "khử kiểm duyệt" (uncensoring): hết hàng thì số bán thấp hơn nhu cầu thật; nếu cứ học số bán thì
+        /// dự báo thấp dần -> đặt ít -> càng hết hàng (vòng xoáy, đo được trong InventoryPolicyTests: tỉ lệ đáp ứng 84% thay vì 96%).
+        /// </summary>
+        public int[] availableHours;
     }
 
     private readonly float[] level = new float[Groups];
@@ -57,15 +65,23 @@ public class DemandForecaster
     public float PredictDay(int g, int weather, int tempC, DayOfWeek day) =>
         Level(g) * WeatherFactor(g, weather) * TempFactor(g, tempC) * WeekdayFactor(g, day);
 
-    /// <summary>Tỉ trọng số bán của nhóm g trong khoảng giờ [fromHour, toHour) (chưa có dữ liệu: chia đều 8-18 h).</summary>
+    /// <summary>Tỉ trọng số bán của nhóm g trong khoảng giờ [fromHour, toHour) (chưa có dữ liệu: chia đều giờ mở cửa).</summary>
     public float HourShare(int g, int fromHour, int toHour)
+    {
+        int mask = 0;
+        for (int h = Math.Max(0, fromHour); h < Math.Min(Hours, toHour); h++) mask |= 1 << h;
+        return MaskShare(g, mask);
+    }
+
+    /// <summary>Tỉ trọng số bán của nhóm g trong các giờ có bit = 1.</summary>
+    public float MaskShare(int g, int mask)
     {
         float total = 0f, part = 0f;
         for (int h = 0; h < Hours; h++)
         {
-            float c = hourCount[g, h] + (h >= 8 && h < 18 ? 0.5f : 0f); // làm mịn: mỗi giờ mở cửa 0.5 món giả
+            float c = hourCount[g, h] + (h >= OpenHour && h < CloseHour ? 0.5f : 0f); // làm mịn: mỗi giờ mở cửa 0.5 món giả
             total += c;
-            if (h >= fromHour && h < toHour) part += c;
+            if ((mask & (1 << h)) != 0) part += c;
         }
         return total > 0f ? part / total : 0f;
     }
@@ -79,12 +95,20 @@ public class DemandForecaster
         for (int g = 0; g < Groups; g++)
         {
             float total = 0f;
-            for (int h = 0; h < Hours; h++)
+            for (int h = 0; h < Hours; h++) total += o.groupHour[g * Hours + h];
+
+            // Khử kiểm duyệt: số bán chỉ đến từ các giờ còn hàng -> nhu cầu cả ngày ≈ số bán / tỉ trọng các giờ đó
+            bool skip = false;
+            int mask = o.availableHours != null && g < o.availableHours.Length ? o.availableHours[g] : -1;
+            if (mask != -1 && !o.noHours)
             {
-                int n = o.groupHour[g * Hours + h];
-                total += n;
-                if (!o.noHours) hourCount[g, h] += n;
+                float share = MaskShare(g, mask);
+                if (share < MinAvailableShare) skip = true;
+                else if (share < 0.999f) total /= share;
             }
+            for (int h = 0; h < Hours; h++)
+                if (!o.noHours && (mask == -1 || (mask & (1 << h)) != 0)) hourCount[g, h] += o.groupHour[g * Hours + h];
+            if (skip) continue;
             if (total <= 0f && !seen[g]) continue; // nhóm chưa bán bao giờ (chưa có giấy phép / chưa bày)
 
             float fw = Factor(wSum, wCnt, g, w), ft = Factor(tSum, tCnt, g, tb), fd = Factor(dSum, dCnt, g, d);

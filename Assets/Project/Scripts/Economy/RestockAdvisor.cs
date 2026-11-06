@@ -14,7 +14,8 @@ using UnityEngine;
 ///  4. Mức hàng mục tiêu Q = μ + z·σ, với σ = sqrt(μ + (0.25μ)²) (nhiễu ngẫu nhiên + sai số dự báo ~25% đo được):
 ///     - hàng không hỏng: z = 1.28 (đủ hàng 90% số ngày; để dư không mất gì ngoài tiền vốn);
 ///     - hàng tươi: mô hình NEWSVENDOR - mức phục vụ tối ưu = Cu / (Cu + Co), Cu = lãi mất khi hết hàng (giá bán - giá nhập),
-///       Co = vốn mất khi hàng hỏng (giá nhập); chỉ tính nhu cầu trong hạn dùng.
+///       Co = phần vốn có thể mất khi dư hàng. Newsvendor gốc giả định hàng dư hỏng hết sau 1 kỳ (Co = giá nhập); ở đây hàng
+///       còn bán được tới hết hạn L ngày nên Co ≈ giá nhập / L (mô phỏng: dùng Co = giá nhập làm tỉ lệ đáp ứng tụt 96% -> 93%).
 ///  5. Cần đặt = Q - (hàng trên kệ + trong thùng), làm tròn lên số thùng (hàng tươi: làm tròn gần nhất, ít nhất 1 thùng khi thiếu &gt;= nửa thùng).
 /// Các hàm Quantile / TargetStock / Boxes là hàm thuần để test EditMode.
 /// </summary>
@@ -72,10 +73,10 @@ public static class RestockAdvisor
         return (float)(q < 0 ? -val : val);
     }
 
-    /// <summary>Mức phục vụ tối ưu newsvendor: Cu / (Cu + Co).</summary>
-    public static float NewsvendorServiceLevel(float sellPrice, float unitCost)
+    /// <summary>Mức phục vụ tối ưu newsvendor: Cu / (Cu + Co), Co = giá nhập / số ngày hạn dùng (hàng dư còn bán tiếp được).</summary>
+    public static float NewsvendorServiceLevel(float sellPrice, float unitCost, float shelfLifeDays = 1f)
     {
-        float cu = Mathf.Max(0f, sellPrice - unitCost), co = Mathf.Max(0.01f, unitCost);
+        float cu = Mathf.Max(0f, sellPrice - unitCost), co = Mathf.Max(0.01f, unitCost) / Mathf.Max(1f, shelfLifeDays);
         return Mathf.Clamp(cu / (cu + co), 0.05f, 0.95f);
     }
 
@@ -98,7 +99,7 @@ public static class RestockAdvisor
     }
 
     // ================= Dựng báo cáo từ trạng thái game =================
-    public static DemandForecaster TrainFromHistory(out int days)
+    public static DemandForecaster TrainFromHistory(out int days, int openHour = 8, int closeHour = 18)
     {
         var obs = new List<DemandForecaster.Observation>();
         foreach (BusinessStats.DayRecord r in BusinessStats.Days)
@@ -122,17 +123,20 @@ public static class RestockAdvisor
                 dayOfWeek = GameManager.DateOfDay(r.day).DayOfWeek,
                 groupHour = gh,
                 noHours = noHours,
+                availableHours = r.availableHours,
             });
         }
         days = obs.Count;
-        return DemandForecaster.Train(obs);
+        var f = new DemandForecaster { OpenHour = openHour, CloseHour = closeHour };
+        foreach (DemandForecaster.Observation o in obs) f.Observe(o);
+        return f;
     }
 
     public static Report Build(IEnumerable<ItemData> catalog)
     {
         var rep = new Report();
-        DemandForecaster f = TrainFromHistory(out rep.daysOfHistory);
         GameManager gm = GameManager.Instance;
+        DemandForecaster f = TrainFromHistory(out rep.daysOfHistory, gm != null ? gm.openingHour : 8, gm != null ? gm.closingHour : 18);
         int today = gm != null ? gm.currentDay : 1;
         float now = gm != null ? gm.ClockHours : 8f;
         int open = gm != null ? gm.openingHour : 8, close = gm != null ? gm.closingHour : 18;
@@ -185,7 +189,7 @@ public static class RestockAdvisor
                 bool perishable = life > 0f;
                 // Hàng tươi: chỉ tính nhu cầu trước khi hết hạn (hạn &lt; 1 ngày thì chỉ phần còn lại của hôm nay)
                 float mean = (restToday + (perishable && life < 1.5f && restToday > 0f ? 0f : tomorrow)) * share;
-                float sl = perishable ? NewsvendorServiceLevel(PriceManager.GetSellPrice(it), it.unitPrice) : ServiceLevelDry;
+                float sl = perishable ? NewsvendorServiceLevel(PriceManager.GetSellPrice(it), it.unitPrice, life) : ServiceLevelDry;
                 float target = TargetStock(mean, sl);
                 int onHand = onHandByName.TryGetValue(it.itemName, out int oh) ? oh : 0;
                 var sug = new Suggestion

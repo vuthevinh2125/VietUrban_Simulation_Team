@@ -17,6 +17,8 @@ public class RestockAdvisorTests
     {
         // Giá nhập 1, giá bán 1.6: thiếu 1 món mất 0.6 lãi, dư 1 món hỏng mất 1 vốn -> 0.6 / 1.6 = 37.5%
         Assert.AreEqual(0.375f, RestockAdvisor.NewsvendorServiceLevel(1.6f, 1f), 1e-4);
+        // Hạn 4 ngày: hàng dư còn bán tiếp, rủi ro hỏng ~1/4 -> 0.6 / (0.6 + 0.25) ≈ 70.6%
+        Assert.AreEqual(0.6f / 0.85f, RestockAdvisor.NewsvendorServiceLevel(1.6f, 1f, 4f), 1e-4);
         // Lãi càng cao càng nên trữ nhiều
         Assert.Greater(RestockAdvisor.NewsvendorServiceLevel(3f, 1f), RestockAdvisor.NewsvendorServiceLevel(1.6f, 1f));
     }

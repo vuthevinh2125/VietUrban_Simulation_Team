@@ -29,6 +29,11 @@ public class BusinessStats : MonoBehaviour
         /// Save cũ không có -> null (bộ dự báo bỏ qua ngày đó).
         /// </summary>
         public int[] groupHour;
+        /// <summary>
+        /// Giờ còn hàng của từng nhóm: availableHours[g] bit h = 1 nếu đầu giờ h (lúc cửa hàng mở) còn ít nhất một món bán được
+        /// trên kệ. Bộ dự báo dùng để ước lượng nhu cầu thật khi hết hàng giữa ngày (số bán bị "kiểm duyệt").
+        /// </summary>
+        public int[] availableHours;
         public List<ItemCount> products = new List<ItemCount>();
         public float Profit => income - expenses;
         public DateTime Date => GameManager.DateOfDay(day);
@@ -42,6 +47,28 @@ public class BusinessStats : MonoBehaviour
     private readonly Dictionary<string, ItemCount> todayItems = new Dictionary<string, ItemCount>();
     public const int GroupCount = 10; // số giá trị của ProductGroup
     private int[] todayGroupHour = new int[GroupCount * 24];
+    private int[] todayAvailable = new int[GroupCount];
+    private int sampledHour = -1, todaySampled;
+    private readonly bool[] groupStocked = new bool[GroupCount];
+
+    void Update()
+    {
+        // Mỗi đầu giờ (khi cửa hàng mở): ghi lại nhóm nào còn hàng trên kệ
+        GameManager gm = GameManager.Instance;
+        if (gm == null || !gm.IsStoreOpen) return;
+        int hour = Mathf.Clamp(Mathf.FloorToInt(gm.ClockHours), 0, 23);
+        if (hour == sampledHour) return;
+        sampledHour = hour;
+        todaySampled |= 1 << hour;
+        Array.Clear(groupStocked, 0, groupStocked.Length);
+        foreach (Shelf sh in StockManager.Shelves)
+        {
+            if (sh == null || sh.CurrentItem == null || sh.SellableCount <= 0) continue;
+            int g = (int)DemandModel.GroupOf(sh.CurrentItem);
+            if (g >= 0 && g < GroupCount) groupStocked[g] = true;
+        }
+        for (int g = 0; g < GroupCount; g++) if (groupStocked[g]) todayAvailable[g] |= 1 << hour;
+    }
     private int todayDeliveries;
     private float todayDeliveryRevenue;
 
@@ -118,6 +145,8 @@ public class BusinessStats : MonoBehaviour
             season = WeatherSystem.SeasonName(WeatherSystem.CurrentSeason),
             tempC = WeatherSystem.TemperatureC,
             groupHour = todayGroupHour,
+            // Giờ không lấy mẫu (cửa hàng đóng) coi như "không biết" = còn hàng, để không bị hiểu nhầm là hết hàng
+            availableHours = Array.ConvertAll(todayAvailable, m => m | (~todaySampled & 0xFFFFFF)),
             products = todayItems.Values.OrderByDescending(i => i.revenue).ToList(),
         };
         ReviewManager.ForDay(s.day, out r.rating, out r.reviews);
@@ -126,6 +155,9 @@ public class BusinessStats : MonoBehaviour
         days.Sort((a, b) => a.day.CompareTo(b.day));
         todayItems.Clear();
         todayGroupHour = new int[GroupCount * 24];
+        todayAvailable = new int[GroupCount];
+        sampledHour = -1;
+        todaySampled = 0;
         todayDeliveries = 0;
         todayDeliveryRevenue = 0f;
         OnChanged?.Invoke();
@@ -142,6 +174,9 @@ public class BusinessStats : MonoBehaviour
         Instance.days.Sort((a, b) => a.day.CompareTo(b.day));
         Instance.todayItems.Clear();
         Instance.todayGroupHour = new int[GroupCount * 24];
+        Instance.todayAvailable = new int[GroupCount];
+        Instance.sampledHour = -1;
+        Instance.todaySampled = 0;
         Instance.todayDeliveries = 0;
         Instance.todayDeliveryRevenue = 0f;
         OnChanged?.Invoke();

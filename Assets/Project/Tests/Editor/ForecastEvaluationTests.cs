@@ -24,11 +24,11 @@ using UnityEngine;
 /// </summary>
 public class ForecastEvaluationTests
 {
-    private static readonly float[] Rate = { 0.5f, 0.3f, 0.15f, 0.25f, 0.45f, 0.35f, 0.2f, 0.4f, 0.2f, 0.1f }; // món / khách / giờ (tỉ lệ)
-    private const int OpenHour = 8, CloseHour = 18;
+    internal static readonly float[] Rate = { 0.5f, 0.3f, 0.15f, 0.25f, 0.45f, 0.35f, 0.2f, 0.4f, 0.2f, 0.1f }; // món / khách / giờ (tỉ lệ)
+    internal const int OpenHour = 8, CloseHour = 18;
     private static readonly string[] Methods = { "Naive (yesterday)", "Seasonal naive (same weekday last week)", "Moving average 7 days", "Forecaster + weather forecast", "Forecaster + actual weather", "Lower bound (true demand)" };
 
-    private static float Lambda(int day, int g, int hour, WeatherSystem.DayWeather wx)
+    internal static float Lambda(int day, int g, int hour, WeatherSystem.DayWeather wx)
     {
         DayOfWeek dow = GameManager.DateOfDay(day).DayOfWeek;
         float growth = 1f + 0.01f * (day - 1);
@@ -36,7 +36,7 @@ public class ForecastEvaluationTests
                * DemandModel.Multiplier((ProductGroup)g, hour + 0.5f, wx.weather, wx.season, wx.tempC, dow);
     }
 
-    private static int Poisson(System.Random rng, double l)
+    internal static int Poisson(System.Random rng, double l)
     {
         if (l <= 0) return 0;
         if (l > 30)
