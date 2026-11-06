@@ -160,4 +160,81 @@ public class SceneSmokeTests
         RestoreSave();
         yield return new ExitPlayMode();
     }
+
+    // ---------- T11: mua xe (FR13) ----------
+    [UnityTest]
+    public IEnumerator Vehicle_Purchase_ChecksLevelAndMoney()
+    {
+        OpenGameScene();
+        yield return new EnterPlayMode();
+        yield return Frames(10);
+
+        VehicleManager.Entry e = System.Array.Find(VehicleManager.Catalog, v => !v.starter && v.level > 1 && v.price > 0f && VehicleManager.Exists(v.id));
+        Assert.IsNotNull(e, "Cần một xe bán được trong scene (không phải xe có sẵn, có yêu cầu cấp độ)");
+        EconomyManager eco = EconomyManager.Instance;
+        int day = GameManager.Instance.currentDay;
+
+        StoreProgress.Load(e.level - 1, 0);
+        eco.LoadState(e.price + 100f, day);
+        Assert.AreEqual(VehicleManager.BuyResult.LevelTooLow, VehicleManager.CanBuy(e), "Chưa đủ cấp thì khoá");
+        Assert.IsFalse(VehicleManager.Buy(e), "Chưa đủ cấp thì không mua được");
+
+        StoreProgress.Load(e.level, 0);
+        eco.LoadState(e.price - 1f, day);
+        Assert.AreEqual(VehicleManager.BuyResult.NotEnoughMoney, VehicleManager.CanBuy(e), "Thiếu tiền");
+        Assert.IsFalse(VehicleManager.Buy(e));
+        Assert.AreEqual(e.price - 1f, eco.Money, 0.01f, "Mua hỏng thì không trừ tiền");
+
+        eco.LoadState(e.price + 100f, day);
+        Assert.IsTrue(VehicleManager.Buy(e), "Đủ cấp, đủ tiền thì mua được");
+        Assert.AreEqual(100f, eco.Money, 0.01f, "Tiền giảm đúng giá xe");
+        Assert.IsTrue(VehicleManager.Owns(e.id));
+        Assert.AreEqual(VehicleManager.BuyResult.AlreadyOwned, VehicleManager.CanBuy(e), "Đã có thì không mua lại");
+        GameObject vehicle = VehicleManager.FindObject(e.id);
+        Assert.IsNotNull(vehicle, "Xe phải có trong scene");
+        Assert.IsTrue(vehicle.activeInHierarchy, "Xe mua xong phải hiện ra trước cửa hàng");
+
+        yield return new ExitPlayMode();
+    }
+
+    // ---------- T14: chốt ngày, sang ngày mới, hết tiền (FR5) ----------
+    [UnityTest]
+    public IEnumerator DayEnd_ChargesRent_AndGameOverWhenBroke()
+    {
+        OpenGameScene();
+        yield return new EnterPlayMode();
+        yield return Frames(10);
+        BackupSave(); // sang ngày mới thì game tự lưu
+
+        GameManager gm = GameManager.Instance;
+        EconomyManager eco = EconomyManager.Instance;
+        int day = gm.currentDay;
+        eco.LoadState(500f, day);
+        float rent = eco.CurrentRent;
+        Assert.Greater(rent, 0f, "Tiền thuê mỗi ngày phải dương");
+
+        DailySummary summary = eco.CloseDay();
+        Assert.AreEqual(500f - rent, eco.Money, 0.01f, "Chốt ngày phải trừ tiền thuê");
+        Assert.AreEqual(rent, summary.Get(MoneyCategory.Rent), 0.01f, "Báo cáo ngày ghi tiền thuê");
+        Assert.AreEqual(500f - rent, summary.closingBalance, 0.01f, "Số dư cuối ngày");
+
+        // StartNextDay là hàm riêng do nút Continue của báo cáo ngày gọi -> gọi qua reflection
+        var next = typeof(GameManager).GetMethod("StartNextDay", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(next, "GameManager.StartNextDay");
+        next.Invoke(gm, null);
+        yield return null;
+        Assert.AreEqual(day + 1, gm.currentDay, "Còn tiền thì sang ngày mới");
+        Assert.IsFalse(gm.IsGameOver);
+
+        eco.LoadState(-10f, gm.currentDay);
+        next.Invoke(gm, null);
+        yield return null;
+        Assert.IsTrue(gm.IsGameOver, "Tiền âm khi sang ngày mới thì Game Over");
+        Assert.AreEqual(day + 1, gm.currentDay, "Game Over thì không sang ngày");
+        Assert.AreEqual(0f, Time.timeScale, "Game Over dừng thời gian");
+
+        Time.timeScale = 1f;
+        RestoreSave();
+        yield return new ExitPlayMode();
+    }
 }

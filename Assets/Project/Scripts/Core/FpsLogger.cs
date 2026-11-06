@@ -27,6 +27,8 @@ using UnityEngine.AI;
 /// ánh sáng / bóng ổn định rồi mới đo 60 giây; xong trả lại điều khiển. Muốn tự chọn chỗ đứng: đặt GameObject rỗng
 /// tên "BenchmarkPoint_Store" / "BenchmarkPoint_Street" trong scene (vị trí + hướng của nó được dùng thay mặc định).
 /// Cột "mode" trong csv ghi free / bench-store / bench-street.
+///  - Alt + F11: chạy CẢ BỘ đo chính thức tự động: 1 lần khởi động không tính, rồi bench-store x 3, bench-street x 3, bench-crowd x 3 (khoảng 13 phút, không
+///    cần chạm vào máy), rồi ghi thêm bảng tóm tắt (trung bình / thấp nhất theo từng cảnh + cấu hình máy) vào fps_summary.txt.
 /// </summary>
 public class FpsLogger : MonoBehaviour
 {
@@ -50,6 +52,8 @@ public class FpsLogger : MonoBehaviour
     private CustomerSpawner crowdSpawner;
     private long crowdSum; private int crowdSamples;
     private PlayerController frozenPlayer;
+    private bool inSuite, suiteWarmup;
+    private readonly List<(string mode, float avg, float low)> suiteResults = new List<(string, float, float)>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -68,7 +72,9 @@ public class FpsLogger : MonoBehaviour
             {
                 bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                 bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-                if (shift && ctrl) StartCoroutine(Benchmark(2));
+                bool alt = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+                if (alt) { if (!inSuite) StartCoroutine(Suite()); }
+                else if (shift && ctrl) StartCoroutine(Benchmark(2));
                 else if (shift) StartCoroutine(Benchmark(0));
                 else if (ctrl) StartCoroutine(Benchmark(1));
                 else { mode = "free"; Begin(); }
@@ -272,6 +278,8 @@ public class FpsLogger : MonoBehaviour
         ProgressHUD.Toast($"FPS test [{mode}]: average {avgFps.ToString("0.0", inv)}, 1% low {lowFps.ToString("0.0", inv)} ({frameTimes.Count} frames)" +
                           (cpuAvg.Length > 0 ? $"  ·  CPU {cpuAvg} ms" : "") + (gcKb.Length > 0 ? $"  ·  GC {gcKb} KB/frame" : ""));
 
+        if (inSuite && !suiteWarmup) suiteResults.Add((mode, avgFps, lowFps));
+
         try
         {
             string path = Path.Combine(Application.persistentDataPath, "fps_log.csv");
@@ -290,6 +298,64 @@ public class FpsLogger : MonoBehaviour
             Debug.Log($"[FpsLogger] Saved to {path}");
         }
         catch (Exception e) { Debug.LogWarning($"[FpsLogger] Could not write fps_log.csv: {e.Message}"); }
+    }
+
+    // ================= Bộ đo chính thức (Alt + F11) =================
+    private IEnumerator Suite()
+    {
+        inSuite = true;
+        suiteResults.Clear();
+        // Lần chạy khởi động (không tính): lần đo đầu tiên sau khi bấm phím từng bị khựng tới 71 s (Editor nạp / biên dịch
+        // shader, dọn bộ nhớ) -> 1% low 0.5 FPS, kéo cả bảng xuống. Chạy một lần cảnh cửa hàng trước rồi mới ghi.
+        suiteWarmup = true;
+        ProgressHUD.Toast("FPS suite: warm-up run (not counted) - don't touch anything.");
+        yield return StartCoroutine(Benchmark(0));
+        while (preparing || measuring) yield return null;
+        suiteWarmup = false;
+        int[] order = { 0, 0, 0, 1, 1, 1, 2, 2, 2 }; // cửa hàng x3, phố x3, đông khách x3 (đông khách cuối cùng: khách còn ở lại trong cửa hàng)
+        for (int i = 0; i < order.Length; i++)
+        {
+            ProgressHUD.Toast($"FPS suite: run {i + 1} / {order.Length} - don't touch anything.");
+            yield return new WaitForSecondsRealtime(2f);
+            int before = suiteResults.Count;
+            yield return StartCoroutine(Benchmark(order[i]));
+            while (preparing || measuring) yield return null;
+            if (suiteResults.Count == before)
+            {
+                ProgressHUD.Toast("FPS suite stopped: a run could not start.");
+                inSuite = false;
+                yield break;
+            }
+        }
+        inSuite = false;
+        WriteSuiteSummary();
+    }
+
+    private void WriteSuiteSummary()
+    {
+        var inv = CultureInfo.InvariantCulture;
+        var sb = new System.Text.StringBuilder();
+        string build = Application.isEditor ? "Editor" : Debug.isDebugBuild ? "Development Build" : "Release build";
+        sb.AppendLine($"FPS suite {DateTime.Now.ToString("yyyy-MM-dd HH:mm", inv)} - {build}, {Screen.width}x{Screen.height}, quality {QualitySettings.names[QualitySettings.GetQualityLevel()]}");
+        sb.AppendLine($"CPU: {SystemInfo.processorType} ({SystemInfo.processorCount} threads) - GPU: {SystemInfo.graphicsDeviceName} - RAM: {SystemInfo.systemMemorySize} MB - OS: {SystemInfo.operatingSystem}");
+        sb.AppendLine("mode, runs, average FPS (mean / lowest run), 1% low FPS (mean / lowest run)");
+        foreach (string m in new[] { "bench-store", "bench-street", "bench-crowd" })
+        {
+            var rs = suiteResults.FindAll(r => r.mode == m);
+            if (rs.Count == 0) continue;
+            float sumAvg = 0f, minAvg = float.MaxValue, sumLow = 0f, minLow = float.MaxValue;
+            foreach (var r in rs) { sumAvg += r.avg; minAvg = Mathf.Min(minAvg, r.avg); sumLow += r.low; minLow = Mathf.Min(minLow, r.low); }
+            sb.AppendLine($"{m}, {rs.Count}, {(sumAvg / rs.Count).ToString("0.0", inv)} / {minAvg.ToString("0.0", inv)}, {(sumLow / rs.Count).ToString("0.0", inv)} / {minLow.ToString("0.0", inv)}");
+        }
+        sb.AppendLine();
+        try
+        {
+            string path = Path.Combine(Application.persistentDataPath, "fps_summary.txt");
+            File.AppendAllText(path, sb.ToString());
+            Debug.Log($"[FpsLogger] Suite summary saved to {path}\n{sb}");
+            ProgressHUD.Toast("FPS suite done - results in fps_summary.txt (save folder).");
+        }
+        catch (Exception e) { Debug.LogWarning($"[FpsLogger] Could not write fps_summary.txt: {e.Message}"); }
     }
 
     /// <summary>File cũ (chỉ có cột FPS) -> thay dòng tiêu đề bằng tiêu đề mới; các dòng cũ giữ nguyên (cột mới để trống).</summary>
