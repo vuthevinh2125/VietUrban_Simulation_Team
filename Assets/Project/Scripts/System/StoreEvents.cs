@@ -147,7 +147,7 @@ public class StoreEvents : MonoBehaviour
 
     private IEnumerator ThiefGang()
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         if (spawner == null || StockManager.GetRandomStockedShelf() == null) yield break;
         var gang = new List<NPCShopper>();
         for (int i = 0; i < 3; i++)
@@ -170,7 +170,7 @@ public class StoreEvents : MonoBehaviour
     // ================= Thanh tra vệ sinh =================
     private IEnumerator Inspection()
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         GameObject prefab = spawner != null ? spawner.RandomCustomerPrefab() : null;
         Vector3 door = DoorPoint(out Vector3 outward);
         if (prefab == null) yield break;
@@ -276,7 +276,7 @@ public class StoreEvents : MonoBehaviour
     /// </summary>
     private IEnumerator TourGroup()
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         if (spawner == null) yield break;
         Vector3 door = DoorPoint(out Vector3 outward);
         Vector3 sideV = Vector3.Cross(Vector3.up, outward);
@@ -378,7 +378,7 @@ public class StoreEvents : MonoBehaviour
 
         // Ẩn HUD (tiền, bản đồ nhỏ, hướng dẫn, thông báo) như cảnh mở đầu
         var hiddenCanvases = new List<Canvas>();
-        foreach (Canvas c in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        foreach (Canvas c in FindObjectsByType<Canvas>())
         {
             if (c == null || !c.enabled || !c.isRootCanvas || c.renderMode != RenderMode.ScreenSpaceOverlay) continue;
             c.enabled = false;
@@ -512,7 +512,7 @@ public class StoreEvents : MonoBehaviour
     {
         if (doorCached) { outward = cachedOutward; return cachedDoor; }
         outward = Vector3.back;
-        EntranceDoor[] doors = FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None);
+        EntranceDoor[] doors = FindObjectsByType<EntranceDoor>();
         GameObject store = GameObject.Find("Supermarket_full");
         if (doors.Length == 0) return Vector3.zero;
         Vector3 door = Vector3.zero;

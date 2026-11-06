@@ -61,7 +61,7 @@ public class WeatherSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindFirstObjectByType<GameManager>() != null) new GameObject("WeatherSystem").AddComponent<WeatherSystem>();
+        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("WeatherSystem").AddComponent<WeatherSystem>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -272,7 +272,7 @@ public class WeatherSystem : MonoBehaviour
             _ => new Color(0.55f, 0.58f, 0.56f),
         };
         if (mpb == null) mpb = new MaterialPropertyBlock();
-        foreach (Renderer r in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+        foreach (Renderer r in FindObjectsByType<Renderer>())
         {
             if (r is ParticleSystemRenderer) continue;
             string n = r.name.ToLowerInvariant();

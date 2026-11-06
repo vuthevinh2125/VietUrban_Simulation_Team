@@ -37,7 +37,7 @@ public class PedestrianSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && GameObject.Find("CityExpansion_East") != null && FindFirstObjectByType<GameManager>() != null)
+        if (Instance == null && GameObject.Find("CityExpansion_East") != null && FindAnyObjectByType<GameManager>() != null)
             new GameObject("PedestrianSystem").AddComponent<PedestrianSystem>();
     }
 
@@ -113,7 +113,7 @@ public class PedestrianSystem : MonoBehaviour
 
     private void Spawn()
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         if (spawner == null || spawner.customerPrefabs == null || spawner.customerPrefabs.Length == 0) return;
         GameObject prefab = spawner.RandomCustomerPrefab(); // bỏ model dành riêng cho nhân viên lau nhà
         if (prefab == null) return;

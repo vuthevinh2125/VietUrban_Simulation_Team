@@ -61,15 +61,15 @@ public class ComputerInteract : MonoBehaviour
     public static GameObject FindComputerUI()
     {
         // 1) Đúng tên "ComputerUI"
-        foreach (RectTransform t in FindObjectsByType<RectTransform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (RectTransform t in FindObjectsByType<RectTransform>(FindObjectsInactive.Include))
             if (t.name == "ComputerUI" && t.gameObject.scene.IsValid()) return t.gameObject;
 
         // 2) Panel có UIMouseControl (panel giao diện chính)
-        UIMouseControl mouse = FindFirstObjectByType<UIMouseControl>(FindObjectsInactive.Include);
+        UIMouseControl mouse = FindAnyObjectByType<UIMouseControl>(FindObjectsInactive.Include);
         if (mouse != null) return mouse.gameObject;
 
         // 3) ShopFilterManager NẰM NGOÀI CÙNG (bỏ qua các panel con như Header_Panel)
-        foreach (ShopFilterManager shop in FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ShopFilterManager shop in FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include))
         {
             Transform p = shop.transform.parent;
             if (p == null || p.GetComponentInParent<ShopFilterManager>(true) == null) return shop.gameObject;

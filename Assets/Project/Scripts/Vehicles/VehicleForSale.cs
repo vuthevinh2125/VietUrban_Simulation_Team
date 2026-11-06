@@ -97,7 +97,7 @@ public class VehicleForSale : MonoBehaviour
         if (player != null && player.gameObject.activeInHierarchy) return player;
         if (Time.time < nextFind) return null;
         nextFind = Time.time + 1f;
-        PlayerController pc = FindFirstObjectByType<PlayerController>();
+        PlayerController pc = FindAnyObjectByType<PlayerController>();
         player = pc != null ? pc.transform : null;
         return player;
     }

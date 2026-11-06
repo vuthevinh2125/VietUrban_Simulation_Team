@@ -63,7 +63,7 @@ public class TutorialManager : MonoBehaviour
     public void Begin()
     {
         hands = null;
-        foreach (ItemPickup ip in FindObjectsByType<ItemPickup>(FindObjectsSortMode.None))
+        foreach (ItemPickup ip in FindObjectsByType<ItemPickup>())
             if (ip.playerCamera != null) { hands = ip; break; }
 
         startBoxes = CountBoxes();

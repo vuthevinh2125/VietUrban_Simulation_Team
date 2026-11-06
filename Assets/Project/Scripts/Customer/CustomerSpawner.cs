@@ -48,7 +48,7 @@ public class CustomerSpawner : MonoBehaviour
     private void KeepAwayFromLinks(Transform point)
     {
         if (point == null) return;
-        foreach (NavMeshLink link in FindObjectsByType<NavMeshLink>(FindObjectsSortMode.None))
+        foreach (NavMeshLink link in FindObjectsByType<NavMeshLink>())
         {
             Vector3 a = link.transform.TransformPoint(link.startPoint);
             Vector3 b = link.transform.TransformPoint(link.endPoint);

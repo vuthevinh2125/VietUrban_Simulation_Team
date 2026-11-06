@@ -57,7 +57,7 @@ public class LightShadowBudget : MonoBehaviour
     private void Scan()
     {
         candidates.RemoveAll(l => l == null);
-        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include))
         {
             if (l.type != LightType.Point && l.type != LightType.Spot) continue;
             if (original.ContainsKey(l)) continue;

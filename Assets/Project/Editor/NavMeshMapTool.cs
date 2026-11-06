@@ -20,8 +20,8 @@ public static class NavMeshMapTool
     [MenuItem("Tools/Debug/NavMesh Connectivity Map")]
     private static void Run()
     {
-        Transform store = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).FirstOrDefault(t => t.name == StoreRootName && t.parent == null);
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>();
+        Transform store = Object.FindObjectsByType<Transform>().FirstOrDefault(t => t.name == StoreRootName && t.parent == null);
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>();
         if (store == null || spawner == null || spawner.spawnPoint == null)
         {
             EditorUtility.DisplayDialog("NavMesh Map", "Cần có Supermarket_full và CustomerSpawner (đã có SpawnPoint).", "OK");
@@ -63,7 +63,7 @@ public static class NavMeshMapTool
             }
 
         Mark(grid, area, spawner.spawnPoint.position, 'S');
-        foreach (CheckoutCounter c in Object.FindObjectsByType<CheckoutCounter>(FindObjectsSortMode.None))
+        foreach (CheckoutCounter c in Object.FindObjectsByType<CheckoutCounter>())
             if (c.customerPoint != null) Mark(grid, area, c.customerPoint.position, 'C');
 
         var sb = new StringBuilder();

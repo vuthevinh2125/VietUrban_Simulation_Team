@@ -52,7 +52,7 @@ public static class DoorSensor
         {
             nextAgentScan = Time.time + 2f;
             agents.Clear();
-            foreach (NavMeshAgent a in Object.FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None))
+            foreach (NavMeshAgent a in Object.FindObjectsByType<NavMeshAgent>())
                 if (a.GetComponent<NPCShopper>() == null && a.GetComponent<PedestrianWalker>() == null) agents.Add(a);
         }
         foreach (NavMeshAgent a in agents)
@@ -123,7 +123,7 @@ public static class DoorSensor
         {
             nextPlayerFind = Time.time + 1f;
             playerParts.Clear();
-            foreach (PlayerController pc in Object.FindObjectsByType<PlayerController>(FindObjectsSortMode.None))
+            foreach (PlayerController pc in Object.FindObjectsByType<PlayerController>())
             {
                 playerParts.Add(pc.transform);
                 Rigidbody rb = pc.GetComponentInParent<Rigidbody>() ?? pc.GetComponentInChildren<Rigidbody>();

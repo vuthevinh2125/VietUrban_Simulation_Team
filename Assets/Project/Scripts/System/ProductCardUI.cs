@@ -147,7 +147,7 @@ public class ProductCardUI : MonoBehaviour
     // Hook this to the [Add To Cart] Button OnClick()
     public void OnAddToCartClicked()
     {
-        MarketManager manager = MarketManager.Instance != null ? MarketManager.Instance : FindFirstObjectByType<MarketManager>();
+        MarketManager manager = MarketManager.Instance != null ? MarketManager.Instance : FindAnyObjectByType<MarketManager>();
         if (manager != null && itemData != null)
         {
             manager.AddToCart(itemData, currentBoxAmount);

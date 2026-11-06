@@ -18,20 +18,20 @@ public static class SceneReportTool
         var sb = new StringBuilder();
         sb.AppendLine("# Scene report: " + UnityEngine.SceneManagement.SceneManager.GetActiveScene().path);
 
-        var all = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var all = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
 
         Section(sb, "Player", all.Where(t => t.CompareTag("Player")));
-        Section(sb, "Shelves", Object.FindObjectsByType<Shelf>(FindObjectsInactive.Include, FindObjectsSortMode.None).Select(s => s.transform),
+        Section(sb, "Shelves", Object.FindObjectsByType<Shelf>(FindObjectsInactive.Include).Select(s => s.transform),
             t => { var s = t.GetComponent<Shelf>(); return $"slots={s.slots?.Length ?? 0} assigned={(s.assignedItem ? s.assignedItem.itemName : "-")} accepts='{s.acceptsDisplayType}'"; });
-        Section(sb, "Computers", Object.FindObjectsByType<ComputerInteract>(FindObjectsInactive.Include, FindObjectsSortMode.None).Select(c => c.transform));
-        Section(sb, "AutoDoors", Object.FindObjectsByType<AutoDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None).Select(d => d.transform),
+        Section(sb, "Computers", Object.FindObjectsByType<ComputerInteract>(FindObjectsInactive.Include).Select(c => c.transform));
+        Section(sb, "AutoDoors", Object.FindObjectsByType<AutoDoor>(FindObjectsInactive.Include).Select(d => d.transform),
             t => { var c = t.GetComponent<Collider>(); return c ? $"area center={c.bounds.center:F2} size={c.bounds.size:F2} trigger={c.isTrigger}" : "no collider"; });
-        Section(sb, "MarketManager / DeliveryPoint", Object.FindObjectsByType<MarketManager>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+        Section(sb, "MarketManager / DeliveryPoint", Object.FindObjectsByType<MarketManager>(FindObjectsInactive.Include)
             .Where(m => m.deliveryPoint != null).Select(m => m.deliveryPoint));
 
         // NPCs
         sb.AppendLine("\n## NavMeshAgents (NPC)");
-        foreach (var a in Object.FindObjectsByType<NavMeshAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (var a in Object.FindObjectsByType<NavMeshAgent>(FindObjectsInactive.Include))
         {
             var scripts = a.GetComponents<MonoBehaviour>().Where(m => m != null).Select(m => m.GetType().Name);
             var src = PrefabUtility.GetCorrespondingObjectFromSource(a.gameObject);
@@ -62,11 +62,11 @@ public static class SceneReportTool
         var tri = NavMesh.CalculateTriangulation();
         sb.AppendLine($"navmesh vertices={tri.vertices.Length} triangles={tri.indices.Length / 3}");
         Vector3? origin = null;
-        var firstAgent = Object.FindFirstObjectByType<NavMeshAgent>();
+        var firstAgent = Object.FindAnyObjectByType<NavMeshAgent>();
         if (firstAgent) origin = firstAgent.transform.position;
         var points = new List<Transform>();
         points.AddRange(all.Where(t => t.gameObject.scene.IsValid() && keys.Any(k => t.name.ToLower().Contains(k)) && t.GetComponent<Shelf>() == null).Take(40));
-        points.AddRange(Object.FindObjectsByType<Shelf>(FindObjectsInactive.Include, FindObjectsSortMode.None).Select(s => s.transform));
+        points.AddRange(Object.FindObjectsByType<Shelf>(FindObjectsInactive.Include).Select(s => s.transform));
         foreach (var p in points.Distinct())
         {
             string onMesh = NavMesh.SamplePosition(p.position, out NavMeshHit hit, 3f, NavMesh.AllAreas)

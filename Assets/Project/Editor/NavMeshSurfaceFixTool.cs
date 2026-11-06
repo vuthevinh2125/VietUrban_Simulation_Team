@@ -18,7 +18,7 @@ public static class NavMeshSurfaceFixTool
     [MenuItem("Tools/Store Setup/6. Remove Duplicate NavMesh Surfaces")]
     private static void Run()
     {
-        NavMeshSurface[] all = Object.FindObjectsByType<NavMeshSurface>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        NavMeshSurface[] all = Object.FindObjectsByType<NavMeshSurface>(FindObjectsInactive.Include);
         NavMeshSurface keep = all.FirstOrDefault(s => s.name == KeepName) ?? all.FirstOrDefault(s => s.enabled && s.navMeshData != null);
         if (keep == null)
         {

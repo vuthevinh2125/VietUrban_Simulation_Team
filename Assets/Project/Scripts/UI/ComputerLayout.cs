@@ -34,7 +34,7 @@ public class ComputerLayout : MonoBehaviour
 
     private static void AttachAll()
     {
-        foreach (ShopCatalog c in Object.FindObjectsByType<ShopCatalog>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ShopCatalog c in Object.FindObjectsByType<ShopCatalog>(FindObjectsInactive.Include))
             if (c.GetComponent<ComputerLayout>() == null) c.gameObject.AddComponent<ComputerLayout>();
     }
 

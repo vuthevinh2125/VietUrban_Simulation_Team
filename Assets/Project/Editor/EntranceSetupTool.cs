@@ -21,7 +21,7 @@ public static class EntranceSetupTool
     [MenuItem("Tools/Store Setup/4. Open Store Entrances (rồi Bake NavMesh)")]
     private static void Run()
     {
-        Transform store = Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+        Transform store = Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude)
             .FirstOrDefault(t => t.name == StoreRootName && t.parent == null);
         if (store == null) { EditorUtility.DisplayDialog("Entrance Setup", $"Không tìm thấy '{StoreRootName}'.", "OK"); return; }
 

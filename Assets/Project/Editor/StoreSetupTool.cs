@@ -154,7 +154,7 @@ public static class StoreSetupTool
 
         // ---------- 4) Gỡ script AI gắn nhầm (vật không có Animator mà có NavMeshAgent/SecurityGuard) ----------
         sb.AppendLine("\n## Gỡ AI gắn nhầm lên đồ vật");
-        foreach (NavMeshAgent agent in Object.FindObjectsByType<NavMeshAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (NavMeshAgent agent in Object.FindObjectsByType<NavMeshAgent>(FindObjectsInactive.Include))
         {
             if (agent.GetComponentInChildren<Animator>(true) != null) continue;
             sb.AppendLine($"- {agent.name}: gỡ NavMeshAgent{(agent.GetComponent<SecurityGuard>() ? " + SecurityGuard" : "")}");
@@ -333,9 +333,9 @@ public static class StoreSetupTool
 
     private static GameObject FindSceneObject(string name)
     {
-        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
             if (t.name == name && t.parent == null && t.gameObject.scene.IsValid()) return t.gameObject;
-        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
             if (t.name == name && t.gameObject.scene.IsValid()) return t.gameObject;
         return null;
     }

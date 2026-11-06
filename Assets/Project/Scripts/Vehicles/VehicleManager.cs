@@ -266,9 +266,9 @@ public class VehicleManager : MonoBehaviour
     {
         if (UIState.IsBlockingUIOpen) return false;
         float mine = (vehicle.position - playerPos).sqrMagnitude;
-        foreach (MotorcycleInteraction m in FindObjectsByType<MotorcycleInteraction>(FindObjectsSortMode.None))
+        foreach (MotorcycleInteraction m in FindObjectsByType<MotorcycleInteraction>())
             if (m.enabled && m.transform != vehicle && (m.transform.position - playerPos).sqrMagnitude < mine) return false;
-        foreach (CarInteraction c in FindObjectsByType<CarInteraction>(FindObjectsSortMode.None))
+        foreach (CarInteraction c in FindObjectsByType<CarInteraction>())
             if (c.enabled && c.transform != vehicle && (c.transform.position - playerPos).sqrMagnitude < mine) return false;
         return true;
     }

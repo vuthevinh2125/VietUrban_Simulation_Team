@@ -21,14 +21,14 @@ public static class EntranceLinkTool
     [MenuItem("Tools/Store Setup/5. Connect Entrances (NavMesh Links)")]
     private static void Run()
     {
-        EntranceDoor[] doors = Object.FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None);
+        EntranceDoor[] doors = Object.FindObjectsByType<EntranceDoor>();
         if (doors.Length == 0)
         {
             EditorUtility.DisplayDialog("Entrance Links", "Chưa có EntranceDoor nào. Chạy '4. Open Store Entrances' trước.", "OK");
             return;
         }
 
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>();
         Vector3 outsideRef = spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint.position : doors[0].transform.position - Vector3.forward * 5f;
 
         Undo.SetCurrentGroupName("Connect Entrances");

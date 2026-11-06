@@ -378,8 +378,8 @@ public class NPCShopper : MonoBehaviour
         StartCoroutine(MoveTo(escape));
 
         var doors = new List<Transform>();
-        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None)) doors.Add(d.transform);
-        foreach (AutoDoor d in FindObjectsByType<AutoDoor>(FindObjectsSortMode.None)) doors.Add(d.transform);
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>()) doors.Add(d.transform);
+        foreach (AutoDoor d in FindObjectsByType<AutoDoor>()) doors.Add(d.transform);
 
         float t = 0f;
         while (!caught && t < moveTimeout * 2f)

@@ -43,14 +43,14 @@ public class DayNightCycle : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindFirstObjectByType<GameManager>() != null) new GameObject("DayNightCycle").AddComponent<DayNightCycle>();
+        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("DayNightCycle").AddComponent<DayNightCycle>();
     }
 
     void Awake()
     {
         Instance = this;
         // Ngày làm việc ngắn (đóng cửa sớm) thì mặt trời lặn sớm hơn để giờ cuối ngày vẫn thấy trời chạng vạng / tối
-        GameManager gm = GameManager.Instance != null ? GameManager.Instance : FindFirstObjectByType<GameManager>();
+        GameManager gm = GameManager.Instance != null ? GameManager.Instance : FindAnyObjectByType<GameManager>();
         if (gm != null) sunsetHour = Mathf.Clamp(gm.closingHour - 0.5f, 16.5f, 19f);
         sun = FindSun();
         if (sun != null)
@@ -87,9 +87,9 @@ public class DayNightCycle : MonoBehaviour
     /// <summary>Đèn mặt trời: object "Directional Light" có sẵn (kể cả đang tắt), không có thì tạo mới.</summary>
     private static Light FindSun()
     {
-        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include))
             if (l.type == LightType.Directional && l.name == "Directional Light") return l;
-        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Light l in FindObjectsByType<Light>(FindObjectsInactive.Include))
             if (l.type == LightType.Directional && l.name != "MoonLight") return l;
         var go = new GameObject("Directional Light");
         Light sunLight = go.AddComponent<Light>();

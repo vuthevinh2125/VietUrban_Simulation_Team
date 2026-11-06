@@ -111,7 +111,7 @@ public class StaffManager : MonoBehaviour
     public bool HireRestocker(bool ignoreRequirements = false)
     {
         if (!ignoreRequirements && !CanHireRestocker(out _)) return false;
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         Transform at = spawner != null && spawner.entrancePoint != null ? spawner.entrancePoint
                      : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint : transform);
         Vector3 pos = NavMesh.SamplePosition(at.position, out NavMeshHit hit, 4f, NavMesh.AllAreas) ? hit.position : at.position;
@@ -192,7 +192,7 @@ public class StaffManager : MonoBehaviour
     {
         if (!ignoreRequirements && !CanHireJanitor(out _)) return false;
         Vector3 pos = TryIdleSpot(transform.position, janitors.Count, out Vector3 idle) ? idle : StaffEntrance(out _);
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         GameObject model = spawner != null ? spawner.FindPrefab(JanitorModel) : null;
         GameObject body = model != null
             ? SpawnFromPrefab(model, $"Janitor_{janitors.Count + 1}", pos, Quaternion.identity)
@@ -225,7 +225,7 @@ public class StaffManager : MonoBehaviour
     // ================= Chỗ nghỉ của nhân viên =================
     private Vector3 StaffEntrance(out Quaternion rot)
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         Transform at = spawner != null && spawner.entrancePoint != null ? spawner.entrancePoint
                      : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint : transform);
         rot = at.rotation;
@@ -266,14 +266,14 @@ public class StaffManager : MonoBehaviour
     /// </summary>
     private Vector3 GuardPost(int index, out Quaternion rot)
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         Vector3 exit = spawner != null && spawner.exitPoint != null ? spawner.exitPoint.position
                      : (spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint.position : transform.position);
 
         // Cửa ra vào gần điểm ra về nhất
         Vector3 door = exit;
         float best = float.MaxValue;
-        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None))
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>())
         {
             float dist = Vector3.Distance(d.transform.position, exit);
             if (dist < best) { best = dist; door = d.transform.position; }
@@ -321,7 +321,7 @@ public class StaffManager : MonoBehaviour
         if (prefab == null) prefab = Resources.Load<GameObject>("Staff_Worker");
         if (prefab == null)
         {
-            CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+            CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
             if (spawner != null && spawner.customerPrefabs != null && spawner.customerPrefabs.Length > 0)
                 prefab = spawner.customerPrefabs[Random.Range(0, spawner.customerPrefabs.Length)];
             Debug.LogWarning("[Staff] Chưa có model nhân viên riêng - chạy Tools > Store Setup > 10. Build Staff Model. Tạm dùng model khách.");

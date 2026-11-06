@@ -176,7 +176,7 @@ public class FpsLogger : MonoBehaviour
         Vector3 center = Vector3.zero; int n = 0;
         foreach (Shelf sh in StockManager.Shelves) if (sh != null) { center += sh.transform.position; n++; }
         EntranceDoor door = null; float best = float.MaxValue;
-        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None))
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>())
         {
             float dist = n > 0 ? Vector3.Distance(d.transform.position, center / n) : 0f;
             if (dist < best) { best = dist; door = d; }

@@ -70,7 +70,7 @@ public static class CustomerModelTool
         finally { EditorUtility.ClearProgressBar(); }
 
         // Thêm vào CustomerSpawner (giữ NPC_01 / NPC_02 cũ)
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>(FindObjectsInactive.Include);
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>(FindObjectsInactive.Include);
         string spawnInfo = "Không thấy CustomerSpawner trong scene.";
         if (spawner != null)
         {

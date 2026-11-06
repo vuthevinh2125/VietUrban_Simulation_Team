@@ -70,7 +70,7 @@ public static class CheckoutSetupTool
         log.AppendLine($"Counter at {bounds.center:F2}, customer point {customerPoint.position:F2}, drop point {dropPoint.position:F2}");
 
         // ---------- 2) CustomerSpawner ----------
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>(FindObjectsInactive.Include);
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>(FindObjectsInactive.Include);
         if (spawner == null)
         {
             var go = new GameObject("CustomerSpawner");
@@ -102,7 +102,7 @@ public static class CheckoutSetupTool
 
         // ---------- 3) Kiểm tra NavMesh ----------
         Vector3 spawn = spawner.spawnPoint != null ? spawner.spawnPoint.position : spawner.transform.position;
-        Shelf anyShelf = Object.FindObjectsByType<Shelf>(FindObjectsSortMode.None).OrderBy(s => (s.transform.position - customerPos).sqrMagnitude).FirstOrDefault();
+        Shelf anyShelf = Object.FindObjectsByType<Shelf>().OrderBy(s => (s.transform.position - customerPos).sqrMagnitude).FirstOrDefault();
         Vector3 shelfPos = anyShelf != null ? anyShelf.transform.position : storeCenter;
         log.AppendLine("\n## NavMesh paths");
         string a = PathStatus(spawn, shelfPos);
@@ -152,7 +152,7 @@ public static class CheckoutSetupTool
 
     private static Transform FindSceneTransform(string name)
     {
-        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
             if (t.name == name && t.gameObject.scene.IsValid()) return t;
         return null;
     }

@@ -141,7 +141,7 @@ public class SaveManager : MonoBehaviour
         foreach (var kv in PriceManager.AllCustomPrices)
             if (kv.Key != null) d.prices.Add(new PriceEntry { item = kv.Key.name, price = kv.Value });
 
-        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude))
         {
             PlacedFurniture pf = shelf.GetComponent<PlacedFurniture>();
             string item = shelf.Count > 0 && shelf.CurrentItem != null ? shelf.CurrentItem.name : "";
@@ -156,7 +156,7 @@ public class SaveManager : MonoBehaviour
             }
         }
         // Nội thất đã mua nhưng không có Shelf (phòng hờ)
-        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Exclude))
             if (pf.data != null && pf.GetComponent<Shelf>() == null)
                 d.furniture.Add(new FurnitureEntry { data = pf.data.name, pos = pf.transform.position, rot = pf.transform.rotation });
 
@@ -175,7 +175,7 @@ public class SaveManager : MonoBehaviour
             d.boxes.Add(new BoxEntry { item = box.itemData.name, count = box.productCount, pos = box.transform.position, rot = box.transform.rotation });
         }
 
-        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include))
             if (fb.data != null)
                 d.furnitureBoxes.Add(new FurnitureBoxEntry { data = fb.data.name, pos = fb.transform.position, rot = fb.transform.rotation });
 
@@ -234,19 +234,19 @@ public class SaveManager : MonoBehaviour
         // Xoá trạng thái hiện tại: khách, hàng trên kệ, nội thất đã mua, thùng hàng, thùng nội thất
         for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)
             if (NPCShopper.Active[i] != null) Destroy(NPCShopper.Active[i].gameObject);
-        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (PlacedFurniture pf in FindObjectsByType<PlacedFurniture>(FindObjectsInactive.Include))
             Destroy(pf.gameObject);
-        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude))
             if (shelf.GetComponent<PlacedFurniture>() == null) shelf.ClearAll();
         foreach (Interactable box in new List<Interactable>(StockManager.Boxes))
             if (box != null && !box.IsHeld) Destroy(box.gameObject);
-        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (FurnitureBox fb in FindObjectsByType<FurnitureBox>(FindObjectsInactive.Include))
             Destroy(fb.gameObject);
 
         // Kệ có sẵn trong cửa hàng: nhận ra bằng VỊ TRÍ (đã đặt lại đúng chỗ đã lưu ở trên),
         // đường dẫn trong Hierarchy chỉ để dự phòng vì thứ tự object có thể đổi khi chơi
         var sceneShelves = new List<Shelf>();
-        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (Shelf shelf in FindObjectsByType<Shelf>(FindObjectsInactive.Exclude))
             if (shelf.GetComponent<PlacedFurniture>() == null) sceneShelves.Add(shelf);
         var filled = new HashSet<Shelf>();
         foreach (ShelfEntry s in d.shelves)

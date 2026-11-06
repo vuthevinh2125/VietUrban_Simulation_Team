@@ -53,7 +53,7 @@ public static class CashierPositionTool
         EditorPrefs.DeleteKey(Key);
         if (data == null || data.list.Count == 0) return;
 
-        var counters = Object.FindObjectsByType<CheckoutCounter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var counters = Object.FindObjectsByType<CheckoutCounter>(FindObjectsInactive.Include);
         int done = 0;
         foreach (Entry e in data.list)
         {

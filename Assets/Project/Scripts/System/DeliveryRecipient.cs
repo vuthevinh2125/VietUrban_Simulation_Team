@@ -25,7 +25,7 @@ public class DeliveryRecipient : MonoBehaviour
     /// <summary>Tạo người nhận tại điểm giao. homeDir: hướng đi vào nhà sau khi nhận (có thể bằng 0).</summary>
     public static DeliveryRecipient Spawn(Vector3 at, Vector3 homeDir)
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         GameObject prefab = spawner != null ? spawner.RandomCustomerPrefab() : null;
         if (prefab == null) return null;
 

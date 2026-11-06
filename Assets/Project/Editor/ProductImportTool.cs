@@ -251,11 +251,11 @@ public static class ProductImportTool
     // ================= Danh mục trên máy tính =================
     private static void AssignToCatalog(List<ItemData> items)
     {
-        ShopFilterManager filter = Object.FindFirstObjectByType<ShopFilterManager>(FindObjectsInactive.Include);
+        ShopFilterManager filter = Object.FindAnyObjectByType<ShopFilterManager>(FindObjectsInactive.Include);
         if (filter == null) { Debug.LogWarning("[Import Products] Không tìm thấy giao diện máy tính (ShopFilterManager) để gắn danh mục."); return; }
 
         // ComputerUI = ShopFilterManager ngoài cùng (Header_Panel cũng có ShopFilterManager)
-        foreach (ShopFilterManager f in Object.FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ShopFilterManager f in Object.FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include))
             if (f.transform.parent == null || f.transform.parent.GetComponentInParent<ShopFilterManager>(true) == null) { filter = f; break; }
 
         ShopCatalog catalog = filter.GetComponent<ShopCatalog>();

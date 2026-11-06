@@ -50,15 +50,15 @@ public static class StarterSectionTool
         }
         sb.AppendLine($"[Layout] floor {(anyFloor ? B(floor) : "none")}");
 
-        foreach (CheckoutCounter c in Object.FindObjectsByType<CheckoutCounter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (CheckoutCounter c in Object.FindObjectsByType<CheckoutCounter>(FindObjectsInactive.Include))
             sb.AppendLine($"[Layout] checkout '{c.name}' active {c.gameObject.activeInHierarchy} pos {V(c.transform.position)} locked {c.GetComponentInParent<LockedCheckout>(true) != null}");
-        foreach (AutoDoor d in Object.FindObjectsByType<AutoDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (AutoDoor d in Object.FindObjectsByType<AutoDoor>(FindObjectsInactive.Include))
             sb.AppendLine($"[Layout] door '{d.name}' pos {V(d.transform.position)}");
-        foreach (EntranceDoor d in Object.FindObjectsByType<EntranceDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (EntranceDoor d in Object.FindObjectsByType<EntranceDoor>(FindObjectsInactive.Include))
             sb.AppendLine($"[Layout] entrance '{d.name}' pos {V(d.transform.position)}");
-        foreach (StoreExpansion e in Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (StoreExpansion e in Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include))
             sb.AppendLine($"[Layout] expansion '{e.id}' lv {e.requiredLevel} ${e.price} pos {V(e.transform.position)} show {e.showOnUnlock?.Length} hide {e.hideOnUnlock?.Length} move {e.moveOnUnlock?.Length}");
-        CustomerSpawner sp = Object.FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner sp = Object.FindAnyObjectByType<CustomerSpawner>();
         if (sp != null) sb.AppendLine($"[Layout] spawner pos {V(sp.transform.position)}");
 
         Transform furn = store.transform.Find("Furniture");
@@ -163,7 +163,7 @@ public static class StarterSectionTool
         StoreExpansion s4 = Section(root.transform, "section_rear", "Rear Hall", "Back fridges, freezers and the deli corner", 5, 750f, -1, s3.id, hall4.ToArray(), new[] { wH4 });
 
         // Phòng mở rộng #1 / #2 nằm ngoài các gian trong cùng -> mở hết các gian trước
-        foreach (StoreExpansion e in Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (StoreExpansion e in Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include))
             if (e.id != null && e.id.StartsWith("expansion_storeexpansion")) { Undo.RecordObject(e, "Requires"); e.requires = s4.id; EditorUtility.SetDirty(e); }
 
         // Ẩn ngay trong Editor để nhìn thấy kết quả (lúc chơi StoreExpansion cũng tự ẩn)

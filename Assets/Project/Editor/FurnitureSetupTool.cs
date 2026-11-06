@@ -428,7 +428,7 @@ public static class FurnitureSetupTool
 
     private static string AssignToCatalog(List<FurnitureData> datas)
     {
-        ShopCatalog shop = Object.FindFirstObjectByType<ShopCatalog>(FindObjectsInactive.Include);
+        ShopCatalog shop = Object.FindAnyObjectByType<ShopCatalog>(FindObjectsInactive.Include);
         if (shop == null) return "Không thấy ShopCatalog (máy tính) trong scene - hãy mở scene chính rồi chạy lại.";
         FurnitureCatalog cat = shop.GetComponent<FurnitureCatalog>();
         if (cat == null) cat = Undo.AddComponent<FurnitureCatalog>(shop.gameObject);

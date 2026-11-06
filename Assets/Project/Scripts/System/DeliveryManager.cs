@@ -94,7 +94,7 @@ public class DeliveryManager : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindFirstObjectByType<GameManager>() != null) new GameObject("DeliveryManager").AddComponent<DeliveryManager>();
+        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("DeliveryManager").AddComponent<DeliveryManager>();
     }
 
     void Awake()
@@ -358,7 +358,7 @@ public class DeliveryManager : MonoBehaviour
     private static Transform PlayerTransform()
     {
         if (cachedPlayer != null) return cachedPlayer;
-        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>(FindObjectsInactive.Include))
         {
             if (hands == null || hands.playerCamera == null) continue; // bỏ ItemPickup thừa trên UI máy tính
             CharacterController cc = hands.GetComponentInParent<CharacterController>(true);
@@ -387,7 +387,7 @@ public class DeliveryManager : MonoBehaviour
 
     private Vector3 PackageSpot()
     {
-        MarketManager market = FindFirstObjectByType<MarketManager>();
+        MarketManager market = FindAnyObjectByType<MarketManager>();
         Vector3 p;
         if (market != null && market.deliveryPoint != null) p = market.deliveryPoint.position + market.deliveryPoint.right * 1.2f;
         else

@@ -246,13 +246,13 @@ public class IntroCutscene : MonoBehaviour
     private bool FindPlaces(out Camera playerCam)
     {
         playerCam = null;
-        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>(FindObjectsSortMode.None))
+        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>())
             if (hands != null && hands.playerCamera != null) { playerCam = hands.playerCamera; break; }
         if (playerCam == null) playerCam = Camera.main;
         if (playerCam == null) return false;
 
         GameObject store = GameObject.Find("Supermarket_full");
-        EntranceDoor[] doors = FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None);
+        EntranceDoor[] doors = FindObjectsByType<EntranceDoor>();
         if (store == null || doors.Length == 0) return false;
         Bounds sb = default; bool any = false;
         foreach (Renderer r in store.GetComponentsInChildren<Renderer>())
@@ -277,7 +277,7 @@ public class IntroCutscene : MonoBehaviour
     // ================= Cô Lan =================
     private void SpawnLan()
     {
-        CustomerSpawner spawner = FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
         if (spawner == null) return;
         GameObject prefab = spawner.FindPrefab(LanModel);
         if (prefab == null) prefab = spawner.RandomCustomerPrefab();
@@ -506,7 +506,7 @@ public class IntroCutscene : MonoBehaviour
 
     private void HideOtherCanvases()
     {
-        foreach (Canvas c in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        foreach (Canvas c in FindObjectsByType<Canvas>())
         {
             if (c == null || !c.enabled || !c.isRootCanvas || c.renderMode != RenderMode.ScreenSpaceOverlay) continue;
             c.enabled = false;

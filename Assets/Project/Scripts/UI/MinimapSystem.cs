@@ -76,7 +76,7 @@ public class MinimapSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindFirstObjectByType<GameManager>() != null) new GameObject("MinimapSystem").AddComponent<MinimapSystem>();
+        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("MinimapSystem").AddComponent<MinimapSystem>();
     }
 
     void Awake()
@@ -459,7 +459,7 @@ public class MinimapSystem : MonoBehaviour
     // ================= Tiện ích =================
     private static Transform FindPlayer()
     {
-        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ItemPickup hands in FindObjectsByType<ItemPickup>(FindObjectsInactive.Include))
         {
             if (hands == null || hands.playerCamera == null) continue;
             CharacterController cc = hands.GetComponentInParent<CharacterController>(true);
@@ -473,7 +473,7 @@ public class MinimapSystem : MonoBehaviour
     private static Bounds CityBounds()
     {
         Bounds b = default; bool any = false;
-        foreach (Renderer r in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+        foreach (Renderer r in FindObjectsByType<Renderer>())
         {
             Bounds rb = r.bounds;
             if (rb.size.y > 1f || rb.min.y > 0.5f || rb.min.y < -1f) continue;

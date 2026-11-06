@@ -34,7 +34,7 @@ public static class StoreFlow
         if (initialized) return;
         initialized = true;
 
-        EntranceDoor[] doors = Object.FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None);
+        EntranceDoor[] doors = Object.FindObjectsByType<EntranceDoor>();
         GameObject store = GameObject.Find("Supermarket_full");
         if (doors.Length < 2 || store == null)
         {
@@ -59,7 +59,7 @@ public static class StoreFlow
         float Lateral(Vector3 p) => Vector3.Dot(p - doorMid, side);
 
         // Cửa vào = cửa gần điểm sinh khách nhất (khách đi bộ tới từ đó); cửa ra = cửa còn lại xa nhất
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>();
         Vector3 spawn = spawner != null && spawner.spawnPoint != null ? spawner.spawnPoint.position : doorMid;
         EntranceDoor inDoor = doors[0], outDoor = doors[0];
         foreach (EntranceDoor d in doors)

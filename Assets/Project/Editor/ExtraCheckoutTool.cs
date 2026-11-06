@@ -19,12 +19,12 @@ public static class ExtraCheckoutTool
     [MenuItem("Tools/Store Setup/11. Setup Extra Checkouts")]
     private static void Run()
     {
-        CheckoutCounter main = Object.FindObjectsByType<CheckoutCounter>(FindObjectsSortMode.None)
+        CheckoutCounter main = Object.FindObjectsByType<CheckoutCounter>()
             .FirstOrDefault(c => c.GetComponent<LockedCheckout>() == null);
         if (main == null) { EditorUtility.DisplayDialog("Extra Checkouts", "Chưa có quầy chính (chạy công cụ số 3 trước).", "OK"); return; }
 
         GameObject store = GameObject.Find(StoreRoot);
-        IEnumerable<Transform> pool = store != null ? store.GetComponentsInChildren<Transform>() : Object.FindObjectsByType<Transform>(FindObjectsSortMode.None);
+        IEnumerable<Transform> pool = store != null ? store.GetComponentsInChildren<Transform>() : Object.FindObjectsByType<Transform>();
         var candidates = pool
             .Where(t => t.name.StartsWith("Checkout_") && t.gameObject != main.gameObject && t.GetComponentInChildren<Renderer>() != null)
             .Where(t => t.parent == null || !t.parent.name.StartsWith("Checkout_")) // chỉ lấy gốc của quầy

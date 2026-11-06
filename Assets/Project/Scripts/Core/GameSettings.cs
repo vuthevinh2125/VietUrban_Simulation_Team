@@ -52,14 +52,14 @@ public static class GameSettings
 
     private static void ApplySensitivity()
     {
-        foreach (PlayerController pc in Object.FindObjectsByType<PlayerController>(FindObjectsSortMode.None))
+        foreach (PlayerController pc in Object.FindObjectsByType<PlayerController>())
             pc.mouseSensitivity = MouseSensitivity;
     }
 
     /// <summary>Bật / tắt bóng đổ của mọi đèn điểm, đèn rọi (đèn mặt trời giữ nguyên).</summary>
     public static void ApplyLampShadows()
     {
-        foreach (Light l in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+        foreach (Light l in Object.FindObjectsByType<Light>())
         {
             if (l.type == LightType.Directional) continue;
             if (!originalShadows.ContainsKey(l)) originalShadows[l] = l.shadows;

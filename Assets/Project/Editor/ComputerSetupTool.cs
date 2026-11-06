@@ -20,7 +20,7 @@ public static class ComputerSetupTool
     {
         GameObject target = Selection.activeGameObject;
 
-        ComputerInteract oldInteract = Object.FindFirstObjectByType<ComputerInteract>(FindObjectsInactive.Include);
+        ComputerInteract oldInteract = Object.FindAnyObjectByType<ComputerInteract>(FindObjectsInactive.Include);
         GameObject computerUI = oldInteract != null && oldInteract.computerUI != null ? oldInteract.computerUI : FindInScene("ComputerUI");
         if (computerUI == null)
         {
@@ -51,7 +51,7 @@ public static class ComputerSetupTool
         int group = Undo.GetCurrentGroup();
 
         // 1) Gỡ script khỏi máy tính cũ, gắn vào object mới
-        foreach (ComputerInteract ci in Object.FindObjectsByType<ComputerInteract>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ComputerInteract ci in Object.FindObjectsByType<ComputerInteract>(FindObjectsInactive.Include))
             if (ci.gameObject != target) Undo.DestroyObjectImmediate(ci);
 
         ComputerInteract interact = target.GetComponent<ComputerInteract>();
@@ -108,7 +108,7 @@ public static class ComputerSetupTool
 
     private static GameObject FindInScene(string name)
     {
-        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Transform t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
             if (t.name == name && t.gameObject.scene.IsValid()) return t.gameObject;
         return null;
     }

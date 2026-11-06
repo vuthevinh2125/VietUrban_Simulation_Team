@@ -14,7 +14,7 @@ public static class UIKit
 
     public static Canvas CreateCanvas(Transform parent, int sortingOrder)
     {
-        if (Object.FindFirstObjectByType<EventSystem>() == null)
+        if (Object.FindAnyObjectByType<EventSystem>() == null)
             new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         var go = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         go.transform.SetParent(parent, false);

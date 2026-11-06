@@ -17,7 +17,7 @@ public static class EntranceDiagnosticTool
     {
         var sb = new StringBuilder("# Entrance diagnostic\n");
 
-        NavMeshSurface surface = Object.FindFirstObjectByType<NavMeshSurface>();
+        NavMeshSurface surface = Object.FindAnyObjectByType<NavMeshSurface>();
         if (surface != null)
         {
             NavMeshBuildSettings s = NavMesh.GetSettingsByID(surface.agentTypeID);
@@ -25,7 +25,7 @@ public static class EntranceDiagnosticTool
                           $"collect={surface.collectObjects} geometry={surface.useGeometry} layers={surface.layerMask.value} data={(surface.navMeshData ? surface.navMeshData.name : "NONE")}");
         }
 
-        foreach (EntranceDoor door in Object.FindObjectsByType<EntranceDoor>(FindObjectsSortMode.None))
+        foreach (EntranceDoor door in Object.FindObjectsByType<EntranceDoor>())
         {
             Bounds db = default;
             bool any = false;
@@ -69,7 +69,7 @@ public static class EntranceDiagnosticTool
             // Vật thể nằm trong khung cửa
             Bounds gap = new Bounds(db.center, new Vector3(normal == Vector3.right ? 1.2f : db.size.x, db.size.y, normal == Vector3.forward ? 1.2f : db.size.z));
             sb.AppendLine("  objects inside the doorway volume:");
-            foreach (Renderer r in Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            foreach (Renderer r in Object.FindObjectsByType<Renderer>())
             {
                 if (!r.enabled || r.transform.IsChildOf(door.transform)) continue;
                 if (!r.bounds.Intersects(gap)) continue;
@@ -81,7 +81,7 @@ public static class EntranceDiagnosticTool
         }
 
         // Điểm sinh khách
-        CustomerSpawner spawner = Object.FindFirstObjectByType<CustomerSpawner>();
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>();
         if (spawner != null && spawner.spawnPoint != null)
         {
             Vector3 sp = spawner.spawnPoint.position;

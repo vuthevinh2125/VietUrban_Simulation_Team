@@ -116,7 +116,7 @@ public static class ExpansionBuilderTool
         if (Physics.Raycast(wb.center - normal * 1.2f + Vector3.up * 1.5f, Vector3.down, out RaycastHit hit, 5f, ~0, QueryTriggerInteraction.Ignore))
             floorY = hit.point.y;
 
-        int index = Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include, FindObjectsSortMode.None).Count(e => e.name.StartsWith("Expansion_Store")) + 1;
+        int index = Object.FindObjectsByType<StoreExpansion>(FindObjectsInactive.Include).Count(e => e.name.StartsWith("Expansion_Store")) + 1;
         Undo.SetCurrentGroupName("Build store expansion");
         var root = new GameObject($"StoreExpansion_{index}").transform;
         Undo.RegisterCreatedObjectUndo(root.gameObject, "Expansion");
@@ -225,7 +225,7 @@ public static class ExpansionBuilderTool
             PrefabUtility.UnloadPrefabContents(root);
         }
 
-        foreach (MeshCollider mc in Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (MeshCollider mc in Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Include))
         {
             if (EditorUtility.IsPersistent(mc)) continue;
             Undo.RecordObject(mc, "Double-sided collider");

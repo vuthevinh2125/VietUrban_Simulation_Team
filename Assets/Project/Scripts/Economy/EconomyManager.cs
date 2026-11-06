@@ -48,7 +48,7 @@ public class EconomyManager : MonoBehaviour
         {
             if (instance == null && !isQuitting)
             {
-                instance = FindFirstObjectByType<EconomyManager>();
+                instance = FindAnyObjectByType<EconomyManager>();
                 if (instance == null)
                     instance = new GameObject("EconomyManager").AddComponent<EconomyManager>();
             }
