@@ -62,7 +62,7 @@ public class CarInteraction : MonoBehaviour
         if (playerCamera != null) playerCamera.SetActive(false);
         if (carCamera != null) carCamera.SetActive(true);
 
-        Debug.Log("Entered vehicle successfully.");
+        Debug.Log($"[Vehicle] Player got into {name}.");
     }
 
     void ExitCar()
@@ -87,6 +87,6 @@ public class CarInteraction : MonoBehaviour
         if (carCamera != null) carCamera.SetActive(false);
         if (playerCamera != null) playerCamera.SetActive(true);
 
-        Debug.Log("Exited vehicle successfully.");
+        Debug.Log($"[Vehicle] Player got out of {name}.");
     }
 }
