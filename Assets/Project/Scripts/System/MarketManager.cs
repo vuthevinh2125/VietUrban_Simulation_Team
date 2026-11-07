@@ -145,7 +145,7 @@ public class MarketManager : MonoBehaviour
 
         if (!EconomyManager.Instance.TrySpend(CartTotal, MoneyCategory.Supplies, $"Order {CartBoxCount} box(es)"))
         {
-            SetStatus($"Not enough money! Need {EconomyManager.Format(CartTotal)}");
+            SetStatus($"Not enough money: the cart holds {CartBoxCount} box(es) for {EconomyManager.Format(CartTotal)}, you have {EconomyManager.Format(EconomyManager.Instance.Money)}. Remove boxes with -, or right-click Buy to empty the cart.");
             return;
         }
 
@@ -250,6 +250,7 @@ public class MarketManager : MonoBehaviour
     {
         Debug.Log("[Market] " + message);
         if (statusText != null) statusText.text = message;
+        else ProgressHUD.Toast(message); // scene không gán ô trạng thái -> trước đây thông báo chỉ hiện trong Console
     }
 
     void OnDrawGizmosSelected()

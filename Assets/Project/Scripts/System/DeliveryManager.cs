@@ -133,6 +133,7 @@ public class DeliveryManager : MonoBehaviour
                     nextOfferAt = Time.time + Random.Range(offerInterval.x, offerInterval.y);
                     if (StoreProgress.Level >= requiredLevel && TryCreateOrder(out order))
                     {
+                        Debug.Log($"[Delivery] Offer created at store level {StoreProgress.Level} (needs {requiredLevel}), day {(GameManager.Instance != null ? GameManager.Instance.currentDay : 0)}.");
                         stage = Stage.Offer;
                         offerExpiresAt = Time.time + offerTimeout;
                         AudioManager.Play("card_beep", 0.8f);
@@ -142,6 +143,7 @@ public class DeliveryManager : MonoBehaviour
                 break;
 
             case Stage.Offer:
+                if (StoreProgress.Level < requiredLevel) { order = null; stage = Stage.Idle; break; } // vd. vừa New Game / nạp bản lưu cấp thấp
                 float left = offerExpiresAt - Time.time;
                 if (HudTick()) ShowHud($"<b><color=#FFD54A>DELIVERY ORDER</color></b>  <size=80%>({left:0}s)</size>\n{order.Summary}\nTo: <b>{order.placeName}</b>  ·  {order.distance:0} m\n" +
                         $"Pay {EconomyManager.Format(order.goodsValue)} + delivery fee {EconomyManager.Format(order.fee)}\n<color=#8CFF8C>[J] Accept</color>   <color=#FF8A7A>[K] Decline</color>");

@@ -128,9 +128,9 @@ public class GameManager : MonoBehaviour
             Debug.Log("[GameManager] (Test) Nhảy tới giờ đóng cửa.");
         }
 
-        // Đồng hồ chỉ chạy khi cửa hàng đang mở
-        if (storeOpen)
-            clockMinutes += Time.deltaTime * WorkMinutes / Mathf.Max(1f, realMinutesPerDay * 60f);
+        // Đồng hồ luôn chạy, kể cả khi cửa hàng đóng (trước: chỉ chạy khi mở cửa -> đóng cửa là "dừng thời gian" để
+        // nhận đơn giao hàng / dọn kho vô hạn trong một ngày, người chơi có thể lợi dụng để kiếm tiền)
+        clockMinutes += Time.deltaTime * WorkMinutes / Mathf.Max(1f, realMinutesPerDay * 60f);
 
         if (!closingTimeReached && clockMinutes >= OpenMinutes + WorkMinutes)
         {
@@ -190,6 +190,23 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Nạp giờ trong ngày từ file lưu (sau LoadDay). Lưu lúc đã quá giờ đóng cửa thì chờ khách về hết rồi tới báo cáo
+    /// cuối ngày như bình thường; lưu lúc đang mở cửa thì mở cửa lại.
+    /// </summary>
+    public void RestoreClock(float hours, bool open)
+    {
+        clockMinutes = Mathf.Clamp(hours * 60f, OpenMinutes, OpenMinutes + WorkMinutes);
+        if (clockMinutes >= OpenMinutes + WorkMinutes)
+        {
+            closingTimeReached = true;
+            closingSince = Time.time;
+            SetStoreOpen(false, force: true);
+        }
+        else if (open) SetStoreOpen(true, force: true);
+        UpdateUI();
+    }
+
     // ================= Ngày =================
     private void EndDay()
     {
@@ -225,6 +242,7 @@ public class GameManager : MonoBehaviour
     {
         isGameOver = true;
         Time.timeScale = 0f;
+        SaveManager.DeleteSave(); // hết tiền là thua hẳn: không Continue lại được bản lưu cũ, phải chơi lại từ đầu
         UIState.Open(this); // hiện chuột để bấm Restart
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
         else if (MenuSystem.Instance != null) { UIState.Close(this); MenuSystem.Instance.ShowGameOver(); }

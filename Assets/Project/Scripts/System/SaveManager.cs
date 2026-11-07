@@ -31,6 +31,8 @@ public class SaveManager : MonoBehaviour
         public int version = 1;
         public string savedAt;
         public int day;
+        public float clockHours = -1f;   // giờ trong ngày lúc lưu (-1 = save cũ: bắt đầu ngày từ giờ mở cửa)
+        public bool storeOpen;           // cửa hàng đang mở lúc lưu
         public float money;
         public int level;
         public int xp;
@@ -121,6 +123,8 @@ public class SaveManager : MonoBehaviour
         {
             savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
             day = gm != null ? gm.currentDay : 1,
+            clockHours = gm != null ? gm.ClockHours : -1f,
+            storeOpen = gm != null && gm.IsStoreOpen,
             money = eco.Money,
             level = StoreProgress.Level,
             xp = StoreProgress.XP,
@@ -205,7 +209,11 @@ public class SaveManager : MonoBehaviour
 
         // Tiến trình
         EconomyManager.Instance.LoadState(d.money, d.day);
-        if (GameManager.Instance != null) GameManager.Instance.LoadDay(d.day);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoadDay(d.day);
+            if (d.clockHours >= 0f) GameManager.Instance.RestoreClock(d.clockHours, d.storeOpen);
+        }
         StoreProgress.Load(d.level, d.xp);
         LicenseManager.LoadOwned(d.licenses);
         MarketPrices.Import(d.market, items);

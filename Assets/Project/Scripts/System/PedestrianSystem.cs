@@ -24,6 +24,10 @@ public class PedestrianSystem : MonoBehaviour
     private readonly List<Walker> walkers = new List<Walker>();
     private readonly List<Vector3> targets = new List<Vector3>();
     private float nextCheck;
+    // Chỉ đi trên vỉa hè (vùng NavMesh "Sidewalks"): trước dùng mọi vùng nên người đi bộ băng qua giữa đường / giữa ngã tư
+    // đang có xe chạy. Sang đường chỉ ở chỗ vỉa hè nối liền (vạch sang đường được bake là Sidewalks).
+    private int walkMask = NavMesh.AllAreas;
+    private static NavMeshPath path;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -50,12 +54,15 @@ public class PedestrianSystem : MonoBehaviour
 
     void Start()
     {
+        int sidewalks = NavMesh.GetAreaFromName("Sidewalks");
+        if (sidewalks >= 0) walkMask = 1 << sidewalks;
+        if (path == null) path = new NavMeshPath();
         // Điểm đến: cửa các toà nhà khu mới + một dãy điểm trên vỉa hè đại lộ cũ trước siêu thị
         foreach (DeliveryAddress a in DeliveryAddress.All) if (a != null) targets.Add(a.doorPoint);
         for (float x = -170f; x <= 10f; x += 20f) { targets.Add(new Vector3(x, 0.2f, 18f)); targets.Add(new Vector3(x, 0.2f, -2f)); }
         for (int i = targets.Count - 1; i >= 0; i--)
         {
-            if (NavMesh.SamplePosition(targets[i], out NavMeshHit hit, 2.5f, NavMesh.AllAreas)) targets[i] = hit.position;
+            if (NavMesh.SamplePosition(targets[i], out NavMeshHit hit, 3f, walkMask)) targets[i] = hit.position;
             else targets.RemoveAt(i);
         }
     }
@@ -101,14 +108,17 @@ public class PedestrianSystem : MonoBehaviour
 
     private Vector3 NextTarget(Vector3 from)
     {
-        // Ưu tiên chỗ không quá xa (đi bộ 20-120m)
-        for (int i = 0; i < 8; i++)
+        // Ưu tiên chỗ không quá xa (đi bộ 20-120m) và đi tới được chỉ bằng vỉa hè
+        Vector3 fallback = from;
+        for (int i = 0; i < 12; i++)
         {
             Vector3 t = targets[Random.Range(0, targets.Count)];
+            if (!NavMesh.CalculatePath(from, t, walkMask, path) || path.status != NavMeshPathStatus.PathComplete) continue;
             float d = Vector3.Distance(t, from);
             if (d > 20f && d < 120f) return t;
+            fallback = t;
         }
-        return targets[Random.Range(0, targets.Count)];
+        return fallback;
     }
 
     private void Spawn()
@@ -135,12 +145,12 @@ public class PedestrianSystem : MonoBehaviour
         go.SetActive(true);
 
         agent.enabled = true;
-        agent.areaMask = NavMesh.AllAreas;
+        agent.areaMask = walkMask;
         agent.speed = Random.Range(walkSpeed.x, walkSpeed.y);
         agent.angularSpeed = 360f;
         agent.stoppingDistance = 0.3f;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-        if (!agent.isOnNavMesh && NavMesh.SamplePosition(at, out NavMeshHit hit, 3f, NavMesh.AllAreas)) agent.Warp(hit.position);
+        if (NavMesh.SamplePosition(at, out NavMeshHit hit, 3f, walkMask)) agent.Warp(hit.position);
 
         var w = new Walker { agent = agent, animator = go.GetComponentInChildren<Animator>() };
         if (w.animator != null) foreach (AnimatorControllerParameter p in w.animator.parameters) if (p.name == "Speed") w.hasSpeed = true;

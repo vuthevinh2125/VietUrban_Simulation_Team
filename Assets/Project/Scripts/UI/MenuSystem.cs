@@ -275,7 +275,7 @@ public class MenuSystem : MonoBehaviour
         // --- Game Over ---
         gameOverMenu = UIKit.FullScreen("GameOver", canvas, new Color(0.15f, 0f, 0f, 0.85f));
         UIKit.Text(gameOverMenu.transform, "GAME OVER", 90, new Vector2(1200, 120), new Vector2(0, 160), TextAlignmentOptions.Center, true, new Color(1f, 0.4f, 0.35f));
-        UIKit.Text(gameOverMenu.transform, "Your supermarket ran out of money.", 34, new Vector2(1200, 60), new Vector2(0, 70), TextAlignmentOptions.Center);
+        UIKit.Text(gameOverMenu.transform, "Your supermarket ran out of money.\n<size=70%>Your saved game has been deleted - start a New Game to try again.</size>", 34, new Vector2(1200, 60), new Vector2(0, 70), TextAlignmentOptions.Center);
         UIKit.Btn(gameOverMenu.transform, "Main Menu", new Vector2(360, 72), new Vector2(0, -50), GameSession.ReloadScene, UIKit.Green, 32);
         UIKit.Btn(gameOverMenu.transform, "Quit", new Vector2(360, 72), new Vector2(0, -140), Quit, UIKit.Red, 32);
 

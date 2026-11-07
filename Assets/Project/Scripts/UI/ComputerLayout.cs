@@ -81,6 +81,7 @@ public class ComputerLayout : MonoBehaviour
         {
             Place(buy, right - BuyW / 2f, BuyW, BuyH);
             StyleContent(buy, 26f, 20f);
+            CartBadge.Attach(buy);
             right -= BuyW + Gap * 3f; // tách nút Buy ra xa các tab
         }
         float left = -w / 2f + Margin;

@@ -168,9 +168,9 @@ public class NPCShopper : MonoBehaviour
             carrier.Init(wanted); // xách giỏ hoặc đẩy xe
         }
         var visited = new HashSet<Shelf>();
-        int attempts = 0;
+        int attempts = 0, missed = 0;
 
-        while (basket.Count < wanted && attempts < wanted * 3)
+        while (basket.Count + missed < wanted && attempts < wanted * 3)
         {
             attempts++;
             Shelf shelf = PickShelf(visited, profile);
@@ -188,7 +188,13 @@ public class NPCShopper : MonoBehaviour
             visit.maxDirt = Mathf.Max(visit.maxDirt, DirtManager.Count);
             yield return new WaitForSeconds(browseTime * Random.Range(0.7f, 1.4f));
 
-            if (shelf.IsEmpty) continue;
+            // Kệ bán hết (hoặc chỉ còn hàng hết hạn): khách không tìm được món định mua -> tính là thiếu hàng khi đánh giá
+            if (shelf.IsEmpty || shelf.SellableCount <= 0)
+            {
+                missed++;
+                if (missed == 1) SpeechBubble.Show(transform, "Sold out?!", new Color(1f, 0.6f, 0.3f), agent.height + 0.35f);
+                if (shelf.IsEmpty) continue;
+            }
             // Hàng hết hạn trên kệ: khách không lấy, và thấy là bực (trừ điểm sạch sẽ khi đánh giá)
             if (shelf.SpoiledCount > 0)
             {
@@ -246,7 +252,9 @@ public class NPCShopper : MonoBehaviour
             yield break;
         }
         visit.got = basket.Count;
+        if (basket.Count == 0 && missed > 0) visit.noStock = true;
         if (basket.Count > 0) yield return CheckoutRoutine();
+        if (carrier != null) carrier.Release(); // không mua gì cũng trả giỏ / xe trước khi ra về
 
         // --- Đánh giá cửa hàng trước khi về ---
         try
@@ -347,7 +355,7 @@ public class NPCShopper : MonoBehaviour
                     SetState(NPCState.Paying);
                     Face(counter.itemDropPoint != null ? counter.itemDropPoint.position : counter.transform.position);
                     counter.StartCheckout(this, basket);
-                    if (carrier != null) carrier.ClearItems(); // bày hàng từ giỏ ra quầy
+                    if (carrier != null) carrier.Release(); // bày hàng ra quầy, để lại giỏ / xe đẩy của siêu thị ở quầy
                 }
             }
             else if (!isFirstInQueue) firstSince = -1f;
@@ -455,7 +463,7 @@ public class NPCShopper : MonoBehaviour
         float value = StolenValue();
         if (value > 0f) EconomyManager.Instance.AddIncome(value, MoneyCategory.Sales, "Recovered stolen goods");
         basket.Clear();
-        if (carrier != null) carrier.ClearItems();
+        if (carrier != null) carrier.Release();
         SpeechBubble.Show(transform, "Sorry!", Color.white, agent.height + 0.4f, 3f);
         ProgressHUD.Toast($"Thief caught! Recovered {EconomyManager.Format(value)}.");
         AudioManager.Play("cash_register", 0.6f);
@@ -586,7 +594,10 @@ public class NPCShopper : MonoBehaviour
     private static readonly List<float> pickWeights = new List<float>();
 
     /// <summary>
-    /// Chọn kệ còn hàng: trọng số = nhu cầu lúc này (DemandModel) x độ ưa thích nhóm hàng của kiểu khách (CustomerProfile).
+    /// Chọn kệ của một mặt hàng cửa hàng đang bán: trọng số = nhu cầu lúc này (DemandModel) x độ ưa thích nhóm hàng của
+    /// kiểu khách (CustomerProfile). Kệ đã bán hết vẫn được chọn (kệ nhớ mặt hàng cũ - Shelf.LastItem): khách tới nơi thấy
+    /// hết hàng thì đó là một món không mua được (trước đây khách chỉ chọn kệ còn hàng nên kệ trống không làm giảm điểm
+    /// "Stock" - lỗi phát hiện khi chạy test case T10).
     /// </summary>
     private static Shelf PickShelf(HashSet<Shelf> visited, CustomerProfile who)
     {
@@ -595,9 +606,11 @@ public class NPCShopper : MonoBehaviour
         float total = 0f;
         foreach (Shelf s in StockManager.Shelves)
         {
-            if (s == null || s.IsEmpty || visited.Contains(s)) continue;
-            float w = DemandModel.Current(s.CurrentItem);
-            if (who != null) w *= who.Preference(DemandModel.GroupOf(s.CurrentItem));
+            if (s == null || visited.Contains(s)) continue;
+            ItemData it = s.LastItem;
+            if (it == null) continue; // kệ chưa từng bày hàng
+            float w = DemandModel.Current(it);
+            if (who != null) w *= who.Preference(DemandModel.GroupOf(it));
             pickCandidates.Add(s);
             pickWeights.Add(w);
             total += w;

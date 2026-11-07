@@ -114,6 +114,15 @@ public class ShoppingCarrier : MonoBehaviour
         visuals.Add(v);
     }
 
+    /// <summary>Trả giỏ / xe đẩy của siêu thị (để lại ở quầy thu ngân hoặc trước khi ra về): khách đi tay không ra ngoài.</summary>
+    public void Release()
+    {
+        ClearItems();
+        if (container != null) Destroy(container.gameObject);
+        container = null;
+        hand = null;
+    }
+
     /// <summary>Bày hết hàng ra quầy: giỏ / xe trống.</summary>
     public void ClearItems()
     {

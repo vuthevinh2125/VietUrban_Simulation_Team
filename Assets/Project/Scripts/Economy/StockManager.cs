@@ -32,6 +32,7 @@ public static class StockManager
     public static void Register(Interactable box)
     {
         if (box != null && !boxes.Contains(box)) { boxes.Add(box); NotifyChanged(); }
+        if (box != null && box.GetComponent<BoxRest>() == null) box.gameObject.AddComponent<BoxRest>();
     }
 
     public static void Unregister(Interactable box)
