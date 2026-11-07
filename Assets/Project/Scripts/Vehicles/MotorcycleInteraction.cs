@@ -73,7 +73,7 @@ public class MotorcycleInteraction : MonoBehaviour
         if (bikeController != null) bikeController.isDriving = true;
 
         SwitchCameras(false);
-        Debug.Log("Mounted the motorcycle.");
+        Debug.Log($"[Vehicle] Player got on {name}.");
     }
 
     void DismountBike()
@@ -90,7 +90,7 @@ public class MotorcycleInteraction : MonoBehaviour
         }
 
         SwitchCameras(true);
-        Debug.Log("Dismounted the motorcycle.");
+        Debug.Log($"[Vehicle] Player got off {name}.");
     }
 
     // Clean code helper method to toggle cameras instantly
