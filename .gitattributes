@@ -2,3 +2,7 @@
 *.png filter=lfs diff=lfs merge=lfs -text
 *.psd filter=lfs diff=lfs merge=lfs -text
 *.unitypackage filter=lfs diff=lfs merge=lfs -text
+
+# Nam's food-delivery project came from a repo without Git LFS, so its files are stored as normal Git files.
+# Turn the LFS filter off for that folder, otherwise Git reports them as "should have been pointers".
+Assets/FoodDelivery/** !filter !diff !merge
