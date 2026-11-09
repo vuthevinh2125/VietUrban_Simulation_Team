@@ -52,7 +52,7 @@ public static class FoodModeSpawn
     }
 }
 
-/// <summary>Chạy một lần sau khi FoodMap nạp xong: dời người chơi tới bếp rồi tự huỷ.</summary>
+/// <summary>Chạy một lần sau khi FoodMap nạp xong: dời người chơi tới bếp, khoá chuột rồi tự huỷ.</summary>
 public class FoodModeSpawnRunner : MonoBehaviour
 {
     private IEnumerator Start()
@@ -60,6 +60,12 @@ public class FoodModeSpawnRunner : MonoBehaviour
         yield return null;
         if (!FoodModeSpawn.MovePlayer(FoodModeSpawn.KitchenSpot, FoodModeSpawn.KitchenYaw))
             Debug.LogWarning($"[FoodModeSpawn] No '{FoodModeSpawn.PlayerName}' in {FoodModeSpawn.SceneName}; the player keeps Nam's start point.");
+
+        // Starter Assets chỉ khoá chuột khi cửa sổ game vừa được focus (OnApplicationFocus). Vào FoodMap từ menu
+        // (chuột đang hiện) thì không có lần focus nào nên chuột không bị khoá, xoay camera không được.
+        // Khoá chuột vào giữa màn hình như khi chơi; điện thoại và menu tạm dừng của Nam tự mở khoá rồi trả lại trạng thái này.
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         Destroy(gameObject);
     }
 }
