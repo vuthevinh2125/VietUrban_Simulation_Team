@@ -456,7 +456,7 @@ MonoBehaviour:
   NewGameButton: {fileID: 1805675590}
   ContinueButton: {fileID: 1275202342}
   QuitButton: {fileID: 958708627}
-  GameScenceName: SampleScene
+  GameScenceName: FoodMap
 --- !u!4 &1113950709
 Transform:
   m_ObjectHideFlags: 0
