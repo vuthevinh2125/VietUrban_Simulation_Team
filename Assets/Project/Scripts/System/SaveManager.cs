@@ -68,7 +68,7 @@ public class SaveManager : MonoBehaviour
 
     private static void Create()
     {
-        if (Instance == null) new GameObject("SaveManager").AddComponent<SaveManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("SaveManager").AddComponent<SaveManager>();
     }
 
     void Awake()

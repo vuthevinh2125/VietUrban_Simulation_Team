@@ -41,7 +41,7 @@ public class TutorialManager : MonoBehaviour
     }
 
     private static void OnSceneLoaded(Scene s, LoadSceneMode m) => Create();
-    private static void Create() { if (Instance == null) new GameObject("TutorialManager").AddComponent<TutorialManager>(); }
+    private static void Create() { if (Instance == null && SupermarketScene.IsActive) new GameObject("TutorialManager").AddComponent<TutorialManager>(); }
 
     void Awake()
     {

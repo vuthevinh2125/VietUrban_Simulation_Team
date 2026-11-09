@@ -38,7 +38,7 @@ public class MenuSystem : MonoBehaviour
 
     private static void Create()
     {
-        if (Instance == null) new GameObject("MenuSystem").AddComponent<MenuSystem>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("MenuSystem").AddComponent<MenuSystem>();
     }
 
     void Awake()

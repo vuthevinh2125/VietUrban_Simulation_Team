@@ -35,7 +35,7 @@ public class DirtManager : MonoBehaviour
     }
 
     private static void OnSceneLoaded(Scene s, LoadSceneMode m) => Create();
-    private static void Create() { if (Instance == null) new GameObject("DirtManager").AddComponent<DirtManager>(); }
+    private static void Create() { if (Instance == null && SupermarketScene.IsActive) new GameObject("DirtManager").AddComponent<DirtManager>(); }
 
     void Awake()
     {

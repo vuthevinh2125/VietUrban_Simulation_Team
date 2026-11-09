@@ -55,7 +55,7 @@ public class StoreEvents : MonoBehaviour
     }
 
     private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => Create();
-    private static void Create() { if (Instance == null) new GameObject("StoreEvents").AddComponent<StoreEvents>(); }
+    private static void Create() { if (Instance == null && SupermarketScene.IsActive) new GameObject("StoreEvents").AddComponent<StoreEvents>(); }
 
     void Awake() { Instance = this; doorCached = false; }
     void OnDestroy() { if (Instance == this) Instance = null; }

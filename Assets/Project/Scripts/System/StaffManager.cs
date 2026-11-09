@@ -47,7 +47,7 @@ public class StaffManager : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null) new GameObject("StaffManager").AddComponent<StaffManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("StaffManager").AddComponent<StaffManager>();
     }
 
     void Awake() => Instance = this;

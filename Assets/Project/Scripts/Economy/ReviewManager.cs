@@ -93,7 +93,7 @@ public class ReviewManager : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null) new GameObject("ReviewManager").AddComponent<ReviewManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("ReviewManager").AddComponent<ReviewManager>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

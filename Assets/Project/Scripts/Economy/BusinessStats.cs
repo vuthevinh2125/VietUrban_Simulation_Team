@@ -84,7 +84,7 @@ public class BusinessStats : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null) new GameObject("BusinessStats").AddComponent<BusinessStats>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("BusinessStats").AddComponent<BusinessStats>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
