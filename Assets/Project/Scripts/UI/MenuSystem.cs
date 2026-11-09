@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Menu của game (tự tạo, không cần đặt vào scene):
-///  - Menu chính khi mở game: Continue (có file lưu) / New Game / Settings / Quit.
+///  - Menu chính khi mở game: Continue (có file lưu) / New Game / Settings / Food Delivery Mode / Quit.
+///    Food Delivery Mode mở chế độ thứ hai: game nấu ăn - giao hàng của Nam (Assets/FoodDelivery).
 ///  - Menu tạm dừng (Esc khi đang chơi): Resume / Save / Settings / Main Menu / Quit.
 ///  - Settings: độ nhạy chuột, âm lượng, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần.
 ///  - Game Over khi hết tiền.
@@ -38,7 +39,7 @@ public class MenuSystem : MonoBehaviour
 
     private static void Create()
     {
-        if (Instance == null) new GameObject("MenuSystem").AddComponent<MenuSystem>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("MenuSystem").AddComponent<MenuSystem>();
     }
 
     void Awake()
@@ -157,6 +158,13 @@ public class MenuSystem : MonoBehaviour
         if (SaveManager.Instance.TryManualSave()) Resume(); // không lưu được (còn khách) thì thông báo hiện lên, vẫn ở menu
     }
 
+    /// <summary>Chế độ thứ hai: mở menu chính của game nấu ăn - giao hàng (scene MainMenu của Nam).</summary>
+    private void OpenFoodDelivery()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
+    }
+
     private void ToMainMenu() =>
         Confirm("Return to main menu?\n<size=75%>Progress since your last save will be lost.</size>", GameSession.ReloadScene);
 
@@ -246,7 +254,8 @@ public class MenuSystem : MonoBehaviour
         saveInfo = UIKit.Text(mainMenu.transform, "", 22, new Vector2(800, 60), new Vector2(0, 15), TextAlignmentOptions.Center, false, new Color(0.8f, 0.85f, 0.9f));
         UIKit.Btn(mainMenu.transform, "New Game", new Vector2(380, 74), new Vector2(0, -60), NewGame, null, 34);
         UIKit.Btn(mainMenu.transform, "Settings", new Vector2(380, 74), new Vector2(0, -150), () => OpenSettings(mainMenu), null, 34);
-        UIKit.Btn(mainMenu.transform, "Quit", new Vector2(380, 74), new Vector2(0, -240), Quit, UIKit.Red, 34);
+        UIKit.Btn(mainMenu.transform, "Food Delivery Mode", new Vector2(380, 74), new Vector2(0, -240), OpenFoodDelivery, null, 30);
+        UIKit.Btn(mainMenu.transform, "Quit", new Vector2(380, 74), new Vector2(0, -330), Quit, UIKit.Red, 34);
         UIKit.Text(mainMenu.transform, "WASD move · Mouse look · E / LMB interact · Esc pause", 22, new Vector2(1200, 40), new Vector2(0, -400), TextAlignmentOptions.Center, false, new Color(0.7f, 0.75f, 0.8f));
 
         // --- Tạm dừng ---

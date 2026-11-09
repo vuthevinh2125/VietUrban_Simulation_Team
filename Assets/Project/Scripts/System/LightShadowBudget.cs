@@ -32,7 +32,7 @@ public class LightShadowBudget : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (instance == null) instance = new GameObject("LightShadowBudget").AddComponent<LightShadowBudget>();
+        if (instance == null && SupermarketScene.IsActive) instance = new GameObject("LightShadowBudget").AddComponent<LightShadowBudget>();
     }
 
     void OnDestroy()

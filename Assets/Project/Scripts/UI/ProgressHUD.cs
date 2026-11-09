@@ -29,7 +29,7 @@ public class ProgressHUD : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (instance == null) new GameObject("ProgressHUD").AddComponent<ProgressHUD>();
+        if (instance == null && SupermarketScene.IsActive) new GameObject("ProgressHUD").AddComponent<ProgressHUD>();
     }
 
     /// <summary>Hiện một dòng thông báo giữa màn hình vài giây.</summary>

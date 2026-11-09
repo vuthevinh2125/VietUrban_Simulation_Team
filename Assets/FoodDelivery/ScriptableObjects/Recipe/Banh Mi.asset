@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05f7b5882b382b04f88e02ebdedcaee6, type: 3}
+  m_Name: Banh Mi
+  m_EditorClassIdentifier: Assembly-CSharp::RecipeData
+  recipeName: Banh Mi Trung
+  dishItem: {fileID: 11400000, guid: 8e7442713477ec04ba9d9ecb957f7893, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: 5610730d5b8a9444cb4faf5c824843c3, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 5610730d5b8a9444cb4faf5c824843c3, type: 2}
+    amount: 1
+  cookTime: 10
+  completedDish: {fileID: 7471733910451209573, guid: 8b6440d29375374418d4334b580c2053, type: 3}
+  incompletedDish: {fileID: 4406908661635849117, guid: 87de8244ced2e304eb1a3ffbca26a73d, type: 3}

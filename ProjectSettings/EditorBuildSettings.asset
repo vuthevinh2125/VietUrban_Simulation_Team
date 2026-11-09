@@ -8,6 +8,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/FoodDelivery/Scenes/MainMenu.unity
+    guid: 43af4ebe7d4f9cb4795e65b12e2eb605
+  - enabled: 1
+    path: Assets/FoodDelivery/Scenes/FoodMap.unity
+    guid: cd0103967c17420da3f26b776d2f7d3e
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

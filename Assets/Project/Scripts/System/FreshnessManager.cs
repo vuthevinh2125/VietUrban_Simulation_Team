@@ -26,7 +26,7 @@ public class FreshnessManager : MonoBehaviour
     }
 
     private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene s, UnityEngine.SceneManagement.LoadSceneMode m) => Create();
-    private static void Create() { if (Instance == null) new GameObject("FreshnessManager").AddComponent<FreshnessManager>(); }
+    private static void Create() { if (Instance == null && SupermarketScene.IsActive) new GameObject("FreshnessManager").AddComponent<FreshnessManager>(); }
 
     void Awake()
     {

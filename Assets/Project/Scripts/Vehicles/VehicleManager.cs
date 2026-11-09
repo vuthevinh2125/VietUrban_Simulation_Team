@@ -99,7 +99,7 @@ public class VehicleManager : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null) new GameObject("VehicleManager").AddComponent<VehicleManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("VehicleManager").AddComponent<VehicleManager>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

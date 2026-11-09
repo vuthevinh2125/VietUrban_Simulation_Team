@@ -36,7 +36,7 @@ public class AudioManager : MonoBehaviour
 
     private static void Create()
     {
-        if (Instance == null) new GameObject("AudioManager").AddComponent<AudioManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("AudioManager").AddComponent<AudioManager>();
     }
 
     void Awake()

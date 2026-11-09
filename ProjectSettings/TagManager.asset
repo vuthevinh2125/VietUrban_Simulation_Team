@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Package
   - Thief
+  - CinemachineTarget
   layers:
   - Default
   - TransparentFX
