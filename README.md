@@ -113,18 +113,17 @@ File lưu và kết quả đo nằm ở `%USERPROFILE%\AppData\LocalLow\DefaultC
 
 Ngoài ra có 16 test case chức năng (T1-T16) chạy tay theo các bước ghi trong báo cáo, cả 16 đều pass.
 
-## Cấu trúc code (`Assets/Project/Scripts`, 110 script)
+## Cấu trúc code (`Assets/Project/Scripts`, 114 script)
 
 | Thư mục | Nội dung chính |
 |---|---|
-| `Core/` | `UIState` (khoá điều khiển khi mở giao diện), `GameSettings`, `GameSession`, `AudioManager`, `GameDebug`, `FpsLogger` |
-| `Economy/` | `EconomyManager` (ví tiền, sổ sách, báo cáo ngày), `BusinessStats`, `ReviewManager`, `DemandModel` (nhu cầu của game), `DemandForecaster` + `RestockAdvisor` (dự báo và gợi ý nhập hàng, chỉ học từ số bán đã ghi), `Freshness`, `PriceManager`, `MarketPrices`, `StockManager`, `StoreProgress`, `LicenseManager` |
-| `System/` | `GameManager` (ngày / giờ / mở cửa / Game Over), `MarketManager` (đặt hàng), `ShopCatalog`, `ComputerInteract`, `NPCShopper` (AI khách), `StoreFlow` (luồng vào / ra), `StaffManager`, `SaveManager`, `StoreSign`, `StoreEvents` (sự kiện ngẫu nhiên), `FreshnessManager`, `StoreExpansion`, `DirtManager`, `StoreGuard`, `DeliveryManager`, `AutoDoor`, `DoorSensor`, `DayNightCycle`, `WeatherSystem`, `RainShelter`, `TrafficSystem`, `PedestrianSystem` |
-| `Checkout/` | `CheckoutCounter` (hàng chờ, quét hàng), `PaymentPanel` / `PaymentToken` (tiền mặt, thẻ), `CashMath`, `LockedCheckout` (quầy mở rộng) |
-| `item_Building/` | `Shelf`, `ShelfPriceLabels`, `StorageRack` (kệ kho), nội thất: `FurnitureData`, `FurnitureBox`, `FurniturePlacer`, `PlacedFurniture`, `BuiltInFurniture` |
-| `Customer/` | `CustomerSpawner`, `CustomerProfile` (5 kiểu khách), `Restocker`, `Janitor`, `ShoppingCarrier` (giỏ / xe đẩy) |
-| `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng), `BoxRest` (thùng nằm yên), `PlayerTools` (chổi, gậy), `ComputerZoom` |
-| `UI/` | `AdvisorPanel`, `CartBadge`, `IntroCutscene`, `MinimapSystem`, `StatsPanel`, `VehiclePanel`, `ComputerLayout`, `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `ExpansionPanel`, `DayReportPanel`, `SpeechBubble`, `UIKit` |
+| `Core/` | Phần dùng chung: `UIState` (khoá điều khiển khi mở giao diện), `SaveManager` (lưu / nạp JSON), `GameSettings`, `GameSession`, `AudioManager`, `GameDebug`, `FpsLogger`, `SupermarketScene`, `FoodModeSpawn`, `RuntimeMaterials`, `ModelFit` |
+| `Player/` | `PlayerController`, `ItemPickup` (đôi tay người chơi), `Interactable` (thùng hàng), `BoxRest`, `PlayerTools` (chổi, gậy), `ComputerZoom`; `Vehicles/`: `VehicleManager`, `MotorcycleInteraction`, `CarInteraction`, `PlayerCarController`, `VehicleForSale` và âm thanh, đèn của xe |
+| `Store/` | `MarketManager` (đặt hàng), `ItemData`, `ProductFit`, `StoreExpansion`, `StoreSign`, `AutoDoor`, `DoorSensor`, `EntranceDoor`, `DirtManager`, `DirtSpot`; `Building/`: `Shelf`, `ShelfPriceLabels`, `StorageRack`, nội thất (`FurnitureData`, `FurnitureBox`, `FurniturePlacer`, `PlacedFurniture`, `BuiltInFurniture`); `Checkout/`: `CheckoutCounter`, `PaymentPanel` / `PaymentToken`, `CashMath`, `LockedCheckout` |
+| `Agents/` | AI: `NPCShopper` (khách), `CustomerSpawner`, `CustomerProfile` (5 kiểu khách), `StoreFlow` (luồng vào / ra), `ShoppingCarrier`, `StaffManager`, `Restocker`, `Janitor`, `StoreGuard`, `TrafficSystem`, `PedestrianSystem`, `PedestrianWalker`, `DeliveryRecipient` |
+| `Economy/` | `EconomyManager` (ví tiền, sổ sách, báo cáo ngày), `BusinessStats`, `ReviewManager`, `DemandModel` (nhu cầu của game), `DemandForecaster` + `RestockAdvisor` (dự báo và gợi ý nhập hàng, chỉ học từ số bán đã ghi), `Freshness`, `FreshnessManager`, `PriceManager`, `MarketPrices`, `StockManager`, `StoreProgress`, `LicenseManager` |
+| `World/` | `GameManager` (ngày / giờ / mở cửa / Game Over), `DayNightCycle`, `WeatherSystem`, `RainShelter`, `NightLight`, `LightShadowBudget`, `DeliveryManager`, `DeliveryAddress`, `PointOfInterest`, `MinimapSystem`, `StoreEvents` (sự kiện ngẫu nhiên) |
+| `UI/` | `ComputerInteract`, `ShopCatalog`, `ShopFilterManager`, `ProductCardUI`, `AdvisorPanel`, `CartBadge`, `IntroCutscene`, `StatsPanel`, `VehiclePanel`, `ComputerLayout`, `MenuSystem`, `ProgressHUD`, `TutorialManager`, `PriceSetPanel`, `LicensePanel`, `FurniturePanel`, `StaffPanel`, `ExpansionPanel`, `DayReportPanel`, `SpeechBubble`, `UIKit`, `UIMouseControl` |
 
 Các hệ thống liên lạc qua sự kiện tĩnh (`OnMoneyChanged`, `OnStockChanged`, `OnPriceChanged`, `OnNewDay`...), giao diện bảng phụ được dựng bằng code nên không cần prefab.
 
