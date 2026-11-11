@@ -63,7 +63,7 @@ public class WeatherSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("WeatherSystem").AddComponent<WeatherSystem>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("WeatherSystem").AddComponent<WeatherSystem>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

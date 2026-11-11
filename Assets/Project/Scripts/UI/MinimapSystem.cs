@@ -76,7 +76,7 @@ public class MinimapSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("MinimapSystem").AddComponent<MinimapSystem>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("MinimapSystem").AddComponent<MinimapSystem>();
     }
 
     void Awake()

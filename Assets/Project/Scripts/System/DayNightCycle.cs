@@ -43,7 +43,7 @@ public class DayNightCycle : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("DayNightCycle").AddComponent<DayNightCycle>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("DayNightCycle").AddComponent<DayNightCycle>();
     }
 
     void Awake()

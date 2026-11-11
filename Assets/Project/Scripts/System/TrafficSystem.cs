@@ -64,7 +64,7 @@ public class TrafficSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && GameObject.Find("CityExpansion_East") != null && FindAnyObjectByType<GameManager>() != null)
+        if (Instance == null && GameObject.Find("CityExpansion_East") != null && SupermarketScene.IsActive)
             new GameObject("TrafficSystem").AddComponent<TrafficSystem>();
     }
 

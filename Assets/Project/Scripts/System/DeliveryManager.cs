@@ -94,7 +94,7 @@ public class DeliveryManager : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && FindAnyObjectByType<GameManager>() != null) new GameObject("DeliveryManager").AddComponent<DeliveryManager>();
+        if (Instance == null && SupermarketScene.IsActive) new GameObject("DeliveryManager").AddComponent<DeliveryManager>();
     }
 
     void Awake()
