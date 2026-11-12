@@ -123,6 +123,99 @@ public static class ProductImportTool
         EditorUtility.DisplayDialog("Import Products", "Xong! " + msg, "OK");
     }
 
+    // ================= Rau củ quả =================
+    private const string ProduceFolder = "Assets/Assets_ThirdParty/ModernSupermarket/Prefabs/Props/Produce";
+
+    // prefab (trong thư mục Produce) -> tên bán, giá nhập 1 món ($). Quả nhỏ bán theo khay / túi (_Pack01), quả to bán từng quả.
+    private static readonly (string prefab, string name, float price)[] Produce =
+    {
+        ("Apple_k7nzrr_Pack01", "Red Apples", 2.5f), ("Apple_yf18nm_Pack01", "Green Apples", 2.5f),
+        ("Artichoke_fdde0u_Pack01", "Artichokes", 2.0f), ("Avocado_pd302k_Pack01", "Avocados", 2.2f),
+        ("Banana_zjs4oz", "Bananas", 1.5f), ("Carrot_i2roww_Pack01", "Carrots", 1.2f),
+        ("ChilliPeppers_w388hm", "Chilli Peppers", 1.0f), ("Clementine_7okhg9_Pack01", "Clementines", 2.2f),
+        ("Garlic_tkqeno_Pack01", "Garlic", 1.0f), ("Grapefruit_mrfrpw", "Grapefruit", 1.2f),
+        ("Kiwi_leh3t9_Pack01", "Kiwis", 2.0f), ("Lemon_ahopes_Pack01", "Lemons", 1.5f),
+        ("Mango_1xw10k", "Mango", 1.8f), ("Melon_h6xrq4", "Melon", 3.0f),
+        ("Mushroom_43xvit_Pack01", "Mushrooms", 2.0f), ("Onion_mut7xz_Pack01", "Onions", 1.2f),
+        ("Papaya_xt7unv", "Papaya", 2.5f), ("Perry_fhz4xg_Pack01", "Pears", 2.5f),
+        ("Pineapple_c1vx80", "Pineapple", 2.5f), ("Potato_px2ht4_Pack01", "Fresh Potatoes", 1.5f),
+        ("Pumpkin_hjtgsa", "Pumpkin", 3.5f), ("Squash_0r6m5l", "Squash", 2.5f),
+        ("Tomato_u9ceyc_Pack01", "Tomatoes", 1.8f), ("Watermelon_z0o9y3", "Watermelon", 4.0f),
+        ("Zucchini_z21819_Pack01", "Zucchini", 1.2f),
+    };
+
+    /// <summary>
+    /// Đưa 25 loại rau củ quả của gói ModernSupermarket vào bán (giấy phép "Fruit &amp; Vegetables", cấp 3): ItemData + icon,
+    /// bày trên kệ thường / sạp rau quả (displayType "Shelf"), nhóm Fresh, có hạn dùng (Freshness). Thêm vào danh mục
+    /// máy tính, giữ nguyên các mặt hàng đã có. Chạy lại được, giá đã sửa được giữ.
+    /// </summary>
+    [MenuItem("Tools/Store Setup/7c. Import Fruit & Vegetables")]
+    private static void ImportProduce()
+    {
+        EnsureFolder(DataFolder);
+        EnsureFolder(IconFolder);
+        GameObject crate = EnsureGenericCrate();
+        var items = new List<ItemData>();
+        var missing = new List<string>();
+        foreach (var (prefabName, name, price) in Produce)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{ProduceFolder}/{prefabName}.prefab");
+            if (prefab == null) { missing.Add(prefabName); continue; }
+            string assetPath = $"{DataFolder}/{SafeFileName(name)}.asset";
+            ItemData data = AssetDatabase.LoadAssetAtPath<ItemData>(assetPath);
+            bool isNew = data == null;
+            if (isNew) { data = ScriptableObject.CreateInstance<ItemData>(); AssetDatabase.CreateAsset(data, assetPath); }
+            data.itemName = name;
+            data.description = prefabName; // LicenseManager nhận giấy phép theo tiền tố tên prefab
+            data.brand = string.IsNullOrEmpty(data.brand) ? "Da Lat Farm" : data.brand;
+            data.displayType = "Shelf";
+            data.productPrefab = prefab;
+            data.cratePrefab = crate;
+            data.shelfScale = Vector3.one;
+            if (isNew)
+            {
+                data.unitPrice = price;
+                data.itemsPerBox = Mathf.Clamp(ItemsPerBox(prefab), 4, 16);
+                data.shelfCapacity = data.itemsPerBox * 2;
+            }
+            EditorUtility.SetDirty(data);
+            items.Add(data);
+        }
+        AssetDatabase.SaveAssets();
+        int added = AppendToCatalog(items);
+        int icons = GenerateIcons(items, overwrite: false);
+        string msg = $"{items.Count} loại rau củ quả, {added} thêm mới vào máy tính, {icons} icon." +
+                     (missing.Count > 0 ? $"\nKhông thấy prefab: {string.Join(", ", missing)}" : "") + "\n\nBấm Ctrl+S để lưu scene.";
+        Debug.Log("[Import Produce] " + msg);
+        EditorUtility.DisplayDialog("Fruit & Vegetables", msg, "OK");
+    }
+
+    /// <summary>Thêm mặt hàng vào danh mục máy tính, giữ các mặt hàng đã có (AssignToCatalog thì thay cả danh sách).</summary>
+    private static int AppendToCatalog(List<ItemData> items)
+    {
+        ShopFilterManager filter = null;
+        foreach (ShopFilterManager f in Object.FindObjectsByType<ShopFilterManager>(FindObjectsInactive.Include))
+            if (f.transform.parent == null || f.transform.parent.GetComponentInParent<ShopFilterManager>(true) == null) { filter = f; break; }
+        if (filter == null) { Debug.LogWarning("[Import Produce] Mở scene siêu thị trước (không thấy máy tính)."); return 0; }
+        ShopCatalog catalog = filter.GetComponent<ShopCatalog>();
+        if (catalog == null) catalog = Undo.AddComponent<ShopCatalog>(filter.gameObject);
+        var so = new SerializedObject(catalog);
+        SerializedProperty list = so.FindProperty("items");
+        var have = new HashSet<Object>();
+        for (int i = 0; i < list.arraySize; i++) have.Add(list.GetArrayElementAtIndex(i).objectReferenceValue);
+        int added = 0;
+        foreach (ItemData d in items)
+        {
+            if (have.Contains(d)) continue;
+            list.arraySize++;
+            list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = d;
+            added++;
+        }
+        so.ApplyModifiedProperties();
+        EditorSceneManager.MarkSceneDirty(filter.gameObject.scene);
+        return added;
+    }
+
     [MenuItem("Tools/Store Setup/7b. Regenerate Product Icons")]
     private static void RegenerateIcons()
     {
