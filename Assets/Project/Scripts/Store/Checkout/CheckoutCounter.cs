@@ -86,6 +86,9 @@ public class CheckoutCounter : MonoBehaviour
         if (customerPoint == null) customerPoint = transform;
         if (itemDropPoint == null) itemDropPoint = transform;
         audioSource = GetComponent<AudioSource>();
+        // AudioSource sẵn trên quầy có thể đang là âm 2D (nghe như đứng ở quầy dù ra tận ngoài phố): không dùng nữa,
+        // mọi tiếng của quầy phát qua AudioManager.PlayClipAt (3D, nhỏ dần theo khoảng cách, bị tường chắn)
+        if (audioSource != null) audioSource.enabled = false;
     }
 
     void Start()
@@ -262,12 +265,8 @@ public class CheckoutCounter : MonoBehaviour
         runningTotal += item.price;
         scannedCount++;
         BusinessStats.RecordItemSold(item.item, item.price); // thống kê mặt hàng bán chạy
-        if (scanSound == null) AudioManager.PlayAt("scan_beep", item.transform.position, 0.9f);
-        if (scanSound != null)
-        {
-            if (audioSource != null) audioSource.PlayOneShot(scanSound);
-            else AudioSource.PlayClipAtPoint(scanSound, item.transform.position);
-        }
+        if (scanSound != null) AudioManager.PlayClipAt(scanSound, item.transform.position, 0.45f);
+        else AudioManager.PlayAt("scan_beep", item.transform.position, 0.45f);
         Destroy(item.gameObject);
 
         if (itemsOnCounter.Count == 0) StartCoroutine(CompletePayment());
@@ -330,12 +329,10 @@ public class CheckoutCounter : MonoBehaviour
         StoreProgress.AddXP(StoreProgress.XPForSale(total, scannedCount));
         Debug.Log($"[Checkout] Khách trả {EconomyManager.Format(total)} cho {scannedCount} món ({Method})" +
                   (lostCents > 0 ? $", thối dư mất {EconomyManager.Format(lostCents / 100f)}." : "."));
-        AudioManager.PlayAt(Method == PaymentMethod.Card ? "cardpayment" : "cash_register", transform.position, 0.9f);
-        if (paySound != null)
-        {
-            if (audioSource != null) audioSource.PlayOneShot(paySound);
-            else AudioSource.PlayClipAtPoint(paySound, transform.position);
-        }
+        // Một tiếng duy nhất (trước phát 2 lần: AudioManager + AudioSource của quầy), nhỏ hơn
+        if (Method == PaymentMethod.Card || paySound == null)
+            AudioManager.PlayAt(Method == PaymentMethod.Card ? "cardpayment" : "cash_register", transform.position, 0.5f);
+        else AudioManager.PlayClipAt(paySound, transform.position, 0.5f);
 
         NPCShopper paidCustomer = current;
         current = null;

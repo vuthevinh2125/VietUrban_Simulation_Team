@@ -16,7 +16,9 @@ using UnityEngine.UI;
 /// Nhạc nền như loa trong siêu thị: 5 bài (store_music thu sẵn + 4 bài tổng hợp lo-fi, bossa nova, jazz đêm, pop),
 /// người chơi chọn trong Settings (ngẫu nhiên / một bài / tắt, âm lượng nhạc); trong cửa hàng nghe rõ, ra ngoài phố còn 1/4.
 ///  - AudioManager.Play("tên")            : âm thanh 2D (giao diện, tay người chơi)
-///  - AudioManager.PlayAt("tên", vị trí)  : âm thanh 3D trong cửa hàng (quầy, cửa...)
+///  - AudioManager.PlayAt("tên", vị trí)  : âm thanh 3D (quầy, cửa...): nhỏ dần theo khoảng cách (tắt hẳn sau 18 m), và nếu
+///    người nghe với nguồn âm một bên trong nhà một bên ngoài trời thì nghe nhỏ và đục đi (tường chắn) - không còn chuyện
+///    ra ngoài phố vẫn nghe máy tính tiền rõ như đứng ở quầy.
 /// Tự phát tiếng click khi bấm bất kỳ nút giao diện nào, và nhạc nền lặp lại.
 /// </summary>
 public class AudioManager : MonoBehaviour
@@ -116,18 +118,30 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayAt(string name, Vector3 position, float volume = 1f)
     {
-        if (Instance == null) return;
-        AudioClip clip = Instance.Get(name);
-        if (clip == null) return;
-        var go = new GameObject("SFX_" + name);
+        if (Instance != null) PlayClipAt(Instance.Get(name), position, volume);
+    }
+
+    /// <summary>Như PlayAt nhưng với một AudioClip có sẵn (vd. tiếng gán riêng cho quầy thu ngân).</summary>
+    public static void PlayClipAt(AudioClip clip, Vector3 position, float volume = 1f)
+    {
+        if (Instance == null || clip == null) return;
+        var go = new GameObject("SFX_" + clip.name);
         go.transform.position = position;
         AudioSource src = go.AddComponent<AudioSource>();
         src.clip = clip;
         src.spatialBlend = 1f;            // 3D: nghe to khi đứng gần
-        src.minDistance = 2f;
-        src.maxDistance = 25f;
+        src.minDistance = 1.5f;
+        src.maxDistance = 18f;
         src.rolloffMode = AudioRolloffMode.Linear;
-        src.volume = volume * Instance.sfxVolume;
+        src.dopplerLevel = 0f;
+        float v = volume * Instance.sfxVolume;
+        // Tường chắn: nguồn âm và người nghe ở hai phía của toà nhà -> nhỏ và đục đi
+        if (Instance.listener != null && WeatherSystem.IsSheltered(position + Vector3.up * 0.5f) != Instance.listenerIndoors)
+        {
+            v *= 0.25f;
+            go.AddComponent<AudioLowPassFilter>().cutoffFrequency = 1200f;
+        }
+        src.volume = v;
         src.pitch = Random.Range(0.96f, 1.04f);
         src.Play();
         Destroy(go, clip.length / Mathf.Max(0.5f, src.pitch) + 0.1f);

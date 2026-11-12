@@ -540,7 +540,7 @@ public class NPCShopper : MonoBehaviour
     private void RaiseAlarm()
     {
         alarmed = true;
-        AudioManager.PlayAt("alarm", transform.position, 1f);
+        AudioManager.Play("alarm", 0.85f); // chuông chống trộm của cả cửa hàng: nghe rõ ở mọi nơi, không bị tường chắn
         SpeechBubble.Show(transform, "THIEF!", new Color(1f, 0.25f, 0.2f), agent.height + 0.4f, 6f);
         ProgressHUD.Toast("Anti-theft alarm! A shoplifter is running away - catch them!");
     }
@@ -560,7 +560,7 @@ public class NPCShopper : MonoBehaviour
         if (carrier != null) carrier.Release();
         SpeechBubble.Show(transform, "Sorry!", Color.white, agent.height + 0.4f, 3f);
         ProgressHUD.Toast($"Thief caught! Recovered {EconomyManager.Format(value)}.");
-        AudioManager.Play("cash_register", 0.6f);
+        AudioManager.PlayAt("cash_register", transform.position, 0.5f); // tại chỗ bắt được kẻ trộm, không phải tiếng 2D
         if (walkSpeed > 0f) agent.speed = walkSpeed; // về tốc độ đi bộ
         if (agent.isOnNavMesh) agent.isStopped = false;
         StartCoroutine(LeaveAfterCaught());
