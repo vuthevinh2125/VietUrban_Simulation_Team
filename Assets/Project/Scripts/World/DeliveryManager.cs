@@ -58,6 +58,7 @@ public class DeliveryManager : MonoBehaviour
         nextHudAt = Time.unscaledTime + 0.2f;
         return true;
     }
+    private int orderSerial; // tăng mỗi lần lấy gói hàng (NightRobbery xét mỗi đơn một lần)
     private GameObject package, beacon, carried;
     private DeliveryRecipient recipient; // người dân đứng chờ ở điểm giao
     private TMP_Text hudText;
@@ -80,6 +81,32 @@ public class DeliveryManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    /// <summary>Đang chở gói hàng tới điểm giao (cho sự kiện cướp đêm NightRobbery).</summary>
+    public static bool IsDelivering(out Vector3 destination, out int serial)
+    {
+        destination = default; serial = -1;
+        DeliveryManager m = Instance;
+        if (m == null || m.order == null || m.stage != Stage.Delivering) return false;
+        destination = m.order.destination; serial = m.orderSerial;
+        return true;
+    }
+
+    public static bool TargetName(out string place)
+    {
+        place = Instance != null && Instance.order != null ? Instance.order.placeName : null;
+        return !string.IsNullOrEmpty(place);
+    }
+
+    /// <summary>Bị cướp mất gói hàng: huỷ đơn (hàng đã lấy khỏi kệ thì mất luôn).</summary>
+    public void LoseToRobbery()
+    {
+        if (order == null) return;
+        Cleanup();
+        order = null;
+        stage = Stage.Idle;
+        nextOfferAt = Time.time + Random.Range(offerInterval.x, offerInterval.y);
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -299,6 +326,7 @@ public class DeliveryManager : MonoBehaviour
         }
         beacon = CreateBeacon(order.destination);
         recipient = DeliveryRecipient.Spawn(order.destination, order.homeDir);
+        orderSerial++;
         stage = Stage.Delivering;
         AudioManager.Play("box_pickup", 0.8f);
     }
