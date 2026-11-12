@@ -147,11 +147,6 @@ public class TrafficSystem : MonoBehaviour
     // ================= Xe =================
     private void FindTemplates()
     {
-        foreach (string n in new[] { "Simple Retro Car" }) // không lấy xe máy (Honda Cub, C125): không có người ngồi trên xe
-        {
-            GameObject g = VehicleManager.FindObject(n); // xe người chơi chưa mua bị ẩn nhưng vẫn làm mẫu được
-            if (g != null) templates.Add(g);
-        }
         // Xe đặc biệt: nhân bản khung ô tô mẫu (đang tắt, cùng chỗ nên tính độ cao như ô tô), thay vỏ bằng model khác
         GameObject carBase = GameObject.Find("Simple Retro Car");
         // Xe cứu thương: model quay mặt về -Z nên xoay 180°; dài hơn ô tô con ~25%
@@ -162,6 +157,17 @@ public class TrafficSystem : MonoBehaviour
         {
             VehicleLivery.Swap(policeTemplate.transform, "Police_Mat", "Vehicles/PoliceVN");
             VehicleLivery.Swap(policeTemplate.transform, "Car_Number_Mat", "Vehicles/PlatePoliceVN");
+        }
+        // Xe công cộng: sedan + taxi (không dùng xe của người chơi - Simple Retro Car chỉ làm khung, vỏ bị thay)
+        foreach (string m in new[] { "Sedan", "Taxi" })
+        {
+            GameObject skin = SkinTemplate(carBase, "Vehicles/" + m, m, 0f, 1.05f);
+            if (skin != null) { templates.Add(skin); templates.Add(skin); }
+        }
+        if (templates.Count == 0)
+        {
+            GameObject g = VehicleManager.FindObject("Simple Retro Car"); // dự phòng khi thiếu model
+            if (g != null) templates.Add(g);
         }
     }
 
