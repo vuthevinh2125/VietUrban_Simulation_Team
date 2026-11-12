@@ -33,7 +33,7 @@ public class MotorbikeTraffic : MonoBehaviour
     private Mesh[] dry, rain;
     private bool raining;
     private float nextHorn, nextCacheClear;
-    private const int Variants = 12;
+    private const int Variants = BikeModels.Variants;
     private static readonly RaycastHit[] hits = new RaycastHit[16];
     private readonly Dictionary<Collider, bool> stopCache = new Dictionary<Collider, bool>();
     private bool real;

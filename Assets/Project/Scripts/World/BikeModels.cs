@@ -4,11 +4,13 @@
 /// Xe máy phố Việt dựng bằng code (không dùng xe của người chơi): xe số kiểu Wave và xe tay ga kiểu Vision.
 /// Lốp hình xuyến, vành đúc 5 chấu, đĩa phanh, phuộc, giảm xóc sau, ống xả, ốp chân, đèn pha / xi-nhan / đèn hậu,
 /// gương tròn, biển số trắng, yên da, giá chở đồ... toàn khối bo tròn mịn, chung 1 vật liệu bảng màu (1 lệnh vẽ / xe).
+/// Mẫu 12-15: xe máy điện dáng Wave (không ống xả / khối máy, motor ở moay-ơ bánh sau, hộp pin dưới yên, màu pastel).
 /// Mỗi mẫu có bản LOD1 ít đa giác cho tầm xa. Toạ độ: mặt đất y = 0, đầu xe hướng +Z.
 /// </summary>
 public static class BikeModels
 {
-    public const int Variants = 12;
+    public const int Variants = 16;
+    public const int FirstElectric = 12;
 
     public class Info
     {
@@ -27,6 +29,12 @@ public static class BikeModels
         new Color(0.55f, 0.57f, 0.6f), new Color(0.82f, 0.62f, 0.72f), new Color(0.42f, 0.3f, 0.22f), new Color(0.15f, 0.42f, 0.3f),
         new Color(0.88f, 0.84f, 0.74f), new Color(0.3f, 0.3f, 0.33f),
     };
+    // Xe điện: xanh bạc hà, xanh da trời nhạt, trắng ngà, hồng phấn, vàng nhạt, đỏ
+    private static readonly Color[] EPaints =
+    {
+        new Color(0.6f, 0.86f, 0.76f), new Color(0.62f, 0.8f, 0.92f), new Color(0.95f, 0.94f, 0.9f),
+        new Color(0.94f, 0.72f, 0.76f), new Color(0.96f, 0.88f, 0.55f), new Color(0.78f, 0.12f, 0.12f),
+    };
     private static readonly Color Black = new Color(0.06f, 0.06f, 0.07f), Rubber = new Color(0.09f, 0.09f, 0.09f),
         Chrome = new Color(0.82f, 0.84f, 0.86f), Alloy = new Color(0.62f, 0.64f, 0.66f), Engine = new Color(0.45f, 0.46f, 0.48f),
         Lamp = new Color(1f, 0.97f, 0.85f), Amber = new Color(1f, 0.6f, 0.1f), Red = new Color(0.85f, 0.08f, 0.06f),
@@ -43,13 +51,15 @@ public static class BikeModels
     private static Info Build(int v)
     {
         var rnd = new System.Random(7000 + v);
-        bool scooter = v % 3 == 2;
-        Color paint = Paints[rnd.Next(Paints.Length)];
+        bool electric = v >= FirstElectric;
+        bool scooter = !electric && v % 3 == 2;
+        Color paint = electric ? EPaints[(v - FirstElectric) % EPaints.Length] : Paints[rnd.Next(Paints.Length)];
         Color accent = rnd.NextDouble() < 0.5 ? Black : Color.Lerp(paint, Color.white, 0.6f);
         Color seat = scooter && rnd.NextDouble() < 0.4 ? SeatBrown : Seat;
         var info = new Info { scooter = scooter };
-        info.lod0 = Make(scooter, paint, accent, seat, false, $"{RealModels.MeshPrefix}_Bike{v}");
-        info.lod1 = Make(scooter, paint, accent, seat, true, $"{RealModels.MeshPrefix}_Bike{v}_LOD1");
+        if (electric) accent = Color.white;
+        info.lod0 = Make(scooter, electric, paint, accent, seat, false, $"{RealModels.MeshPrefix}_Bike{v}");
+        info.lod1 = Make(scooter, electric, paint, accent, seat, true, $"{RealModels.MeshPrefix}_Bike{v}_LOD1");
         if (scooter)
         {
             info.seat = new Vector3(0f, 0.99f, -0.2f);
@@ -69,7 +79,7 @@ public static class BikeModels
         return info;
     }
 
-    private static Mesh Make(bool scooter, Color paint, Color accent, Color seatCol, bool low, string name)
+    private static Mesh Make(bool scooter, bool electric, Color paint, Color accent, Color seatCol, bool low, string name)
     {
         var mb = new VMeshBuilder();
         VShape rb = VShape.RoundBox(0.3f, low ? 8 : 16), rbSoft = VShape.RoundBox(0.5f, low ? 8 : 16), cyl = VShape.Cylinder(low ? 6 : 14),
@@ -114,8 +124,18 @@ public static class BikeModels
             S(rb, new Vector3(0f, 1.1f, 0.41f), new Vector3(-28f, 0f, 0f), new Vector3(0.2f, 0.04f, 0.13f), Black);       // đồng hồ
             Tube(new Vector3(0f, 0.92f, 0.44f), new Vector3(0f, 0.46f, 0.14f), 0.08f, paint);                                // khung xương
             S(rb, new Vector3(0f, 0.47f, 0.22f), new Vector3(-30f, 0f, 0f), new Vector3(0.18f, 0.16f, 0.3f), paint);
+            if (electric)
+            {
+                S(rbSoft, new Vector3(0f, 0.36f, 0.0f), Vector3.zero, new Vector3(0.26f, 0.22f, 0.42f), Black);           // hộp pin
+                S(rb, new Vector3(0f, 0.36f, 0.0f), Vector3.zero, new Vector3(0.265f, 0.04f, 0.38f), paint);
+                mb.Add(cyl, Matrix4x4.TRS(ra, Quaternion.Euler(0f, 0f, 90f), new Vector3(d * 0.42f, 0.17f, d * 0.42f)), Engine); // motor moay-ơ
+                mb.Add(cyl, Matrix4x4.TRS(ra, Quaternion.Euler(0f, 0f, 90f), new Vector3(d * 0.2f, 0.19f, d * 0.2f)), Chrome);
+            }
+            else
+            {
             S(rbSoft, new Vector3(0f, 0.33f, 0.04f), Vector3.zero, new Vector3(0.26f, 0.24f, 0.34f), Engine);            // máy
             S(rbSoft, new Vector3(0f, 0.38f, 0.24f), new Vector3(-60f, 0f, 0f), new Vector3(0.16f, 0.14f, 0.2f), Engine);
+            }
             Tube(new Vector3(-0.1f, 0.31f, 0.02f), new Vector3(-0.25f, 0.31f, 0.02f), 0.03f, Black);                       // gác chân
             Tube(new Vector3(0.1f, 0.31f, 0.02f), new Vector3(0.25f, 0.31f, 0.02f), 0.03f, Black);
             S(rb, new Vector3(0f, 0.66f, -0.36f), Vector3.zero, new Vector3(0.34f, 0.3f, 0.78f), paint);                 // thân sau
@@ -126,11 +146,14 @@ public static class BikeModels
             Tube(new Vector3(-0.1f, 0.87f, -0.55f), new Vector3(-0.1f, 0.87f, -0.86f), 0.02f, Black);                     // baga
             Tube(new Vector3(0.1f, 0.87f, -0.55f), new Vector3(0.1f, 0.87f, -0.86f), 0.02f, Black);
             Tube(new Vector3(-0.1f, 0.87f, -0.86f), new Vector3(0.1f, 0.87f, -0.86f), 0.02f, Black);
+            if (!electric)
+            {
             Tube(new Vector3(0.13f, 0.27f, 0.12f), new Vector3(0.15f, 0.3f, -0.56f), 0.075f, Chrome);                      // ống xả
             S(rb, new Vector3(0.19f, 0.31f, -0.2f), Vector3.zero, new Vector3(0.04f, 0.1f, 0.32f), Black);
+            }
             Tube(new Vector3(0.08f, 0.3f, -0.02f), new Vector3(0.08f, 0.29f, -0.6f), 0.035f, Black);                       // gắp sau
             Tube(new Vector3(-0.08f, 0.3f, -0.02f), new Vector3(-0.08f, 0.29f, -0.6f), 0.035f, Black);
-            S(rb, new Vector3(-0.11f, 0.3f, -0.3f), Vector3.zero, new Vector3(0.04f, 0.1f, 0.56f), Black);                // hộp xích
+            if (!electric) S(rb, new Vector3(-0.11f, 0.3f, -0.3f), Vector3.zero, new Vector3(0.04f, 0.1f, 0.56f), Black); // hộp xích
             foreach (float sx in new[] { -0.13f, 0.13f })
             {
                 Tube(new Vector3(sx, 0.31f, -0.56f), new Vector3(sx, 0.68f, -0.45f), 0.04f, Chrome);                       // giảm xóc
