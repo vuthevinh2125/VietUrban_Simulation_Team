@@ -139,6 +139,126 @@ public class VShape
     /// <summary>Nón (nón lá, mái tháp), đáy ở y = -0.5, đỉnh ở y = 0.5.</summary>
     public static VShape Cone => cone ?? (cone = MakeCone(10));
 
+    // ================= Khối mịn (pháp tuyến nội suy) cho xe máy, mũ bảo hiểm =================
+    private static readonly Dictionary<string, VShape> smooth = new Dictionary<string, VShape>();
+
+    /// <summary>Cầu mịn đường kính 1.</summary>
+    public static VShape Sphere(int res = 16) => Cached("sph" + res, () => Param(res, res / 2 + 2, (u, w) =>
+    {
+        float th = w * Mathf.PI, ph = u * Mathf.PI * 2f;
+        Vector3 p = new Vector3(Mathf.Sin(th) * Mathf.Cos(ph), Mathf.Cos(th), Mathf.Sin(th) * Mathf.Sin(ph)) * 0.5f;
+        return (p, p);
+    }));
+
+    /// <summary>Nửa cầu (vòm) đường kính 1, đáy ở y = 0, hở đáy.</summary>
+    public static VShape Dome(int res = 18) => Cached("dome" + res, () => Param(res, res / 3 + 2, (u, w) =>
+    {
+        float th = w * Mathf.PI * 0.5f, ph = u * Mathf.PI * 2f;
+        Vector3 p = new Vector3(Mathf.Sin(th) * Mathf.Cos(ph), Mathf.Cos(th), Mathf.Sin(th) * Mathf.Sin(ph)) * 0.5f;
+        return (p, p);
+    }));
+
+    /// <summary>Hộp bo tròn (siêu elip) kích thước 1; e nhỏ = vuông hơn (0.2 - 0.5 đẹp cho thân xe).</summary>
+    public static VShape RoundBox(float e = 0.3f, int res = 14) => Cached($"rb{e:0.00}_{res}", () => Param(res, res / 2 + 2, (u, w) =>
+    {
+        float v = -Mathf.PI * 0.5f + w * Mathf.PI, ph = -Mathf.PI + u * Mathf.PI * 2f;
+        float cv = SPow(Mathf.Cos(v), e), sv = SPow(Mathf.Sin(v), e), cu = SPow(Mathf.Cos(ph), e), su = SPow(Mathf.Sin(ph), e);
+        Vector3 p = new Vector3(cv * cu, sv, cv * su) * 0.5f;
+        return (p, p);
+    }));
+
+    /// <summary>Hình xuyến (lốp xe) trục y, đường kính ngoài 1; minor = tỉ lệ bán kính ống / bán kính ngoài.</summary>
+    public static VShape Torus(float minor = 0.18f, int res = 20) => Cached($"tor{minor:0.00}_{res}", () =>
+    {
+        float rr = 0.5f * minor, R = 0.5f - rr;
+        return Param(res, Mathf.Max(6, res / 2), (u, w) =>
+        {
+            float a = u * Mathf.PI * 2f, b = w * Mathf.PI * 2f;
+            Vector3 ring = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a));
+            Vector3 p = ring * (R + rr * Mathf.Cos(b)) + Vector3.up * (rr * Mathf.Sin(b));
+            return (p, p - ring * R);
+        });
+    });
+
+    /// <summary>Trụ tròn mịn trục y, cao 1, đường kính 1 (có nắp).</summary>
+    public static VShape Cylinder(int res = 14) => Cached("cyl" + res, () =>
+    {
+        VShape side = Param(res, 1, (u, w) =>
+        {
+            float a = u * Mathf.PI * 2f;
+            Vector3 r = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * 0.5f;
+            return (r + Vector3.up * (w - 0.5f), r);
+        });
+        var b = new Builder();
+        for (int s = 0; s < res; s++)
+        {
+            float a0 = s * Mathf.PI * 2f / res, a1 = (s + 1) * Mathf.PI * 2f / res;
+            Vector3 p0 = new Vector3(Mathf.Cos(a0), 0f, Mathf.Sin(a0)) * 0.5f, p1 = new Vector3(Mathf.Cos(a1), 0f, Mathf.Sin(a1)) * 0.5f;
+            b.Tri(Vector3.up * 0.5f, p0 + Vector3.up * 0.5f, p1 + Vector3.up * 0.5f, Vector3.up);
+            b.Tri(Vector3.down * 0.5f, p0 + Vector3.down * 0.5f, p1 + Vector3.down * 0.5f, Vector3.down);
+        }
+        VShape caps = b.Done();
+        return Merge(side, caps);
+    });
+
+    private static float SPow(float x, float e) => Mathf.Sign(x) * Mathf.Pow(Mathf.Abs(x), e);
+
+    private static VShape Cached(string key, System.Func<VShape> make)
+    {
+        if (!smooth.TryGetValue(key, out VShape s)) smooth[key] = s = make();
+        return s;
+    }
+
+    private static VShape Merge(VShape a, VShape b)
+    {
+        var v = new List<Vector3>(a.v); v.AddRange(b.v);
+        var n = new List<Vector3>(a.n); n.AddRange(b.n);
+        var t = new List<int>(a.t);
+        foreach (int i in b.t) t.Add(i + a.v.Length);
+        return new VShape { v = v.ToArray(), n = n.ToArray(), t = t.ToArray() };
+    }
+
+    /// <summary>Lưới tham số (u, w trong 0..1) đỉnh dùng chung, pháp tuyến = trung bình các mặt quanh đỉnh; f trả về (vị trí, hướng ra ngoài).</summary>
+    private static VShape Param(int nu, int nw, System.Func<float, float, (Vector3 p, Vector3 o)> f)
+    {
+        var v = new Vector3[(nu + 1) * (nw + 1)];
+        var o = new Vector3[v.Length];
+        for (int j = 0; j <= nw; j++)
+            for (int i = 0; i <= nu; i++)
+            {
+                var r = f((float)i / nu, (float)j / nw);
+                v[j * (nu + 1) + i] = r.p;
+                o[j * (nu + 1) + i] = r.o;
+            }
+        var t = new List<int>();
+        var n = new Vector3[v.Length];
+        void Tri(int a, int b, int c)
+        {
+            Vector3 nn = Vector3.Cross(v[b] - v[a], v[c] - v[a]);
+            if (nn.sqrMagnitude < 1e-14f) return;
+            if (Vector3.Dot(nn, o[a] + o[b] + o[c]) < 0f) { int tmp = b; b = c; c = tmp; nn = -nn; }
+            t.Add(a); t.Add(b); t.Add(c);
+            n[a] += nn; n[b] += nn; n[c] += nn;
+        }
+        for (int j = 0; j < nw; j++)
+            for (int i = 0; i < nu; i++)
+            {
+                int a = j * (nu + 1) + i, b = a + 1, c = a + nu + 1, d = c + 1;
+                Tri(a, b, d);
+                Tri(a, d, c);
+            }
+        // Gộp pháp tuyến các đỉnh trùng vị trí (mép nối u = 0 / 1, hai cực) để không lộ đường nối
+        var weld = new Dictionary<Vector3Int, Vector3>();
+        Vector3Int K(Vector3 p) => new Vector3Int(Mathf.RoundToInt(p.x * 10000f), Mathf.RoundToInt(p.y * 10000f), Mathf.RoundToInt(p.z * 10000f));
+        for (int i = 0; i < v.Length; i++) { Vector3Int k = K(v[i]); weld[k] = (weld.TryGetValue(k, out Vector3 s) ? s : Vector3.zero) + n[i]; }
+        for (int i = 0; i < n.Length; i++)
+        {
+            Vector3 s = weld[K(v[i])];
+            n[i] = s.sqrMagnitude > 1e-12f ? s.normalized : (o[i].sqrMagnitude > 1e-12f ? o[i].normalized : Vector3.up);
+        }
+        return new VShape { v = v, n = n, t = t.ToArray() };
+    }
+
     /// <summary>Mesh khối hộp (cho hạt lá rơi).</summary>
     public static Mesh CubeMesh
     {
