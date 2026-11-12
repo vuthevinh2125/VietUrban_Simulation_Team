@@ -437,7 +437,7 @@ public class StoreEvents : MonoBehaviour
     private static TMP_Text subLine;
 
     private static bool Busy() =>
-        CutsceneRunning || IntroCutscene.Playing || Time.timeScale <= 0f || UIState.IsBlockingUIOpen;
+        CutsceneRunning || IntroCutscene.Playing || NightRobbery.Playing || Time.timeScale <= 0f || UIState.IsBlockingUIOpen;
 
     /// <summary>Không chiếu phim: vẫn báo sự kiện bằng thông báo + bong bóng thoại, và ghi lý do ra Console.</summary>
     private static void NoFilm(string title, string subtitle, Shot first, string reason)
