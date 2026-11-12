@@ -27,6 +27,9 @@ public class Shelf : MonoBehaviour
     [Range(0.3f, 1f)] public float heightRatio = 0.8f;
     public float minFitScale = 0.6f;
     public float maxFitScale = 2.5f;
+    [Tooltip("Giữ kích thước thật của model (đã đo đúng mét): chỉ thu nhỏ khi không vừa ô, không phóng to. " +
+             "Tắt thì món nào cũng bị kéo cho đầy ô (lon bia cao bằng chai nước, cùng món to nhỏ khác nhau giữa các kệ).")]
+    public bool keepRealSize = true;
 
     private GameObject[] occupied;   // occupied[i] = món đang nằm ở slots[i]
     private double[] placedAt;       // thời điểm (ngày game, Freshness.Now) món ở slots[i] được xếp lên kệ
@@ -394,6 +397,9 @@ public class Shelf : MonoBehaviour
             cell.x * fillRatio / Mathf.Max(0.001f, size.x),
             cell.z * fillRatio / Mathf.Max(0.001f, size.z),
             cell.y * heightRatio / Mathf.Max(0.001f, size.y));
+        // Model sản phẩm đã đúng tỉ lệ thật (Tools > Store Setup > Report Product Sizes: lon bia 15 cm, chai nước 32 cm):
+        // giữ nguyên cỡ thật để các món cân đối với nhau và giống nhau trên mọi kệ; món quá to thì thu nhỏ cho vừa ô.
+        if (keepRealSize) return Mathf.Clamp(k, Mathf.Min(minFitScale, 0.35f), 1f);
         return Mathf.Clamp(k, minFitScale, maxFitScale);
     }
 
