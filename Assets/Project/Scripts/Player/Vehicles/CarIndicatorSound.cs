@@ -23,7 +23,16 @@ public class CarIndicatorSound : MonoBehaviour
 
         audioSource.clip = clickSound;
         audioSource.loop = true; // Lặp lại tiếng tíc-tắc liên tục
+        // Tắt tiếng xi nhan: phím E trùng phím lên / xuống xe nên tiếng tíc-tắc bật lên ngoài ý muốn và kêu mãi, quá ồn
+        if (!enableSound)
+        {
+            audioSource.Stop();
+            enabled = false;
+        }
     }
+
+    [Tooltip("Bật tiếng xi nhan khi bấm Q / E (mặc định tắt)")]
+    public bool enableSound = false;
 
     void Update()
     {
