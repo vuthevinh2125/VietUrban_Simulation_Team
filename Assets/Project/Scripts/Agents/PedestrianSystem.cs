@@ -27,6 +27,7 @@ public class PedestrianSystem : MonoBehaviour
     // Chỉ đi trên vỉa hè (vùng NavMesh "Sidewalks"): trước dùng mọi vùng nên người đi bộ băng qua giữa đường / giữa ngã tư
     // đang có xe chạy. Sang đường chỉ ở chỗ vỉa hè nối liền (vạch sang đường được bake là Sidewalks).
     private int walkMask = NavMesh.AllAreas;
+    private float vendorChance;
     private static NavMeshPath path;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -57,15 +58,19 @@ public class PedestrianSystem : MonoBehaviour
         int sidewalks = NavMesh.GetAreaFromName("Sidewalks");
         if (sidewalks >= 0) walkMask = 1 << sidewalks;
         if (path == null) path = new NavMeshPath();
-        if (FindAnyObjectByType<VietDistrict>() != null) maxWalkers = Mathf.Max(maxWalkers, 42); // phố Việt đông người hơn
+        if (FindAnyObjectByType<VietDistrict>() != null) { maxWalkers = Mathf.Max(maxWalkers, 70); vendorChance = 0.3f; } // phố Việt đông người hơn
         // Điểm đến: cửa các toà nhà khu mới + một dãy điểm trên vỉa hè đại lộ cũ trước siêu thị
         foreach (DeliveryAddress a in DeliveryAddress.All) if (a != null) targets.Add(a.doorPoint);
+        // Đường dạo quanh Hồ Gươm, lối đi công viên: thêm nhiều lần để người đi bộ hay tới đi dạo
+        VietDistrict city = FindAnyObjectByType<VietDistrict>();
+        if (city != null) for (int k = 0; k < 6; k++) targets.AddRange(city.WalkPoints);
         for (float x = -170f; x <= 10f; x += 20f) { targets.Add(new Vector3(x, 0.2f, 18f)); targets.Add(new Vector3(x, 0.2f, -2f)); }
         for (int i = targets.Count - 1; i >= 0; i--)
         {
             if (NavMesh.SamplePosition(targets[i], out NavMeshHit hit, 3f, walkMask)) targets[i] = hit.position;
             else targets.RemoveAt(i);
         }
+        Debug.Log($"[Pedestrian] {targets.Count} điểm đến trên vỉa hè (vùng Sidewalks = {sidewalks}), tối đa {maxWalkers} người đi bộ");
     }
 
     void Update()
@@ -75,10 +80,11 @@ public class PedestrianSystem : MonoBehaviour
         // Số người mong muốn theo thời tiết và giờ
         if (Time.time >= nextCheck)
         {
-            nextCheck = Time.time + 2f;
+            nextCheck = Time.time + 1f;
             int want = Mathf.RoundToInt(maxWalkers * Density());
-            if (walkers.Count < want) Spawn();
-            else if (walkers.Count > want + 1) Despawn(walkers.Count - 1);
+            RecycleFar();
+            for (int k = 0; k < 3 && walkers.Count < want; k++) Spawn();
+            if (walkers.Count > want + 1) Despawn(walkers.Count - 1);
         }
 
         foreach (Walker w in walkers)
@@ -128,7 +134,7 @@ public class PedestrianSystem : MonoBehaviour
         if (spawner == null || spawner.customerPrefabs == null || spawner.customerPrefabs.Length == 0) return;
         GameObject prefab = spawner.RandomCustomerPrefab(); // bỏ model dành riêng cho nhân viên lau nhà
         if (prefab == null) return;
-        Vector3 at = targets[Random.Range(0, targets.Count)];
+        Vector3 at = NearPlayer();
 
         // Tạo dưới gốc đang tắt để gỡ script mua sắm trước khi nó chạy
         var holder = new GameObject("_WalkerHolder");
@@ -156,7 +162,46 @@ public class PedestrianSystem : MonoBehaviour
         var w = new Walker { agent = agent, animator = go.GetComponentInChildren<Animator>() };
         if (w.animator != null) foreach (AnimatorControllerParameter p in w.animator.parameters) if (p.name == "Speed") w.hasSpeed = true;
         if (agent.isOnNavMesh) agent.SetDestination(NextTarget(at));
+        // Phố Việt: ~30% người đi bộ là hàng rong (gánh hàng / dắt xe đạp bán hoa), đi chậm hơn
+        if (vendorChance > 0f && Random.value < vendorChance)
+        {
+            StreetVendor.Dress(go, Random.value < 0.35f, Random.Range(0, 100000));
+            agent.speed = Random.Range(0.75f, 1.05f);
+            go.name = "Hang rong";
+        }
         walkers.Add(w);
+    }
+
+    /// <summary>Thành phố rộng: người đi bộ xuất hiện quanh người chơi (35 - 110 m, ngoài tầm mắt gần) cho phố luôn đông.</summary>
+    private Vector3 NearPlayer()
+    {
+        Camera cam = Camera.main;
+        Vector3 any = targets[Random.Range(0, targets.Count)];
+        if (cam == null) return any;
+        Vector3 c = cam.transform.position;
+        for (int i = 0; i < 40; i++)
+        {
+            Vector3 t = targets[Random.Range(0, targets.Count)];
+            float d = Vector3.Distance(new Vector3(t.x, 0f, t.z), new Vector3(c.x, 0f, c.z));
+            if (d > 35f && d < 110f) return t;
+        }
+        return any;
+    }
+
+    /// <summary>Người đi bộ đã ở quá xa người chơi (> 170 m) thì bỏ để sinh lại gần hơn.</summary>
+    private void RecycleFar()
+    {
+        Camera cam = Camera.main;
+        if (cam == null) return;
+        Vector3 c = cam.transform.position;
+        int removed = 0;
+        for (int i = walkers.Count - 1; i >= 0 && removed < 3; i--)
+        {
+            Walker w = walkers[i];
+            if (w.agent != null && (w.agent.transform.position - c).sqrMagnitude < 170f * 170f) continue;
+            Despawn(i);
+            removed++;
+        }
     }
 
     private void Despawn(int index)
