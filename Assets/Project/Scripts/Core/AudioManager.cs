@@ -205,8 +205,7 @@ public class AudioManager : MonoBehaviour
             loopTarget["rain_loop"] = rainy ? (listenerIndoors ? 0.05f : 0.18f) : 0f;
             loopTarget["storm_loop"] = storm ? (listenerIndoors ? 0.08f : 0.28f) : 0f;
             loopTarget["city_loop"] = listenerIndoors ? 0.06f : 0.22f;
-            int customers = NPCShopper.Active.Count;
-            loopTarget["crowd_loop"] = customers == 0 ? 0f : Mathf.Min(0.35f, 0.06f + 0.04f * customers) * (listenerIndoors ? 1f : 0.25f);
+            loopTarget["crowd_loop"] = 0f; // tắt tiếng rì rầm đám đông (át mất nhạc nền siêu thị)
 
             // Còi xe xa xa khi đứng ngoài trời
             if (!listenerIndoors && listener != null && Time.unscaledTime >= nextHorn)
