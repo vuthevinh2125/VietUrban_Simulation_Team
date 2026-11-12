@@ -44,6 +44,8 @@ public class NPCShopper : MonoBehaviour
     public bool handsFree;
     [Tooltip("Kẻ trộm chạy nhanh gấp bao nhiêu lần")]
     public float fleeSpeedMultiplier = 1.05f;
+    [Tooltip("Tốc độ chạy trốn tối thiểu (m/s) sau khi ra khỏi cửa hàng và còi chống trộm kêu")]
+    public float runSpeed = 3.6f;
     [Tooltip("Ra khỏi cửa rồi kẻ trộm còn chạy thêm bao xa (m) mới biến mất - thời gian để người chơi đuổi theo")]
     public float fleeDistance = 30f;
     [Tooltip("Thời gian đứng xem mỗi kệ (giây)")]
@@ -90,7 +92,13 @@ public class NPCShopper : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private ShoppingCarrier carrier;
-    private bool hasSpeedParam;
+    private bool hasSpeedParam, hasRunParam;
+    private bool running;        // kẻ trộm đang chạy thục mạng (animation Running)
+    private float lookYaw;       // góc quay đầu thêm (độ) khi dòm ngó
+    private float walkSpeed;     // tốc độ đi bộ trước khi bỏ chạy (trả lại khi bị bắt)
+    private Transform headBone, spineBone, chestBone;
+    private float hunch;         // độ cúi người hiện tại (độ): lén lút cúi nhẹ, chạy trốn cúi thấp
+    private float hunchTarget;
     private readonly List<ItemData> basket = new List<ItemData>();
     private readonly ReviewManager.Visit visit = new ReviewManager.Visit(); // ghi lại trải nghiệm để chấm điểm cửa hàng
 
@@ -105,6 +113,9 @@ public class NPCShopper : MonoBehaviour
     /// <summary>Đang ôm hàng chạy ra cửa mà chưa bị bắt.</summary>
     public bool IsFleeingThief => currentState == NPCState.Fleeing && !caught;
 
+    /// <summary>Kẻ trộm đã ra khỏi cửa hàng (còi đã kêu): lúc này bảo vệ mới đuổi theo.</summary>
+    public bool HasLeftStore => IsFleeingThief && alarmed;
+
     private static int stuckWarnings;
 
     void OnEnable() => Active.Add(this);
@@ -115,6 +126,10 @@ public class NPCShopper : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         hasSpeedParam = animator != null && HasParameter(animator, "Speed");
+        hasRunParam = animator != null && HasParameter(animator, "Run");
+        headBone = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Head) : null;
+        spineBone = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Spine) : null;
+        chestBone = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Chest) : null;
 
         // Rigidbody vật lý đánh nhau với NavMeshAgent -> để kinematic
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -129,6 +144,22 @@ public class NPCShopper : MonoBehaviour
     void Update()
     {
         if (hasSpeedParam) animator.SetFloat("Speed", agent.velocity.magnitude);
+        if (hasRunParam) animator.SetBool("Run", running);
+    }
+
+    // Sau khi animation đã chạy: cúi người (kẻ trộm lén lút / chạy trốn) và quay đầu dòm ngó
+    void LateUpdate()
+    {
+        hunch = Mathf.MoveTowards(hunch, hunchTarget, 90f * Time.deltaTime);
+        if (hunch > 0.5f)
+        {
+            Vector3 right = transform.right;
+            if (spineBone != null) spineBone.rotation = Quaternion.AngleAxis(hunch * 0.55f, right) * spineBone.rotation;
+            if (chestBone != null) chestBone.rotation = Quaternion.AngleAxis(hunch * 0.45f, right) * chestBone.rotation;
+            if (headBone != null) headBone.rotation = Quaternion.AngleAxis(-hunch * 0.6f, right) * headBone.rotation; // vẫn ngẩng nhìn phía trước
+        }
+        if (headBone != null && Mathf.Abs(lookYaw) > 0.5f)
+            headBone.rotation = Quaternion.AngleAxis(lookYaw, Vector3.up) * headBone.rotation;
     }
 
     void OnDestroy()
@@ -374,31 +405,49 @@ public class NPCShopper : MonoBehaviour
     }
 
     // ================= Kẻ trộm =================
-    /// <summary>Ôm hàng chạy thẳng ra cửa. Đi qua cổng chống trộm thì còi kêu; người chơi bấm vào để bắt.</summary>
+    /// <summary>
+    /// Kẻ trộm (giống Supermarket Simulator): đứng lại dòm ngó xung quanh, đi bình thường ra cửa (chốc chốc liếc ra sau),
+    /// bước ra khỏi cửa hàng thì cổng chống trộm mới kêu và kẻ trộm bỏ chạy thục mạng. Bảo vệ chỉ đuổi khi đã ra ngoài.
+    /// Người chơi vẫn bắt được bằng gậy bất cứ lúc nào.
+    /// </summary>
     private IEnumerator FleeRoutine()
     {
         SetState(NPCState.Fleeing);
         float baseSpeed = agent.speed;
-        agent.speed = baseSpeed * fleeSpeedMultiplier;
-        agent.acceleration *= 2f;
-        // Chạy ra cửa rồi chạy tiếp ra xa cửa hàng (người chơi còn đuổi kịp ngoài vỉa hè)
+        walkSpeed = baseSpeed;
+
+        // 1. Cúi người, dòm ngó xem có ai để ý không
+        hunchTarget = 20f;
+        yield return LookAround();
+
+        // 2. Đi bình thường ra cửa rồi ra xa cửa hàng (người chơi còn đuổi kịp ngoài vỉa hè)
         Vector3 escape = EscapePoint();
         StartCoroutine(MoveTo(escape));
 
-        var doors = new List<Transform>();
-        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>()) doors.Add(d.transform);
-        foreach (AutoDoor d in FindObjectsByType<AutoDoor>()) doors.Add(d.transform);
-
-        float t = 0f;
+        float t = 0f, nextGlance = Random.Range(0.8f, 1.6f);
         while (!caught && t < moveTimeout * 2f)
         {
             t += Time.deltaTime;
             if (!alarmed)
-                foreach (Transform door in doors)
-                    if (door != null && FlatDistance(transform.position, door.position) < 3f) { RaiseAlarm(); break; }
+            {
+                nextGlance -= Time.deltaTime;
+                if (nextGlance <= 0f) { StartCoroutine(Glance()); nextGlance = Random.Range(1.5f, 3f); }
+                if (OutsideStore())
+                {
+                    // 3. Ra khỏi cửa: còi kêu, cúi thấp người bỏ chạy
+                    RaiseAlarm();
+                    running = true;
+                    hunchTarget = 32f;
+                    lookYaw = 0f;
+                    agent.speed = Mathf.Max(baseSpeed * fleeSpeedMultiplier, runSpeed);
+                    agent.acceleration *= 2f;
+                }
+            }
             if (FlatDistance(transform.position, escape) < 1.5f) break;
             yield return null;
         }
+        running = false;
+        hunchTarget = 0f;
         if (caught) yield break; // Catch() lo phần còn lại
 
         float value = StolenValue();
@@ -446,6 +495,48 @@ public class NPCShopper : MonoBehaviour
         return best;
     }
 
+    /// <summary>Đứng lại, quay người trái - phải, đầu liếc theo (khoảng 2 - 3 giây).</summary>
+    private IEnumerator LookAround()
+    {
+        if (!agent.isOnNavMesh) yield break;
+        agent.isStopped = true;
+        Quaternion start = transform.rotation;
+        foreach (float yaw in new[] { -55f, 60f, -20f })
+        {
+            Quaternion from = transform.rotation, to = start * Quaternion.Euler(0f, yaw * 0.6f, 0f);
+            float headFrom = lookYaw;
+            for (float d = 0f; d < 1f; d += Time.deltaTime / 0.35f)
+            {
+                transform.rotation = Quaternion.Slerp(from, to, d);
+                lookYaw = Mathf.Lerp(headFrom, yaw * 0.6f, d);
+                yield return null;
+            }
+            yield return new WaitForSeconds(Random.Range(0.4f, 0.75f));
+        }
+        for (float d = 0f; d < 1f; d += Time.deltaTime / 0.3f) { lookYaw = Mathf.Lerp(lookYaw, 0f, d); yield return null; }
+        lookYaw = 0f;
+        if (agent.isOnNavMesh) agent.isStopped = false;
+    }
+
+    /// <summary>Liếc nhanh sang một bên rồi quay lại (vừa đi vừa liếc).</summary>
+    private IEnumerator Glance()
+    {
+        float side = Random.value < 0.5f ? -1f : 1f;
+        for (float d = 0f; d < 1f && !running; d += Time.deltaTime / 0.25f) { lookYaw = 70f * side * d; yield return null; }
+        float hold = 0.5f;
+        while (hold > 0f && !running) { hold -= Time.deltaTime; yield return null; }
+        for (float d = 0f; d < 1f && !running; d += Time.deltaTime / 0.25f) { lookYaw = 70f * side * (1f - d); yield return null; }
+        lookYaw = 0f;
+    }
+
+    /// <summary>
+    /// Đã ra khỏi toà nhà: không còn dưới mái siêu thị / phòng mở rộng (WeatherSystem.IsSheltered - khung nhà + mái phía
+    /// trên). Bản cũ lấy khoảng cách tới cánh cửa gần nhất nên còi kêu khi kẻ trộm còn ở trong cửa hàng.
+    /// </summary>
+    private bool OutsideStore() => WeatherSystem.Instance != null
+        ? !WeatherSystem.IsSheltered(transform.position + Vector3.up * 0.2f)
+        : exitDoor != null && FlatDistance(transform.position, exitDoor.position) < 2.5f;
+
     private void RaiseAlarm()
     {
         alarmed = true;
@@ -459,6 +550,9 @@ public class NPCShopper : MonoBehaviour
     {
         if (!IsFleeingThief) return;
         caught = true;
+        running = false;
+        lookYaw = 0f;
+        hunchTarget = 0f;
         StopAllCoroutines();
         float value = StolenValue();
         if (value > 0f) EconomyManager.Instance.AddIncome(value, MoneyCategory.Sales, "Recovered stolen goods");
@@ -467,7 +561,8 @@ public class NPCShopper : MonoBehaviour
         SpeechBubble.Show(transform, "Sorry!", Color.white, agent.height + 0.4f, 3f);
         ProgressHUD.Toast($"Thief caught! Recovered {EconomyManager.Format(value)}.");
         AudioManager.Play("cash_register", 0.6f);
-        agent.speed /= fleeSpeedMultiplier;
+        if (walkSpeed > 0f) agent.speed = walkSpeed; // về tốc độ đi bộ
+        if (agent.isOnNavMesh) agent.isStopped = false;
         StartCoroutine(LeaveAfterCaught());
     }
 
