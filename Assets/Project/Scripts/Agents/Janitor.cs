@@ -219,8 +219,11 @@ public class Janitor : MonoBehaviour
             if (!agent.pathPending && agent.pathStatus == NavMeshPathStatus.PathInvalid) break;
             yield return null;
         }
-        agent.isStopped = true;
-        agent.ResetPath();
+        if (agent.isOnNavMesh) // bị đẩy khỏi NavMesh (va chạm / người chơi đẩy) thì không gọi được
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
     }
 
     private void Face(Vector3 point)
