@@ -21,8 +21,24 @@ public class CustomerSpawner : MonoBehaviour
     [Header("Rules")]
     public int maxCustomers = 4;
 
-    /// <summary>Cửa hàng lớn dần thì đông khách hơn: +1 khách mỗi 2 cấp, tối đa +3 (Lv7 trở lên).</summary>
-    public int MaxCustomersNow => maxCustomers + Mathf.Min(3, (StoreProgress.Level - 1) / 2);
+    /// <summary>
+    /// Cửa hàng lớn dần thì đông khách hơn: +1 khách mỗi 2 cấp, tối đa +3 (Lv7 trở lên), nhưng không vượt sức chứa mặt bằng:
+    /// cửa hàng gốc chỉ thêm được 1 khách, mỗi phần mở rộng đã mua cho thêm 2 chỗ (đông quá thì khách và nhân viên dễ kẹt ở lối đi).
+    /// </summary>
+    public int MaxCustomersNow
+    {
+        get
+        {
+            int bonus = Mathf.Min(3, (StoreProgress.Level - 1) / 2);
+            if (StoreExpansion.All.Count > 0)
+            {
+                int owned = 0;
+                foreach (StoreExpansion e in StoreExpansion.All) if (e != null && e.IsUnlocked) owned++;
+                bonus = Mathf.Min(bonus, 1 + 2 * owned);
+            }
+            return maxCustomers + bonus;
+        }
+    }
     [Tooltip("Khoảng thời gian giữa 2 khách (giây, ngẫu nhiên trong khoảng)")]
     public Vector2 spawnInterval = new Vector2(8f, 18f);
     [Tooltip("Ngừng đón khách khi ngày đã trôi qua quá tỉ lệ này (0.9 = 90% ngày)")]

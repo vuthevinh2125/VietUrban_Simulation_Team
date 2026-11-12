@@ -541,6 +541,7 @@ public class NPCShopper : MonoBehaviour
         agent.SetDestination(dest);
 
         float elapsed = 0f, still = 0f;
+        int sidesteps = 0;
         while (true)
         {
             elapsed += Time.deltaTime;
@@ -550,6 +551,16 @@ public class NPCShopper : MonoBehaviour
 
                 still = IsStill() ? still + Time.deltaTime : 0f;
                 if (still > 2f && agent.pathStatus != NavMeshPathStatus.PathComplete) break; // đã đi hết mức có thể
+                // Đứng đối mặt với khách / nhân viên khác ở lối hẹp: né sang bên rồi đi tiếp (tối đa 2 lần mỗi chặng)
+                if (still > 1.2f && sidesteps < 2 && BlockedByOther())
+                {
+                    sidesteps++;
+                    yield return Sidestep();
+                    if (!agent.isOnNavMesh) yield break;
+                    agent.SetDestination(dest);
+                    still = 0f;
+                    continue;
+                }
                 if (still > 4f) break;
             }
             if (elapsed > moveTimeout)
@@ -560,6 +571,41 @@ public class NPCShopper : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    /// <summary>Có người (khách, nhân viên) đứng sát trước mặt không.</summary>
+    private bool BlockedByOther()
+    {
+        foreach (NavMeshAgent other in FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None))
+        {
+            if (other == agent || !other.isActiveAndEnabled) continue;
+            Vector3 d = other.transform.position - transform.position;
+            d.y = 0f;
+            if (d.sqrMagnitude < 1.4f * 1.4f) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Né sang trái hoặc phải khoảng 1 m, tạm nhường đường cho người kia, rồi quay lại đường cũ.</summary>
+    private IEnumerator Sidestep()
+    {
+        float sign = Random.value < 0.5f ? -1f : 1f;
+        Vector3 side = Vector3.Cross(Vector3.up, transform.forward).normalized;
+        Vector3 back = -transform.forward * 0.4f;
+        NavMeshHit hit;
+        if (!NavMesh.SamplePosition(transform.position + side * sign * 0.9f + back, out hit, 0.6f, NavMesh.AllAreas) &&
+            !NavMesh.SamplePosition(transform.position - side * sign * 0.9f + back, out hit, 0.6f, NavMesh.AllAreas))
+        {
+            yield return new WaitForSeconds(Random.Range(0.3f, 0.8f)); // không có chỗ né: chờ một chút cho người kia đi qua
+            yield break;
+        }
+        int priority = agent.avoidancePriority;
+        agent.avoidancePriority = Mathf.Min(99, priority + 20);
+        agent.SetDestination(hit.position);
+        float t = 0f;
+        while (t < 1.2f && agent.isOnNavMesh && (agent.pathPending || agent.remainingDistance > 0.15f)) { t += Time.deltaTime; yield return null; }
+        yield return new WaitForSeconds(Random.Range(0.2f, 0.6f));
+        agent.avoidancePriority = priority;
     }
 
     private bool Arrived(float tolerance) =>
@@ -587,7 +633,35 @@ public class NPCShopper : MonoBehaviour
                 if (s != null) { center += s.position; n++; }
         center = n > 0 ? center / n : shelf.transform.position;
         center.y = shelf.transform.position.y;
+        // Đứng lệch ngẫu nhiên dọc theo chiều dài kệ: 2 khách cùng xem một kệ không chen vào đúng một điểm (chống kẹt)
+        if (n > 1)
+        {
+            Vector3 a = shelf.transform.right, b = shelf.transform.forward;
+            a.y = 0f; b.y = 0f; a.Normalize(); b.Normalize();
+            float aMin = 0f, aMax = 0f, bMin = 0f, bMax = 0f;
+            foreach (Transform s in shelf.slots)
+            {
+                if (s == null) continue;
+                Vector3 d = s.position - center;
+                float da = Vector3.Dot(d, a), db = Vector3.Dot(d, b);
+                aMin = Mathf.Min(aMin, da); aMax = Mathf.Max(aMax, da);
+                bMin = Mathf.Min(bMin, db); bMax = Mathf.Max(bMax, db);
+            }
+            bool alongA = aMax - aMin >= bMax - bMin; // chiều dài kệ = trục các ô trải rộng nhất
+            float half = Mathf.Max(0f, (alongA ? aMax - aMin : bMax - bMin) * 0.5f - 0.25f);
+            center += (alongA ? a : b) * Random.Range(-half, half);
+        }
         return Sample(center);
+    }
+
+    /// <summary>Số khách đang ở gần kệ (2 m): kệ đông người thì ít được chọn, để lối đi hẹp không bị dồn ứ.</summary>
+    private static int CrowdNear(Shelf shelf)
+    {
+        int n = 0;
+        Vector3 p = shelf.transform.position;
+        foreach (NPCShopper c in Active)
+            if (c != null && FlatDistance(c.transform.position, p) < 2f) n++;
+        return n;
     }
 
     private static readonly List<Shelf> pickCandidates = new List<Shelf>();
@@ -611,6 +685,7 @@ public class NPCShopper : MonoBehaviour
             if (it == null) continue; // kệ chưa từng bày hàng
             float w = DemandModel.Current(it);
             if (who != null) w *= who.Preference(DemandModel.GroupOf(it));
+            w /= 1f + 2f * CrowdNear(s);
             pickCandidates.Add(s);
             pickWeights.Add(w);
             total += w;
