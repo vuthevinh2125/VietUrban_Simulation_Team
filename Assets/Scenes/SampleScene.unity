@@ -477,7 +477,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2148880}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -75.38796, y: 0.2, z: -9.92259}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -487,7 +487,7 @@ Transform:
   - {fileID: 828624307}
   - {fileID: 700830405}
   - {fileID: 1024258585}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2385624
 PrefabInstance:
@@ -20632,6 +20632,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &93481159
 NavMeshObstacle:
@@ -24546,7 +24547,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 110842532}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -113.98896, y: 0.22, z: -11.50583}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -24779,7 +24780,7 @@ Transform:
   - {fileID: 1605710381}
   - {fileID: 1409103183}
   - {fileID: 1728045056}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &111319691
 PrefabInstance:
@@ -52336,7 +52337,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 238844804}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -49.04312, y: 2.4792, z: 0.21381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -52413,7 +52414,7 @@ Transform:
   - {fileID: 1217971149}
   - {fileID: 540866656}
   - {fileID: 1339895999}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &238958640
 PrefabInstance:
@@ -72132,6 +72133,31 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 830b0f8540c8c064e8c68a492d166a28, type: 2}
   - {fileID: 11400000, guid: 8a2a60bc467c01d4f85deb7fcb7b8860, type: 2}
   - {fileID: 11400000, guid: cb5d322096597f540ae410a99be86293, type: 2}
+  - {fileID: 11400000, guid: 3a1b5230a2bd18441ba64bbfa6dcbd1e, type: 2}
+  - {fileID: 11400000, guid: bfd4d7171ebb65741b286a42b2d5c853, type: 2}
+  - {fileID: 11400000, guid: 23f09ca5816ac574c9f699278c3c657f, type: 2}
+  - {fileID: 11400000, guid: 6c8f7f28d17a05d449a02f61947fa14e, type: 2}
+  - {fileID: 11400000, guid: 4b5740463d66cf04f9b62c7b3566125f, type: 2}
+  - {fileID: 11400000, guid: fddbe8020987d3843992ba65395cc940, type: 2}
+  - {fileID: 11400000, guid: 5d78d72eafb82a240a089514872fd588, type: 2}
+  - {fileID: 11400000, guid: 15fa58506b8ec4848a51c68f583bc557, type: 2}
+  - {fileID: 11400000, guid: bfea48a1a4a2f9d4a9305941b5c709e0, type: 2}
+  - {fileID: 11400000, guid: a7e02ec532856694eb1c89bcd35bdb26, type: 2}
+  - {fileID: 11400000, guid: 7fe431c86f403d64ebe1fb3a6b6ed813, type: 2}
+  - {fileID: 11400000, guid: a74a5f0c1d578cc43b016a001688a56f, type: 2}
+  - {fileID: 11400000, guid: 233a391049e9eb8468b955361e5d7c7a, type: 2}
+  - {fileID: 11400000, guid: 38702c2b8db4f634c8f82b6eb3d0904e, type: 2}
+  - {fileID: 11400000, guid: 4f30cee8a6c92d74da7c0033dfe83f90, type: 2}
+  - {fileID: 11400000, guid: 8e0caa392e4dae9439de7a0a5106f77b, type: 2}
+  - {fileID: 11400000, guid: 30fcff4885459f04f8a0fe1ac035e7b9, type: 2}
+  - {fileID: 11400000, guid: 5480c4383d03d9444a5875a5d92f3304, type: 2}
+  - {fileID: 11400000, guid: edfcdf88f5a76994a9d07509a7b37590, type: 2}
+  - {fileID: 11400000, guid: ed1fd66e82ce08948a5bca4ab00868e2, type: 2}
+  - {fileID: 11400000, guid: 7772ebb22aeddfe44bf043de4eb27077, type: 2}
+  - {fileID: 11400000, guid: 3131b709492332e438c207f1e7b87797, type: 2}
+  - {fileID: 11400000, guid: 8555626c82c0fb543a278315314dd398, type: 2}
+  - {fileID: 11400000, guid: b00215ab316293444b45819ad125b79a, type: 2}
+  - {fileID: 11400000, guid: 0ea2c269b35f5944890d5bd6a01d2035, type: 2}
   contentParent: {fileID: 0}
   keepExistingCardItems: 1
 --- !u!114 &321585533
@@ -76478,7 +76504,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 342926480}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -104.25646, y: 0.1, z: 11.56249}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -76487,7 +76513,7 @@ Transform:
   - {fileID: 550942455}
   - {fileID: 1987323822}
   - {fileID: 846330338}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &343305732
 GameObject:
@@ -84639,6 +84665,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &377710529
 NavMeshObstacle:
@@ -95062,7 +95089,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -95086,7 +95113,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.y
@@ -95094,7 +95121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -95113,6 +95140,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &421295593 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 421295592}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &421570802
 GameObject:
   m_ObjectHideFlags: 0
@@ -107756,7 +107788,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 475041868}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -125.143, y: 0.22, z: -13.33875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -107765,7 +107797,7 @@ Transform:
   - {fileID: 44356228}
   - {fileID: 1429921479}
   - {fileID: 1641582602}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &475750651
 PrefabInstance:
@@ -113572,7 +113604,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -113623,6 +113655,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &503644858 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 503644857}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &503788442
 GameObject:
   m_ObjectHideFlags: 0
@@ -117044,6 +117081,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &520838650
 NavMeshObstacle:
@@ -124665,6 +124703,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &551836751
 NavMeshObstacle:
@@ -128014,6 +128053,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &566449366
 NavMeshObstacle:
@@ -132539,6 +132579,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &589788239
 NavMeshObstacle:
@@ -133267,6 +133308,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &592585979
 NavMeshObstacle:
@@ -134147,6 +134189,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &597323858
 NavMeshObstacle:
@@ -136265,6 +136308,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &607386697
 NavMeshObstacle:
@@ -136388,7 +136432,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607510082}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 58.86829, y: 0, z: 18.44186}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -136557,7 +136601,7 @@ Transform:
   - {fileID: 1110430172}
   - {fileID: 1478732307}
   - {fileID: 1854238130}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &607734274
 PrefabInstance:
@@ -144913,6 +144957,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &644257008
 NavMeshObstacle:
@@ -149545,7 +149590,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -149596,6 +149641,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &661110316 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 661110315}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &661198438
 GameObject:
   m_ObjectHideFlags: 0
@@ -154878,7 +154928,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1385491797830740, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_Name
@@ -154902,7 +154952,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.y
@@ -154910,7 +154960,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -154929,6 +154979,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+--- !u!4 &685119812 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+  m_PrefabInstance: {fileID: 685119811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &685279282
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -155708,6 +155763,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &687173245
 NavMeshObstacle:
@@ -159528,7 +159584,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1385491797830740, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_Name
@@ -159552,7 +159608,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.y
@@ -159560,7 +159616,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -159579,6 +159635,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+--- !u!4 &705593385 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+  m_PrefabInstance: {fileID: 705593384}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &705674015 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
@@ -174343,6 +174404,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &780618930
 NavMeshObstacle:
@@ -175552,6 +175614,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &784084276
 NavMeshObstacle:
@@ -178200,6 +178263,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &793100601
 NavMeshObstacle:
@@ -179039,6 +179103,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &796923603
 NavMeshObstacle:
@@ -179680,7 +179745,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1385491797830740, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_Name
@@ -179704,7 +179769,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.y
@@ -179712,7 +179777,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -179731,6 +179796,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+--- !u!4 &798393185 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+  m_PrefabInstance: {fileID: 798393184}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &798784250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -182270,6 +182340,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &809793751
 NavMeshObstacle:
@@ -184349,7 +184420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820271301}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -68.25646, y: 0.1, z: 11.56249}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -184358,7 +184429,7 @@ Transform:
   - {fileID: 170630143}
   - {fileID: 239685900}
   - {fileID: 1128864684}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &820852328 stripped
 Transform:
@@ -187851,7 +187922,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838140379}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -49.04312, y: 2.4792, z: 0.21381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -187977,7 +188048,7 @@ Transform:
   - {fileID: 1974315593}
   - {fileID: 565584641}
   - {fileID: 1587359909}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &838319804
 PrefabInstance:
@@ -188719,7 +188790,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 841574758}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -35.37184, y: 0.2, z: -9.01365}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -188780,7 +188851,7 @@ Transform:
   - {fileID: 1124241273}
   - {fileID: 227529312}
   - {fileID: 801083019}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &841879507 stripped
 Transform:
@@ -191382,6 +191453,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &849360381
 NavMeshObstacle:
@@ -192030,6 +192102,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &851920037
 NavMeshObstacle:
@@ -196036,7 +196109,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866872472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -19.756462, y: 0.1, z: 11.56249}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -196045,7 +196118,7 @@ Transform:
   - {fileID: 1968059650}
   - {fileID: 1345564631}
   - {fileID: 2060273948}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &866996654
 GameObject:
@@ -197749,6 +197822,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &874184740
 NavMeshObstacle:
@@ -201045,6 +201119,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &890553063
 NavMeshObstacle:
@@ -201379,6 +201454,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &891784278
 NavMeshObstacle:
@@ -203333,6 +203409,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &900123772
 NavMeshObstacle:
@@ -218164,6 +218241,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &964008936
 NavMeshObstacle:
@@ -224050,6 +224128,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &994038952
 NavMeshObstacle:
@@ -224179,6 +224258,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!4 &995640581 stripped
 Transform:
@@ -224304,6 +224384,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &995774314
 NavMeshObstacle:
@@ -227512,6 +227593,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1007090719
 NavMeshObstacle:
@@ -229009,7 +229091,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1012654481}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -39.13262, y: 18.40764, z: -13.235121}
   m_LocalScale: {x: 1, y: 1, z: 1.3423}
   m_ConstrainProportionsScale: 0
@@ -229606,7 +229688,7 @@ Transform:
   - {fileID: 1251253036}
   - {fileID: 2005995345}
   - {fileID: 1080886857}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1012841186
 GameObject:
@@ -232456,6 +232538,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1024974493
 NavMeshObstacle:
@@ -239765,6 +239848,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1055385059
 NavMeshObstacle:
@@ -242791,7 +242875,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -242842,6 +242926,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &1070609078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 1070609077}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1070811974
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -244206,6 +244295,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1077105766
 NavMeshObstacle:
@@ -256844,6 +256934,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1132999418
 NavMeshObstacle:
@@ -261610,7 +261701,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1153457764}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -261620,7 +261711,7 @@ Transform:
   - {fileID: 1230335864}
   - {fileID: 1817061583}
   - {fileID: 1690120541}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1153469794
 GameObject:
@@ -261817,7 +261908,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1646639913439324, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
       propertyPath: m_Name
@@ -261841,7 +261932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4539606987814986, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4539606987814986, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
       propertyPath: m_LocalRotation.y
@@ -261849,7 +261940,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4539606987814986, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4539606987814986, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -261868,6 +261959,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
+--- !u!4 &1154654997 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4539606987814986, guid: ac16a24c584766f4e905adc7db85b93d, type: 3}
+  m_PrefabInstance: {fileID: 1154654996}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1154732686
 GameObject:
   m_ObjectHideFlags: 0
@@ -265298,6 +265394,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1169322397
 NavMeshObstacle:
@@ -266345,6 +266442,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1172140805
 NavMeshObstacle:
@@ -272906,6 +273004,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1201065657
 NavMeshObstacle:
@@ -274263,6 +274362,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1208841165
 NavMeshObstacle:
@@ -280056,6 +280156,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1232963369
 NavMeshObstacle:
@@ -281712,6 +281813,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1240976705
 NavMeshObstacle:
@@ -283635,6 +283737,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1247264209
 NavMeshObstacle:
@@ -287399,6 +287502,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1264967477
 NavMeshObstacle:
@@ -287478,6 +287582,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!65 &1265289201
 BoxCollider:
@@ -288821,6 +288926,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1275305561
 NavMeshObstacle:
@@ -291186,6 +291292,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1284969613
 NavMeshObstacle:
@@ -299001,6 +299108,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1310142257
 NavMeshObstacle:
@@ -300666,6 +300774,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1315948754
 NavMeshObstacle:
@@ -301808,6 +301917,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1322009443
 NavMeshObstacle:
@@ -303429,6 +303539,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1327042423
 NavMeshObstacle:
@@ -304003,7 +304114,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1378370071209536, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
       propertyPath: m_Name
@@ -304027,7 +304138,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4917032449352002, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4917032449352002, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
       propertyPath: m_LocalRotation.y
@@ -304035,7 +304146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4917032449352002, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4917032449352002, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -304054,6 +304165,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
+--- !u!4 &1329753059 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4917032449352002, guid: a60988b24f8ff094ba511054edf48a9d, type: 3}
+  m_PrefabInstance: {fileID: 1329753058}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1329778157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4333627001259202, guid: 4752f864e3118e64482c22f7a8d21b01, type: 3}
@@ -304936,7 +305052,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -304987,6 +305103,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &1333707943 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 1333707942}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1333854893
 GameObject:
   m_ObjectHideFlags: 0
@@ -306984,8 +307105,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341425130}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.11678, y: -0, z: 6.82889}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.11678, y: 0, z: 6.82889}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -307098,7 +307219,7 @@ Transform:
   - {fileID: 264832179}
   - {fileID: 1496643734}
   - {fileID: 457771719}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1341491077
 PrefabInstance:
@@ -317274,6 +317395,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1378537943
 NavMeshObstacle:
@@ -319797,7 +319919,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 3893282762972233077, guid: 1abc0a3eb77d77744bf2bda259b7e357, type: 3}
       propertyPath: m_Name
@@ -319848,6 +319970,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1abc0a3eb77d77744bf2bda259b7e357, type: 3}
+--- !u!4 &1390053072 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6924463569268691509, guid: 1abc0a3eb77d77744bf2bda259b7e357, type: 3}
+  m_PrefabInstance: {fileID: 1390053071}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1390158226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -323135,6 +323262,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1405092654
 NavMeshObstacle:
@@ -331429,6 +331557,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1438570502
 NavMeshObstacle:
@@ -332428,6 +332557,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1442250640
 NavMeshObstacle:
@@ -339840,6 +339970,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1472873791
 NavMeshObstacle:
@@ -348471,6 +348602,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1509433088
 NavMeshObstacle:
@@ -353305,7 +353437,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1385491797830740, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_Name
@@ -353329,7 +353461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.y
@@ -353337,7 +353469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -353356,6 +353488,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+--- !u!4 &1527542136 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+  m_PrefabInstance: {fileID: 1527542135}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1527555672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -354257,6 +354394,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1529832669
 NavMeshObstacle:
@@ -358661,6 +358799,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1547674042
 NavMeshObstacle:
@@ -361587,6 +361726,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1561795043
 NavMeshObstacle:
@@ -361683,7 +361823,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1385491797830740, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_Name
@@ -361707,7 +361847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.y
@@ -361715,7 +361855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -361734,6 +361874,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+--- !u!4 &1562229777 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4583176950735566, guid: f9526b7c12770f14aa830082aa6d9b45, type: 3}
+  m_PrefabInstance: {fileID: 1562229776}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1563010338
 GameObject:
   m_ObjectHideFlags: 0
@@ -369429,6 +369574,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1600198768
 NavMeshObstacle:
@@ -370868,6 +371014,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1606033874
 NavMeshObstacle:
@@ -372201,6 +372348,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1613107491
 NavMeshObstacle:
@@ -373510,7 +373658,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1619382269}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -25.36253, y: 0, z: -1.79783}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -373541,7 +373689,7 @@ Transform:
   - {fileID: 236516354}
   - {fileID: 2064371137}
   - {fileID: 1433782829}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1619558783
 GameObject:
@@ -374495,6 +374643,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1622283554
 NavMeshObstacle:
@@ -382962,6 +383111,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1661324940
 NavMeshObstacle:
@@ -383339,6 +383489,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1661951918
 NavMeshObstacle:
@@ -383574,6 +383725,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!4 &1662232641 stripped
 Transform:
@@ -385466,6 +385618,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1671868617
 NavMeshObstacle:
@@ -385893,6 +386046,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1672492174
 NavMeshObstacle:
@@ -386924,6 +387078,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1676264761
 NavMeshObstacle:
@@ -388204,6 +388359,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1680747802
 NavMeshObstacle:
@@ -389395,6 +389551,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1684876715
 NavMeshObstacle:
@@ -389754,6 +389911,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1686608301
 NavMeshObstacle:
@@ -393907,6 +394065,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1703724981
 NavMeshObstacle:
@@ -397350,6 +397509,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 923295320}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1721360606
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1721360608}
+  - component: {fileID: 1721360607}
+  m_Layer: 0
+  m_Name: VietDistrict_HoanKiem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1721360607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721360606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19869b006bd7b54aa4dd86ac89c152c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VietDistrict
+  seed: 1010
+  storeRect:
+    serializedVersion: 2
+    x: -141
+    y: 16
+    width: 61.940002
+    height: 43.3909
+  lampPrefab: {fileID: 1674700864803382, guid: 6825a3fe8a1605f42a0d0589e582ac40, type: 3}
+  benchPrefab: {fileID: 1307031912822190, guid: c954a7e383194f246b3502f6c815acb4, type: 3}
+--- !u!4 &1721360608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721360606}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1721756665
 GameObject:
   m_ObjectHideFlags: 0
@@ -398001,7 +398213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1723161343}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -119.50482, y: 0.2, z: -9.92259}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -398012,7 +398224,7 @@ Transform:
   - {fileID: 667613594}
   - {fileID: 2059926668}
   - {fileID: 1595217527}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1723576165 stripped
 Transform:
@@ -398966,7 +399178,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1867694626}
     m_Modifications:
     - target: {fileID: 1573730805894322, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_Name
@@ -398990,7 +399202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.y
@@ -398998,7 +399210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -399017,6 +399229,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+--- !u!4 &1728191904 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4533943726500818, guid: 2224b63330275e5478ef024b2913f937, type: 3}
+  m_PrefabInstance: {fileID: 1728191903}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1728521734
 GameObject:
   m_ObjectHideFlags: 0
@@ -405630,6 +405847,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1757096471
 NavMeshObstacle:
@@ -406090,7 +406308,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759152763}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.2462, y: 0.1, z: 7.74125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -406108,7 +406326,7 @@ Transform:
   - {fileID: 591817186}
   - {fileID: 1074921176}
   - {fileID: 172611304}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1759300488
 PrefabInstance:
@@ -406600,6 +406818,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1761143311
 NavMeshObstacle:
@@ -407599,6 +407818,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1764626780
 NavMeshObstacle:
@@ -410915,6 +411135,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1775916220
 NavMeshObstacle:
@@ -413203,6 +413424,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1787689725
 NavMeshObstacle:
@@ -415916,6 +416138,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1798755429
 NavMeshObstacle:
@@ -419566,6 +419789,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1814629688
 NavMeshObstacle:
@@ -423040,6 +423264,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1827891130
 NavMeshObstacle:
@@ -426859,6 +427084,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1844652866
 NavMeshObstacle:
@@ -427473,6 +427699,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1846438710
 NavMeshObstacle:
@@ -428192,6 +428419,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1850179766
 NavMeshObstacle:
@@ -429222,6 +429450,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1855758004
 NavMeshObstacle:
@@ -430798,6 +431027,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1861566743
 NavMeshObstacle:
@@ -432208,6 +432438,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1867505651
 NavMeshObstacle:
@@ -432237,6 +432468,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aed76091b80451390446e72251d2318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuiltInFurniture
+--- !u!1 &1867694625
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1867694626}
+  m_Layer: 0
+  m_Name: _Archived_OldCity
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1867694626
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867694625}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1341425131}
+  - {fileID: 1759152764}
+  - {fileID: 1619382270}
+  - {fileID: 841574759}
+  - {fileID: 238844805}
+  - {fileID: 838140380}
+  - {fileID: 2148881}
+  - {fileID: 1723161344}
+  - {fileID: 110842533}
+  - {fileID: 342926481}
+  - {fileID: 820271302}
+  - {fileID: 866872473}
+  - {fileID: 475041869}
+  - {fileID: 798393185}
+  - {fileID: 1527542136}
+  - {fileID: 1562229777}
+  - {fileID: 705593385}
+  - {fileID: 685119812}
+  - {fileID: 1154654997}
+  - {fileID: 1329753059}
+  - {fileID: 1874208368}
+  - {fileID: 1012654482}
+  - {fileID: 607510083}
+  - {fileID: 421295593}
+  - {fileID: 661110316}
+  - {fileID: 503644858}
+  - {fileID: 1728191904}
+  - {fileID: 1070609078}
+  - {fileID: 1333707943}
+  - {fileID: 1390053072}
+  - {fileID: 1153457765}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1867784814 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 563047412156136489, guid: 9aac5da4c249fb943b2f58502039d284, type: 3}
@@ -433648,13 +433941,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1874208367}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -34.54771, y: 0.1, z: 2.09606}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1042950214}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1867694626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1874234020 stripped
 Transform:
@@ -436122,6 +436415,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1886403184
 NavMeshObstacle:
@@ -438534,6 +438828,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1897530919
 NavMeshObstacle:
@@ -439548,6 +439843,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1902461053
 NavMeshObstacle:
@@ -442123,6 +442419,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1914095552
 NavMeshObstacle:
@@ -443925,6 +444222,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1923256598
 NavMeshObstacle:
@@ -447224,6 +447522,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1938412131
 NavMeshObstacle:
@@ -450974,6 +451273,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1955192679
 NavMeshObstacle:
@@ -451798,6 +452098,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1957907930
 NavMeshObstacle:
@@ -452426,6 +452727,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1959357684
 NavMeshObstacle:
@@ -452635,6 +452937,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1959745676
 NavMeshObstacle:
@@ -455660,6 +455963,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1970884040
 NavMeshObstacle:
@@ -456965,6 +457269,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1976313649
 NavMeshObstacle:
@@ -459057,6 +459362,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &1987124286
 NavMeshObstacle:
@@ -462381,6 +462687,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2000368733
 NavMeshObstacle:
@@ -467164,6 +467471,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2017885429
 NavMeshObstacle:
@@ -467660,6 +467968,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2019282839
 NavMeshObstacle:
@@ -468126,6 +468435,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2020043411
 NavMeshObstacle:
@@ -469426,6 +469736,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2025153846
 NavMeshObstacle:
@@ -469861,6 +470172,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2026199391
 NavMeshObstacle:
@@ -471304,6 +471616,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2032750337
 NavMeshObstacle:
@@ -473513,6 +473826,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2041800019
 NavMeshObstacle:
@@ -474716,6 +475030,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2047176174
 NavMeshObstacle:
@@ -485784,6 +486099,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2093593146
 NavMeshObstacle:
@@ -492391,6 +492707,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2125547483
 NavMeshObstacle:
@@ -492527,6 +492844,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2125600044
 NavMeshObstacle:
@@ -494606,6 +494924,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2133388827
 NavMeshObstacle:
@@ -496838,6 +497157,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &2143777454
 NavMeshObstacle:
@@ -498019,6 +498339,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &543450651776528344
 NavMeshObstacle:
@@ -500180,6 +500501,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &3238994733140042995
 NavMeshObstacle:
@@ -500829,6 +501151,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!208 &5006512736038711657
 NavMeshObstacle:
@@ -502281,6 +502604,7 @@ MonoBehaviour:
   heightRatio: 0.8
   minFitScale: 0.6
   maxFitScale: 2.5
+  keepRealSize: 1
   createPriceLabels: 1
 --- !u!65 &8412306326610209252
 BoxCollider:
@@ -502799,36 +503123,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 1341425131}
-  - {fileID: 1759152764}
-  - {fileID: 1619382270}
-  - {fileID: 841574759}
-  - {fileID: 238844805}
-  - {fileID: 838140380}
-  - {fileID: 2148881}
-  - {fileID: 1723161344}
-  - {fileID: 110842533}
-  - {fileID: 342926481}
-  - {fileID: 820271302}
-  - {fileID: 866872473}
-  - {fileID: 475041869}
-  - {fileID: 798393184}
-  - {fileID: 1527542135}
-  - {fileID: 1562229776}
-  - {fileID: 705593384}
-  - {fileID: 685119811}
-  - {fileID: 1154654996}
-  - {fileID: 1329753058}
   - {fileID: 1842405369}
-  - {fileID: 1874208368}
-  - {fileID: 1012654482}
-  - {fileID: 607510083}
-  - {fileID: 421295592}
-  - {fileID: 661110315}
-  - {fileID: 503644857}
-  - {fileID: 1728191903}
-  - {fileID: 1070609077}
-  - {fileID: 1333707942}
   - {fileID: 7973222759971814035}
   - {fileID: 2216282967600931364}
   - {fileID: 1486832513}
@@ -502841,7 +503136,6 @@ SceneRoots:
   - {fileID: 1991253237310963862}
   - {fileID: 8458696132528281413}
   - {fileID: 641563242}
-  - {fileID: 1390053071}
   - {fileID: 1083430082}
   - {fileID: 1654945054}
   - {fileID: 396881485}
@@ -502862,5 +503156,6 @@ SceneRoots:
   - {fileID: 714381193}
   - {fileID: 93075301}
   - {fileID: 1620099799}
-  - {fileID: 1153457765}
   - {fileID: 1983350551}
+  - {fileID: 1721360608}
+  - {fileID: 1867694626}
