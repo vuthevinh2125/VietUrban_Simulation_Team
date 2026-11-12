@@ -193019,6 +193019,7 @@ MonoBehaviour:
   clickSound: {fileID: 8300000, guid: 1214b3e608a05a646a839264c96e394f, type: 3}
   leftKey: 113
   rightKey: 101
+  enableSound: 0
 --- !u!82 &855231361
 AudioSource:
   m_ObjectHideFlags: 0
@@ -397547,6 +397548,33 @@ MonoBehaviour:
     height: 43.3909
   lampPrefab: {fileID: 1674700864803382, guid: 6825a3fe8a1605f42a0d0589e582ac40, type: 3}
   benchPrefab: {fileID: 1307031912822190, guid: c954a7e383194f246b3502f6c815acb4, type: 3}
+  peopleModels:
+  - {fileID: 919132149155446097, guid: 1d07d06b70d8f2d42bc4764acc1dc3e6, type: 3}
+  - {fileID: 919132149155446097, guid: d8ccd6878475db5459f23d862ad30ecf, type: 3}
+  - {fileID: 919132149155446097, guid: 3a5aa98a5a522354fb5101c985b6f1d7, type: 3}
+  - {fileID: 919132149155446097, guid: b8cd72443356587458d1737ffe7ea1c4, type: 3}
+  - {fileID: 919132149155446097, guid: 3c0bb8b28c9028c4f8abb9dc3443a1ff, type: 3}
+  - {fileID: 919132149155446097, guid: 869edee28b74cdc4bbacef63ab7db849, type: 3}
+  - {fileID: 919132149155446097, guid: baa51d1989739394aab431119d8c638b, type: 3}
+  - {fileID: 919132149155446097, guid: f6f2b76b422e3d44db908533ebae7288, type: 3}
+  - {fileID: 919132149155446097, guid: 863bdad8c6f6dd342b126abfef7b4c63, type: 3}
+  - {fileID: 919132149155446097, guid: 6ee36edb0df173646a216161f4abba43, type: 3}
+  - {fileID: 919132149155446097, guid: 3a1bc47c610c9254b8ef9412e2509122, type: 3}
+  - {fileID: 919132149155446097, guid: 108e476fd9c55144fa6a8f0f7370f34a, type: 3}
+  peopleMaterials:
+  - {fileID: 4831036451404745908, guid: 3c2acea7868ab8144a032fd6d3d8e498, type: 3}
+  - {fileID: 2889476164039202934, guid: 49295bf6e85845047b53ec718a098e0b, type: 3}
+  - {fileID: 5046350146263042985, guid: 33b778f6eea1bfc4cbc8e8638d0b80ea, type: 3}
+  - {fileID: 5978592776003051228, guid: d981e3cb2c3342e4d8f248ee979e2444, type: 3}
+  - {fileID: 7557041092036953876, guid: 4998e0d59063c7b4588bb8ffbaa6fae3, type: 3}
+  - {fileID: 4110442777519271610, guid: 3053867f24bc80542808461ae918e59c, type: 3}
+  - {fileID: 458670015124517403, guid: 5d356f0251514f04b8c56f2ba6a79e11, type: 3}
+  - {fileID: 8904917049043608329, guid: c12b0e05f9caab24da5a3666da49de27, type: 3}
+  - {fileID: 1263535483962122135, guid: cf4ef471f2245bb4a8577c095b9b183b, type: 3}
+  - {fileID: 1143391258494066083, guid: d6b96d953955f1448a2c312125ff2658, type: 3}
+  - {fileID: 5894685524100688657, guid: 6697a253b3e4ce049b0bcd88d5bd86e0, type: 3}
+  - {fileID: 8357019043758168962, guid: dbcef3e0b6f603e4180c3c50d14eab7a, type: 3}
+  bikePrefabs: []
 --- !u!4 &1721360608
 Transform:
   m_ObjectHideFlags: 0
