@@ -36,6 +36,10 @@ public static class LicenseManager
             "Chips", "CandyPack", "SweetJar", "ChocolateSpread", "ChocolateBox", "Cake"),
         new ProductLicense("pantry", "Pantry", 3, 180f,
             "Oil", "Sauce", "Pepper", "MashPotatoe", "PotatoeBag", "OldMetalBox"),
+        new ProductLicense("produce", "Fruit & Vegetables", 3, 200f, // thêm 12/11: 25 loại rau củ quả của gói ModernSupermarket
+            "Apple", "Artichoke", "Avocado", "Banana", "Carrot", "ChilliPeppers", "Clementine", "Garlic", "Grapefruit", "Kiwi",
+            "Lemon", "Mango", "Melon", "Mushroom", "Onion", "Papaya", "Perry", "Pineapple", "Potato_", "Pumpkin", "Squash",
+            "Tomato", "Watermelon", "Zucchini"),
         new ProductLicense("drinks", "Hot & Cold Drinks", 4, 250f,
             "JuiceBrick", "MilkBrick", "Milk", "WaterPack", "CansPack", "Coffee", "Capsule", "Teabox", "ChocolatePowder"),
         new ProductLicense("cleaning", "Cleaning", 5, 300f,

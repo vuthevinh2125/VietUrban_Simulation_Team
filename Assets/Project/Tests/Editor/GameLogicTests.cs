@@ -53,6 +53,9 @@ public class GameLogicTests
     [TestCase("Frozen Pizza", 0f)]
     [TestCase("Chocolate Spread", 0f)]
     [TestCase("Sugar", 0f)]
+    [TestCase("Bananas", 3f)]          // rau quả (thêm 12/11)
+    [TestCase("Fresh Potatoes", 8f)]
+    [TestCase("Potato Bag", 0f)]       // khoai tây đóng túi khô: không hỏng
     public void ShelfLife_ByProductName(string name, float days)
     {
         Assert.AreEqual(days, Freshness.ShelfLifeDays(name));
@@ -67,6 +70,7 @@ public class GameLogicTests
     [TestCase("Chocolate Spread", ProductGroup.Breakfast)]
     [TestCase("Pet Food", ProductGroup.Pet)]
     [TestCase("Rice Pack", ProductGroup.Pantry)]
+    [TestCase("Watermelon", ProductGroup.Fresh)]   // chứa "water" nhưng là trái cây
     public void GroupOf_ClassifiesByName(string name, ProductGroup expected)
     {
         Assert.AreEqual(expected, DemandModel.GroupOf(name));

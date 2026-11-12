@@ -5,7 +5,9 @@ using UnityEngine;
 /// Hạn dùng của hàng tươi (tính bằng NGÀY GAME, đếm từ lúc món được xếp lên kệ).
 /// Hàng trong thùng / trên kệ kho chưa tính (coi như còn niêm phong, để lạnh) - chỉ hàng bày bán mới bắt đầu hỏng.
 ///  - Thịt, gà, cá, sushi, thanh cua: 2 ngày
-///  - Bánh mì, bánh ngọt, táo: 3 ngày
+///  - Rau quả mềm (chuối, cà chua, nấm, bơ, xoài, đu đủ, kiwi, ớt, bí ngòi, atisô), bánh mì, bánh ngọt: 3 ngày
+///  - Táo, lê, cam, chanh, bưởi, dưa, dứa, bí, cà rốt: 5 ngày
+///  - Khoai tây tươi, hành, tỏi, bí ngô: 8 ngày
 ///  - Sữa tươi, sữa chua, kem tươi, giăm bông: 4 ngày
 ///  - Phô mai, trứng, bơ: 6 ngày
 ///  - Còn lại (đồ khô, đồ hộp, sữa hộp tiệt trùng, nước, đồ đông lạnh, gia dụng...): không hỏng
@@ -32,6 +34,9 @@ public static class Freshness
         string n = (itemName ?? "").ToLowerInvariant().Replace('_', ' ');
         if (Has(n, "shampoo", "frozen", "pizza", "brick", "powder", "spread")) return 0f; // "shampoo" chứa "ham"; sữa hộp, bột, đồ đông lạnh không hỏng
         if (Has(n, "meat", "chicken", "fish", "sushi", "crab")) return 2f;
+        if (Has(n, "fresh potato", "onion", "garlic", "pumpkin")) return 8f;
+        if (Has(n, "banana", "tomato", "mushroom", "avocado", "mango", "papaya", "kiwi", "chilli", "zucchini", "artichoke")) return 3f;
+        if (Has(n, "apple", "pear", "clementine", "lemon", "grapefruit", "melon", "squash", "carrot")) return 5f;
         if (Has(n, "bread", "cake", "apple", "banana", "fruit", "vegetable", "salad")) return 3f;
         if (Has(n, "milk", "yoghurt", "yogurt", "cream", "ham")) return 4f;
         if (Has(n, "cheese", "egg", "butter")) return 6f;

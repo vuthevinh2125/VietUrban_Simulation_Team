@@ -43,6 +43,10 @@ public static class DemandModel
     {
         string n = (itemName ?? "").ToLowerInvariant();
         if (Has(n, "pet")) return ProductGroup.Pet;
+        // Rau củ quả xét sớm: "watermelon" có chứa "water", "pineapple" có chứa "apple"
+        if (Has(n, "apple", "pear", "banana", "melon", "mango", "papaya", "kiwi", "lemon", "clementine", "grapefruit",
+                "avocado", "tomato", "carrot", "onion", "garlic", "chilli", "mushroom", "pumpkin", "squash", "zucchini",
+                "artichoke", "fresh potato")) return ProductGroup.Fresh;
         // Đồ gia dụng xét sớm: "shampoo" có chứa "ham"
         if (Has(n, "soap", "shampoo", "toothpaste", "paper", "toilet", "bleach", "cleanser", "laundry")) return ProductGroup.Household;
         if (Has(n, "beer", "wine", "alcohol")) return ProductGroup.Alcohol;
