@@ -6,6 +6,7 @@ using UnityEngine;
 ///  - Đi bên phải đường, tới ngã tư rẽ ngẫu nhiên (cuối đường cụt thì quay đầu).
 ///  - Chậm lại / dừng khi phía trước có xe khác, người chơi hoặc người đi bộ.
 ///  - Mẫu xe lấy từ ô tô có sẵn trong scene (Simple Retro Car) + xe cứu thương / xe CSGT thay vỏ, bỏ hết script lái của người chơi.
+/// Ở thành phố Việt, xe con là ô tô điện dựng bằng code (CarModels) thay cho Sedan / Taxi.
 /// Tự tạo khi vào game (khi có khu phố mới "CityExpansion_East" hoặc thành phố Việt VietDistrict); có VietDistrict thì chạy trên mạng đường của nó, dừng cả khi gặp xe máy (TrafficBike).
 /// </summary>
 public class TrafficSystem : MonoBehaviour
@@ -33,6 +34,7 @@ public class TrafficSystem : MonoBehaviour
     }
     private readonly List<Car> cars = new List<Car>();
     private readonly List<GameObject> templates = new List<GameObject>();
+    private readonly HashSet<GameObject> flatTemplates = new HashSet<GameObject>(); // xe dựng bằng code: bánh chạm đất ở y = 0
     private GameObject ambulanceTemplate;     // xe cứu thương (Resources/Vehicles/Ambulance) dựng trên khung "Simple Retro Car"
     [Range(0f, 1f)] public float ambulanceChance = 0.08f;
     private GameObject policeTemplate;        // xe tuần tra CSGT Việt Nam (xe cảnh sát Mỹ đổi áo, VehicleLivery)
@@ -158,7 +160,16 @@ public class TrafficSystem : MonoBehaviour
             VehicleLivery.Swap(policeTemplate.transform, "Police_Mat", "Vehicles/PoliceVN");
             VehicleLivery.Swap(policeTemplate.transform, "Car_Number_Mat", "Vehicles/PlatePoliceVN");
         }
+        // Thành phố Việt: ô tô điện dựng bằng code (crossover nhỏ, crossover cỡ C, taxi xanh ngọc, SUV 3 hàng ghế)
+        if (FindAnyObjectByType<VietDistrict>() != null)
+            for (int v = 0; v < CarModels.Variants; v++)
+            {
+                GameObject t = CarTemplate(v);
+                templates.Add(t);
+                flatTemplates.Add(t);
+            }
         // Xe công cộng: sedan + taxi (không dùng xe của người chơi - Simple Retro Car chỉ làm khung, vỏ bị thay)
+        if (templates.Count == 0)
         foreach (string m in new[] { "Sedan", "Taxi" })
         {
             GameObject skin = SkinTemplate(carBase, "Vehicles/" + m, m, 0f, 1.05f);
@@ -169,6 +180,37 @@ public class TrafficSystem : MonoBehaviour
             GameObject g = VehicleManager.FindObject("Simple Retro Car"); // dự phòng khi thiếu model
             if (g != null) templates.Add(g);
         }
+    }
+
+    /// <summary>Mẫu ô tô điện (CarModels): LOD0 / LOD1 chung vật liệu bảng màu, hộp va chạm, Rigidbody kinematic.</summary>
+    private GameObject CarTemplate(int v)
+    {
+        CarModels.Info info = CarModels.Get(v);
+        var root = new GameObject($"EV_{info.kind}{v}");
+        root.SetActive(false);
+        root.transform.SetParent(transform, false);
+        Material mat = VPalette.Material;
+        MeshRenderer Part(Mesh mesh, string partName, bool shadows)
+        {
+            var g = new GameObject(partName);
+            g.transform.SetParent(root.transform, false);
+            g.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var r = g.AddComponent<MeshRenderer>();
+            r.sharedMaterial = mat;
+            r.shadowCastingMode = shadows ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
+            return r;
+        }
+        MeshRenderer r0 = Part(info.lod0, "LOD0", true), r1 = Part(info.lod1, "LOD1", false);
+        var lg = root.AddComponent<LODGroup>();
+        lg.SetLODs(new[] { new LOD(0.12f, new Renderer[] { r0 }), new LOD(0.012f, new Renderer[] { r1 }) });
+        lg.RecalculateBounds();
+        var box = root.AddComponent<BoxCollider>();
+        box.size = info.size;
+        box.center = new Vector3(0f, info.size.y * 0.5f, 0f);
+        var body = root.AddComponent<Rigidbody>();
+        body.isKinematic = true;
+        body.useGravity = false;
+        return root;
     }
 
     private GameObject SkinTemplate(GameObject carBase, string modelResource, string name, float yaw, float lengthScale)
@@ -193,7 +235,7 @@ public class TrafficSystem : MonoBehaviour
         GameObject template = ambulanceTemplate != null && roll < ambulanceChance ? ambulanceTemplate
             : policeTemplate != null && roll < ambulanceChance + policeChance ? policeTemplate
             : templates[Random.Range(0, templates.Count)];
-        float yOffset = template.transform.position.y - GroundY(template.transform.position, 0.1f);
+        float yOffset = flatTemplates.Contains(template) ? 0.02f : template.transform.position.y - GroundY(template.transform.position, 0.1f);
 
         var holder = new GameObject("_TrafficHolder");
         holder.SetActive(false);
