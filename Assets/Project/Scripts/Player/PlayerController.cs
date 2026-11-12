@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
 
     private float moveX;
     private float moveZ;
+    private float stepDistance; // quãng đường từ bước chân trước (m)
     private bool isSprinting;
     private bool jumpRequested;
 
@@ -82,6 +83,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             jumpRequested = true;
+        }
+
+        // Bước chân: mỗi 0.65 m (chạy 0.95 m) một tiếng, chỉ khi đang chạm đất
+        Vector3 flat = rb != null ? new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z) : Vector3.zero;
+        if (flat.sqrMagnitude > 0.25f && IsGrounded())
+        {
+            stepDistance += flat.magnitude * Time.deltaTime;
+            if (stepDistance >= (isSprinting ? 0.95f : 0.65f))
+            {
+                stepDistance = 0f;
+                AudioManager.Play("footstep_" + Random.Range(1, 5), isSprinting ? 0.32f : 0.24f);
+            }
         }
 
         if (animator != null)

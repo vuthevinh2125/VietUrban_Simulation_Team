@@ -83,6 +83,17 @@ public class Interactable : MonoBehaviour
             Debug.LogWarning($"[Box] '{name}' chưa gán ItemData - kệ sẽ không biết đây là hàng gì.", this);
     }
 
+    // Thùng rơi / bị ném chạm đất: tiếng bìa các-tông, to theo vận tốc va chạm
+    private float nextImpactSound;
+    void OnCollisionEnter(Collision c)
+    {
+        if (IsHeld || Time.time < nextImpactSound) return;
+        float v = c.relativeVelocity.magnitude;
+        if (v < 1.2f) return;
+        nextImpactSound = Time.time + 0.25f;
+        AudioManager.PlayAt("box_drop", transform.position, Mathf.Clamp01(v / 5f) * 0.9f);
+    }
+
     void OnEnable() => StockManager.Register(this);
     void OnDisable() => StockManager.Unregister(this);
 

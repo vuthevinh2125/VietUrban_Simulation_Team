@@ -87,6 +87,7 @@ public class RainDamage : MonoBehaviour
             if (Random.value > chance || !box.RemoveOne()) continue;
             lostNow++;
             lostValue += item != null ? item.unitPrice : 0f;
+            AudioManager.PlayAt("wet_squish", box.transform.position, 0.7f);
             if (firstName == null) firstName = box.DisplayName;
         }
         foreach (Interactable b in dry) { wet.Remove(b); nextLoss.Remove(b); if (b != null) Tint(b, false); }

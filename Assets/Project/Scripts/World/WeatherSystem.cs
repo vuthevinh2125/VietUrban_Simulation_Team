@@ -200,6 +200,9 @@ public class WeatherSystem : MonoBehaviour
             {
                 nextFlash = Time.time + UnityEngine.Random.Range(6f, 16f);
                 flashUntil = Time.time + 0.18f;
+                // Sấm tới sau tia chớp (gần thì tới sớm và to hơn)
+                float delay = UnityEngine.Random.Range(0.3f, 2.2f);
+                AudioManager.PlayDelayed("thunder_" + UnityEngine.Random.Range(1, 4), delay, Mathf.Lerp(0.95f, 0.55f, delay / 2.2f));
             }
             // Đèn chớp luôn BẬT suốt cơn giông, chỉ đổi cường độ: bật / tắt một đèn directional làm đổi số đèn
             // trong cảnh -> URP đổi biến thể shader mỗi lần chớp (gây khựng). Đổi cường độ thì không.
