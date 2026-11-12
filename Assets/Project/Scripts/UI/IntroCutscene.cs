@@ -12,7 +12,9 @@ using UnityEngine.UI;
 /// Cảnh mở đầu khi bắt đầu New Game (~45 giây + phần đọc thư, [Space] để bỏ qua). Cốt truyện: cửa hàng của bà Lan.
 ///  0. Tiêu đề trên nền đen.
 ///  1. HỒI TƯỞNG (màu nâu cũ): ba mươi năm trước, cô Lan trẻ đứng trước cửa hàng mới mở, rao khách rồi bước vào trong.
-///  2. Chớp trắng -> HIỆN TẠI: camera lượn vòng quanh cửa hàng giữa phố (không bay ra ngoài bản đồ).
+///  2. Chớp trắng -> HIỆN TẠI: giới thiệu thành phố kiểu Hà Nội (VietDistrict): bay trên Hồ Gươm, xuống phố cổ treo đèn lồng
+///     đầy xe máy, rồi lướt dọc đường Hai Bà Trưng tới cửa hàng ở trung tâm (không có VietDistrict thì lượn vòng quanh cửa hàng).
+///     Trong đoạn hồi tưởng, dòng xe và người đi bộ được tạm ẩn (phố ba mươi năm trước còn vắng).
 ///  3. Cảnh "anh hùng" của cửa hàng: góc thấp, đẩy chậm vào mặt tiền.
 ///  4. LÁ THƯ của bà (tương tác): lật trang, rồi chọn lời hồi âm (chỉ để kể chuyện, không thưởng gì).
 ///  5. Vào trong: gian nhỏ đang mở; trôi về mắt người chơi và trả điều khiển.
@@ -43,6 +45,8 @@ public class IntroCutscene : MonoBehaviour
     private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
 
     private Vector3 doorG, outward, side, center, inside;
+    private VietDistrict city;
+    private readonly List<GameObject> modernTraffic = new List<GameObject>();
     private GameObject lan;
     private NavMeshAgent lanAgent;
     private Animator lanAnim;
@@ -114,8 +118,9 @@ public class IntroCutscene : MonoBehaviour
         yield return Wait(2f);
         yield return Tween(0.6f, t => titleGroup.alpha = 1f - t);
 
-        // 1. Hồi tưởng: góc thấp bên kia đường, trượt ngang chậm; cô Lan rao khách
+        // 1. Hồi tưởng: góc thấp bên kia đường, trượt ngang chậm; cô Lan rao khách (phố xưa vắng: tạm ẩn xe cộ, người đi bộ)
         flashback.weight = 1f;
+        SetModernTraffic(false);
         StartCoroutine(Tween(1.4f, t => fade.color = new Color(0f, 0f, 0f, 1f - t)));
         Say(lan, "Fresh eggs and hot coffee!", 2.5f, 3.5f);
         yield return Shot(wideA, wideA + side * 5f, doorG + side * 2f + Vector3.up * 2.6f, doorG + side * 1f + Vector3.up * 2.2f, 45f, 40f, 7.5f,
@@ -132,11 +137,13 @@ public class IntroCutscene : MonoBehaviour
         // Chớp trắng -> hiện tại
         yield return Tween(0.35f, t => fade.color = new Color(1f, 1f, 1f, t));
         flashback.weight = 0f;
+        SetModernTraffic(true);
         if (lan != null) lan.SetActive(false);
         StartCoroutine(Tween(0.7f, t => fade.color = new Color(1f, 1f, 1f, 1f - t)));
 
-        // 2. Hiện tại: lượn vòng quanh cửa hàng (bán kính 45 m, cao 24 m - luôn ở trong thành phố)
-        yield return Orbit(45f, 24f, -55f, 5f, 7.5f, "Thirty years later, the street has grown into VietUrban - a city of motorbikes, street food and neon signs.");
+        // 2. Hiện tại: giới thiệu thành phố (hồ - phố cổ - đại lộ trước cửa hàng); không có thành phố Việt thì lượn vòng quanh cửa hàng
+        if (city != null) yield return CityTour();
+        else yield return Orbit(45f, 24f, -55f, 5f, 7.5f, "Thirty years later, the street has grown into VietUrban - a city of motorbikes, street food and neon signs.");
 
         // 3. Mặt tiền cửa hàng: góc thấp, đẩy vào, thu hẹp tiêu cự
         Vector3 heroA = doorG + outward * 18f + side * 3f + Vector3.up * 0.5f;
@@ -173,8 +180,47 @@ public class IntroCutscene : MonoBehaviour
         Finish();
     }
 
+    /// <summary>Ba cảnh giới thiệu thành phố kiểu Hà Nội, toạ độ lấy từ bố cục VietDistrict.</summary>
+    private IEnumerator CityTour()
+    {
+        city.EnsureLayout();
+        VietDistrict.Line[] X = city.X, Z = city.Z;
+        float g = VietDistrict.LotTop;
+        // a. Bay chéo trên cao về phía Hồ Gươm, hạ dần tới Tháp Rùa
+        Vector3 lake = new Vector3((X[4].c1 + X[6].c0) * 0.5f, g, (Z[4].c1 + Z[6].c0) * 0.5f);
+        float lakeDepth = (Z[6].c0 - Z[4].c1) * 0.5f - 14f;
+        Vector3 turtle = lake - Vector3.forward * lakeDepth * 0.22f;
+        yield return Shot(lake + new Vector3(-110f, 85f, -140f), lake + new Vector3(-45f, 42f, -78f), lake + Vector3.up * 5f, turtle + Vector3.up * 4f, 55f, 44f, 8f,
+                          "Thirty years later, the street has grown into VietUrban - a city around a quiet green lake,");
+        // b. Phố cổ: máy quay cao 4 m trên làn sát lề (trên đầu xe cộ, dưới dây đèn lồng), trôi dọc phố, xe máy chạy qua
+        float z = Z[6].c0 + 1.0f, x0 = X[2].c1 + 6f, x1 = X[3].c0 - 18f;
+        Vector3 aim = new Vector3(0f, -1.2f, (Z[6].c0 + Z[6].c1) * 0.5f - z);
+        yield return Shot(new Vector3(x0, g + 4.2f, z), new Vector3(x1, g + 3.4f, z), new Vector3(x0 + 25f, g + 3f, z) + aim, new Vector3(x1 + 22f, g + 2.4f, z) + aim, 52f, 48f, 7f,
+                          "with lantern-lit old streets, street food on every corner and a river of motorbikes.");
+        // c. Dọc đường Hai Bà Trưng, hạ thấp dần về phía cửa hàng ở trung tâm thành phố
+        float zr = Z[3].c1 - 3.5f;
+        Vector3 c0 = new Vector3(X[5].c0 - 4f, g + 9f, zr), c1 = new Vector3(X[4].c1 + 14f, g + 4.5f, zr);
+        yield return Shot(c0, c1, doorG + Vector3.up * 6f, doorG + Vector3.up * 3.5f, 50f, 46f, 6.5f,
+                          "And right in the middle of it all, on Hai Ba Trung street...");
+    }
+
+    /// <summary>Ẩn / hiện dòng ô tô, xe máy, người đi bộ (đoạn hồi tưởng phố xưa còn vắng).</summary>
+    private void SetModernTraffic(bool on)
+    {
+        if (!on)
+        {
+            modernTraffic.Clear();
+            if (TrafficSystem.Instance != null) modernTraffic.Add(TrafficSystem.Instance.gameObject);
+            if (MotorbikeTraffic.Instance != null) modernTraffic.Add(MotorbikeTraffic.Instance.gameObject);
+            if (PedestrianSystem.Instance != null) modernTraffic.Add(PedestrianSystem.Instance.gameObject);
+        }
+        foreach (GameObject g in modernTraffic) if (g != null) g.SetActive(on);
+        if (on) modernTraffic.Clear();
+    }
+
     private void Finish()
     {
+        SetModernTraffic(true);
         if (SpeechBubble.ViewCamera == cam) SpeechBubble.ViewCamera = null;
         if (cam != null) Destroy(cam.gameObject);
         if (flashback != null) { Destroy(flashback.profile); Destroy(flashback.gameObject); }
@@ -251,6 +297,7 @@ public class IntroCutscene : MonoBehaviour
         if (playerCam == null) playerCam = Camera.main;
         if (playerCam == null) return false;
 
+        city = FindAnyObjectByType<VietDistrict>();
         GameObject store = GameObject.Find("Supermarket_full");
         EntranceDoor[] doors = FindObjectsByType<EntranceDoor>();
         if (store == null || doors.Length == 0) return false;
