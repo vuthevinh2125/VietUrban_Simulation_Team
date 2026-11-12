@@ -30,9 +30,11 @@ public class WeatherSystem : MonoBehaviour
     public static bool IsRaining => CurrentWeather == Weather.Rain || CurrentWeather == Weather.Storm;
 
     /// <summary>
-    /// Điểm này có mái che thật không: nằm trong khung nhà (siêu thị, phòng mở rộng, nhà kho, hộp RainShelter) VÀ có
-    /// mái / trần / mái hiên ngay phía trên. Khung nhà rộng hơn tường (gồm cả sân trước cửa) nên chỉ xét khung thì
-    /// thùng hàng và nhân viên đứng ngoài sân vẫn bị coi là trong nhà (lỗi thùng không ướt, nhân viên đứng dưới mưa).
+    /// Điểm này có mái che thật không: nằm trong khung nhà (siêu thị, phòng mở rộng, nhà kho, hộp RainShelter) và
+    ///  - ở phía trong đường cửa ra vào (trong toà nhà) -> luôn có che;
+    ///  - ở ngoài đường cửa (sân trước cửa, khung nhà phủ cả sân) -> chỉ có che khi có mái hiên ngay phía trên.
+    /// Chỉ xét khung thì thùng / nhân viên ngoài sân bị coi là trong nhà; chỉ xét mảnh mái thì trần siêu thị gồm nhiều
+    /// mảnh nhỏ (ống, đèn, tấm trần) bị lọt nên mưa rơi trong cửa hàng - hai lỗi phát hiện khi chơi thử.
     /// </summary>
     public static bool IsSheltered(Vector3 p)
     {
@@ -71,6 +73,38 @@ public class WeatherSystem : MonoBehaviour
         gridH = Mathf.Clamp(Mathf.CeilToInt(all.size.z / RoofCell), 1, 1024);
         roofGrid = new float[gridW * gridH];
         for (int i = 0; i < roofGrid.Length; i++) roofGrid[i] = float.NegativeInfinity;
+
+        // Ô phía trong đường cửa (so với cửa gần nhất, hướng từ giữa cửa hàng ra cửa) = trong toà nhà: luôn có mái
+        var doors = new List<Vector3>();
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>()) doors.Add(d.transform.position);
+        foreach (AutoDoor d in FindObjectsByType<AutoDoor>()) doors.Add(d.transform.position);
+        Vector3 center = Vector3.zero;
+        int shelves = 0;
+        foreach (Shelf sh in StockManager.Shelves) if (sh != null) { center += sh.transform.position; shelves++; }
+        if (doors.Count > 0 && shelves > 0)
+        {
+            center /= shelves;
+            for (int z = 0; z < gridH; z++)
+                for (int x = 0; x < gridW; x++)
+                {
+                    Vector3 c = new Vector3(gridX + (x + 0.5f) * RoofCell, 0f, gridZ + (z + 0.5f) * RoofCell);
+                    Vector3 door = doors[0];
+                    float best = float.MaxValue;
+                    foreach (Vector3 d in doors)
+                    {
+                        float dist = (d.x - c.x) * (d.x - c.x) + (d.z - c.z) * (d.z - c.z);
+                        if (dist < best) { best = dist; door = d; }
+                    }
+                    Vector3 outward = door - center; outward.y = 0f;
+                    Vector3 rel = c - door; rel.y = 0f;
+                    if (outward.sqrMagnitude < 0.01f || Vector3.Dot(rel, outward.normalized) < 0.3f)
+                        roofGrid[z * gridW + x] = float.PositiveInfinity;
+                }
+        }
+        else
+        {
+            for (int i = 0; i < roofGrid.Length; i++) roofGrid[i] = float.PositiveInfinity; // không xác định được cửa -> theo khung như cũ
+        }
         foreach (Bounds r in roofs)
         {
             int x0 = Mathf.Max(0, Mathf.FloorToInt((r.min.x - gridX) / RoofCell)), x1 = Mathf.Min(gridW - 1, Mathf.FloorToInt((r.max.x - gridX) / RoofCell));
@@ -79,6 +113,7 @@ public class WeatherSystem : MonoBehaviour
                 for (int x = x0; x <= x1; x++)
                 {
                     int i = z * gridW + x;
+                    if (roofGrid[i] == float.PositiveInfinity) continue; // trong toà nhà: đã có mái
                     if (roofGrid[i] == float.NegativeInfinity || r.min.y < roofGrid[i]) roofGrid[i] = r.min.y;
                 }
         }
