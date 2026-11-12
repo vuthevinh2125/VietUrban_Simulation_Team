@@ -639,6 +639,7 @@ public class NPCShopper : MonoBehaviour
         int sidesteps = 0;
         while (true)
         {
+            if (!agent.isOnNavMesh) yield break; // bị đẩy khỏi NavMesh (xe / người chơi đẩy): nơi gọi tự kiểm tra khoảng cách
             elapsed += Time.deltaTime;
             if (!agent.pathPending)
             {
