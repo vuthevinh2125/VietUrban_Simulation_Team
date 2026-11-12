@@ -36,6 +36,78 @@ public class MotorbikeTraffic : MonoBehaviour
     private const int Variants = 12;
     private static readonly RaycastHit[] hits = new RaycastHit[16];
     private readonly Dictionary<Collider, bool> stopCache = new Dictionary<Collider, bool>();
+    private bool real;
+    private RealModels.Model[] realRider, realPassenger;
+    private Mesh[] helmetLod0, helmetLod1;
+
+    /// <summary>
+    /// Mỗi biến thể = 1 mẫu xe máy dựng bằng code (BikeModels: xe số / tay ga, nhiều màu) + người lái là model NPC thật
+    /// (tay IK đúng tay lái, chân đúng chỗ để chân) + mũ bảo hiểm nửa đầu; 30% có người ngồi sau.
+    /// Không dùng xe của người chơi (C125, Honda Cub).
+    /// </summary>
+    private void BuildRealVariants()
+    {
+        realRider = new RealModels.Model[Variants];
+        realPassenger = new RealModels.Model[Variants];
+        helmetLod0 = new Mesh[Variants];
+        helmetLod1 = new Mesh[Variants];
+        Color[] helmets =
+        {
+            new Color(0.85f, 0.1f, 0.1f), new Color(0.95f, 0.95f, 0.95f), new Color(0.1f, 0.3f, 0.7f), new Color(0.95f, 0.8f, 0.1f),
+            new Color(0.08f, 0.08f, 0.08f), new Color(0.9f, 0.5f, 0.7f), new Color(0.3f, 0.55f, 0.3f), new Color(0.55f, 0.4f, 0.3f),
+        };
+        var rnd = new System.Random(2026);
+        GameObject[] people = district.peopleModels, mats = district.peopleMaterials;
+        for (int v = 0; v < Variants; v++)
+        {
+            BikeModels.Info bike = BikeModels.Get(v);
+            int a = rnd.Next(people.Length);
+            realRider[v] = RealModels.Person(people[a], mats != null && a < mats.Length ? mats[a] : null, RealModels.Pose.Ride, RiderIK(bike), bike.scooter ? "scooter" : "wave");
+            if (rnd.NextDouble() < 0.3)
+            {
+                int b = rnd.Next(people.Length);
+                realPassenger[v] = RealModels.Person(people[b], mats != null && b < mats.Length ? mats[b] : null, RealModels.Pose.RideBack, PassengerIK(bike), bike.scooter ? "pscooter" : "pwave");
+            }
+            Color hc = helmets[rnd.Next(helmets.Length)];
+            helmetLod0[v] = BikeModels.Helmet(hc, false);
+            helmetLod1[v] = BikeModels.Helmet(hc, true);
+        }
+    }
+
+    public static RealModels.IK RiderIK(BikeModels.Info b) => new RealModels.IK
+    {
+        on = true,
+        handL = b.gripL - b.seat, handR = b.gripR - b.seat, footL = b.footL - b.seat, footR = b.footR - b.seat,
+    };
+
+    public static RealModels.IK PassengerIK(BikeModels.Info b) => new RealModels.IK
+    {
+        on = true,
+        handL = new Vector3(-0.17f, 0.02f, 0.3f), handR = new Vector3(0.17f, 0.02f, 0.3f),
+        footL = b.pegL - b.rearSeat, footR = b.pegR - b.rearSeat,
+    };
+
+    private GameObject SpawnReal(Bike b, int index)
+    {
+        BikeModels.Info info = BikeModels.Get(b.variant);
+        var bikeModel = new RealModels.Model { ok = true };
+        bikeModel.lod0.Add(new RealModels.Part { mesh = info.lod0, mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        bikeModel.lod1.Add(new RealModels.Part { mesh = info.lod1, mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        GameObject go = RealModels.Spawn(bikeModel, transform, Vector3.zero, Quaternion.identity, "Xe may " + index, true, 0.22f, 0.02f);
+        var helmet = new RealModels.Model { ok = true };
+        helmet.lod0.Add(new RealModels.Part { mesh = helmetLod0[b.variant], mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        helmet.lod1.Add(new RealModels.Part { mesh = helmetLod1[b.variant], mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        void Seat(RealModels.Model m, Vector3 hipsAt)
+        {
+            if (m == null || !m.ok) return;
+            Vector3 off = hipsAt - m.hips;
+            RealModels.AddTo(go, m, Matrix4x4.TRS(off, Quaternion.identity, Vector3.one), true);
+            RealModels.AddTo(go, helmet, Matrix4x4.TRS(off + m.head + new Vector3(0f, 0.07f, 0.01f), Quaternion.identity, Vector3.one), true);
+        }
+        Seat(realRider[b.variant], info.seat);
+        Seat(realPassenger[b.variant], info.rearSeat);
+        return go;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -76,7 +148,13 @@ public class MotorbikeTraffic : MonoBehaviour
             links[e.x].Add(e.y);
             links[e.y].Add(e.x);
         }
-        BuildMeshes();
+        real = district.peopleModels != null && district.peopleModels.Length > 0;
+        if (real)
+        {
+            BuildRealVariants();
+            bikeCount = Mathf.Min(bikeCount, 90);
+        }
+        else BuildMeshes();
         raining = WeatherSystem.IsRaining;
         for (int i = 0; i < bikeCount; i++) Spawn(i);
     }
@@ -93,13 +171,18 @@ public class MotorbikeTraffic : MonoBehaviour
             variant = Random.Range(0, Variants),
             cruise = Random.Range(speedRange.x, speedRange.y),
         };
-        var go = new GameObject("Xe may " + index);
-        go.transform.SetParent(transform, false);
+        GameObject go;
+        if (real) go = SpawnReal(b, index);
+        else
+        {
+            go = new GameObject("Xe may " + index);
+            go.transform.SetParent(transform, false);
+            b.mf = go.AddComponent<MeshFilter>();
+            b.mf.sharedMesh = raining ? rain[b.variant] : dry[b.variant];
+            var mr = go.AddComponent<MeshRenderer>();
+            mr.sharedMaterial = VPalette.Material;
+        }
         b.t = go.transform;
-        b.mf = go.AddComponent<MeshFilter>();
-        b.mf.sharedMesh = raining ? rain[b.variant] : dry[b.variant];
-        var mr = go.AddComponent<MeshRenderer>();
-        mr.sharedMaterial = VPalette.Material;
         var col = go.AddComponent<BoxCollider>();
         col.center = new Vector3(0f, 0.75f, 0f);
         col.size = new Vector3(0.5f, 1.4f, 1.7f);
@@ -210,7 +293,7 @@ public class MotorbikeTraffic : MonoBehaviour
         if (r != raining)
         {
             raining = r;
-            foreach (Bike b in bikes) b.mf.sharedMesh = raining ? rain[b.variant] : dry[b.variant];
+            if (!real) foreach (Bike b in bikes) b.mf.sharedMesh = raining ? rain[b.variant] : dry[b.variant];
         }
         if (Time.time >= nextCacheClear) { stopCache.Clear(); nextCacheClear = Time.time + 30f; }
 
