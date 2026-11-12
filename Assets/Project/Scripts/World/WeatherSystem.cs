@@ -27,6 +27,92 @@ public class WeatherSystem : MonoBehaviour
     public static float CustomerMultiplier => Instance != null ? Instance.customerMul : 1f;
     public static float DeliveryTipMultiplier => Instance == null ? 1f : Instance.weather == Weather.Storm ? 2f : Instance.weather == Weather.Rain ? 1.5f : 1f;
     public static int TemperatureC => Instance != null ? Instance.temperature : 25;
+    public static bool IsRaining => CurrentWeather == Weather.Rain || CurrentWeather == Weather.Storm;
+
+    /// <summary>
+    /// Điểm này có mái che thật không: nằm trong khung nhà (siêu thị, phòng mở rộng, nhà kho, hộp RainShelter) VÀ có
+    /// mái / trần / mái hiên ngay phía trên. Khung nhà rộng hơn tường (gồm cả sân trước cửa) nên chỉ xét khung thì
+    /// thùng hàng và nhân viên đứng ngoài sân vẫn bị coi là trong nhà (lỗi thùng không ướt, nhân viên đứng dưới mưa).
+    /// </summary>
+    public static bool IsSheltered(Vector3 p)
+    {
+        if (Instance == null) return true;
+        if (Time.time - Instance.indoorBuiltAt > 15f) Instance.BuildIndoorVolumes();
+        bool inside = false;
+        foreach (Bounds b in Instance.indoor)
+            if (p.x > b.min.x && p.x < b.max.x && p.z > b.min.z && p.z < b.max.z && p.y < b.max.y) { inside = true; break; }
+        if (!inside) return false;
+        float roof = Instance.RoofAbove(p);
+        return roof > p.y + 1.5f; // không đo được mái (scene khác) -> RoofAbove trả về vô cực, theo khung như cũ
+    }
+
+    // Lưới mái che 0.5 m phủ các khung nhà: mỗi ô lưu đáy mái thấp nhất phía trên (vô cực = không có mái / chưa đo được)
+    private const float RoofCell = 0.5f;
+    private float[] roofGrid;
+    private float gridX, gridZ;
+    private int gridW, gridH;
+
+    private float RoofAbove(Vector3 p)
+    {
+        if (roofGrid == null) return float.PositiveInfinity;
+        int x = Mathf.FloorToInt((p.x - gridX) / RoofCell), z = Mathf.FloorToInt((p.z - gridZ) / RoofCell);
+        if (x < 0 || z < 0 || x >= gridW || z >= gridH) return float.NegativeInfinity;
+        return roofGrid[z * gridW + x];
+    }
+
+    private void BuildRoofGrid()
+    {
+        roofGrid = null;
+        if (roofs.Count == 0 || indoor.Count == 0) return;
+        Bounds all = indoor[0];
+        foreach (Bounds b in indoor) all.Encapsulate(b);
+        gridX = all.min.x; gridZ = all.min.z;
+        gridW = Mathf.Clamp(Mathf.CeilToInt(all.size.x / RoofCell), 1, 1024);
+        gridH = Mathf.Clamp(Mathf.CeilToInt(all.size.z / RoofCell), 1, 1024);
+        roofGrid = new float[gridW * gridH];
+        for (int i = 0; i < roofGrid.Length; i++) roofGrid[i] = float.NegativeInfinity;
+        foreach (Bounds r in roofs)
+        {
+            int x0 = Mathf.Max(0, Mathf.FloorToInt((r.min.x - gridX) / RoofCell)), x1 = Mathf.Min(gridW - 1, Mathf.FloorToInt((r.max.x - gridX) / RoofCell));
+            int z0 = Mathf.Max(0, Mathf.FloorToInt((r.min.z - gridZ) / RoofCell)), z1 = Mathf.Min(gridH - 1, Mathf.FloorToInt((r.max.z - gridZ) / RoofCell));
+            for (int z = z0; z <= z1; z++)
+                for (int x = x0; x <= x1; x++)
+                {
+                    int i = z * gridW + x;
+                    if (roofGrid[i] == float.NegativeInfinity || r.min.y < roofGrid[i]) roofGrid[i] = r.min.y;
+                }
+        }
+    }
+
+    // Mái / trần: các mảnh mô hình bắt đầu từ trên đầu người (đáy > 2.2 m, tường thì bắt đầu từ sàn nên bị loại) và đủ rộng (> 1 m2)
+    private readonly List<Bounds> roofs = new List<Bounds>();
+    private readonly List<Bounds> storeRoofs = new List<Bounds>();
+    private bool storeRoofsKnown;
+
+    private void CollectRoofs()
+    {
+        if (!storeRoofsKnown)
+        {
+            GameObject sm = GameObject.Find("Supermarket_full");
+            if (sm != null) { AddRoofs(sm, storeRoofs); storeRoofsKnown = true; }
+        }
+        roofs.Clear();
+        roofs.AddRange(storeRoofs);
+        foreach (string name in new[] { "StoreExpansion_1", "StoreExpansion_2", "Warehouse" })
+        {
+            GameObject root = GameObject.Find(name);
+            if (root != null) AddRoofs(root, roofs);
+        }
+    }
+
+    private static void AddRoofs(GameObject root, List<Bounds> into)
+    {
+        foreach (Renderer r in root.GetComponentsInChildren<Renderer>(true))
+        {
+            Bounds b = r.bounds;
+            if (b.min.y > 2.2f && b.size.x * b.size.z > 1f) into.Add(b);
+        }
+    }
     public static event Action OnWeatherChanged;
 
     private Season season;
@@ -304,7 +390,7 @@ public class WeatherSystem : MonoBehaviour
             for (int k = 0; k < indoor.Count; k++)
             {
                 Bounds b = indoor[k];
-                if (p.x > b.min.x && p.x < b.max.x && p.z > b.min.z && p.z < b.max.z && p.y < b.max.y)
+                if (p.x > b.min.x && p.x < b.max.x && p.z > b.min.z && p.z < b.max.z && p.y < b.max.y && p.y < RoofAbove(p))
                 {
                     rainBuf[i].remainingLifetime = 0f;
                     changed = true;
@@ -319,6 +405,7 @@ public class WeatherSystem : MonoBehaviour
     {
         indoorBuiltAt = Time.time;
         indoor.Clear();
+        CollectRoofs();
 
         // Có hộp RainShelter đặt trong scene thì dùng chúng thay cho khung siêu thị mặc định bên dưới
         if (RainShelter.All.Count > 0)
@@ -370,6 +457,7 @@ public class WeatherSystem : MonoBehaviour
             b.SetMinMax(new Vector3(b.min.x - 0.3f, b.min.y - 5f, b.min.z - 0.3f), new Vector3(b.max.x + 0.3f, Mathf.Max(b.max.y, b.min.y + 3f) + 0.3f, b.max.z + 0.3f));
             indoor.Add(b);
         }
+        BuildRoofGrid(); // mọi nhánh của BuildIndoorVolumes đều kết thúc ở đây
     }
 
     // ================= Dựng hạt mưa / HUD =================
