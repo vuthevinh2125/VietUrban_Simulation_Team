@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d2a951fa15b4f489fadb3374651558, type: 3}
+  m_Name: Lemons
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Lemons
+  icon: {fileID: 21300000, guid: 203b91629f8fac64482f86603bad434f, type: 3}
+  description: Lemon_ahopes_Pack01
+  rarity: 0
+  isStackable: 0
+  maxStack: 0
+  itemScale: {x: 1, y: 1, z: 1}
+  shelfScale: {x: 1, y: 1, z: 1}
+  brand: Da Lat Farm
+  displayType: Shelf
+  unitPrice: 1.5
+  itemsPerBox: 4
+  shelfCapacity: 8
+  marketPrice: 0
+  cratePrefab: {fileID: 8730148434445327593, guid: 6da9f2103711bcb40b97b78550e2247a, type: 3}
+  productPrefab: {fileID: 6836379634843573040, guid: 970e2594cf0ec0049b3af9042b61ce9b, type: 3}
