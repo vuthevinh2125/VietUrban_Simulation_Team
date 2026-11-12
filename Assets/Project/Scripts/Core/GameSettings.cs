@@ -2,19 +2,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Cài đặt người chơi (lưu bằng PlayerPrefs): độ nhạy chuột, âm lượng, chất lượng đồ hoạ, toàn màn hình, bóng đèn trần.
+/// Cài đặt người chơi (lưu bằng PlayerPrefs): độ nhạy chuột, âm lượng, nhạc nền (chọn bài / ngẫu nhiên / tắt, âm lượng nhạc),
+/// chất lượng đồ hoạ, toàn màn hình, bóng đèn trần.
 /// Bóng đổ của đèn điểm / đèn rọi mặc định TẮT: cửa hàng có hàng trăm đèn trần, bật bóng đổ hết vừa nặng máy
 /// vừa sinh cảnh báo "Reduced additional punctual light shadows..." liên tục.
 /// </summary>
 public static class GameSettings
 {
-    private const string KSens = "set.sensitivity", KVol = "set.volume", KQual = "set.quality", KFull = "set.fullscreen", KShadow = "set.lampShadows";
+    private const string KSens = "set.sensitivity", KVol = "set.volume", KQual = "set.quality", KFull = "set.fullscreen", KShadow = "set.lampShadows",
+                         KMusic = "set.music", KMusicVol = "set.musicVolume";
 
     public static float MouseSensitivity { get; private set; } = 2f;
     public static float Volume { get; private set; } = 1f;
     public static int Quality { get; private set; }
     public static bool Fullscreen { get; private set; } = true;
     public static bool LampShadows { get; private set; }
+
+    /// <summary>Nhạc nền: 0 = ngẫu nhiên (đổi bài khi hết), 1..N = một bài lặp lại (AudioManager.TrackNames), N + 1 = tắt.</summary>
+    public static int Music { get; private set; }
+    public static float MusicVolume { get; private set; } = 1f;
+    public static event System.Action OnMusicChanged;
+    public static int MusicOff => AudioManager.TrackNames.Length + 1;
+    public static string MusicName => Music == 0 ? "Shuffle" : Music >= MusicOff ? "Off" : AudioManager.TrackNames[Music - 1];
 
     private static readonly Dictionary<Light, LightShadows> originalShadows = new Dictionary<Light, LightShadows>();
 
@@ -25,6 +34,9 @@ public static class GameSettings
         Quality = PlayerPrefs.GetInt(KQual, QualitySettings.GetQualityLevel());
         Fullscreen = PlayerPrefs.GetInt(KFull, Screen.fullScreen ? 1 : 0) == 1;
         LampShadows = PlayerPrefs.GetInt(KShadow, 0) == 1;
+        Music = Mathf.Clamp(PlayerPrefs.GetInt(KMusic, 0), 0, MusicOff);
+        MusicVolume = PlayerPrefs.GetFloat(KMusicVol, 1f);
+        OnMusicChanged?.Invoke(); // AudioManager có thể đã khởi động trước khi đọc cài đặt
         ApplyAll();
     }
 
@@ -46,6 +58,13 @@ public static class GameSettings
         QualitySettings.SetQualityLevel(Quality, true);
     }
     public static void SetFullscreen(bool v) { Fullscreen = v; PlayerPrefs.SetInt(KFull, v ? 1 : 0); Screen.fullScreen = v; }
+    public static void SetMusic(int choice)
+    {
+        Music = (choice % (MusicOff + 1) + MusicOff + 1) % (MusicOff + 1); // vòng tròn: Shuffle -> các bài -> Off -> Shuffle
+        PlayerPrefs.SetInt(KMusic, Music);
+        OnMusicChanged?.Invoke();
+    }
+    public static void SetMusicVolume(float v) { MusicVolume = Mathf.Clamp01(v); PlayerPrefs.SetFloat(KMusicVol, MusicVolume); }
     public static void SetLampShadows(bool v) { LampShadows = v; PlayerPrefs.SetInt(KShadow, v ? 1 : 0); ApplyLampShadows(); }
 
     public static string QualityName => QualitySettings.names.Length > 0 ? QualitySettings.names[Mathf.Clamp(Quality, 0, QualitySettings.names.Length - 1)] : "-";

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 ///  - Menu chính khi mở game: Continue (có file lưu) / New Game / Settings / Food Delivery Mode / Quit.
 ///    Food Delivery Mode mở chế độ thứ hai: game nấu ăn - giao hàng của Nam (Assets/FoodDelivery).
 ///  - Menu tạm dừng (Esc khi đang chơi): Resume / Save / Settings / Main Menu / Quit.
-///  - Settings: độ nhạy chuột, âm lượng, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần.
+///  - Settings: độ nhạy chuột, âm lượng, nhạc nền (chọn bài), âm lượng nhạc, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần.
 ///  - Game Over khi hết tiền.
 /// Khi menu mở: thời gian dừng (Time.timeScale = 0), hiện chuột.
 /// </summary>
@@ -21,7 +21,7 @@ public class MenuSystem : MonoBehaviour
     private GameObject mainMenu, pauseMenu, settingsMenu, confirmMenu, gameOverMenu;
     private Button continueButton;
     private TMP_Text saveInfo, confirmText;
-    private TMP_Text sensValue, volValue, qualValue, fullValue, shadowValue;
+    private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue;
     private Action confirmAction;
     private GameObject settingsReturnTo;
 
@@ -205,6 +205,8 @@ public class MenuSystem : MonoBehaviour
     {
         sensValue.text = GameSettings.MouseSensitivity.ToString("0.0");
         volValue.text = Mathf.RoundToInt(GameSettings.Volume * 100f) + "%";
+        musicValue.text = GameSettings.MusicName;
+        musicVolValue.text = Mathf.RoundToInt(GameSettings.MusicVolume * 100f) + "%";
         qualValue.text = GameSettings.QualityName;
         fullValue.text = GameSettings.Fullscreen ? "On" : "Off";
         shadowValue.text = GameSettings.LampShadows ? "On" : "Off";
@@ -271,15 +273,17 @@ public class MenuSystem : MonoBehaviour
 
         // --- Settings ---
         settingsMenu = UIKit.FullScreen("Settings", canvas, new Color(0f, 0f, 0f, 0.7f));
-        GameObject sw = UIKit.Panel("Window", settingsMenu.transform, new Vector2(760, 600), Vector2.zero, UIKit.Window);
-        GameObject sh = UIKit.Panel("Header", sw.transform, new Vector2(760, 70), new Vector2(0, 265), UIKit.Header);
+        GameObject sw = UIKit.Panel("Window", settingsMenu.transform, new Vector2(760, 740), Vector2.zero, UIKit.Window);
+        GameObject sh = UIKit.Panel("Header", sw.transform, new Vector2(760, 70), new Vector2(0, 335), UIKit.Header);
         UIKit.Text(sh.transform, "SETTINGS", 36, new Vector2(740, 60), Vector2.zero, TextAlignmentOptions.Center, true);
-        sensValue = SettingRow(sw.transform, "Mouse sensitivity", 160, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity - 0.2f); RefreshSettings(); }, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity + 0.2f); RefreshSettings(); });
-        volValue = SettingRow(sw.transform, "Volume", 80, () => { GameSettings.SetVolume(GameSettings.Volume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetVolume(GameSettings.Volume + 0.1f); RefreshSettings(); });
-        qualValue = SettingRow(sw.transform, "Graphics quality", 0, () => { GameSettings.SetQuality(GameSettings.Quality - 1); RefreshSettings(); }, () => { GameSettings.SetQuality(GameSettings.Quality + 1); RefreshSettings(); });
-        fullValue = SettingRow(sw.transform, "Fullscreen", -80, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); }, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); });
-        shadowValue = SettingRow(sw.transform, "Lamp shadows (slow)", -160, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); }, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); });
-        UIKit.Btn(sw.transform, "Back", new Vector2(240, 62), new Vector2(0, -250), CloseSettings, UIKit.Green);
+        sensValue = SettingRow(sw.transform, "Mouse sensitivity", 240, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity - 0.2f); RefreshSettings(); }, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity + 0.2f); RefreshSettings(); });
+        volValue = SettingRow(sw.transform, "Volume", 170, () => { GameSettings.SetVolume(GameSettings.Volume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetVolume(GameSettings.Volume + 0.1f); RefreshSettings(); });
+        musicValue = SettingRow(sw.transform, "Music", 100, () => { GameSettings.SetMusic(GameSettings.Music - 1); RefreshSettings(); }, () => { GameSettings.SetMusic(GameSettings.Music + 1); RefreshSettings(); });
+        musicVolValue = SettingRow(sw.transform, "Music volume", 30, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume + 0.1f); RefreshSettings(); });
+        qualValue = SettingRow(sw.transform, "Graphics quality", -40, () => { GameSettings.SetQuality(GameSettings.Quality - 1); RefreshSettings(); }, () => { GameSettings.SetQuality(GameSettings.Quality + 1); RefreshSettings(); });
+        fullValue = SettingRow(sw.transform, "Fullscreen", -110, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); }, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); });
+        shadowValue = SettingRow(sw.transform, "Lamp shadows (slow)", -180, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); }, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); });
+        UIKit.Btn(sw.transform, "Back", new Vector2(240, 62), new Vector2(0, -290), CloseSettings, UIKit.Green);
 
         // --- Game Over ---
         gameOverMenu = UIKit.FullScreen("GameOver", canvas, new Color(0.15f, 0f, 0f, 0.85f));
