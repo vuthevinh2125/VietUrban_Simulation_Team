@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 /// </summary>
 public static class RealModels
 {
-    public enum Pose { Stand, Sit, Squat, Ride, RideBack }
+    public enum Pose { Stand, Sit, Squat, Ride, RideBack, RideUpright }
 
     /// <summary>Đích tay / chân (tính từ khớp hông, hệ toạ độ nhân vật: x phải, y lên, z trước) cho tư thế lái xe.</summary>
     public struct IK
@@ -32,6 +32,8 @@ public static class RealModels
     {
         public readonly List<Part> lod0 = new List<Part>(), lod1 = new List<Part>();
         public Vector3 hips, head;
+        /// <summary>Vị trí cổ tay / khuỷu tay sau khi tạo tư thế (hệ toạ độ gốc model) - để gắn đồ cầm tay đúng vào lòng bàn tay.</summary>
+        public Vector3 handL, handR, elbowL, elbowR;
         public Bounds bounds;
         public bool ok;
     }
@@ -150,6 +152,11 @@ public static class RealModels
             Transform hips = a.GetBoneTransform(HumanBodyBones.Hips), head = a.GetBoneTransform(HumanBodyBones.Head);
             result.hips = hips != null ? rootInv.MultiplyPoint3x4(hips.position) : new Vector3(0f, 0.95f, 0f);
             result.head = head != null ? rootInv.MultiplyPoint3x4(head.position) : new Vector3(0f, 1.6f, 0f);
+            Vector3 Bone(HumanBodyBones b, Vector3 fallback) { Transform t = a.GetBoneTransform(b); return t != null ? rootInv.MultiplyPoint3x4(t.position) : fallback; }
+            result.handL = Bone(HumanBodyBones.LeftHand, result.hips + new Vector3(-0.3f, 0f, 0.3f));
+            result.handR = Bone(HumanBodyBones.RightHand, result.hips + new Vector3(0.3f, 0f, 0.3f));
+            result.elbowL = Bone(HumanBodyBones.LeftLowerArm, result.handL + new Vector3(0f, 0.1f, -0.2f));
+            result.elbowR = Bone(HumanBodyBones.RightLowerArm, result.handR + new Vector3(0f, 0.1f, -0.2f));
 
             var srcMats = new Dictionary<string, Material[]>();
             if (materialSource != null)
@@ -220,6 +227,11 @@ public static class RealModels
                 Legs(D(0.18f, -0.15f, 1f), D(0.06f, -1f, 0.38f));
                 Lean(0.25f);
                 Arms(D(0.22f, -0.45f, 1f), D(0.02f, -0.15f, 1f));
+                break;
+            case Pose.RideUpright: // ngồi thẳng lưng kiểu xe số / xe Cub (tay lái cao), dùng cho nhân vật người chơi trong đoạn phim
+                Legs(D(0.18f, -0.2f, 1f), D(0.04f, -1f, 0.3f));
+                Lean(0.06f);
+                Arms(D(0.22f, -0.3f, 1f), D(0.02f, -0.05f, 1f));
                 break;
             case Pose.RideBack:
                 Legs(D(0.2f, -0.12f, 1f), D(0.08f, -1f, 0.25f));
