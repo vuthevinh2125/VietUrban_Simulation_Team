@@ -148,7 +148,6 @@ public partial class VietDistrict
         if (food) FoodSet(o + u * (w * 0.5f) - vin * 1.6f, u, vin, Chance(0.75));
         else if (shop && Chance(0.45)) GoodsDisplay(P, rot, w, trade);
         if (!shop && Chance(0.3)) PlantPot(o + u * (w - 0.4f) - vin * 0.3f);
-        if (Chance(0.06)) Vendor(o + u * (w * 0.5f) - vin * 2.3f, u);
     }
 
     private void Balcony(System.Func<float, float, float, Vector3> P, Quaternion rot, float w, float y)
@@ -630,6 +629,7 @@ public partial class VietDistrict
         Box(c + Vector3.up * 0.012f, Quaternion.identity, new Vector3(3f, 0.02f, ih), Path, false);
         MarkVolume(c, new Vector3(iw + 1f, 1.5f, 3f));
         MarkVolume(c, new Vector3(3f, 1.5f, ih + 1f));
+        for (float t = -0.4f; t <= 0.41f; t += 0.2f) { WalkPoints.Add(c + new Vector3(iw * t, 0f, 0f)); WalkPoints.Add(c + new Vector3(0f, 0f, ih * t)); }
         Vector3 pond = c + new Vector3(iw * 0.22f, 0f, ih * 0.22f);
         Water(pond + Vector3.up * 0.02f, 9f, 7f);
         // Thuỷ tạ
@@ -691,6 +691,7 @@ public partial class VietDistrict
 
         // Kè đá, đường dạo, cây (lá vàng + liễu rủ), ghế đá
         int segs = 72;
+        var ke = new List<(Vector3 p, Quaternion q, float len)>();
         var ring = new List<Vector3>();
         for (int i = 0; i < segs; i++)
         {
@@ -699,15 +700,38 @@ public partial class VietDistrict
             Vector3 mid = (p0 + p1) * 0.5f, dir = p1 - p0;
             Quaternion q = Quaternion.LookRotation(dir.normalized, Vector3.up);
             Vector3 outward = new Vector3(Mathf.Cos(am) / rx, 0f, Mathf.Sin(am) / rz).normalized;
-            Box(mid + Vector3.up * 0.2f, q, new Vector3(0.5f, 0.4f, dir.magnitude + 0.1f), Stone, true);
+            ke.Add((mid, q, dir.magnitude + 0.1f));
             AddCollider(mid + Vector3.up * 0.6f, q, new Vector3(0.5f, 1.2f, dir.magnitude + 0.1f), "Lake_Edge");
             Box(mid + outward * 2.4f + Vector3.up * 0.012f, q, new Vector3(3.6f, 0.02f, dir.magnitude + 0.7f), Path, false);
             if (i % 3 == 0) { if (Chance(0.4)) Willow(mid + outward * 0.9f); else PlantTree(mid + outward * 5.4f, Range(1.1f, 1.4f), false); ring.Add(mid + outward * 5f); }
             else if (i % 3 == 1 && benchPrefab != null) Prop(benchPrefab, mid + outward * 4.4f, Quaternion.LookRotation(-outward));
             if (i % 9 == 4 && lampPrefab != null) Prop(lampPrefab, mid + outward * 4.6f, Quaternion.LookRotation(outward), i % 18 == 4);
         }
+        // 4 lối vào từ vỉa hè tới đường dạo quanh hồ (người đi bộ chỉ đi vùng Sidewalks)
+        foreach (Vector3 dir in new[] { Vector3.back, Vector3.forward, Vector3.left, Vector3.right })
+        {
+            bool alongZ = dir.x == 0f;
+            float shore = alongZ ? rz : rx;
+            float edge = alongZ ? r.height * 0.5f - Walk : r.width * 0.5f - Walk;
+            Vector3 lateral = alongZ ? Vector3.right * (dir.z < 0f ? 6f : 2f) : Vector3.forward * (dir.x > 0f ? -rz * 0.3f : 0f);
+            Vector3 a = center + dir * (edge + 0.3f) + lateral, b = center + dir * (shore + 2.4f) + lateral;
+            Vector3 mid = (a + b) * 0.5f;
+            float len = Vector3.Distance(a, b);
+            Box(mid + Vector3.up * 0.013f, Quaternion.LookRotation(dir), new Vector3(3f, 0.02f, len), Path, false);
+            MarkVolume(mid, alongZ ? new Vector3(3f, 1.5f, len + 1f) : new Vector3(len + 1f, 1.5f, 3f));
+            WalkPoints.Add(b);
+        }
         GameObject pathGroup = Flush(name + "_Path");
         MarkSidewalk(pathGroup);
+        // Kè đá riêng một nhóm, không cho người đi bộ đi trên thành kè
+        foreach (var k in ke) Box(k.p + Vector3.up * 0.2f, k.q, new Vector3(0.5f, 0.4f, k.len), Stone, true);
+        MarkArea(Flush(name + "_Ke"), "Not Walkable");
+        for (int i = 0; i < 24; i++)
+        {
+            float ang = i * Mathf.PI * 2f / 24f;
+            Vector3 outw = new Vector3(Mathf.Cos(ang) / rx, 0f, Mathf.Sin(ang) / rz).normalized;
+            WalkPoints.Add(center + new Vector3(Mathf.Cos(ang) * rx, 0f, Mathf.Sin(ang) * rz) + outw * 2.4f);
+        }
         for (int s = 0; s + 6 < ring.Count; s += 6) Leaves(ring[s], ring[s + 6], 7f);
 
         // Tháp Rùa
@@ -778,12 +802,6 @@ public partial class VietDistrict
             Vector3 p = center + new Vector3(Mathf.Cos(a) * rx, 0f, Mathf.Sin(a) * rz) + outward * 2.6f;
             FlowerBike(p, Vector3.Cross(Vector3.up, outward));
         }
-        for (int k = 0; k < 14; k++)
-        {
-            float a = Range(0f, Mathf.PI * 2f);
-            Vector3 outward = new Vector3(Mathf.Cos(a) / rx, 0f, Mathf.Sin(a) / rz).normalized;
-            Person(center + new Vector3(Mathf.Cos(a) * rx, 0f, Mathf.Sin(a) * rz) + outward * Range(1.4f, 3.4f), Vector3.Cross(Vector3.up, outward) * (Chance(0.5) ? 1f : -1f), 0, Chance(0.15) ? 1 : 0);
-        }
         Flush(name);
     }
 
@@ -802,6 +820,7 @@ public partial class VietDistrict
         }
         mr.sharedMaterial = waterMat;
         mr.shadowCastingMode = ShadowCastingMode.Off;
+        MarkArea(go, "Not Walkable"); // không ai đi trên mặt nước
     }
 
     private static Mesh Ellipse(Vector3 c, float rx, float rz, int n)

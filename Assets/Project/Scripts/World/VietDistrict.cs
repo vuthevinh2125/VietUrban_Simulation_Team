@@ -26,6 +26,12 @@ public partial class VietDistrict : MonoBehaviour
     [Tooltip("Mặt bằng siêu thị (x, z) - menu 20 tự đo từ các object của cửa hàng. Mép dưới = mép vỉa hè trước cửa.")]
     public Rect storeRect = Rect.MinMaxRect(-150f, 16f, -70f, 64f);
     public GameObject lampPrefab, benchPrefab;
+    [Tooltip("Model người (FBX humanoid của các NPC khách) - menu 20 tự điền")]
+    public GameObject[] peopleModels;
+    [Tooltip("Prefab NPC tương ứng từng model (lấy vật liệu)")]
+    public GameObject[] peopleMaterials;
+    [Tooltip("Prefab xe máy thật (Honda Super Cub C125)")]
+    public GameObject[] bikePrefabs;
 
     public const float RoadTop = 0.1f, LotTop = 0.18f, Walk = 3f, Floor = 3.2f;
 
@@ -45,6 +51,8 @@ public partial class VietDistrict : MonoBehaviour
     public Line[] Z { get; private set; }
     public Rect City { get; private set; }
     public int AddressCount { get; private set; }
+    /// <summary>Điểm đi dạo (đường quanh Hồ Gươm, lối đi công viên) - PedestrianSystem cho người đi bộ tới đây.</summary>
+    public readonly List<Vector3> WalkPoints = new List<Vector3>();
 
     // Đồ thị đường cho ô tô / xe máy: nút = ngã tư, cạnh = đoạn phố
     public readonly List<Vector3> Nodes = new List<Vector3>();
@@ -201,11 +209,21 @@ public partial class VietDistrict : MonoBehaviour
             GameObject c = transform.GetChild(i).gameObject;
             if (!Application.isPlaying)
                 foreach (MeshFilter mf in c.GetComponentsInChildren<MeshFilter>(true))
-                    if (mf.sharedMesh != null && mf.sharedMesh != VShape.CubeMesh) DestroyImmediate(mf.sharedMesh);
+                    if (mf.sharedMesh != null && mf.sharedMesh != VShape.CubeMesh && !mf.sharedMesh.name.StartsWith(RealModels.MeshPrefix) && !IsAsset(mf.sharedMesh)) DestroyImmediate(mf.sharedMesh);
             if (Application.isPlaying) Destroy(c); else DestroyImmediate(c);
         }
         leafSystems.Clear();
         AddressCount = 0;
+    }
+
+    /// <summary>Mesh thuộc file asset (đèn, ghế của gói POLYGON) thì không được xoá.</summary>
+    private static bool IsAsset(Object o)
+    {
+#if UNITY_EDITOR
+        return UnityEditor.EditorUtility.IsPersistent(o);
+#else
+        return false;
+#endif
     }
 
     private void Build()
@@ -217,11 +235,14 @@ public partial class VietDistrict : MonoBehaviour
         reserved.Clear();
         leafSystems.Clear();
         AddressCount = 0;
+        WalkPoints.Clear();
+        realPeople = realBikes = 0;
         solid.Clear(); detail.Clear();
         geo = Child("Geometry"); cols = Child("Colliders"); signsRoot = Child("Signs"); propsRoot = Child("Props"); fxRoot = Child("Leaves");
         InitFoliage();
 
         BuildGroundAndBackdrop();
+        cellCap = 1000;
         BuildRoads();
         for (int i = 0; i <= 8; i++)
             for (int k = 0; k <= 8; k++)
@@ -229,6 +250,7 @@ public partial class VietDistrict : MonoBehaviour
         VPalette.Apply();
         ApplySeason(true);
         SetHideFlags(transform);
+        Debug.Log($"[VietCity] Dựng xong ({(Application.isPlaying ? "Play" : "Editor")}): {realPeople} người, {realBikes} xe máy dựng, {AddressCount} địa chỉ, model người: {(peopleModels == null ? 0 : peopleModels.Length)}");
     }
 
     void Update()
@@ -419,11 +441,13 @@ public partial class VietDistrict : MonoBehaviour
         Cell type = Zone(i, k);
         if (type == Cell.Lake)
         {
-            if (i == 5 && k == 5) BuildLake(LakeRect());
+            if (i == 5 && k == 5) { cellPeople = cellBikes = 0; cellCap = 50; BuildLake(LakeRect()); }
             return;
         }
         Rect r = CellRect(i, k);
         string name = $"Cell_{i}_{k}_{type}";
+        cellPeople = cellBikes = 0;
+        cellCap = type == Cell.Outer ? 6 : 14;
         Edge[] edges = EdgesOf(i, k, r);
         reserved.Clear();
         LotAndSidewalk(r, name, type == Cell.Park ? Grass : type == Cell.School ? Yard : type == Cell.Pagoda ? Grass : Lot);
@@ -686,6 +710,18 @@ public partial class VietDistrict : MonoBehaviour
     }
 
     /// <summary>Vùng NavMesh "Sidewalks" cho cả object (người đi bộ chỉ đi vỉa hè) - dùng NavMeshModifier nếu có gói AI Navigation.</summary>
+    /// <summary>Đặt vùng NavMesh tuỳ ý cho cả object (vd. "Not Walkable" cho kè đá, mặt hồ).</summary>
+    private static void MarkArea(GameObject go, string areaName)
+    {
+        if (go == null) return;
+        System.Type t = System.Type.GetType("Unity.AI.Navigation.NavMeshModifier, Unity.AI.Navigation");
+        int area = UnityEngine.AI.NavMesh.GetAreaFromName(areaName);
+        if (t == null || area < 0) return;
+        Component mod = go.AddComponent(t);
+        t.GetProperty("overrideArea")?.SetValue(mod, true);
+        t.GetProperty("area")?.SetValue(mod, area);
+    }
+
     private static void MarkSidewalk(GameObject go)
     {
         if (go == null) return;

@@ -68,6 +68,7 @@ public static class VietDistrictTool
         d.storeRect = store;
         d.lampPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(Lamps + "street_lamp 1 prefab.prefab");
         d.benchPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(Props + "Bench 2 prefab.prefab");
+        string models = SetupRealModels(d);
         go.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         float t0 = Time.realtimeSinceStartup;
         d.Rebuild();
@@ -76,11 +77,58 @@ public static class VietDistrictTool
         EditorSceneManager.MarkSceneDirty(go.scene);
         string msg = $"Đã cất {archived} nhóm object của thành phố cũ vào '{ArchiveName}'.\n" +
                      $"Mặt bằng siêu thị: x {store.xMin:0} .. {store.xMax:0}, z {store.yMin:0} .. {store.yMax:0}{note}\n" +
-                     $"Thành phố Việt: {d.City.width:0} x {d.City.height:0} m, {d.Edges.Count} đoạn phố, {d.AddressCount} địa chỉ giao hàng (dựng {secs:0.0} s).\n\n" +
+                     $"Thành phố Việt: {d.City.width:0} x {d.City.height:0} m, {d.Edges.Count} đoạn phố, {d.AddressCount} địa chỉ giao hàng (dựng {secs:0.0} s).\n" +
+                     models + "\n\n" +
                      "BƯỚC TIẾP: chọn 'NavMesh Manager' > Bake (có thể mất 1 - 3 phút), rồi Ctrl+S.";
         Debug.Log("[VietCity] " + msg);
         EditorUtility.DisplayDialog("Viet City", msg, "OK");
         Selection.activeGameObject = go;
+    }
+
+    /// <summary>
+    /// Model thật cho người: model FBX humanoid của các NPC khách (bỏ model lao công) + prefab NPC để lấy vật liệu.
+    /// Bật Read/Write cho các FBX đó (cần để nướng tư thế lúc chạy, kể cả bản build).
+    /// </summary>
+    private static string SetupRealModels(VietDistrict d)
+    {
+        var models = new List<GameObject>();
+        var mats = new List<GameObject>();
+        var paths = new HashSet<string>();
+        CustomerSpawner spawner = Object.FindAnyObjectByType<CustomerSpawner>();
+        if (spawner != null && spawner.customerPrefabs != null)
+            foreach (GameObject p in spawner.customerPrefabs)
+            {
+                if (p == null || p.name == StaffManager.JanitorModel) continue;
+                SkinnedMeshRenderer smr = p.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                if (smr == null || smr.sharedMesh == null) continue;
+                string path = AssetDatabase.GetAssetPath(smr.sharedMesh);
+                GameObject model = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (model == null || model.GetComponentInChildren<Animator>(true) == null || models.Contains(model)) continue;
+                models.Add(model);
+                mats.Add(p);
+                paths.Add(path);
+            }
+        int changed = 0;
+        foreach (string path in paths)
+        {
+            if (!(AssetImporter.GetAtPath(path) is ModelImporter imp) || imp.isReadable) continue;
+            imp.isReadable = true;
+            imp.SaveAndReimport();
+            changed++;
+        }
+        d.peopleModels = models.ToArray();
+        d.peopleMaterials = mats.ToArray();
+        d.bikePrefabs = new GameObject[0]; // xe máy công cộng dựng bằng code (BikeModels), không dùng xe của người chơi
+        CopyTaxi();
+        return $"Model thật: {models.Count} người" + (changed > 0 ? $" (đã bật Read/Write cho {changed} file FBX)" : "") + ".";
+    }
+
+    /// <summary>Đưa xe Taxi (gói Free American Sedans) vào Resources/Vehicles để dòng xe ô tô dùng được lúc chạy.</summary>
+    private static void CopyTaxi()
+    {
+        const string src = "Assets/High Matters/Free American Sedans/Prefabs/Taxi.prefab", dst = "Assets/Resources/Vehicles/Taxi.prefab";
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(dst) != null || AssetDatabase.LoadAssetAtPath<GameObject>(src) == null) return;
+        AssetDatabase.CopyAsset(src, dst);
     }
 
     [MenuItem("Tools/Store Setup/20b. Restore Old City (bo thanh pho Viet)")]

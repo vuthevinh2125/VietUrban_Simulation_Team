@@ -170,8 +170,8 @@ public partial class VietDistrict
         if (type == Cell.Store || type == Cell.Lake || type == Cell.Park) return;
         // Xe ôm đầu phố, gánh hàng rong, xe đạp bán hoa, xe bánh mì
         if (Chance(0.3)) XeOm(e.a + vin * 1.6f + u * (Walk + 2.5f) + Vector3.up * LotTop, u);
-        if (Chance(0.25)) Vendor(e.a + vin * 1.8f + u * Range(10f, len - 10f) + Vector3.up * LotTop, u);
-        if ((type == Cell.OldQuarter || type == Cell.French) && Chance(0.2)) FlowerBike(e.a + vin * 1.5f + u * Range(10f, len - 10f) + Vector3.up * LotTop, u);
+        // Gánh hàng rong / xe đạp hoa giờ là người đi bộ thật biết đi (PedestrianSystem + StreetVendor); chỉ còn ít người đứng bán tại chỗ
+        if (Chance(0.06)) Vendor(e.a + vin * 1.8f + u * Range(10f, len - 10f) + Vector3.up * LotTop, u);
         if (Chance(0.2)) BreadCart(e.a + vin * 1.6f + u * Range(10f, len - 10f) + Vector3.up * LotTop, u);
     }
 
@@ -210,12 +210,6 @@ public partial class VietDistrict
             if (d.sqrMagnitude < 1e-4f) continue;
             Box((p0 + p1) * 0.5f, Quaternion.LookRotation(d.normalized, Vector3.up), new Vector3(0.03f, 0.03f, d.magnitude + 0.02f), Wire, false);
         }
-    }
-
-    private void Bin(Vector3 p)
-    {
-        Box(p + Vector3.up * 0.45f, Quaternion.identity, new Vector3(0.5f, 0.9f, 0.5f), new Color(0.15f, 0.5f, 0.25f), false);
-        Box(p + Vector3.up * 0.93f, Quaternion.identity, new Vector3(0.55f, 0.06f, 0.55f), new Color(0.12f, 0.4f, 0.2f), false);
     }
 
     // ================= Cây =================
@@ -391,6 +385,12 @@ public partial class VietDistrict
         fwd.y = 0f;
         if (fwd.sqrMagnitude < 0.01f) fwd = Vector3.forward;
         Quaternion r = Quaternion.LookRotation(fwd.normalized);
+        if (peopleModels != null && peopleModels.Length > 0)
+        {
+            RealPerson(feet, r, pose, hat, kid);
+            return;
+        }
+        if (pose == 3) pose = 1;
         float k = kid ? 0.72f : Range(0.92f, 1.05f);
         Color skin = Pick(Skins), shirt = kid ? White : Pick(Shirts), pants = kid ? StreetBlue : Pick(Pants);
         Vector3 L(float x, float y, float z) => feet + r * (new Vector3(x, y, z) * k);
@@ -434,80 +434,85 @@ public partial class VietDistrict
         else if (hat == 2) Blob(head + Vector3.up * 0.05f * k, r, new Vector3(0.32f, 0.27f, 0.34f) * k, Pick(Helmets), false);
     }
 
-    /// <summary>Gánh hàng rong: nón lá, đòn gánh, hai thúng hoa quả.</summary>
-    private void Vendor(Vector3 p, Vector3 u)
+    private int realPeople, realBikes, cellPeople, cellBikes, cellCap = 1000;
+    private const int MaxRealPeople = 900, MaxRealBikes = 900;
+
+    /// <summary>Người thật (model NPC của game) ở tư thế đứng / ngồi ghế nhựa / ngồi xổm / ngồi xe máy, nướng thành mesh tĩnh.</summary>
+    private void RealPerson(Vector3 feet, Quaternion r, int pose, int hat, bool kid)
     {
-        Vector3 fwd = Vector3.Cross(u, Vector3.up);
-        Person(p, fwd, Chance(0.3) ? 2 : 0, 1);
-        Quaternion r = Quaternion.LookRotation(u);
-        bool squat = false;
-        Vector3 pole = p + Vector3.up * (squat ? 0.9f : 1.42f);
-        Box(pole, r, new Vector3(0.05f, 0.05f, 1.8f), Bamboo, false);
-        foreach (float s in new[] { -0.82f, 0.82f })
+        if (realPeople >= MaxRealPeople || cellPeople >= cellCap) return; // chia đều cho mọi ô phố
+        int idx = rng.Next(peopleModels.Length);
+        RealModels.Pose p = pose == 1 ? RealModels.Pose.Sit : pose == 2 ? RealModels.Pose.Squat : pose == 3 ? RealModels.Pose.Ride : RealModels.Pose.Stand;
+        GameObject matSrc = peopleMaterials != null && idx < peopleMaterials.Length ? peopleMaterials[idx] : null;
+        RealModels.Model m = RealModels.Person(peopleModels[idx], matSrc, p);
+        if (m == null || !m.ok) return;
+        float s = kid ? 0.72f : Range(0.95f, 1.03f);
+        Vector3 pos = feet;
+        if (p != RealModels.Pose.Stand)
         {
-            Vector3 basket = p + u * s + Vector3.up * 0.32f;
-            Prism(basket, Quaternion.identity, new Vector3(0.6f, 0.3f, 0.6f), Bamboo, false);
-            for (int k = 0; k < 5; k++) Blob(basket + new Vector3(Range(-0.18f, 0.18f), 0.18f, Range(-0.18f, 0.18f)), Rot(Range(0f, 360f)), Vector3.one * 0.18f, Pick(Fruits), false);
-            for (int k = 0; k < 3; k++)
-            {
-                float a = k * 120f * Mathf.Deg2Rad;
-                Vector3 rim = basket + new Vector3(Mathf.Cos(a) * 0.27f, 0.15f, Mathf.Sin(a) * 0.27f);
-                Vector3 top = pole + u * s * 0.98f;
-                Vector3 d = top - rim;
-                Box((rim + top) * 0.5f, Quaternion.LookRotation(d.normalized), new Vector3(0.015f, 0.015f, d.magnitude), Bamboo, false);
-            }
+            float hipsY = p == RealModels.Pose.Sit ? 0.4f : p == RealModels.Pose.Squat ? 0.45f : 0.86f; // ghế nhựa 0.3 m / ngồi xổm / yên xe
+            pos.y = feet.y + hipsY - m.hips.y * s;
+            pos -= r * new Vector3(m.hips.x, 0f, m.hips.z) * s;
         }
+        RealModels.Spawn(m, propsRoot, pos, r, "Nguoi", true, 0.2f, 0.02f, s);
+        realPeople++;
+        cellPeople++;
+        Vector3 head = pos + r * (m.head * s);
+        if (hat == 1) Cone(head + Vector3.up * 0.2f * s, Quaternion.identity, new Vector3(0.6f, 0.22f, 0.6f) * s, NonLa, true);
+        else if (hat == 2) Blob(head + Vector3.up * 0.06f * s, r, new Vector3(0.3f, 0.26f, 0.33f) * s, Pick(Helmets), false);
     }
 
-    /// <summary>Xe đạp chở hoa (cúc hoạ mi, hồng...) - đặc sản phố Hà Nội mùa thu.</summary>
-    private void FlowerBike(Vector3 p, Vector3 forward)
+    /// <summary>Xe máy (mẫu xe số / tay ga dựng bằng code, không dùng xe của người chơi) dựng chân chống trên vỉa hè.</summary>
+    private bool RealBike(Vector3 p, Vector3 forward)
     {
-        forward.y = 0f;
-        if (forward.sqrMagnitude < 0.01f) forward = Vector3.forward;
-        Quaternion r = Quaternion.LookRotation(forward.normalized);
-        Vector3 L(float x, float y, float z) => p + r * new Vector3(x, y, z);
-        Quaternion wheel = r * Quaternion.Euler(0f, 0f, 90f);
-        Prism(L(0f, 0.34f, 0.55f), wheel, new Vector3(0.68f, 0.04f, 0.68f), Rail, false);
-        Prism(L(0f, 0.34f, -0.55f), wheel, new Vector3(0.68f, 0.04f, 0.68f), Rail, false);
-        Box(L(0f, 0.62f, 0f), r * Quaternion.Euler(-12f, 0f, 0f), new Vector3(0.04f, 0.04f, 1.0f), new Color(0.15f, 0.35f, 0.25f), false);
-        Box(L(0f, 0.65f, 0.38f), r * Quaternion.Euler(18f, 0f, 0f), new Vector3(0.04f, 0.6f, 0.04f), new Color(0.15f, 0.35f, 0.25f), false);
-        Box(L(0f, 0.98f, 0.45f), r, new Vector3(0.55f, 0.04f, 0.04f), Rail, false);
-        Box(L(0f, 0.9f, -0.22f), r, new Vector3(0.18f, 0.06f, 0.26f), Rail, false);
-        Box(L(0f, 0.85f, -0.62f), r, new Vector3(0.75f, 0.3f, 0.75f), Bamboo, false);
-        for (int k = 0; k < 16; k++)
-            Blob(L(Range(-0.4f, 0.4f), Range(1.0f, 1.45f), -0.62f + Range(-0.4f, 0.4f)), Rot(Range(0f, 360f)), Vector3.one * Range(0.14f, 0.22f), Pick(Flowers), false);
-        for (int k = 0; k < 6; k++)
-            Box(L(Range(-0.3f, 0.3f), 1.05f, -0.62f + Range(-0.3f, 0.3f)), r, new Vector3(0.02f, 0.4f, 0.02f), Plant, false);
-        Box(L(0f, 0.9f, 0.62f), r, new Vector3(0.35f, 0.22f, 0.3f), Bamboo, false);
-        for (int k = 0; k < 5; k++) Blob(L(Range(-0.12f, 0.12f), 1.08f, 0.62f + Range(-0.1f, 0.1f)), Quaternion.identity, Vector3.one * 0.15f, Pick(Flowers), false);
-        if (Chance(0.65)) Person(p + r * new Vector3(0.6f, 0f, 0f), -(r * Vector3.right), 0, 1);
+        if (realBikes >= MaxRealBikes || cellBikes >= cellCap) return true;
+        cellBikes++;
+        SpawnBike(BikeModels.Get(rng.Next(BikeModels.Variants)), p, Quaternion.LookRotation(forward.normalized, Vector3.up) * Quaternion.Euler(0f, 0f, Range(3f, 6f)));
+        realBikes++;
+        return true;
     }
 
-    /// <summary>Xe bánh mì: tủ kính trên xe đẩy, biển chữ đỏ.</summary>
-    private void BreadCart(Vector3 p, Vector3 u)
+    private static RealModels.Model PaletteModel(Mesh lod0, Mesh lod1)
     {
-        Quaternion r = Quaternion.LookRotation(u);
-        Box(p + Vector3.up * 0.55f, r, new Vector3(0.7f, 0.8f, 1.2f), White, false);
-        Box(p + Vector3.up * 1.2f, r, new Vector3(0.65f, 0.5f, 1.1f), Glass, false);
-        for (int k = 0; k < 6; k++) Box(p + Vector3.up * 1.05f + r * new Vector3(Range(-0.2f, 0.2f), 0f, -0.4f + k * 0.16f), r, new Vector3(0.12f, 0.08f, 0.32f), new Color(0.88f, 0.66f, 0.3f), false);
-        Box(p + Vector3.up * 1.6f, r, new Vector3(0.75f, 0.3f, 1.25f), new Color(0.8f, 0.1f, 0.08f), false);
-        Vector3 side = Vector3.Cross(Vector3.up, u);
-        Sign(p + Vector3.up * 1.6f - side * 0.39f, side, new Vector2(1.2f, 0.26f), "BÁNH MÌ", new Color(1f, 0.92f, 0.3f));
-        Prism(p + Vector3.up * 0.15f + u * 0.5f, Rot(0f) * Quaternion.LookRotation(u) * Quaternion.Euler(0f, 0f, 90f), new Vector3(0.3f, 0.6f, 0.3f), Rail, false);
-        Person(p - side * 0.9f, side, 0, Chance(0.5) ? 1 : 0);
+        var m = new RealModels.Model { ok = true };
+        m.lod0.Add(new RealModels.Part { mesh = lod0, mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        m.lod1.Add(new RealModels.Part { mesh = lod1, mats = new[] { VPalette.Material }, local = Matrix4x4.identity });
+        return m;
     }
+
+    private void SpawnBike(BikeModels.Info info, Vector3 p, Quaternion r) =>
+        RealModels.Spawn(PaletteModel(info.lod0, info.lod1), propsRoot, p, r, "Xe may", true, 0.25f, 0.025f);
 
     /// <summary>Xe ôm đầu phố: bác tài ngồi vắt chân chờ khách.</summary>
     private void XeOm(Vector3 p, Vector3 u)
     {
+        if (peopleModels != null && peopleModels.Length > 0 && realPeople < MaxRealPeople)
+        {
+            // Bác xe ôm ngồi sẵn trên xe, tay đặt lên tay lái
+            BikeModels.Info info = BikeModels.Get(rng.Next(BikeModels.Variants));
+            Quaternion r = Quaternion.LookRotation(u);
+            SpawnBike(info, p, r);
+            int idx = rng.Next(peopleModels.Length);
+            GameObject matSrc = peopleMaterials != null && idx < peopleMaterials.Length ? peopleMaterials[idx] : null;
+            RealModels.Model m = RealModels.Person(peopleModels[idx], matSrc, RealModels.Pose.Ride, MotorbikeTraffic.RiderIK(info), info.scooter ? "scooter" : "wave");
+            if (m == null || !m.ok) return;
+            Vector3 pos = p + r * (info.seat - m.hips);
+            RealModels.Spawn(m, propsRoot, pos, r, "Xe om", true, 0.2f, 0.02f);
+            realPeople++;
+            Color hc = Pick(Helmets);
+            RealModels.Spawn(PaletteModel(BikeModels.Helmet(hc, false), BikeModels.Helmet(hc, true)), propsRoot, pos + r * (m.head + new Vector3(0f, 0.07f, 0.01f)), r, "Mu", false, 0.2f, 0.02f);
+            return;
+        }
         Motorbike(p, u, Pick(Bikes));
-        Person(p + Vector3.up * 0.5f - u * 0.3f, u, 1, 2);
+        if (peopleModels != null && peopleModels.Length > 0) Person(p - u * 0.2f, u, 3, 2);
+        else Person(p + Vector3.up * 0.5f - u * 0.3f, u, 1, 2);
     }
 
     private void Motorbike(Vector3 p, Vector3 forward, Color body)
     {
         forward.y = 0f;
         if (forward.sqrMagnitude < 0.01f) forward = Vector3.forward;
+        if (RealBike(p, forward)) return;
         Quaternion r = Quaternion.LookRotation(forward.normalized, Vector3.up);
         Vector3 L(float x, float y, float z) => p + r * new Vector3(x, y, z);
         Quaternion wheel = r * Quaternion.Euler(0f, 0f, 90f);
@@ -520,57 +525,6 @@ public partial class VietDistrict
         Box(L(0f, 1.05f, 0.55f), r, new Vector3(0.64f, 0.05f, 0.05f), Rail, false);
         Box(L(0f, 1.0f, 0.62f), r, new Vector3(0.16f, 0.1f, 0.06f), new Color(1f, 0.95f, 0.75f), false);
         Box(L(0f, 0.62f, -0.72f), r, new Vector3(0.18f, 0.11f, 0.02f), White, false);
-    }
-
-    private void FoodSet(Vector3 p, Vector3 u, Vector3 vin, bool people)
-    {
-        Quaternion r = Quaternion.LookRotation(vin);
-        Color sc = Chance(0.6) ? Stool1 : Stool2;
-        Box(p + Vector3.up * 0.42f, r, new Vector3(0.8f, 0.04f, 0.5f), Chance(0.5) ? White : Steel, false);
-        Box(p + Vector3.up * 0.2f, r, new Vector3(0.7f, 0.4f, 0.04f), Rail, false);
-        for (int k = 0; k < 3; k++) Prism(p + Vector3.up * 0.47f + u * Range(-0.3f, 0.3f) + vin * Range(-0.15f, 0.15f), Quaternion.identity, new Vector3(0.16f, 0.07f, 0.16f), White, false);
-        Vector3[] seats = { u * 0.65f, -u * 0.65f, vin * 0.5f, -vin * 0.5f };
-        int seated = people ? rng.Next(1, 4) : 0;
-        for (int k = 0; k < 4; k++)
-        {
-            Vector3 s = p + seats[k];
-            Box(s + Vector3.up * 0.15f, r, new Vector3(0.3f, 0.3f, 0.3f), sc, false);
-            if (k < seated) Person(s + Vector3.up * 0.0f - (p - s).normalized * 0.1f, p - s, 1, Chance(0.15) ? 2 : 0);
-        }
-    }
-
-    private void LowTable(Vector3 p, Quaternion r, Color stool)
-    {
-        Box(p + Vector3.up * 0.42f, r, new Vector3(0.75f, 0.04f, 0.5f), White, false);
-        Box(p + Vector3.up * 0.2f, r, new Vector3(0.65f, 0.4f, 0.04f), Rail, false);
-        Box(p + r * new Vector3(0.6f, 0.15f, 0f), r, new Vector3(0.3f, 0.3f, 0.3f), stool, false);
-        Box(p + r * new Vector3(-0.6f, 0.15f, 0f), r, new Vector3(0.3f, 0.3f, 0.3f), stool, false);
-        if (Chance(0.5)) Person(p + r * new Vector3(0.62f, 0f, 0f), r * Vector3.left, 1, 0);
-    }
-
-    private void ChessGame(Vector3 p)
-    {
-        Box(p + Vector3.up * 0.22f, Quaternion.identity, new Vector3(0.5f, 0.44f, 0.5f), WoodBrown, false);
-        Box(p + Vector3.up * 0.45f, Quaternion.identity, new Vector3(0.45f, 0.02f, 0.45f), new Color(0.9f, 0.8f, 0.55f), false);
-        for (int k = 0; k < 10; k++) Prism(p + new Vector3(Range(-0.18f, 0.18f), 0.47f, Range(-0.18f, 0.18f)), Quaternion.identity, new Vector3(0.04f, 0.02f, 0.04f), k % 2 == 0 ? new Color(0.8f, 0.1f, 0.1f) : Dark, false);
-        Box(p + new Vector3(0.6f, 0.15f, 0f), Quaternion.identity, new Vector3(0.3f, 0.3f, 0.3f), Stool1, false);
-        Box(p + new Vector3(-0.6f, 0.15f, 0f), Quaternion.identity, new Vector3(0.3f, 0.3f, 0.3f), Stool2, false);
-        Person(p + new Vector3(0.62f, 0f, 0f), Vector3.left, 1, 0);
-        Person(p + new Vector3(-0.62f, 0f, 0f), Vector3.right, 1, 0);
-        Person(p + new Vector3(0f, 0f, 0.8f), Vector3.back, 0, 0);
-    }
-
-    private void Umbrella(Vector3 p)
-    {
-        Box(p + Vector3.up * 1.2f, Quaternion.identity, new Vector3(0.05f, 2.4f, 0.05f), Rail, false);
-        Cone(p + Vector3.up * 2.4f, Quaternion.identity, new Vector3(2.6f, 0.5f, 2.6f), Pick(UmbrellaColors), true);
-    }
-
-    private void PlantPot(Vector3 p)
-    {
-        Box(p + Vector3.up * 0.15f, Quaternion.identity, new Vector3(0.32f, 0.3f, 0.32f), Chance(0.5) ? Terracotta : new Color(0.2f, 0.35f, 0.6f), false);
-        Color leaf = Chance(0.3) ? new Color(0.9f, 0.3f, 0.55f) : Pick(Greens); // hoa giấy hồng hoặc cây xanh
-        Blob(p + Vector3.up * 0.5f, Rot(Range(0f, 360f)), new Vector3(0.5f, 0.45f, 0.5f), leaf, false);
     }
 
     private void Laundry(Vector3 a, Vector3 b)
