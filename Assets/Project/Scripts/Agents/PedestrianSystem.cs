@@ -41,7 +41,7 @@ public class PedestrianSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && GameObject.Find("CityExpansion_East") != null && SupermarketScene.IsActive)
+        if (Instance == null && (GameObject.Find("CityExpansion_East") != null || FindAnyObjectByType<VietDistrict>() != null) && SupermarketScene.IsActive)
             new GameObject("PedestrianSystem").AddComponent<PedestrianSystem>();
     }
 
@@ -57,6 +57,7 @@ public class PedestrianSystem : MonoBehaviour
         int sidewalks = NavMesh.GetAreaFromName("Sidewalks");
         if (sidewalks >= 0) walkMask = 1 << sidewalks;
         if (path == null) path = new NavMeshPath();
+        if (FindAnyObjectByType<VietDistrict>() != null) maxWalkers = Mathf.Max(maxWalkers, 42); // phố Việt đông người hơn
         // Điểm đến: cửa các toà nhà khu mới + một dãy điểm trên vỉa hè đại lộ cũ trước siêu thị
         foreach (DeliveryAddress a in DeliveryAddress.All) if (a != null) targets.Add(a.doorPoint);
         for (float x = -170f; x <= 10f; x += 20f) { targets.Add(new Vector3(x, 0.2f, 18f)); targets.Add(new Vector3(x, 0.2f, -2f)); }

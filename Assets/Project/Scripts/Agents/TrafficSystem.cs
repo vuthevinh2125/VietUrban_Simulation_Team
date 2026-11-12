@@ -6,7 +6,7 @@ using UnityEngine;
 ///  - Đi bên phải đường, tới ngã tư rẽ ngẫu nhiên (cuối đường cụt thì quay đầu).
 ///  - Chậm lại / dừng khi phía trước có xe khác, người chơi hoặc người đi bộ.
 ///  - Mẫu xe lấy từ ô tô có sẵn trong scene (Simple Retro Car) + xe cứu thương / xe CSGT thay vỏ, bỏ hết script lái của người chơi.
-/// Tự tạo khi vào game (chỉ khi có khu phố mới "CityExpansion_East").
+/// Tự tạo khi vào game (khi có khu phố mới "CityExpansion_East" hoặc thành phố Việt VietDistrict); có VietDistrict thì chạy trên mạng đường của nó, dừng cả khi gặp xe máy (TrafficBike).
 /// </summary>
 public class TrafficSystem : MonoBehaviour
 {
@@ -64,7 +64,7 @@ public class TrafficSystem : MonoBehaviour
 
     private static void CreateIfMissing()
     {
-        if (Instance == null && GameObject.Find("CityExpansion_East") != null && SupermarketScene.IsActive)
+        if (Instance == null && (GameObject.Find("CityExpansion_East") != null || FindAnyObjectByType<VietDistrict>() != null) && SupermarketScene.IsActive)
             new GameObject("TrafficSystem").AddComponent<TrafficSystem>();
     }
 
@@ -95,6 +95,7 @@ public class TrafficSystem : MonoBehaviour
     /// <summary>Lưới ngã tư khu mới (3 đường dọc x 5 đường ngang) + đường dọc cũ x=22 + đại lộ cũ chạy về phía tây.</summary>
     private void BuildNetwork()
     {
+        if (BuildDistrictNetwork()) return;
         float[] xs = { 92f, 160f, 228f };
         float[] zs = { -90f, -42f, 8f, 54f, 98f };
         int[,] grid = new int[xs.Length, zs.Length];
@@ -113,6 +114,22 @@ public class TrafficSystem : MonoBehaviour
         // Đại lộ cũ chạy qua trước siêu thị về phía tây (cuối đường quay đầu)
         int d = AddNode(new Vector3(-80f, 0.1f, 8f), 1f), e = AddNode(new Vector3(-175f, 0.1f, 8f), 1f);
         Link(b, d); Link(d, e);
+    }
+
+    /// <summary>
+    /// Thành phố Việt (VietDistrict) bao quanh siêu thị: lấy thẳng đồ thị đường của nó (nút = ngã tư, cạnh = đoạn phố),
+    /// bỏ mạng đường cũ (khu phố Mỹ cũ đã được cất đi).
+    /// </summary>
+    private bool BuildDistrictNetwork()
+    {
+        VietDistrict d = FindAnyObjectByType<VietDistrict>();
+        if (d == null) return false;
+        d.EnsureLayout();
+        if (d.Nodes.Count < 2) return false;
+        for (int i = 0; i < d.Nodes.Count; i++) AddNode(d.Nodes[i], d.NodeRadius[i]);
+        foreach (Vector2Int e in d.Edges) Link(e.x, e.y);
+        carCount += 16; // thành phố rộng hơn nhiều -> thêm xe
+        return true;
     }
 
     private int AddNode(Vector3 p, float radius)
@@ -345,6 +362,7 @@ public class TrafficSystem : MonoBehaviour
             {
                 stopFor = IsTrafficCar(col.transform) || col.GetComponentInParent<CharacterController>() != null
                           || col.GetComponentInParent<PedestrianWalker>() != null
+                          || col.GetComponentInParent<TrafficBike>() != null
                           || col.GetComponentInParent<PlayerCarController>() != null;
                 stopForCache[col] = stopFor;
             }
