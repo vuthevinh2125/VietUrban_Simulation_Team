@@ -196,7 +196,7 @@ public class PlayerTools : MonoBehaviour
     /// bản sao ở Resources/Tools/PlayerBat. Thiếu file thì quay về gậy dựng bằng khối hình học như trước.
     /// Gốc toạ độ của gậy: trục Y chạy từ cán (dưới, y = -0.28) lên đầu gậy, dài 0.86 m (giống gậy cũ nên động tác vung giữ nguyên).
     /// </summary>
-    private static Transform BuildBat(Transform parent)
+    public static Transform BuildBat(Transform parent) // bảo vệ (StoreGuard) dùng chung model gậy
     {
         var root = new GameObject("Bat").transform;
         root.SetParent(parent, false);
