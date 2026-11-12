@@ -234,7 +234,8 @@ public class StaffManager : MonoBehaviour
 
     /// <summary>
     /// Chỗ nhân viên (xếp kệ, lau nhà) đứng chờ khi hết việc, để không chắn lối đi của khách:
-    /// cạnh một kệ kho (StorageRack, thường ở nhà kho), nếu chưa có thì cạnh chỗ nhận hàng, lệch sang một bên.
+    /// cạnh một kệ kho (StorageRack, thường ở nhà kho), nếu chưa có thì cạnh chỗ nhận hàng, lệch sang một bên;
+    /// chỗ nhận hàng không có mái che thì đứng ngay trong cửa, nép sang một bên (không đứng ngoài mưa).
     /// index khác nhau để nhiều nhân viên không đứng chồng lên nhau.
     /// </summary>
     public static bool TryIdleSpot(Vector3 from, int index, out Vector3 spot)
@@ -256,6 +257,23 @@ public class StaffManager : MonoBehaviour
         {
             Transform d = market.deliveryPoint;
             Vector3 p = d.position + d.right * (3f + (Mathf.Abs(index) % 3) * 1.2f);
+            if (NavMesh.SamplePosition(p, out NavMeshHit h, 3f, NavMesh.AllAreas) && WeatherSystem.IsSheltered(h.position)) { spot = h.position; return true; }
+        }
+        // Trong cửa, lệch sang hai bên lối vào
+        CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
+        if (spawner != null && spawner.entrancePoint != null)
+        {
+            Transform e = spawner.entrancePoint;
+            float off = (1.8f + (Mathf.Abs(index) % 3) * 0.9f) * (index % 2 == 0 ? 1f : -1f);
+            foreach (float sign in new[] { 1f, -1f })
+            {
+                Vector3 p = e.position + e.right * off * sign + e.forward * 0.8f;
+                if (NavMesh.SamplePosition(p, out NavMeshHit h, 1.5f, NavMesh.AllAreas) && WeatherSystem.IsSheltered(h.position)) { spot = h.position; return true; }
+            }
+        }
+        if (market != null && market.deliveryPoint != null)
+        {
+            Vector3 p = market.deliveryPoint.position + market.deliveryPoint.right * 3f;
             if (NavMesh.SamplePosition(p, out NavMeshHit h, 3f, NavMesh.AllAreas)) { spot = h.position; return true; }
         }
         return false;
