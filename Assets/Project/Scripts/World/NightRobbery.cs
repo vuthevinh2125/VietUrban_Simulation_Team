@@ -56,12 +56,13 @@ public partial class NightRobbery : MonoBehaviour
     {
         Instance = this;
         GameManager.OnNewDay += OnNewDay;
+        GameManager.HoldDayEnd = HoldsDayEnd;   // sự kiện camera ca đêm giữ báo cáo cuối ngày lại
     }
 
     void OnDestroy()
     {
         GameManager.OnNewDay -= OnNewDay;
-        if (Instance == this) Instance = null;
+        if (Instance == this) { Instance = null; GameManager.HoldDayEnd = null; }
         if (Playing) Time.timeScale = 1f;
         Playing = false;
     }
@@ -70,6 +71,8 @@ public partial class NightRobbery : MonoBehaviour
     void Update()
     {
         if (Playing) return;
+        if (!mournersPrepped && IsNight()) StartCoroutine(PrepMourners());   // chuẩn bị đồ tang từ chập tối (chạy nền)
+        if (HorrorUpdate()) return;                                          // sự kiện kinh dị ban đêm (NightRobbery.Horror*.cs)
         bool force = GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F4) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
         if (!force && Time.time < nextCheck) return;
         nextCheck = Time.time + 0.5f;
@@ -214,6 +217,7 @@ public partial class NightRobbery : MonoBehaviour
         }
         lastNight = Ending.None;
         ScamNews();
+        HorrorNews();
     }
 
     // ================= Đường chạy (làn phải của mạng đường) =================
@@ -381,7 +385,9 @@ public partial class NightRobbery : MonoBehaviour
     /// <summary>Gọi mỗi frame trong mọi cú máy: xe người chơi chạy theo làn, xe cướp bám theo vị trí tương đối mong muốn.</summary>
     private void Drive()
     {
+        if (rail == null || car == null) { UpdateCctv(); UpdateGhouls(Time.deltaTime); return; }   // đoạn phim trong cửa hàng: không có xe
         float dt = Time.unscaledDeltaTime * slow;
+        if (!float.IsNaN(stopAtS)) vYouWant = Mathf.Clamp((stopAtS - sYou) * 0.9f, 0f, 8f);   // phanh dừng đúng chỗ
         vYou = Mathf.MoveTowards(vYou, vYouWant, (vYouWant > vYou ? 5f : 9f) * dt);
         if (sYou + vYou * dt > rail.Length - 3f) { vYou = Mathf.Max(0f, (rail.Length - 3f - sYou) / Mathf.Max(dt, 0.001f)); vYouWant = 0f; }
         sYou += vYou * dt;
@@ -399,6 +405,9 @@ public partial class NightRobbery : MonoBehaviour
 
         UpdateFlyer(dt);
         UpdateScamAnim(dt);
+        UpdateCoffin(dt);
+        UpdateDemons(Time.deltaTime);
+        UpdateGhouls(Time.deltaTime);
         if (bike == null) return;
         float lastLat = robLat;
         robLat = Mathf.MoveTowards(robLat, robLatWant, 2.2f * dt);
@@ -1284,6 +1293,7 @@ public partial class NightRobbery : MonoBehaviour
         cam.targetTexture = null;
         cam.depth = 96f;
         cam.fieldOfView = 52f;
+        cam.nearClipPlane = Mathf.Min(cam.nearClipPlane, 0.06f);   // máy quay trong cabin không cắt xuyên thành xe
         prevBubbleCam = SpeechBubble.ViewCamera;
         SpeechBubble.ViewCamera = cam;
         hiddenCanvases.Clear();
