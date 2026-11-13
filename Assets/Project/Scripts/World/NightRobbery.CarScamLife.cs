@@ -769,10 +769,10 @@ public partial class NightRobbery
                         Color outc = keep ? (Color)o : new Color(Mathf.Clamp01(target.r * shade), Mathf.Clamp01(target.g * shade), Mathf.Clamp01(target.b * shade), 1f);
                         if (bloodiness > 0f)
                         {
-                            float n = Mathf.PerlinNoise(x * 0.035f + 13.1f, y * 0.035f) * 0.75f + Mathf.PerlinNoise(x * 0.16f, y * 0.16f + 5.3f) * 0.35f;
-                            if (n > 1.02f - bloodiness * 0.55f)
+                            float bn = Mathf.PerlinNoise(x * 0.035f + 13.1f, y * 0.035f) * 0.75f + Mathf.PerlinNoise(x * 0.16f, y * 0.16f + 5.3f) * 0.35f;
+                            if (bn > 1.02f - bloodiness * 0.55f)
                             {
-                                float wet = Mathf.Clamp01((n - (1.02f - bloodiness * 0.55f)) * 6f);
+                                float wet = Mathf.Clamp01((bn - (1.02f - bloodiness * 0.55f)) * 6f);
                                 outc = Color.Lerp(outc, new Color(0.38f + 0.12f * lum, 0.015f, 0.015f, 1f), 0.55f + 0.4f * wet);
                             }
                         }
