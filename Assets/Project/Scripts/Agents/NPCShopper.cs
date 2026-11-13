@@ -560,7 +560,7 @@ public class NPCShopper : MonoBehaviour
         if (carrier != null) carrier.Release();
         SpeechBubble.Show(transform, "Sorry!", Color.white, agent.height + 0.4f, 3f);
         ProgressHUD.Toast($"Thief caught! Recovered {EconomyManager.Format(value)}.");
-        AudioManager.PlayAt("cash_register", transform.position, 0.5f); // tại chỗ bắt được kẻ trộm, không phải tiếng 2D
+        AudioManager.PlayAt("coin", transform.position, 0.5f); // tại chỗ bắt được kẻ trộm, không phải tiếng 2D
         if (walkSpeed > 0f) agent.speed = walkSpeed; // về tốc độ đi bộ
         if (agent.isOnNavMesh) agent.isStopped = false;
         StartCoroutine(LeaveAfterCaught());

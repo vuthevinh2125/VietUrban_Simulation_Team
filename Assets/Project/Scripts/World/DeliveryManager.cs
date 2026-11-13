@@ -340,7 +340,7 @@ public class DeliveryManager : MonoBehaviour
         BusinessStats.RecordDelivery(total);
         EconomyManager.Instance.AddIncome(total, MoneyCategory.Sales, $"Delivery to {order.placeName}");
         StoreProgress.AddXP(fast ? 8 : 4);
-        AudioManager.Play("cash_register", 0.8f);
+        AudioManager.Play("coin", 0.8f);
         if (recipient != null) { recipient.Receive(fast); recipient = null; } // tự đi vào nhà rồi biến mất
         ProgressHUD.Toast(fast
             ? $"Delivered on time! +{EconomyManager.Format(total)} (tip {EconomyManager.Format(tip)}{(WeatherSystem.DeliveryTipMultiplier > 1f ? ", rain bonus" : "")})"

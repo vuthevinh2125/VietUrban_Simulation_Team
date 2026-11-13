@@ -210,7 +210,7 @@ public class VehicleManager : MonoBehaviour
         Instance.owned.Add(e.id);
         Instance.ResetToHome(e.id);
         Instance.Apply(e);
-        AudioManager.Play("cash_register");
+        AudioManager.Play("coin");
         ProgressHUD.Toast($"You bought the {e.name}! It's parked outside the store - press [F] to ride.");
         OnChanged?.Invoke();
         return true;

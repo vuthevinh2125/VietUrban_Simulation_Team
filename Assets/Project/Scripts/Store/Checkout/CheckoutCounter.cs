@@ -331,7 +331,7 @@ public class CheckoutCounter : MonoBehaviour
                   (lostCents > 0 ? $", thối dư mất {EconomyManager.Format(lostCents / 100f)}." : "."));
         // Một tiếng duy nhất (trước phát 2 lần: AudioManager + AudioSource của quầy), nhỏ hơn
         if (Method == PaymentMethod.Card || paySound == null)
-            AudioManager.PlayAt(Method == PaymentMethod.Card ? "cardpayment" : "cash_register", transform.position, 0.5f);
+            AudioManager.PlayAt(Method == PaymentMethod.Card ? "cardpayment" : "coin", transform.position, 0.5f);   // bỏ tiếng máy tính tiền "è è è" (cash_register) - chói tai
         else AudioManager.PlayClipAt(paySound, transform.position, 0.5f);
 
         NPCShopper paidCustomer = current;
