@@ -416,7 +416,7 @@ public partial class NightRobbery
     /// <summary>Hoạt cảnh mỗi frame (gọi từ Drive): đổi tư thế, lắc lư, tiếng đập kính.</summary>
     private void UpdateScamAnim(float dt)
     {
-        if (!carMode) return;
+        if (!carMode && movers.Count == 0) return;
         UpdateCrowd(dt);
         foreach (ScamActor a in actors)
         {

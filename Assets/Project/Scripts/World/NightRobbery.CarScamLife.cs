@@ -333,6 +333,13 @@ public partial class NightRobbery
             }
             return;
         }
+        if (m.role == "mourner")
+        {
+            // đi chậm rãi; dừng lại thì đứng im phăng phắc (đóng băng tư thế)
+            if (v > 0.01f) { if (m.cp.Current != "Walking") m.cp.Play("Walking", true, 0.3f, 0.6f, Random.value); else m.cp.SetSpeed(Mathf.Clamp(v / 1.3f, 0.45f, 1f)); }
+            else m.cp.SetSpeed(0f);
+            return;
+        }
         if (v > 0.01f)
         {
             ClipPlayer.RemovePhone(m.anim);
@@ -489,7 +496,7 @@ public partial class NightRobbery
         foreach (GameObject p in copPrefabs.ToArray())
         {
             yield return null;
-            if (p != null) yield return PaintUniformCo(p, true);
+            if (p != null) yield return PaintOutfitCo(p, true, PoliceColors, "csgt");
         }
     }
 
@@ -656,7 +663,9 @@ public partial class NightRobbery
     }
 
     private static Mesh capMesh, batonMesh, shoulderMesh, beltMesh;
-    private static readonly Dictionary<Mesh, Material> uniformByMesh = new Dictionary<Mesh, Material>();
+    private static readonly Dictionary<string, Material> outfitCache = new Dictionary<string, Material>();   // theo mesh + bộ màu
+    /// <summary>Màu theo vùng: 0 giữ nguyên (da), 1 áo, 2 quần, 3 giày. CSGT: áo vàng, quần xanh lá đậm, giày đen.</summary>
+    private static readonly Color[] PoliceColors = { Color.white, new Color(0.93f, 0.8f, 0.3f), new Color(0.2f, 0.29f, 0.17f), new Color(0.05f, 0.05f, 0.05f) };
 
     /// <summary>
     /// Vẽ đồng phục CSGT lên texture riêng: nhân vật Mixamo chỉ có 1 vật liệu "body" (da + quần áo chung 1 texture),
@@ -667,7 +676,7 @@ public partial class NightRobbery
     /// </summary>
     private static void PaintUniform(GameObject go, Animator anim)
     {
-        IEnumerator e = PaintUniformCo(go, false);
+        IEnumerator e = PaintOutfitCo(go, false, PoliceColors, "csgt");
         while (e.MoveNext()) { }
     }
 
@@ -689,9 +698,9 @@ public partial class NightRobbery
     /// <summary>
     /// Vẽ đồng phục (xem PaintUniform). sliced = chia nhỏ ra nhiều frame (~4 ms / frame) để chuẩn bị trước, không làm khựng game.
     /// </summary>
-    private static IEnumerator PaintUniformCo(GameObject go, bool sliced)
+    private static IEnumerator PaintOutfitCo(GameObject go, bool sliced, Color[] col, string tag, float gore = 0f)
     {
-        Color[] col = { Color.white, new Color(0.93f, 0.8f, 0.3f), new Color(0.2f, 0.29f, 0.17f), new Color(0.05f, 0.05f, 0.05f) };
+        // gore > 0: da tái nhợt xám xanh + loang máu (nhiều ở đầu / tay, áo vừa, quần ít)
         var clock = System.Diagnostics.Stopwatch.StartNew();
         foreach (SkinnedMeshRenderer smr in go.GetComponentsInChildren<SkinnedMeshRenderer>(true))
         {
@@ -699,7 +708,8 @@ public partial class NightRobbery
             if (mesh == null) continue;
             string n = (smr.name + " " + (smr.sharedMaterial != null ? smr.sharedMaterial.name : "")).ToLowerInvariant();
             if (n.Contains("hair") || n.Contains("eye") || n.Contains("lash") || n.Contains("teeth")) continue;
-            if (uniformByMesh.TryGetValue(mesh, out Material cached) && cached != null) { if (!sliced) smr.sharedMaterial = cached; continue; }
+            string key = mesh.GetHashCode() + "_" + mesh.name + "_" + tag;
+            if (outfitCache.TryGetValue(key, out Material cached) && cached != null) { if (!sliced) smr.sharedMaterial = cached; continue; }
             Material src = smr.sharedMaterial;
             Texture srcTex = src != null ? (src.HasProperty("_BaseMap") ? src.GetTexture("_BaseMap") : src.mainTexture) : null;
             if (!mesh.isReadable || srcTex == null)
@@ -714,7 +724,7 @@ public partial class NightRobbery
             Graphics.Blit(srcTex, rt);
             var prevRt = RenderTexture.active;
             RenderTexture.active = rt;
-            var tex = new Texture2D(w, h, TextureFormat.RGBA32, true) { name = srcTex.name + "_CSGT", hideFlags = HideFlags.DontSave };
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, true) { name = srcTex.name + "_" + tag, hideFlags = HideFlags.DontSave };
             tex.ReadPixels(new Rect(0, 0, w, h), 0, 0);
             RenderTexture.active = prevRt;
             RenderTexture.ReleaseTemporary(rt);
@@ -734,13 +744,15 @@ public partial class NightRobbery
                 if (sliced && clock.ElapsedMilliseconds > 4) { yield return null; clock.Restart(); if (tex == null) yield break; }
                 int a = tris[i], b = tris[i + 1], c = tris[i + 2];
                 int k = vc[a] == vc[b] || vc[a] == vc[c] ? vc[a] : vc[b] == vc[c] ? vc[b] : 0;   // đa số 3 đỉnh
-                if (k == 0) continue;
+                if ((k == 0 || col == null) && gore <= 0f) continue;
                 Vector2 A = Wrap(uv[a]) * new Vector2(w, h), B = Wrap(uv[b]) * new Vector2(w, h), C = Wrap(uv[c]) * new Vector2(w, h);
                 int x0 = Mathf.Max(0, Mathf.FloorToInt(Mathf.Min(A.x, Mathf.Min(B.x, C.x))) - 1), x1 = Mathf.Min(w - 1, Mathf.CeilToInt(Mathf.Max(A.x, Mathf.Max(B.x, C.x))) + 1);
                 int y0 = Mathf.Max(0, Mathf.FloorToInt(Mathf.Min(A.y, Mathf.Min(B.y, C.y))) - 1), y1 = Mathf.Min(h - 1, Mathf.CeilToInt(Mathf.Max(A.y, Mathf.Max(B.y, C.y))) + 1);
                 float area = (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y);
                 if (Mathf.Abs(area) < 1e-6f || (x1 - x0) * (y1 - y0) > 400000) continue;
-                Color target = col[k];
+                Color target = k == 0 ? new Color(0.74f, 0.77f, 0.8f) : col != null ? col[k] : Color.white;
+                bool keep = col == null && k != 0;   // giữ màu quần áo gốc, chỉ thêm máu
+                float bloodiness = gore * (k == 0 ? 0.95f : k == 1 ? 0.7f : k == 2 ? 0.4f : 0.15f);
                 for (int y = y0; y <= y1; y++)
                     for (int x = x0; x <= x1; x++)
                     {
@@ -754,16 +766,26 @@ public partial class NightRobbery
                         Color32 o = px[idx];
                         float lum = (o.r * 0.3f + o.g * 0.59f + o.b * 0.11f) / 255f;
                         float shade = Mathf.Lerp(0.62f, 1.12f, lum);   // giữ nếp vải / bóng đổ của texture cũ
-                        px[idx] = new Color(Mathf.Clamp01(target.r * shade), Mathf.Clamp01(target.g * shade), Mathf.Clamp01(target.b * shade), 1f);
+                        Color outc = keep ? (Color)o : new Color(Mathf.Clamp01(target.r * shade), Mathf.Clamp01(target.g * shade), Mathf.Clamp01(target.b * shade), 1f);
+                        if (bloodiness > 0f)
+                        {
+                            float n = Mathf.PerlinNoise(x * 0.035f + 13.1f, y * 0.035f) * 0.75f + Mathf.PerlinNoise(x * 0.16f, y * 0.16f + 5.3f) * 0.35f;
+                            if (n > 1.02f - bloodiness * 0.55f)
+                            {
+                                float wet = Mathf.Clamp01((n - (1.02f - bloodiness * 0.55f)) * 6f);
+                                outc = Color.Lerp(outc, new Color(0.38f + 0.12f * lum, 0.015f, 0.015f, 1f), 0.55f + 0.4f * wet);
+                            }
+                        }
+                        px[idx] = outc;
                     }
             }
             tex.SetPixels32(px);
             tex.Apply(true);
-            var mat = new Material(src) { name = src.name + "_CSGT", hideFlags = HideFlags.DontSave };
+            var mat = new Material(src) { name = src.name + "_" + tag, hideFlags = HideFlags.DontSave };
             if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
             mat.mainTexture = tex;
             if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", Color.white);
-            uniformByMesh[mesh] = mat;
+            outfitCache[key] = mat;
             if (!sliced) smr.sharedMaterial = mat;   // chuẩn bị trước trên prefab: chỉ nhớ lại, không sửa prefab
             if (sliced) { yield return null; clock.Restart(); }
         }

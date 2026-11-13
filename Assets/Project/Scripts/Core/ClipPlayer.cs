@@ -97,6 +97,12 @@ public class ClipPlayer : MonoBehaviour
         return true;
     }
 
+    /// <summary>Đổi tốc độ hoạt ảnh đang phát (0 = đứng im, giữ nguyên tư thế hiện tại).</summary>
+    public void SetSpeed(float speed)
+    {
+        for (int i = 0; i < 2; i++) if (slot[i].IsValid()) slot[i].SetSpeed(speed);
+    }
+
     /// <summary>Hoạt ảnh phát tiếp khi hoạt ảnh không lặp hiện tại chạy xong.</summary>
     public void Then(string clipName, bool loop = true) { queued = clipName; queuedLoop = loop; }
 

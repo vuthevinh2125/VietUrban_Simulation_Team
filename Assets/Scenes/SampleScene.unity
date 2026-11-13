@@ -194736,10 +194736,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   currentDay: 1
-  realMinutesPerDay: 10
+  realMinutesPerDay: 14
   realSecondsPerDay: 60
   openingHour: 8
-  closingHour: 18
+  closingHour: 24
   dayTextUI: {fileID: 585513237597887582}
   moneyTextUI: {fileID: 6566579155271609670}
   timeTextUI: {fileID: 267260424}
