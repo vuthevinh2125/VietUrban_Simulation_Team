@@ -79,7 +79,14 @@ public class ClipPlayer : MonoBehaviour
     {
         AnimationClip clip = Clip(clipName);
         if (clip == null || animator == null || !animator.isHuman) return false;
-        if (Current == clipName && cur >= 0 && loop && loops[cur]) return true; // đang phát rồi
+        if (Current == clipName && cur >= 0 && loop && loops[cur] && slot[cur].IsValid())
+        {
+            // đang phát rồi: chỉ cập nhật tốc độ (vd. "Walking" đang đứng im ở tốc độ 0 -> đi thật),
+            // nếu không nhân vật trượt đi với một chân co cứng
+            slot[cur].SetSpeed(speed);
+            if (prev >= 0 && slot[prev].IsValid()) slot[prev].SetSpeed(speed);
+            return true;
+        }
         Ensure();
         int next = cur < 0 ? 0 : 1 - cur;
         if (slot[next].IsValid()) { graph.Disconnect(mixer, next); slot[next].Destroy(); }
@@ -95,6 +102,12 @@ public class ClipPlayer : MonoBehaviour
         Current = clipName;
         queued = null;
         return true;
+    }
+
+    /// <summary>Đổi tốc độ hoạt ảnh đang phát (0 = đứng im, giữ nguyên tư thế hiện tại).</summary>
+    public void SetSpeed(float speed)
+    {
+        for (int i = 0; i < 2; i++) if (slot[i].IsValid()) slot[i].SetSpeed(speed);
     }
 
     /// <summary>Hoạt ảnh phát tiếp khi hoạt ảnh không lặp hiện tại chạy xong.</summary>
