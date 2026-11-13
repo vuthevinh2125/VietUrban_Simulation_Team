@@ -15,9 +15,9 @@ using UnityEngine.UI;
 ///    Hết giờ mà chưa chọn = đứng hình, bị cướp.
 ///  - Kết thúc: thoát (thưởng + XP, giao tiếp đơn), CSGT bắt được (thưởng thêm), mất gói hàng (đơn huỷ), mất cả hàng lẫn tiền mặt.
 ///    Sáng hôm sau có "bản tin" kể lại chuyện đêm qua.
-/// Phím thử (chỉ bản Editor / Development): Shift + F9 gây sự kiện ngay khi đang chở hàng bằng xe máy.
+/// Phím thử (chỉ bản Editor / Development): Shift + F4 gây sự kiện ngay khi đang chở hàng bằng xe máy.
 /// </summary>
-public class NightRobbery : MonoBehaviour
+public partial class NightRobbery : MonoBehaviour
 {
     public static NightRobbery Instance { get; private set; }
     public static bool Playing { get; private set; }
@@ -70,7 +70,7 @@ public class NightRobbery : MonoBehaviour
     void Update()
     {
         if (Playing) return;
-        bool force = GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F9) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        bool force = GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F4) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
         if (!force && Time.time < nextCheck) return;
         nextCheck = Time.time + 0.5f;
         if (!DeliveryManager.IsDelivering(out Vector3 dest, out int serial))
@@ -81,7 +81,8 @@ public class NightRobbery : MonoBehaviour
         PlayerCarController ride = RidingBike();
         if (ride == null)
         {
-            if (force) ProgressHUD.Toast("Thử sự kiện cướp: hãy lên xe máy trước đã.");
+            // Đang lái ô tô: vụ "va chạm giả để ăn vạ" (NightRobbery.CarScam.cs)
+            if (!TryCarScam(dest, serial, force) && force) ProgressHUD.Toast("Thử sự kiện: hãy lên xe máy hoặc ô tô trước đã.");
             return;
         }
         if (!force)
@@ -212,6 +213,7 @@ public class NightRobbery : MonoBehaviour
                 break;
         }
         lastNight = Ending.None;
+        ScamNews();
     }
 
     // ================= Đường chạy (làn phải của mạng đường) =================
@@ -392,10 +394,11 @@ public class NightRobbery : MonoBehaviour
         if (lookDir.sqrMagnitude < 0.001f) lookDir = youDir;
         // nghiêng xe theo tốc độ quay đầu (như người lái nghiêng vào cua)
         float yawRate = dt > 0f ? Vector3.SignedAngle(fwdNow, lookDir, Vector3.up) / dt : 0f;
-        youLean = Mathf.Lerp(youLean, Mathf.Clamp(-yawRate * 0.35f * Mathf.Clamp01(vYou / 8f), -32f, 32f), 1f - Mathf.Exp(-6f * dt));
+        youLean = Mathf.Lerp(youLean, Mathf.Clamp(-yawRate * (carMode ? 0.04f : 0.35f) * Mathf.Clamp01(vYou / 8f), -32f, 32f), 1f - Mathf.Exp(-6f * dt)); // ô tô chỉ nghiêng nhẹ
         ct.SetPositionAndRotation(youPos + Vector3.up * yOffset, Quaternion.LookRotation(lookDir) * Quaternion.Euler(0f, 0f, youLean));
 
         UpdateFlyer(dt);
+        UpdateScamAnim(dt);
         if (bike == null) return;
         float lastLat = robLat;
         robLat = Mathf.MoveTowards(robLat, robLatWant, 2.2f * dt);
@@ -1253,8 +1256,27 @@ public class NightRobbery : MonoBehaviour
     private CursorLockMode prevLock;
     private bool prevCursor;
 
+    private readonly List<GameObject> hiddenTraffic = new List<GameObject>();
+
+    /// <summary>Tạm ẩn dòng ô tô / xe máy giao thông trong lúc chiếu phim (để không xe nào chạy xuyên qua cảnh), xong thì hiện lại.</summary>
+    private void HideTraffic(bool hide)
+    {
+        if (hide)
+        {
+            hiddenTraffic.Clear();
+            foreach (MonoBehaviour sys in new MonoBehaviour[] { TrafficSystem.Instance, MotorbikeTraffic.Instance })
+                if (sys != null && sys.gameObject.activeSelf) { sys.gameObject.SetActive(false); hiddenTraffic.Add(sys.gameObject); }
+        }
+        else
+        {
+            foreach (GameObject g in hiddenTraffic) if (g != null) g.SetActive(true);
+            hiddenTraffic.Clear();
+        }
+    }
+
     private void BeginFilm()
     {
+        HideTraffic(true);
         Camera like = Camera.main;
         var camGo = new GameObject("RobberyCamera");
         cam = camGo.AddComponent<Camera>();
@@ -1284,6 +1306,7 @@ public class NightRobbery : MonoBehaviour
 
     private void EndFilm()
     {
+        HideTraffic(false);
         Time.timeScale = 1f;
         slow = 1f;
         foreach (Canvas c in hiddenCanvases) if (c != null) c.enabled = true;
