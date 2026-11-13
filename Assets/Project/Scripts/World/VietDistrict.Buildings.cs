@@ -463,8 +463,9 @@ public partial class VietDistrict
         Sign(c + new Vector3(0f, 11.3f, 10.42f), Vector3.back, new Vector2(15f, 1.6f), "NHÀ HÁT LỚN HÀ NỘI", new Color(0.4f, 0.25f, 0.1f));
         HouseCollider(c + Vector3.up * 7f, Quaternion.identity, new Vector3(38f, 14f, 18f), "Nha Hat Lon, " + front.line.id, c + new Vector3(0f, 0f, 14f));
         // Quảng trường trước nhà hát + đài phun nước
-        Box(c + new Vector3(0f, 0.012f, 16f), Quaternion.identity, new Vector3(36f, 0.02f, 8f), Stone, false);
-        for (int k = 0; k < 6; k++) Person(c + new Vector3(Range(-14f, 14f), 0f, Range(13f, 18f)), Rot(rng.Next(360)) * Vector3.forward, 0, 0);
+        // chỉ trải từ chân nhà hát (z = +9) tới mép lô đất (z = +14), không tràn ra vỉa hè / lòng đường
+        Box(c + new Vector3(0f, 0.012f, 11.5f), Quaternion.identity, new Vector3(Mathf.Min(36f, r.width - Walk * 2f), 0.02f, 5f), Stone, false);
+        for (int k = 0; k < 6; k++) Person(c + new Vector3(Range(-14f, 14f), 0f, Range(13.1f, 13.8f)), Rot(rng.Next(360)) * Vector3.forward, 0, 0);
     }
 
     // ================= Chợ Đồng Xuân =================
