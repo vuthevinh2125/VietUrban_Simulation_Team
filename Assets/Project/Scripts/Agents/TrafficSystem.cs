@@ -12,6 +12,8 @@ using UnityEngine;
 public class TrafficSystem : MonoBehaviour
 {
     public static TrafficSystem Instance { get; private set; }
+    /// <summary>Mẫu xe tuần tra CSGT (đang ẩn) - đoạn phim nhân bản để dùng.</summary>
+    public static GameObject PoliceTemplate => Instance != null ? Instance.policeTemplate : null;
 
     public int carCount = 14;
     public float cruiseSpeed = 9f;

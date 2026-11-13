@@ -24,6 +24,8 @@ using UnityEngine.UI;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    /// <summary>Âm lượng tiếng ồn đám đông do đoạn phim đặt (vụ ăn vạ có người kéo tới xem); mặc định 0.</summary>
+    public static float CrowdBoost;
 
     [Range(0f, 1f)] public float musicVolume = 0.38f;
     [Range(0f, 1f)] public float sfxVolume = 0.8f;
@@ -205,7 +207,7 @@ public class AudioManager : MonoBehaviour
             loopTarget["rain_loop"] = rainy ? (listenerIndoors ? 0.05f : 0.18f) : 0f;
             loopTarget["storm_loop"] = storm ? (listenerIndoors ? 0.08f : 0.28f) : 0f;
             loopTarget["city_loop"] = listenerIndoors ? 0.06f : 0.22f;
-            loopTarget["crowd_loop"] = 0f; // tắt tiếng rì rầm đám đông (át mất nhạc nền siêu thị)
+            loopTarget["crowd_loop"] = CrowdBoost; // trong siêu thị luôn tắt (át nhạc nền); chỉ bật khi có đám đông ngoài phố trong đoạn phim
 
             // Còi xe xa xa khi đứng ngoài trời
             if (!listenerIndoors && listener != null && Time.unscaledTime >= nextHorn)
