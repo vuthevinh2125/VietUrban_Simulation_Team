@@ -19,16 +19,18 @@ public class GameManager : MonoBehaviour
     public static event Action<int> OnNewDay;
     /// <summary>Cửa hàng mở (true) / đóng (false).</summary>
     public static event Action<bool> OnStoreOpenChanged;
+    /// <summary>Trả về true để tạm giữ báo cáo cuối ngày (vd. đoạn phim "camera ca đêm" đang chiếu lúc đóng cửa).</summary>
+    public static Func<bool> HoldDayEnd;
 
     [Header("Game Progression")]
     public int currentDay = 1;
     [Tooltip("Một ngày làm việc (từ giờ mở tới giờ đóng cửa) dài bao nhiêu PHÚT ngoài đời khi cửa hàng mở")]
-    public float realMinutesPerDay = 10f;
+    public float realMinutesPerDay = 14f;
     [HideInInspector] public float realSecondsPerDay = 60f; // không còn dùng, giữ để không mất dữ liệu cũ
     [Tooltip("Giờ mở cửa (0-23)")]
     public int openingHour = 8;
-    [Tooltip("Giờ đóng cửa (0-23)")]
-    public int closingHour = 22;
+    [Tooltip("Giờ đóng cửa (tối đa 24 = nửa đêm)")]
+    public int closingHour = 24;
 
     [Header("UI References")]
     public TextMeshProUGUI dayTextUI;
@@ -148,7 +150,7 @@ public class GameManager : MonoBehaviour
             for (int i = NPCShopper.Active.Count - 1; i >= 0; i--)
                 if (NPCShopper.Active[i] != null) Destroy(NPCShopper.Active[i].gameObject);
         }
-        if (closingTimeReached && NPCShopper.Active.Count == 0 && !UIState.IsBlockingUIOpen) EndDay();
+        if (closingTimeReached && NPCShopper.Active.Count == 0 && !UIState.IsBlockingUIOpen && (HoldDayEnd == null || !HoldDayEnd())) EndDay();
 
         UpdateClockText();
     }
