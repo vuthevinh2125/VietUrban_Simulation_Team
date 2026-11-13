@@ -17,6 +17,7 @@ public class DeliveryRecipient : MonoBehaviour
     public bool Leaving { get; private set; }
 
     private Animator animator;
+    private ClipPlayer clips;
     private bool hasSpeed, called;
     private NavMeshAgent agent;
     private Vector3 homeDir;
@@ -66,6 +67,16 @@ public class DeliveryRecipient : MonoBehaviour
             return;
         }
         if (hasSpeed) animator.SetFloat(SpeedHash, 0f);
+        // Đứng chờ: cúi xem điện thoại; thấy shipper tới thì chỉ tay gọi (hoạt ảnh Mixamo, nếu có)
+        if (clips == null && animator != null && animator.isHuman && ClipPlayer.Has("Texting_While_Standing"))
+        {
+            clips = ClipPlayer.On(animator);
+            clips.Play("Texting_While_Standing", true, 0f, 1f, Random.value);
+        }
+        if (clips != null && clips.Current != null)
+        {
+            if (clips.Current.StartsWith("Texting")) ClipPlayer.AttachPhone(animator); else ClipPlayer.RemovePhone(animator);
+        }
 
         Transform player = DeliveryManager.PlayerForRecipient();
         if (player == null) return;
@@ -77,6 +88,7 @@ public class DeliveryRecipient : MonoBehaviour
         {
             called = true;
             SpeechBubble.Show(transform, "Over here!", new Color(1f, 0.85f, 0.3f));
+            if (clips != null && ClipPlayer.Has("Pointing")) { clips.Play("Pointing", false, 0.3f); clips.Then("Texting_While_Standing"); }
         }
     }
 
@@ -85,6 +97,7 @@ public class DeliveryRecipient : MonoBehaviour
     {
         if (Leaving) return;
         Leaving = true;
+        if (clips != null) { clips.Stop(); ClipPlayer.RemovePhone(animator); clips = null; }   // về Animator gốc để đi vào nhà
         SpeechBubble.Show(transform, onTime ? "Thank you!" : "Finally... thanks.", onTime ? new Color(0.55f, 1f, 0.55f) : new Color(1f, 0.7f, 0.5f));
         destroyAt = Time.time + 4f;
         if (agent != null && agent.isOnNavMesh && homeDir.sqrMagnitude > 0.01f)

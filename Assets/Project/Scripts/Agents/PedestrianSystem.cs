@@ -20,6 +20,8 @@ public class PedestrianSystem : MonoBehaviour
         public Animator animator;
         public bool hasSpeed;
         public float waitUntil;
+        public ClipPlayer cp;      // đang làm gì đó khi dừng chân (nhắn tin, nói chuyện điện thoại, cãi nhau...)
+        public bool vendor;
     }
     private readonly List<Walker> walkers = new List<Walker>();
     private readonly List<Vector3> targets = new List<Vector3>();
@@ -92,11 +94,54 @@ public class PedestrianSystem : MonoBehaviour
             if (w.agent == null || !w.agent.isOnNavMesh) continue;
             if (w.hasSpeed) w.animator.SetFloat("Speed", w.agent.velocity.magnitude);
             if (w.agent.pathPending || w.agent.remainingDistance > 0.6f) continue;
-            if (w.waitUntil == 0f) { w.waitUntil = Time.time + Random.Range(1.5f, 6f); continue; }
+            if (w.waitUntil == 0f) { w.waitUntil = Time.time + Random.Range(1.5f, 6f); StartActivity(w); continue; }
             if (Time.time < w.waitUntil) continue;
             w.waitUntil = 0f;
+            StopActivity(w);
             w.agent.SetDestination(NextTarget(w.agent.transform.position));
         }
+    }
+
+    /// <summary>
+    /// Dừng chân lâu hơn chút và làm gì đó cho phố sống động (hoạt ảnh Mixamo trong Resources/Animations):
+    /// 40% người dừng chân rút điện thoại nhắn tin; nếu có người khác cũng đang đứng trong 3 m thì hai người quay ra cãi / nói chuyện.
+    /// Hàng rong không đổi (đang gánh / dắt xe).
+    /// </summary>
+    private void StartActivity(Walker w)
+    {
+        if (w.vendor || w.animator == null || !w.animator.isHuman || Random.value > 0.4f) return;
+        if (!ClipPlayer.Has("Texting_While_Standing")) return;
+        Vector3 me = w.agent.transform.position;
+        Walker mate = null;
+        foreach (Walker o in walkers)
+            if (o != w && o.cp != null && o.waitUntil > 0f && (o.agent.transform.position - me).sqrMagnitude < 9f) { mate = o; break; }
+        w.cp = ClipPlayer.On(w.animator);
+        w.waitUntil = Time.time + Random.Range(5f, 10f);
+        if (mate != null && ClipPlayer.Has("Standing_Arguing"))
+        {
+            // quay mặt vào nhau nói chuyện / cãi nhau
+            Vector3 d = mate.agent.transform.position - me; d.y = 0f;
+            if (d.sqrMagnitude > 0.01f)
+            {
+                w.agent.transform.rotation = Quaternion.LookRotation(d);
+                mate.agent.transform.rotation = Quaternion.LookRotation(-d);
+            }
+            ClipPlayer.RemovePhone(w.animator); ClipPlayer.RemovePhone(mate.animator);
+            w.cp.Play(Random.value < 0.5f ? "Standing_Arguing" : "Standing_Arguing_1", true, 0.4f, 1f, Random.value);
+            mate.cp.Play(Random.value < 0.5f ? "Standing_Arguing" : "Standing_Arguing_1", true, 0.4f, 1f, Random.value);
+            mate.waitUntil = Mathf.Max(mate.waitUntil, w.waitUntil);
+            return;
+        }
+        w.cp.Play(Random.value < 0.6f ? "Texting_While_Standing" : "Texting", true, 0.4f, 1f, Random.value);
+        ClipPlayer.AttachPhone(w.animator);
+    }
+
+    private static void StopActivity(Walker w)
+    {
+        if (w.cp == null) return;
+        w.cp.Stop();
+        ClipPlayer.RemovePhone(w.animator);
+        w.cp = null;
     }
 
     private static float Density()
@@ -166,6 +211,7 @@ public class PedestrianSystem : MonoBehaviour
         if (vendorChance > 0f && Random.value < vendorChance)
         {
             StreetVendor.Dress(go, Random.value < 0.35f, Random.Range(0, 100000));
+            w.vendor = true;
             agent.speed = Random.Range(0.75f, 1.05f);
             go.name = "Hang rong";
         }
