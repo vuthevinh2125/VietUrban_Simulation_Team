@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public float realSecondsPerDay = 60f; // không còn dùng, giữ để không mất dữ liệu cũ
     [Tooltip("Giờ mở cửa (0-23)")]
     public int openingHour = 8;
-    [Tooltip("Giờ đóng cửa (tối đa 24 = nửa đêm)")]
-    public int closingHour = 24;
+    [Tooltip("Giờ đóng cửa (tối đa 24 = nửa đêm). 22h: trời tối từ ~18h30, đủ chỗ cho các sự kiện ban đêm")]
+    public int closingHour = 22;
 
     [Header("UI References")]
     public TextMeshProUGUI dayTextUI;

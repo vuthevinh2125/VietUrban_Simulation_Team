@@ -194739,7 +194739,7 @@ MonoBehaviour:
   realMinutesPerDay: 14
   realSecondsPerDay: 60
   openingHour: 8
-  closingHour: 24
+  closingHour: 22
   dayTextUI: {fileID: 585513237597887582}
   moneyTextUI: {fileID: 6566579155271609670}
   timeTextUI: {fileID: 267260424}
