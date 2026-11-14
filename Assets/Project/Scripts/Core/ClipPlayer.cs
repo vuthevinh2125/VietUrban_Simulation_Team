@@ -15,10 +15,17 @@ public class ClipPlayer : MonoBehaviour
 {
     private static readonly Dictionary<string, AnimationClip> cache = new Dictionary<string, AnimationClip>();
 
+    /// <summary>
+    /// Thử hoạt ảnh đi bộ khác: "Walking" phát bằng Walking_Alt.fbx (bản Walking của gói FoodDelivery) nếu có,
+    /// vì Walking.fbx (Ch27) làm đầu gối bị bẻ ngang. Đặt false để quay lại bản cũ.
+    /// </summary>
+    public static bool UseAltWalk = true;
+
     /// <summary>Hoạt ảnh trong Resources/Animations/&lt;tên&gt;.fbx (null nếu không có).</summary>
     public static AnimationClip Clip(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
+        if (UseAltWalk && name == "Walking") { AnimationClip alt = Clip("Walking_Alt"); if (alt != null) return alt; }
         if (cache.TryGetValue(name, out AnimationClip c)) return c;
         c = null;
         foreach (AnimationClip a in Resources.LoadAll<AnimationClip>("Animations/" + name))
