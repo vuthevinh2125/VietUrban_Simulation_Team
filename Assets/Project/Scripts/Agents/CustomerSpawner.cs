@@ -89,6 +89,7 @@ public class CustomerSpawner : MonoBehaviour
 
         GameManager gm = GameManager.Instance;
         if (gm != null && (gm.IsGameOver || !gm.IsStoreOpen || gm.DayProgress01 > stopSpawningAt)) return; // chỉ đón khách khi đang mở cửa
+        if (NightRobbery.Playing) return;   // đang chiếu phim sự kiện (vd. "cửa hàng tối om" của đơn giao cho chính mình): không cho khách mới đi vào cảnh
         if (NPCShopper.Active.Count >= MaxCustomersNow) return;
         if (onlyWhenStocked && StockManager.GetRandomStockedShelf() == null) return;
 

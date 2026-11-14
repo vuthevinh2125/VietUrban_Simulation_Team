@@ -88,7 +88,8 @@ public class SaveManager : MonoBehaviour
     void Update()
     {
         if (UIState.IsBlockingUIOpen) return;
-        if (Input.GetKeyDown(KeyCode.F5)) TryManualSave();
+        bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (Input.GetKeyDown(KeyCode.F5) && !shift) TryManualSave();   // Shift+F5 là phím thử của sự kiện kinh dị (ghi đầu dãy kệ)
         if (Input.GetKeyDown(KeyCode.F9) && File.Exists(SavePath)) Load();
     }
 
