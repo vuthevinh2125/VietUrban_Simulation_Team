@@ -765,6 +765,7 @@ public partial class NightRobbery : MonoBehaviour
         if (flyer != null) Destroy(flyer.gameObject);
         flyer = null;
         bike = standIn = null;
+        LevelCar();
         car.enabled = true;
         if (rb != null) { rb.isKinematic = wasKinematic; rb.linearVelocity = Vector3.zero; }
         Apply(ending, injured);
@@ -1305,13 +1306,37 @@ public partial class NightRobbery : MonoBehaviour
         }
         canvas = UIKit.CreateCanvas(camGo.transform, 885);
         Bar(true); Bar(false);
-        titleText = UIKit.Text(canvas.transform, "", 44, new Vector2(1700, 60), new Vector2(0, 380), TextAlignmentOptions.Center, true, Accent * 1.2f + new Color(0.2f, 0.2f, 0.2f));
-        hintText = UIKit.Text(canvas.transform, "", 24, new Vector2(1700, 40), new Vector2(0, 335), TextAlignmentOptions.Center, false, new Color(1f, 1f, 1f, 0.75f));
-        subLine = UIKit.Text(canvas.transform, "", 32, new Vector2(1500, 90), new Vector2(0, -300), TextAlignmentOptions.Center, false);
+        // Góc trên trái: chip đỏ tên sự kiện + dòng thời gian / địa điểm (bản thiết kế 10)
+        RectTransform chip = ShopUI.Box("TitleChip", canvas.transform, new Vector2(10f, 51f), Vector2.zero, ShopPC.Red);
+        chip.anchorMin = chip.anchorMax = new Vector2(0f, 1f); chip.pivot = new Vector2(0f, 0.5f);
+        chip.anchoredPosition = new Vector2(72f, -123f);
+        titleText = ShopUI.Text(chip, "", ShopUI.Print, 27, new Vector2(10f, 51f), Vector2.zero, ShopPC.Gold, TextAlignmentOptions.Center, 0f, 3f);
+        titleText.textWrappingMode = TextWrappingModes.NoWrap;
+        chip.gameObject.AddComponent<ChipFit>().text = titleText;
+        hintText = ShopUI.Text(canvas.transform, "", ShopUI.Body, 18, new Vector2(1400f, 30f), Vector2.zero, ShopPC.Soft, TextAlignmentOptions.Left, 0f, 3f);
+        hintText.fontStyle = FontStyles.Bold | FontStyles.UpperCase;
+        RectTransform hr = hintText.rectTransform;
+        hr.anchorMin = hr.anchorMax = new Vector2(0f, 1f); hr.pivot = new Vector2(0f, 0.5f);
+        hr.anchoredPosition = new Vector2(72f, -168f);
+        subLine = ShopUI.Text(canvas.transform, "", ShopUI.Body, 28, new Vector2(1500, 90), new Vector2(0, -150), Color.white, TextAlignmentOptions.Center);
+        subLine.fontStyle = FontStyles.Normal;
+        subLine.outlineWidth = 0.18f; subLine.outlineColor = new Color32(0, 0, 0, 220);
         fade = UIKit.FullScreen("Fade", canvas.transform, Color.black).GetComponent<Image>();
         fade.color = new Color(0f, 0f, 0f, 0f);
         fade.raycastTarget = false;
         prevLock = Cursor.lockState; prevCursor = Cursor.visible;
+    }
+
+    /// <summary>
+    /// Trả xe về thẳng đứng: trong phim xe được nghiêng theo cua (youLean) và ngóc theo dốc đường; không dựng lại thì
+    /// sau phim xe vẫn nghiêng, camera gắn trên xe nghiêng theo, và nhân vật xuống xe cũng bị nghiêng.
+    /// </summary>
+    private void LevelCar()
+    {
+        if (car == null) return;
+        Transform t = car.transform;
+        t.rotation = Quaternion.Euler(0f, t.eulerAngles.y, 0f);
+        youLean = 0f;
     }
 
     private void EndFilm()
@@ -1423,16 +1448,50 @@ public partial class NightRobbery : MonoBehaviour
         if (FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
             new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.EventSystems.StandaloneInputModule));
 
-        GameObject panel = UIKit.Rect("Choices", canvas.transform, new Vector2(900, 80 * options.Length + 70), new Vector2(0, -60));
-        UIKit.Text(panel.transform, "BẠN SẼ LÀM GÌ?", 30, new Vector2(900, 44), new Vector2(0, 40 * options.Length + 12), TextAlignmentOptions.Center, true, Accent * 1.3f);
-        for (int i = 0; i < options.Length; i++)
+        // Bảng chọn kiểu bản thiết kế 10: tiêu đề vàng + thanh đếm ngược + số giây, các ô lựa chọn nằm ngang có ô phím
+        int n = options.Length;
+        int cols = Mathf.Min(4, n);
+        int rowsN = Mathf.CeilToInt(n / (float)cols);
+        const float W = 1560f, cardH = 156f, gapC = 15f;
+        float panelH = 60f + rowsN * (cardH + gapC);
+        GameObject panel = UIKit.Rect("Choices", canvas.transform, new Vector2(W, panelH), Vector2.zero);
+        var prt = (RectTransform)panel.transform;
+        prt.anchorMin = prt.anchorMax = new Vector2(0.5f, 0f); prt.pivot = new Vector2(0.5f, 0f);
+        prt.anchoredPosition = new Vector2(0f, 126f);
+        TMP_Text head = ShopPC.Text(prt, "BẠN SẼ LÀM GÌ?", ShopUI.Print, 42, 0f, 0f, 330f, 54f, ShopPC.Gold, TextAlignmentOptions.Left, 4.5f);
+        head.textWrappingMode = TextWrappingModes.NoWrap;
+        RectTransform track = ShopPC.Box("TimerTrack", prt, 345f, 24f, W - 345f - 90f, 9f, ShopPC.A(Color.white, 0.12f));
+        RectTransform fillRt = ShopUI.Box("Fill", track, track.sizeDelta, Vector2.zero, ShopPC.Gold);
+        Image timer = fillRt.GetComponent<Image>();
+        timer.sprite = UIKit.WhiteSprite; timer.type = Image.Type.Filled;
+        timer.fillMethod = Image.FillMethod.Horizontal; timer.fillOrigin = (int)Image.OriginHorizontal.Left;
+        timer.fillAmount = 1f;
+        TMP_Text secs = ShopPC.Text(prt, "", ShopUI.Print, 33, W - 80f, 6f, 80f, 44f, ShopPC.Gold, TextAlignmentOptions.Right);
+        float cw = (W - gapC * (cols - 1)) / cols;
+        for (int i = 0; i < n; i++)
         {
             int k = i;
-            UIKit.Btn(panel.transform, $"[{i + 1}]  {options[i]}", new Vector2(860, 64), new Vector2(0, 40 * options.Length - 30 - i * 78),
-                () => chosen = k, new Color(0.08f, 0.09f, 0.12f, 0.88f), 27);
+            float x = (i % cols) * (cw + gapC), y = 66f + (i / cols) * (cardH + gapC);
+            RectTransform card = ShopPC.Box("Option" + i, prt, x, y, cw, cardH, ShopPC.A(ShopPC.Hex(0x0E1118), 0.88f), 0f, true);
+            ShopUI.Frame(card, card.sizeDelta, ShopPC.A(Color.white, 0.16f), 1.5f);
+            RectTransform key = ShopPC.Box("Key", card, 21f, 18f, 42f, 42f, ShopPC.Hex(0xF4ECD8));
+            ShopUI.Text(key, (i + 1).ToString(), ShopUI.Body, 21, key.sizeDelta, Vector2.zero, ShopPC.Ink, TextAlignmentOptions.Center).fontStyle = FontStyles.Bold;
+            TMP_Text label = ShopPC.Text(card, options[i], ShopUI.Body, 24, 21f, 72f, cw - 42f, cardH - 84f, Color.white, TextAlignmentOptions.TopLeft, 0f, true);
+            label.enableAutoSizing = true; label.fontSizeMin = 16; label.fontSizeMax = 24;
+            Button b = card.gameObject.AddComponent<Button>();
+            b.transition = Selectable.Transition.None;
+            b.onClick.AddListener(() => chosen = k);
+            UIMotion m = card.gameObject.AddComponent<UIMotion>();
+            m.hoverScale = 1.04f; m.dropIn = 30f;
         }
-        Image timer = UIKit.HBar(panel.transform, new Vector2(-430, -40 * options.Length - 18), 860, 10, Accent);
-        timer.fillAmount = 1f;
+        // Góc trên phải: báo hình chậm
+        TMP_Text slowTag = ShopUI.Text(panel.transform, "● HÌNH CHẬM ×0.3", ShopUI.Body, 18, new Vector2(400f, 30f), Vector2.zero, ShopPC.Gold, TextAlignmentOptions.Right, 0f, 3f);
+        slowTag.fontStyle = FontStyles.Bold;
+        RectTransform st = slowTag.rectTransform;
+        st.SetParent(canvas.transform, false);
+        st.anchorMin = st.anchorMax = new Vector2(1f, 1f); st.pivot = new Vector2(1f, 0.5f);
+        st.anchoredPosition = new Vector2(-72f, -123f);
+        slowTag.gameObject.AddComponent<AlphaPulse>().speed = 6f;
 
         slow = 0.3f;
         Time.timeScale = 0.3f;
@@ -1448,7 +1507,8 @@ public partial class NightRobbery : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i) || Input.GetKeyDown(KeyCode.Keypad1 + i)) chosen = i;
             float left = 1f - (Time.unscaledTime - t0) / seconds;
             timer.fillAmount = left;
-            timer.color = left < 0.35f ? Color.Lerp(Accent, Color.white, Mathf.PingPong(Time.unscaledTime * 4f, 1f)) : Accent;
+            timer.color = left < 0.35f ? Color.Lerp(ShopPC.Gold, Accent, Mathf.PingPong(Time.unscaledTime * 4f, 1f)) : ShopPC.Gold;
+            secs.text = Mathf.Max(0f, seconds * left).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
             Drive();
             var s = frame();
             Vector3 want = Unblocked(s.look, s.pos);
@@ -1461,6 +1521,7 @@ public partial class NightRobbery : MonoBehaviour
         Time.timeScale = 1f;
         cam.fieldOfView = 52f;
         Destroy(panel);
+        Destroy(slowTag.gameObject);
         Cursor.lockState = prevLock; Cursor.visible = prevCursor;
         if (chosen >= 0) Say("Bạn", $"<i>{options[chosen]}</i>", YouCol);
         result(chosen);

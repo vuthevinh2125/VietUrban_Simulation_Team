@@ -218,6 +218,7 @@ public partial class NightRobbery
         if (carMode) ClearCarDriver();
         if (standIn != null) Destroy(standIn.gameObject);
         standIn = null; bike = null;
+        LevelCar();
         if (car != null) car.enabled = true;
         if (rideRb != null) { rideRb.isKinematic = rideWasKinematic; rideRb.linearVelocity = Vector3.zero; }
         rail = null; robRail = null;

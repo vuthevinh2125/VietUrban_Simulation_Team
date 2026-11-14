@@ -302,6 +302,7 @@ public partial class NightRobbery
         ClearCarDriver();
         if (bike != null) Destroy(bike.gameObject);
         bike = null;
+        LevelCar();
         car.enabled = true;
         if (rb != null) { rb.isKinematic = wasKinematic; rb.linearVelocity = Vector3.zero; }
         ApplyScam(end, pick < 0);
