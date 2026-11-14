@@ -6,11 +6,11 @@ using UnityEngine.UI;
 /// <summary>Hàm dựng giao diện bằng code dùng chung (canvas phủ màn hình, khung, chữ, nút).</summary>
 public static class UIKit
 {
-    public static readonly Color Window = new Color(0.13f, 0.16f, 0.21f, 0.98f);
-    public static readonly Color Header = new Color(0.0f, 0.6f, 0.95f, 1f);
-    public static readonly Color Button = new Color(0.25f, 0.3f, 0.38f, 1f);
-    public static readonly Color Green = new Color(0.2f, 0.7f, 0.3f, 1f);
-    public static readonly Color Red = new Color(0.8f, 0.25f, 0.2f, 1f);
+    public static readonly Color Window = ShopUI.Wood;
+    public static readonly Color Header = ShopUI.SignRed;
+    public static readonly Color Button = ShopUI.WoodButton;
+    public static readonly Color Green = ShopUI.SignRed;   // nút chính (tên giữ nguyên cho code cũ)
+    public static readonly Color Red = ShopUI.Ink;         // nút đóng X
 
     public static Canvas CreateCanvas(Transform parent, int sortingOrder)
     {
@@ -60,6 +60,7 @@ public static class UIKit
     {
         GameObject go = Rect("Text", parent, box, pos);
         var t = go.AddComponent<TextMeshProUGUI>();
+        t.font = ShopUI.Body;
         t.text = text;
         t.fontSize = size;
         t.alignment = align;

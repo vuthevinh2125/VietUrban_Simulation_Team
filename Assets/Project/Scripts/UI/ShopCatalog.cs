@@ -207,6 +207,7 @@ public class ShopCatalog : MonoBehaviour
             tgo.transform.SetParent(go.transform, false);
             ((RectTransform)tgo.transform).sizeDelta = rt.sizeDelta;
             var t = tgo.AddComponent<TextMeshProUGUI>();
+            t.font = ShopUI.Body;
             t.alignment = TextAlignmentOptions.Center;
             t.fontSize = 24;
             t.fontStyle = FontStyles.Bold;

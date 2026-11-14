@@ -388,16 +388,32 @@ public class StoreEvents : MonoBehaviour
         Canvas canvas = UIKit.CreateCanvas(camGo.transform, 880);
         Bar(canvas.transform, true);
         Bar(canvas.transform, false);
-        GameObject banner = UIKit.Panel("Banner", canvas.transform, new Vector2(1920, 110), new Vector2(0, -330), new Color(0f, 0f, 0f, 0.65f));
-        UIKit.Panel("Accent", banner.transform, new Vector2(16, 110), new Vector2(-952, 0), accent);
-        UIKit.Text(banner.transform, title, 46, new Vector2(1700, 56), new Vector2(0, 22), TextAlignmentOptions.Center, true, accent * 1.3f + new Color(0.2f, 0.2f, 0.2f));
-        UIKit.Text(banner.transform, subtitle, 26, new Vector2(1700, 40), new Vector2(0, -28), TextAlignmentOptions.Center, false);
-        TMP_Text skip = UIKit.Text(canvas.transform, "[Space] Skip", 20, new Vector2(300, 40), Vector2.zero, TextAlignmentOptions.Right, false, new Color(1f, 1f, 1f, 0.6f));
-        RectTransform skipRt = skip.rectTransform;
-        skipRt.anchorMin = skipRt.anchorMax = skipRt.pivot = new Vector2(1f, 1f);
-        skipRt.anchoredPosition = new Vector2(-30f, -25f);
-        // Lời thoại hiện thành phụ đề phía trên dải tiêu đề (bong bóng thoại 3D quá to khi camera đứng sát)
-        subLine = UIKit.Text(canvas.transform, "", 30, new Vector2(1500, 90), new Vector2(0, -215), TextAlignmentOptions.Center, false);
+        // Góc trên trái: chip màu sự kiện + mô tả (cùng kiểu với sự kiện đêm, bản thiết kế 10)
+        GameObject banner = UIKit.Rect("Banner", canvas.transform);
+        var brt = (RectTransform)banner.transform;
+        brt.anchorMin = brt.anchorMax = new Vector2(0f, 1f); brt.pivot = new Vector2(0f, 1f);
+        brt.sizeDelta = new Vector2(1500f, 120f); brt.anchoredPosition = new Vector2(72f, -100f);
+        RectTransform chip = ShopUI.Box("TitleChip", banner.transform, new Vector2(10f, 51f), Vector2.zero, accent);
+        chip.anchorMin = chip.anchorMax = new Vector2(0f, 1f); chip.pivot = new Vector2(0f, 1f);
+        chip.anchoredPosition = Vector2.zero;
+        TMP_Text titleT = ShopUI.Text(chip, title, ShopUI.Print, 27, new Vector2(10f, 51f), Vector2.zero, ShopPC.Hex(0xFFF3D6), TextAlignmentOptions.Center, 0f, 3f);
+        titleT.textWrappingMode = TextWrappingModes.NoWrap;
+        chip.gameObject.AddComponent<ChipFit>().text = titleT;
+        TMP_Text subT = ShopUI.Text(banner.transform, subtitle, ShopUI.Body, 20, new Vector2(1500f, 60f), Vector2.zero, Color.white, TextAlignmentOptions.TopLeft);
+        RectTransform srt = subT.rectTransform;
+        srt.anchorMin = srt.anchorMax = new Vector2(0f, 1f); srt.pivot = new Vector2(0f, 1f);
+        srt.anchoredPosition = new Vector2(0f, -66f);
+        subT.outlineWidth = 0.15f; subT.outlineColor = new Color32(0, 0, 0, 200);
+        // Góc trên phải: phím bỏ qua dạng ô phím
+        RectTransform skipBar = ShopUI.Group("Skip", canvas.transform, new Vector2(260f, 40f), Vector2.zero);
+        skipBar.anchorMin = skipBar.anchorMax = skipBar.pivot = new Vector2(1f, 1f);
+        skipBar.anchoredPosition = new Vector2(-72f, -105f);
+        RectTransform cap = ShopUI.Box("Key", skipBar, new Vector2(90f, 36f), new Vector2(-85f, 0f), ShopPC.Hex(0xF4ECD8));
+        ShopUI.Text(cap, "Space", ShopUI.Body, 17, cap.sizeDelta, Vector2.zero, ShopPC.Ink, TextAlignmentOptions.Center).fontStyle = FontStyles.Bold;
+        ShopUI.Text(skipBar, "Skip", ShopUI.Body, 19, new Vector2(120f, 36f), new Vector2(50f, 0f), ShopPC.Hex(0xF4ECD8), TextAlignmentOptions.Left);
+        // Lời thoại: phụ đề chữ trắng viền đen phía dưới
+        subLine = ShopUI.Text(canvas.transform, "", ShopUI.Body, 28, new Vector2(1500, 90), new Vector2(0, -330), Color.white, TextAlignmentOptions.Center);
+        subLine.outlineWidth = 0.18f; subLine.outlineColor = new Color32(0, 0, 0, 220);
         var group = banner.AddComponent<CanvasGroup>();
 
         float start = Time.unscaledTime;

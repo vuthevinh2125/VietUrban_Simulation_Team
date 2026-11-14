@@ -501,19 +501,28 @@ public class DeliveryManager : MonoBehaviour
     private void BuildHud()
     {
         Canvas canvas = UIKit.CreateCanvas(transform, 55);
-        hudPanel = UIKit.Panel("DeliveryPanel", canvas.transform, new Vector2(560, 190), Vector2.zero, new Color(0.08f, 0.1f, 0.14f, 0.82f));
-        var rt = (RectTransform)hudPanel.transform;
-        rt.anchorMin = rt.anchorMax = new Vector2(1f, 0.5f);
-        rt.pivot = new Vector2(1f, 0.5f);
-        rt.anchoredPosition = new Vector2(-20f, 120f);
-        hudText = UIKit.Text(hudPanel.transform, "", 24, new Vector2(530, 175), Vector2.zero, TextAlignmentOptions.Left);
+        // "PHIẾU GIAO HÀNG": tờ giấy dán băng dính ở mép phải màn hình (bản thiết kế HUD)
+        RectTransform anchor = ShopUI.Group("DeliveryAnchor", canvas.transform, new Vector2(570f, 230f), Vector2.zero);
+        anchor.anchorMin = anchor.anchorMax = new Vector2(1f, 0.5f);
+        anchor.pivot = new Vector2(1f, 0.5f);
+        anchor.anchoredPosition = new Vector2(-24f, 110f);
+        hudPanel = anchor.gameObject;
+        RectTransform slip = ShopUI.Sheet("DeliverySlip", anchor, new Vector2(540f, 210f), Vector2.zero, ShopPC.Paper, 1.2f);
+        ShopUI.Tape(slip, -150f, -5f);
+        ShopUI.Box("Strip", slip, new Vector2(6f, 210f), new Vector2(-267f, 0f), ShopPC.Red);
+        TMP_Text label = ShopUI.Text(slip, "PHIẾU GIAO HÀNG · DELIVERY SLIP", ShopUI.Body, 14, new Vector2(500f, 22f), new Vector2(0f, 82f), ShopPC.Red, TextAlignmentOptions.Left, 0f, 3f);
+        label.fontStyle = FontStyles.Bold;
+        hudText = ShopUI.Text(slip, "", ShopUI.Body, 20, new Vector2(500f, 160f), new Vector2(0f, -14f), ShopPC.Ink, TextAlignmentOptions.TopLeft);
+        hudText.textWrappingMode = TextWrappingModes.Normal;
+        hudText.enableAutoSizing = true; hudText.fontSizeMin = 14; hudText.fontSizeMax = 20;
         hudPanel.SetActive(false);
     }
 
     private void ShowHud(string text)
     {
         if (!hudPanel.activeSelf) hudPanel.SetActive(true);
-        hudText.text = text;
+        // Màu chữ cũ dành cho nền tối -> đổi sang mực đỏ / xanh lá cho giấy
+        hudText.text = text.Replace("#FFD54A", "#C8161D").Replace("#8CFF8C", "#2F7A4A").Replace("#FF8A7A", "#C8161D");
     }
 
     /// <summary>Mũi tên chỉ hướng tới mục tiêu so với hướng camera đang nhìn.</summary>

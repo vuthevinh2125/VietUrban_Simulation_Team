@@ -11,6 +11,8 @@ public class MarketManager : MonoBehaviour
 {
     public static MarketManager Instance { get; private set; }
     public static event Action OnCartChanged;
+    /// <summary>Thông báo của chợ (đã thêm vào giỏ, đặt hàng xong, thiếu tiền...) để màn hình đặt hàng hiện lên.</summary>
+    public static event Action<string> OnStatus;
 
     [Header("UI")]
     public TextMeshProUGUI moneyText;
@@ -249,6 +251,7 @@ public class MarketManager : MonoBehaviour
     private void SetStatus(string message)
     {
         Debug.Log("[Market] " + message);
+        OnStatus?.Invoke(message);
         if (statusText != null) statusText.text = message;
         else ProgressHUD.Toast(message); // scene không gán ô trạng thái -> trước đây thông báo chỉ hiện trong Console
     }

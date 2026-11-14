@@ -69,6 +69,9 @@ public class CheckoutCounter : MonoBehaviour
     public int QueueLength => queue.Count;
     public float RunningTotal => runningTotal;
     public int ItemsLeft => itemsOnCounter.Count;
+    /// <summary>Các món đã quét của khách hiện tại (tên, giá) - để in lên hoá đơn ở màn hình thanh toán.</summary>
+    public IReadOnlyList<(string name, float price)> Scanned => scanned;
+    private readonly List<(string name, float price)> scanned = new List<(string name, float price)>();
     public bool IsPaying => paying;
 
     void OnEnable() => All.Add(this);
@@ -244,6 +247,7 @@ public class CheckoutCounter : MonoBehaviour
         current = customer;
         runningTotal = 0f;
         scannedCount = 0;
+        scanned.Clear();
 
         // Chia khay thành lưới đủ ô cho cả giỏ hàng, mỗi món một ô
         Vector2 area = new Vector2(Mathf.Max(0.05f, dropAreaSize.x - dropAreaMargin * 2f), Mathf.Max(0.05f, dropAreaSize.y - dropAreaMargin * 2f));
@@ -264,6 +268,7 @@ public class CheckoutCounter : MonoBehaviour
 
         runningTotal += item.price;
         scannedCount++;
+        scanned.Add((item.DisplayName, item.price));
         BusinessStats.RecordItemSold(item.item, item.price); // thống kê mặt hàng bán chạy
         if (scanSound != null) AudioManager.PlayClipAt(scanSound, item.transform.position, 0.45f);
         else AudioManager.PlayAt("scan_beep", item.transform.position, 0.45f);

@@ -299,15 +299,16 @@ public class GameManager : MonoBehaviour
 
     public void ShowInteractText(string message)
     {
-        if (interactTextUI == null) return;
-        interactTextUI.text = message;
-        if (!interactTextUI.gameObject.activeSelf) interactTextUI.gameObject.SetActive(true);
+        // Thẻ gợi ý kiểu mới (tên + số liệu + phím bấm); dòng chữ cũ trong scene ẩn đi
+        InteractCard.Show(message);
+        if (interactTextUI != null && interactTextUI.gameObject.activeSelf) interactTextUI.gameObject.SetActive(false);
     }
 
     public void HideInteractText()
     {
         if (interactTextUI != null && interactTextUI.gameObject.activeSelf)
             interactTextUI.gameObject.SetActive(false);
+        InteractCard.Hide();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

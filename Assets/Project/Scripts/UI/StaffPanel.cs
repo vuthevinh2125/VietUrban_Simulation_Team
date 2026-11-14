@@ -11,13 +11,10 @@ public class StaffPanel : MonoBehaviour
     public static int ClosedFrame { get; private set; } = -1;
 
     private GameObject root;
-    private TMP_Text headerInfo, cashierStatus, restockerStatus, guardStatus, janitorStatus;
-    private Button hireCashier, fireCashier, hireRestocker, fireRestocker, hireGuard, fireGuard, hireJanitor, fireJanitor, unlockCounter;
+    private TMP_Text headerInfo;
+    private Button unlockCounter;
     private TMP_Text counterStatus;
 
-    private static readonly Color WindowColor = new Color(0.13f, 0.16f, 0.21f, 0.98f);
-    private static readonly Color HeaderColor = new Color(0.0f, 0.6f, 0.95f, 1f);
-    private static readonly Color RowColor = new Color(0.2f, 0.24f, 0.3f, 1f);
 
     public static void Open()
     {
@@ -65,138 +62,115 @@ public class StaffPanel : MonoBehaviour
         if (root == null || !root.activeSelf) return;
         StaffManager sm = StaffManager.Instance;
         if (sm == null) return;
-        headerInfo.text = $"Store level {StoreProgress.Level}   |   Daily wages {EconomyManager.Format(sm.DailyWages)}";
+        headerInfo.text = $"Store level {StoreProgress.Level} · wages are paid at the end of each day";
+        wagesText.text = $"Daily wages  <b><color=#FF9F8A><size=27>{EconomyManager.Format(sm.DailyWages)}</size></color></b>";
 
         bool canC = sm.CanHireCashier(out string rc);
-        cashierStatus.text = $"Hired {sm.CashierCount}/{sm.MaxCashiers}" + (canC ? "" : $"\n<size=80%><color=#FF8A7A>{rc}</color></size>");
-        hireCashier.interactable = canC;
-        fireCashier.interactable = sm.CashierCount > 0;
-
+        cards[0].Set(sm.CashierCount, sm.MaxCashiers, canC, rc);
         bool canR = sm.CanHireRestocker(out string rr);
-        restockerStatus.text = $"Hired {sm.RestockerCount}/{StaffManager.MaxRestockers}" + (canR ? "" : $"\n<size=80%><color=#FF8A7A>{rr}</color></size>");
-        hireRestocker.interactable = canR;
-        fireRestocker.interactable = sm.RestockerCount > 0;
-
+        cards[1].Set(sm.RestockerCount, StaffManager.MaxRestockers, canR, rr);
         bool canG = sm.CanHireGuard(out string rg);
-        guardStatus.text = $"Hired {sm.GuardCount}/{StaffManager.MaxGuards}" + (canG ? "" : $"\n<size=80%><color=#FF8A7A>{rg}</color></size>");
-        hireGuard.interactable = canG;
-        fireGuard.interactable = sm.GuardCount > 0;
-
+        cards[2].Set(sm.GuardCount, StaffManager.MaxGuards, canG, rg);
         bool canJ = sm.CanHireJanitor(out string rj);
-        janitorStatus.text = $"Hired {sm.JanitorCount}/{StaffManager.MaxJanitors}" + (canJ ? "" : $"\n<size=80%><color=#FF8A7A>{rj}</color></size>");
-        hireJanitor.interactable = canJ;
-        fireJanitor.interactable = sm.JanitorCount > 0;
+        cards[3].Set(sm.JanitorCount, StaffManager.MaxJanitors, canJ, rj);
 
         int total = 1 + LockedCheckout.All.Count;
         int open = 1 + LockedCheckout.UnlockedCount;
         LockedCheckout next = LockedCheckout.Next();
         bool canU = LockedCheckout.CanUnlockNext(out string ru);
-        counterStatus.text = $"Open {open}/{total}" + (next == null ? "" :
-            $"\n<size=80%>Next: Lv {next.requiredLevel} · {EconomyManager.Format(next.price)}</size>" +
-            (canU ? "" : $"\n<size=75%><color=#FF8A7A>{ru}</color></size>"));
+        counterTitle.text = next == null ? "CHECKOUT COUNTERS" : $"CHECKOUT COUNTER {open + 1}";
+        counterStatus.text = next == null
+            ? $"All {total} counters are open. Each open counter can have one cashier."
+            : $"Another counter halves the queue at rush hour. It needs its own cashier.  <color=#AEB6C2>Open {open}/{total} · needs store Lv {next.requiredLevel}</color>"
+              + (canU ? "" : $"  <color=#FF9F8A>{ru}</color>");
+        unlockCounter.gameObject.SetActive(next != null);
+        if (next != null) ShopPC.SetLabel(unlockCounter, $"UNLOCK · {EconomyManager.Format(next.price)}");
         unlockCounter.interactable = canU;
     }
 
-    // ================= Dựng giao diện =================
+    // ================= Dựng giao diện (bản thiết kế 03: đơn xin việc) =================
+    private class StaffCard
+    {
+        public TMP_Text who, reason, waiting;
+        public GameObject stamp;
+        public Button hire, fire;
+
+        public void Set(int count, int max, bool canHire, string why)
+        {
+            who.text = count > 0 ? $"Hired {count}/{max}" : "position open";
+            stamp.SetActive(count > 0);
+            waiting.gameObject.SetActive(count == 0);
+            reason.text = canHire || count >= max ? "" : why;
+            hire.gameObject.SetActive(count < max);
+            hire.interactable = canHire;
+            fire.gameObject.SetActive(count > 0);
+        }
+    }
+
+    private readonly StaffCard[] cards = new StaffCard[4];
+    private TMP_Text wagesText, counterTitle;
+
     private void Build()
     {
-        if (FindAnyObjectByType<EventSystem>() == null)
-            new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        Transform canvas = UIKit.CreateCanvas(transform, 550).transform;
+        RectTransform c = ShopPC.Computer(canvas, "STAFF", Close, out root);
+        headerInfo = ShopPC.Title(c, "STAFF", "", out wagesText);
 
-        var canvasGo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasGo.transform.SetParent(transform, false);
-        Canvas canvas = canvasGo.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 550;
-        CanvasScaler scaler = canvasGo.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920, 1080);
-        scaler.matchWidthOrHeight = 0.5f;
+        var roles = new (string role, string desc, float wage, int level, UnityEngine.Events.UnityAction hire, UnityEngine.Events.UnityAction fire)[]
+        {
+            ("Cashier", "Scans items and takes payment at a counter.", StaffManager.CashierWage, StaffManager.CashierLevel,
+                () => StaffManager.Instance.HireCashier(), () => StaffManager.Instance.FireCashier()),
+            ("Restocker", "Carries boxes to shelves that sell that product and refills them.", StaffManager.RestockerWage, StaffManager.RestockerLevel,
+                () => StaffManager.Instance.HireRestocker(), () => StaffManager.Instance.FireRestocker()),
+            ("Guard", "Stands outside the entrance and chases down shoplifters for you.", StaffManager.GuardWage, StaffManager.GuardLevel,
+                () => StaffManager.Instance.HireGuard(), () => StaffManager.Instance.FireGuard()),
+            ("Janitor", "Finds dirty spots on the floor and sweeps them, so customers stay happy.", StaffManager.JanitorWage, StaffManager.JanitorLevel,
+                () => StaffManager.Instance.HireJanitor(), () => StaffManager.Instance.FireJanitor()),
+        };
+        float[] rots = { -1f, 0.8f, -0.6f, 1f };
+        const float gap = 27f, h = 420f;
+        float w = (ShopPC.ContentSize.x - gap * 3f) / 4f;
+        for (int i = 0; i < 4; i++)
+            cards[i] = Card(c, i * (w + gap), 84f, w, h, rots[i], roles[i].role, roles[i].desc, roles[i].wage, roles[i].level, roles[i].hire, roles[i].fire, 0.04f + i * 0.04f);
 
-        root = NewRect("Root", canvasGo.transform);
-        var rrt = (RectTransform)root.transform;
-        rrt.anchorMin = Vector2.zero; rrt.anchorMax = Vector2.one; rrt.offsetMin = rrt.offsetMax = Vector2.zero;
-        root.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.45f);
-
-        GameObject window = NewRect("Window", root.transform, new Vector2(960, 890));
-        window.AddComponent<Image>().color = WindowColor;
-        GameObject header = NewRect("Header", window.transform, new Vector2(960, 70), new Vector2(0, 410));
-        header.AddComponent<Image>().color = HeaderColor;
-        Text(header.transform, "STAFF", 34, new Vector2(900, 60), Vector2.zero, TextAlignmentOptions.Center, true);
-        Btn(header.transform, "X", new Vector2(50, 50), new Vector2(445, 0), Close, new Color(0.9f, 0.2f, 0.2f));
-        headerInfo = Text(window.transform, "", 24, new Vector2(900, 36), new Vector2(0, 350), TextAlignmentOptions.Center, false);
-
-        Row(window.transform, 260, "Cashier",
-            $"Scans items and takes payment at a counter.\n{EconomyManager.Format(StaffManager.CashierWage)}/day  ·  Lv {StaffManager.CashierLevel}",
-            out cashierStatus, out hireCashier, out fireCashier,
-            () => StaffManager.Instance.HireCashier(), () => StaffManager.Instance.FireCashier());
-        Row(window.transform, 130, "Restocker",
-            $"Carries boxes to shelves that sell that product and refills them.\n{EconomyManager.Format(StaffManager.RestockerWage)}/day  ·  Lv {StaffManager.RestockerLevel}",
-            out restockerStatus, out hireRestocker, out fireRestocker,
-            () => StaffManager.Instance.HireRestocker(), () => StaffManager.Instance.FireRestocker());
-        Row(window.transform, 0, "Guard",
-            $"Stands outside the entrance and chases down shoplifters for you.\n{EconomyManager.Format(StaffManager.GuardWage)}/day  ·  Lv {StaffManager.GuardLevel}",
-            out guardStatus, out hireGuard, out fireGuard,
-            () => StaffManager.Instance.HireGuard(), () => StaffManager.Instance.FireGuard());
-        Row(window.transform, -130, "Janitor",
-            $"Finds dirty spots on the floor and sweeps them, so customers stay happy.\n{EconomyManager.Format(StaffManager.JanitorWage)}/day  ·  Lv {StaffManager.JanitorLevel}",
-            out janitorStatus, out hireJanitor, out fireJanitor,
-            () => StaffManager.Instance.HireJanitor(), () => StaffManager.Instance.FireJanitor());
-
-        // Mở thêm quầy thu ngân (tối đa 4 quầy = 4 thu ngân)
-        GameObject crow = NewRect("Row_Counter", window.transform, new Vector2(900, 120), new Vector2(0, -260));
-        crow.AddComponent<Image>().color = RowColor;
-        Text(crow.transform, "<b>Checkout counter</b>", 30, new Vector2(320, 50), new Vector2(-270, 25), TextAlignmentOptions.Left, false);
-        Text(crow.transform, "<size=75%>Open another checkout so more customers can pay at once.\nEach open counter can have 1 cashier (max 4).</size>", 26, new Vector2(460, 70), new Vector2(-200, -22), TextAlignmentOptions.Left, false);
-        counterStatus = Text(crow.transform, "", 24, new Vector2(220, 110), new Vector2(170, 0), TextAlignmentOptions.Center, true);
-        unlockCounter = Btn(crow.transform, "Unlock", new Vector2(150, 46), new Vector2(360, 0), () => LockedCheckout.TryUnlockNext(), new Color(0.2f, 0.6f, 0.9f));
-
-        Text(window.transform, "<size=80%>Wages are paid at the end of each day.</size>", 24, new Vector2(900, 36), new Vector2(0, -390), TextAlignmentOptions.Center, false);
+        // Quầy thu ngân
+        RectTransform bar = ShopPC.Box("Counter", c, 0f, ShopPC.ContentSize.y - 90f, ShopPC.ContentSize.x, 90f, ShopPC.Card);
+        ShopPC.Box("Gold", bar, 0f, 0f, 6f, 90f, ShopPC.Gold);
+        counterTitle = ShopPC.Text(bar, "", ShopUI.Print, 30, 30f, 0f, 420f, 90f, ShopPC.Gold, TextAlignmentOptions.Left, 3f);
+        counterStatus = ShopPC.Text(bar, "", ShopUI.Body, 19, 450f, 0f, 1060f, 90f, ShopPC.Hex(0xD3D8E0), TextAlignmentOptions.Left);
+        unlockCounter = ShopPC.Btn(bar, "UNLOCK", ShopPC.ContentSize.x - 27f - 300f, 15f, 300f, 60f, () => LockedCheckout.TryUnlockNext(), ShopPC.Kind.Red, 24f);
         root.SetActive(false);
     }
 
-    private void Row(Transform parent, float y, string title, string desc, out TMP_Text status, out Button hire, out Button fire,
-                     UnityEngine.Events.UnityAction onHire, UnityEngine.Events.UnityAction onFire)
+    private StaffCard Card(Transform parent, float x, float y, float w, float h, float rot, string role, string desc, float wage, int level,
+                           UnityEngine.Events.UnityAction onHire, UnityEngine.Events.UnityAction onFire, float delay)
     {
-        GameObject row = NewRect("Row_" + title, parent, new Vector2(900, 120), new Vector2(0, y));
-        row.AddComponent<Image>().color = RowColor;
-        Text(row.transform, $"<b>{title}</b>", 30, new Vector2(200, 50), new Vector2(-330, 25), TextAlignmentOptions.Left, false);
-        Text(row.transform, $"<size=75%>{desc}</size>", 26, new Vector2(460, 70), new Vector2(-200, -22), TextAlignmentOptions.Left, false);
-        status = Text(row.transform, "", 24, new Vector2(180, 100), new Vector2(155, 0), TextAlignmentOptions.Center, true);
-        hire = Btn(row.transform, "Hire", new Vector2(100, 46), new Vector2(310, 0), onHire, new Color(0.2f, 0.7f, 0.3f));
-        fire = Btn(row.transform, "Fire", new Vector2(80, 46), new Vector2(410, 0), onFire, new Color(0.75f, 0.3f, 0.25f));
-    }
+        var sc = new StaffCard();
+        RectTransform card = ShopPC.Sheet("Card_" + role, parent, x, y, w, h, ShopPC.Paper, rot, 30f);
+        ShopPC.Text(card, "ĐƠN XIN VIỆC · JOB APPLICATION", ShopUI.Body, 15, 0f, 18f, w, 24f, ShopPC.Red, TextAlignmentOptions.Center, 3f, true);
 
-    private static GameObject NewRect(string name, Transform parent, Vector2 size = default, Vector2 pos = default)
-    {
-        var go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        var rt = (RectTransform)go.transform;
-        rt.sizeDelta = size;
-        rt.anchoredPosition = pos;
-        return go;
-    }
+        // Ảnh thẻ: bóng người trên nền xanh
+        RectTransform photo = ShopPC.Box("Photo", card, 24f, 54f, 111f, 144f, ShopPC.Hex(0x8FB2D6));
+        photo.gameObject.AddComponent<RectMask2D>();
+        Color sil = ShopPC.Hex(0x2A2018);
+        ShopPC.Dot(photo, new Vector2(84f, 84f), ShopPC.At(photo.sizeDelta, 13.5f, 75f, 84f, 84f), sil);
+        ShopPC.Box("Body", photo, 13.5f, 117f, 84f, 40f, sil);
+        ShopPC.Dot(photo, new Vector2(42f, 45f), ShopPC.At(photo.sizeDelta, 34.5f, 24f, 42f, 45f), sil);
+        ShopUI.Frame(photo, photo.sizeDelta, Color.white, 3f);
 
-    private static TMP_Text Text(Transform parent, string text, float size, Vector2 box, Vector2 pos, TextAlignmentOptions align, bool bold)
-    {
-        GameObject go = NewRect("Text", parent, box, pos);
-        var t = go.AddComponent<TextMeshProUGUI>();
-        t.text = text;
-        t.fontSize = size;
-        t.alignment = align;
-        t.color = Color.white;
-        t.raycastTarget = false;
-        if (bold) t.fontStyle = FontStyles.Bold;
-        return t;
-    }
+        ShopPC.Text(card, role.ToUpperInvariant(), ShopUI.Print, 39, 153f, 50f, w - 170f, 48f, ShopPC.Ink, TextAlignmentOptions.Left, 1.5f);
+        sc.who = ShopPC.Text(card, "", ShopUI.Hand, 31, 153f, 96f, w - 170f, 38f, ShopPC.Pen, TextAlignmentOptions.Left);
+        ShopPC.Text(card, "Wage", ShopUI.Body, 18, 153f, 144f, 60f, 32f, ShopPC.Ink, TextAlignmentOptions.Left, 0f, true);
+        ShopPC.Text(card, $"{EconomyManager.Format(wage)} / day", ShopUI.Hand, 33, 208f, 136f, w - 225f, 42f, ShopPC.Pen, TextAlignmentOptions.Left);
+        ShopPC.Text(card, $"Needs store Lv {level}", ShopUI.Body, 16, 153f, 178f, w - 170f, 26f, ShopPC.Muted, TextAlignmentOptions.Left);
+        ShopPC.Text(card, desc, ShopUI.Body, 18, 24f, 216f, w - 48f, 80f, ShopPC.Body, TextAlignmentOptions.TopLeft);
+        sc.reason = ShopPC.Text(card, "", ShopUI.Body, 15, 24f, 298f, w - 48f, 26f, ShopPC.Red, TextAlignmentOptions.Left, 0f, true);
 
-    private static Button Btn(Transform parent, string label, Vector2 size, Vector2 pos, UnityEngine.Events.UnityAction onClick, Color color)
-    {
-        GameObject go = NewRect("Button_" + label, parent, size, pos);
-        go.AddComponent<Image>().color = color;
-        Button b = go.AddComponent<Button>();
-        b.onClick.AddListener(onClick);
-        Text(go.transform, label, 24, size, Vector2.zero, TextAlignmentOptions.Center, true);
-        return b;
+        float by = h - 24f - 57f;
+        sc.stamp = ShopPC.Stamp(card, "ĐÃ NHẬN · HIRED", ShopPC.At(card.sizeDelta, 24f, by + 4f, 200f, 50f), 24f, -6f).gameObject;
+        sc.waiting = ShopPC.Text(card, "Not hired yet", ShopUI.Body, 16, 24f, by, 200f, 57f, ShopPC.Muted, TextAlignmentOptions.Left);
+        sc.hire = ShopPC.Btn(card, "HIRE", w - 24f - 120f, by, 120f, 57f, onHire, ShopPC.Kind.Red, 24f);
+        sc.fire = ShopPC.Btn(card, "FIRE", w - 24f - 120f - 12f - 120f, by, 120f, 57f, onFire, ShopPC.Kind.Dark, 24f);
+        return sc;
     }
 }

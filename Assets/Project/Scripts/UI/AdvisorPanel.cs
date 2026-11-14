@@ -13,16 +13,13 @@ public class AdvisorPanel : MonoBehaviour
     private static AdvisorPanel instance;
     public static bool IsOpen => instance != null && instance.root != null && instance.root.activeSelf;
 
-    private const int MaxRows = 12;
-    private const float W = 1640f, H = 860f, RowH = 44f;
-    private static readonly Color RowA = new Color(0.09f, 0.11f, 0.15f, 1f), RowB = new Color(0.11f, 0.135f, 0.18f, 1f);
-    private static readonly Color Dim = new Color(0.68f, 0.74f, 0.82f), Gold = new Color(1f, 0.84f, 0.3f);
-    private static readonly Color Disabled = new Color(0.3f, 0.33f, 0.38f, 1f);
-    // Cột: tên, x (tâm), rộng
+    private const int MaxRows = 11;
+    private const float RowH = 60f, Left = 90f;
+    // Cột: tên, vị trí trái, rộng (tính từ mép trái tờ giấy)
     private static readonly (string title, float x, float w)[] Cols =
     {
-        ("Product", -640f, 300f), ("Group", -430f, 120f), ("On hand", -320f, 100f), ("Expected sales", -195f, 150f),
-        ("Target", -75f, 90f), ("Order", 30f, 120f), ("Why", 320f, 460f), ("", 700f, 190f),
+        ("PRODUCT", 90f, 285f), ("IN STOCK", 375f, 120f), ("WILL SELL", 495f, 135f), ("SHOULD HAVE", 630f, 150f),
+        ("ORDER", 780f, 180f), ("WHY", 960f, 720f), ("", 1689f, 126f),
     };
 
     private class Row
@@ -37,7 +34,7 @@ public class AdvisorPanel : MonoBehaviour
     }
 
     private GameObject root;
-    private TMP_Text info, empty, totalText;
+    private TMP_Text info, empty, totalText, learned;
     private Button addAll;
     private readonly List<Row> rows = new List<Row>();
     private RestockAdvisor.Report report;
@@ -78,14 +75,13 @@ public class AdvisorPanel : MonoBehaviour
         GameManager gm = GameManager.Instance;
         int day = gm != null ? gm.currentDay : 1;
         string date = GameManager.DateOfDay(day + 1).ToString("ddd dd/MM", CultureInfo.InvariantCulture);
-        string history = report.daysOfHistory == 0 ? "<color=#FFB86B>no sales history yet - default estimates</color>"
-            : report.daysOfHistory < 7 ? $"<color=#FFB86B>learned from {report.daysOfHistory} day(s) of sales - still learning</color>"
-            : $"learned from {report.daysOfHistory} days of sales";
-        string today = report.hoursLeftToday > 0f ? $"{report.hoursLeftToday:0.#} h left today + " : "";
-        info.text = $"Covers {today}tomorrow ({date}: forecast <b>{report.tomorrow}</b>, forecasts are right ~{WeatherSystem.ForecastAccuracy * 100f:0}% of days)   ·   {history}";
+        learned.text = report.daysOfHistory == 0 ? "what to order tonight - no sales history yet, so these are first guesses"
+            : $"what to order tonight - learned from {report.daysOfHistory} day{(report.daysOfHistory > 1 ? "s" : "")} of sales";
+        string today = report.hoursLeftToday > 0f ? $"TODAY: {report.hoursLeftToday:0.#} h left" : "TODAY: closed";
+        info.text = $"{today}      TOMORROW {date.ToUpperInvariant()} (radio, right ~{WeatherSystem.ForecastAccuracy * 100f:0}% of days): {report.tomorrow}";
 
         float total = 0f;
-        int shown = 0;
+        int shown = 0, toOrder = 0;
         for (int i = 0; i < rows.Count; i++)
         {
             Row r = rows[i];
@@ -96,21 +92,20 @@ public class AdvisorPanel : MonoBehaviour
             var s = report.items[i];
             r.s = s;
             r.added = false;
-            string name = s.item.itemName + (s.perishable ? "  <color=#7CD992>(fresh)</color>" : "");
-            r.cells[0].text = name;
-            r.cells[1].text = DemandModel.GroupName(s.group);
-            r.cells[2].text = s.onHand.ToString(CultureInfo.InvariantCulture);
-            r.cells[3].text = s.forecast.ToString("0.#", CultureInfo.InvariantCulture);
-            r.cells[4].text = Mathf.CeilToInt(s.target).ToString(CultureInfo.InvariantCulture);
-            r.cells[5].text = s.boxes > 0
-                ? $"<color=#FFD54A><b>{s.boxes} box{(s.boxes > 1 ? "es" : "")}</b></color>\n<size=14>{s.boxes * Mathf.Max(1, s.item.itemsPerBox)} items</size>"
-                : "<color=#6BE07A>enough</color>";
-            r.cells[6].text = string.IsNullOrEmpty(s.reason) ? "<color=#8A94A3>normal demand</color>" : s.reason;
-            if (s.boxes > 0) total += s.boxes * s.item.BoxPrice;
+            r.cells[0].text = s.item.itemName + (s.perishable ? " <size=70%><color=#2F7A4A>(fresh)</color></size>" : "");
+            r.cells[1].text = s.onHand.ToString(CultureInfo.InvariantCulture);
+            r.cells[2].text = s.forecast.ToString("0.#", CultureInfo.InvariantCulture);
+            r.cells[3].text = Mathf.CeilToInt(s.target).ToString(CultureInfo.InvariantCulture);
+            r.cells[4].text = s.boxes > 0 ? $"+ {s.boxes} box{(s.boxes > 1 ? "es" : "")}" : "enough";
+            r.cells[4].color = s.boxes > 0 ? ShopPC.Red : ShopPC.GreenInk;
+            r.cells[5].text = string.IsNullOrEmpty(s.reason) ? $"{DemandModel.GroupName(s.group)} · normal demand" : s.reason;
+            if (s.boxes > 0) { total += s.boxes * s.item.BoxPrice; toOrder++; }
             UpdateButton(r);
         }
         empty.gameObject.SetActive(shown == 0);
-        totalText.text = total > 0f ? $"Suggested order total: <color=#FFD54A>{EconomyManager.Format(total)}</color>" : "Nothing to order right now.";
+        totalText.text = total > 0f ? "Fresh food: I order a little less than I think I can sell. Spoiled food is money in the bin. - bà Lan"
+                                    : "Nothing to order right now. The shelves will last until tomorrow. - bà Lan";
+        ShopPC.SetLabel(addAll, total > 0f ? $"ADD ALL {toOrder} TO CART · {EconomyManager.Format(total)}" : "ADD ALL TO CART");
         addAll.interactable = total > 0f && MarketManager.Instance != null;
     }
 
@@ -118,8 +113,8 @@ public class AdvisorPanel : MonoBehaviour
     {
         bool can = r.s != null && r.s.boxes > 0 && !r.added && MarketManager.Instance != null;
         r.button.interactable = can;
-        r.buttonImage.color = can ? UIKit.Green : Disabled;
-        r.buttonLabel.text = r.added ? "IN CART" : r.s != null && r.s.boxes > 0 ? $"ADD {r.s.boxes}" : "-";
+        r.button.gameObject.SetActive(r.s != null && r.s.boxes > 0);
+        r.buttonLabel.text = r.added ? "IN CART" : "ADD";
     }
 
     private void Add(Row r)
@@ -138,52 +133,54 @@ public class AdvisorPanel : MonoBehaviour
         if (n > 0) ProgressHUD.Toast($"Added {n} suggested product(s) to the cart. Press <b>Buy</b> to order.");
     }
 
-    // ================= Dựng giao diện =================
+    // ================= Dựng giao diện (bản thiết kế 09: sổ tay bà Lan) =================
     private void Build()
     {
         Transform canvas = UIKit.CreateCanvas(transform, 550).transform;
-        root = UIKit.FullScreen("Root", canvas, new Color(0f, 0f, 0f, 0.5f));
-        GameObject window = UIKit.Panel("Window", root.transform, new Vector2(W, H), Vector2.zero, UIKit.Window);
-        Transform t = window.transform;
-        GameObject header = UIKit.Panel("Header", t, new Vector2(W, 64), new Vector2(0, H / 2f - 32f), UIKit.Header);
-        UIKit.Text(header.transform, "RESTOCK ADVISOR", 32, new Vector2(W - 200, 60), Vector2.zero, TextAlignmentOptions.Center, true);
-        UIKit.Btn(header.transform, "X", new Vector2(48, 48), new Vector2(W / 2f - 30f, 0), Close, UIKit.Red);
+        RectTransform c = ShopPC.Computer(canvas, "ADVISOR", Close, out root);
+        Vector2 sz = ShopPC.ContentSize;
+        RectTransform book = ShopPC.Sheet("Notebook", c, 0f, 0f, sz.x, sz.y, ShopPC.Paper);
+        Transform t = book;
+        ShopPC.Box("Margin", book, 60f, 0f, 3f, sz.y, ShopPC.A(ShopPC.Red, 0.5f));
+        for (float hy = 36f; hy < sz.y - 30f; hy += 69f) ShopPC.Dot(book, new Vector2(21f, 21f), ShopPC.At(sz, 21f, hy, 21f, 21f), ShopPC.Bg);
 
-        info = UIKit.Text(t, "", 19, new Vector2(W - 60, 30), new Vector2(0, H / 2f - 88f), TextAlignmentOptions.Center, false, new Color(0.85f, 0.9f, 0.95f));
-        TMP_Text how = UIKit.Text(t,
-            "Expected sales come from your own sales history (weather, temperature and weekday effects it has learned) - not from a fixed rule. " +
-            "Target keeps enough stock for 90% of days; fresh food uses the newsvendor rule to balance lost sales against spoilage.",
-            16, new Vector2(W - 80, 44), new Vector2(0, H / 2f - 124f), TextAlignmentOptions.Center, false, Dim);
-        how.textWrappingMode = TextWrappingModes.Normal;
+        TMP_Text title = ShopPC.Text(book, "SỔ TAY BÀ LAN", ShopUI.Print, 45, Left, 24f, 500f, 60f, ShopPC.Red, TextAlignmentOptions.BottomLeft, 4.5f);
+        title.textWrappingMode = TextWrappingModes.NoWrap;
+        float tw = title.GetPreferredValues(title.text).x + 21f;
+        learned = ShopPC.Text(book, "", ShopUI.Hand, 33, Left + tw, 30f, sz.x - Left - tw - 40f, 50f, ShopPC.Pen, TextAlignmentOptions.BottomLeft);
+        info = ShopPC.Text(book, "", ShopUI.Body, 18, Left, 90f, sz.x - Left - 40f, 28f, ShopPC.Muted, TextAlignmentOptions.Left, 0f, true);
 
-        float y = H / 2f - 172f;
-        GameObject head = UIKit.Panel("ColumnHeader", t, new Vector2(W - 40, 36), new Vector2(0, y), new Color(0.06f, 0.08f, 0.11f, 1f));
-        foreach (var c in Cols)
-            UIKit.Text(head.transform, c.title, 17, new Vector2(c.w, 34), new Vector2(c.x, 0), Align(c.title), true, Dim);
+        float y = 130f;
+        foreach (var col in Cols)
+            ShopPC.Text(book, col.title, ShopUI.Body, 15, col.x, y, col.w, 30f, ShopPC.Red, TextAlignmentOptions.BottomLeft, 1.5f, true);
+        ShopPC.Box("HeadLine", book, Left, y + 33f, sz.x - Left - 33f, 3f, ShopPC.Red);
 
-        y -= 40f;
+        y += 39f;
         for (int i = 0; i < MaxRows; i++)
         {
-            var r = new Row { cells = new TMP_Text[Cols.Length - 1] };
-            r.go = UIKit.Panel("Row" + i, t, new Vector2(W - 40, RowH - 2), new Vector2(0, y - i * RowH), i % 2 == 0 ? RowA : RowB);
-            for (int c = 0; c < Cols.Length - 1; c++)
+            var r = new Row { cells = new TMP_Text[6] };
+            r.go = ShopPC.Group("Row" + i, book, 0f, y + i * RowH, sz.x, RowH).gameObject;
+            Transform rt = r.go.transform;
+            ShopPC.Box("Rule", rt, Left, RowH - 1.5f, sz.x - Left - 33f, 1.5f, ShopPC.A(ShopPC.Pen, 0.25f));
+            for (int k = 0; k < 6; k++)
             {
-                r.cells[c] = UIKit.Text(r.go.transform, "", c == 6 ? 15 : 18, new Vector2(Cols[c].w, RowH - 4), new Vector2(Cols[c].x, 0), Align(Cols[c].title), c == 0);
-                r.cells[c].textWrappingMode = c == 6 || c == 0 ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
-                r.cells[c].overflowMode = TextOverflowModes.Ellipsis;
+                r.cells[k] = ShopPC.Text(rt, "", ShopUI.Hand, k == 5 ? 28 : 33, Cols[k].x, 0f, Cols[k].w - 12f, RowH, k == 5 ? ShopPC.Hex(0x5A4A34) : ShopPC.Pen, TextAlignmentOptions.Left);
+                r.cells[k].textWrappingMode = TextWrappingModes.NoWrap;
+                r.cells[k].overflowMode = TextOverflowModes.Ellipsis;
             }
+            r.cells[0].fontStyle = FontStyles.Bold;
             Row captured = r;
-            r.button = UIKit.Btn(r.go.transform, "ADD", new Vector2(Cols[7].w - 20, RowH - 10), new Vector2(Cols[7].x, 0), () => Add(captured), UIKit.Green, 17);
+            r.button = ShopPC.Btn(rt, "ADD", Cols[6].x, 7.5f, Cols[6].w, 45f, () => Add(captured), ShopPC.Kind.Red, 22f);
             r.buttonImage = r.button.GetComponent<Image>();
             r.buttonLabel = r.button.GetComponentInChildren<TMP_Text>();
             rows.Add(r);
         }
-        empty = UIKit.Text(t, "No products in the store yet - order a few products first, then come back after a day of sales.", 22,
-            new Vector2(W - 200, 60), new Vector2(0, 0), TextAlignmentOptions.Center, false, Dim);
+        empty = ShopPC.Text(book, "No products in the store yet - order a few products first, then come back after a day of sales.", ShopUI.Hand, 33,
+            Left, 300f, sz.x - Left - 60f, 80f, ShopPC.Pen, TextAlignmentOptions.Center);
 
-        float by = -H / 2f + 44f;
-        totalText = UIKit.Text(t, "", 22, new Vector2(700, 44), new Vector2(-W / 2f + 380f, by), TextAlignmentOptions.Left, true);
-        addAll = UIKit.Btn(t, "ADD ALL TO CART", new Vector2(320, 56), new Vector2(W / 2f - 190f, by), AddAll, UIKit.Green, 22);
+        float by = sz.y - 24f - 69f;
+        totalText = ShopPC.Text(book, "", ShopUI.Hand, 31, Left, by, sz.x - Left - 560f, 69f, ShopPC.Pen, TextAlignmentOptions.Left);
+        addAll = ShopPC.Btn(book, "ADD ALL TO CART", sz.x - 39f - 480f, by, 480f, 69f, AddAll, ShopPC.Kind.Red, 25f);
         root.SetActive(false);
     }
 

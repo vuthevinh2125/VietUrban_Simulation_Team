@@ -117,6 +117,9 @@ public class BusinessStats : MonoBehaviour
         if (g >= 0 && g < GroupCount) Instance.todayGroupHour[g * 24 + hour]++;
     }
 
+    /// <summary>Số đơn giao hàng đã xong hôm nay (cho thẻ "Việc hôm nay").</summary>
+    public static int TodayDeliveries => Instance != null ? Instance.todayDeliveries : 0;
+
     public static void RecordDelivery(float amount)
     {
         if (Instance == null) return;

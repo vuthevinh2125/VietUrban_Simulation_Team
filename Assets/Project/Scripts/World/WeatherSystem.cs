@@ -550,12 +550,13 @@ public class WeatherSystem : MonoBehaviour
     private void BuildHud()
     {
         Canvas canvas = UIKit.CreateCanvas(transform, 50);
-        GameObject panel = UIKit.Panel("WeatherInfo", canvas.transform, new Vector2(300, 30), Vector2.zero, new Color(0f, 0f, 0f, 0.55f));
+        GameObject panel = UIKit.Panel("WeatherInfo", canvas.transform, new Vector2(300, 30), Vector2.zero, ShopUI.A(ShopUI.Night, 0.82f));
         var rt = (RectTransform)panel.transform;
         rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
         rt.anchoredPosition = new Vector2(10f, -126f); // ngay dưới khung ngày / giờ / tiền (rộng 300, x 10)
         hudText = UIKit.Text(panel.transform, "", 16, new Vector2(284, 28), Vector2.zero, TextAlignmentOptions.Left);
+        hudText.font = ShopUI.Body;
         hudText.enableAutoSizing = true; hudText.fontSizeMin = 11; hudText.fontSizeMax = 16;
         hudText.textWrappingMode = TextWrappingModes.NoWrap;
     }

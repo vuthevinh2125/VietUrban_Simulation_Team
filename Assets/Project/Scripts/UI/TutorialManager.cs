@@ -147,12 +147,14 @@ public class TutorialManager : MonoBehaviour
     private void Build()
     {
         Transform canvas = UIKit.CreateCanvas(transform, 60).transform;
-        panel = UIKit.Panel("Tutorial", canvas, new Vector2(520, 210), Vector2.zero, new Color(0.04f, 0.2f, 0.35f, 0.88f));
+        panel = UIKit.Panel("Tutorial", canvas, new Vector2(520, 210), Vector2.zero, ShopUI.A(ShopUI.Counter, 0.92f));
         var rt = (RectTransform)panel.transform;
         rt.anchorMin = rt.anchorMax = new Vector2(1f, 0.5f);
         rt.pivot = new Vector2(1f, 0.5f);
         rt.anchoredPosition = new Vector2(-20f, 120f);
-        progressText = UIKit.Text(panel.transform, "", 20, new Vector2(490, 30), new Vector2(0, 80), TextAlignmentOptions.Left, true, new Color(0.6f, 0.85f, 1f));
+        ShopUI.Box("Accent", panel.transform, new Vector2(6f, 210f), new Vector2(-257f, 0f), ShopUI.SignRed);
+        ShopUI.Frame(panel.transform, new Vector2(520f, 210f), ShopUI.A(ShopUI.SignGold, 0.35f), 2f);
+        progressText = UIKit.Text(panel.transform, "", 20, new Vector2(490, 30), new Vector2(0, 80), TextAlignmentOptions.Left, true, ShopUI.SignGold);
         titleText = UIKit.Text(panel.transform, "", 32, new Vector2(490, 44), new Vector2(0, 45), TextAlignmentOptions.Left, true);
         bodyText = UIKit.Text(panel.transform, "", 23, new Vector2(490, 110), new Vector2(0, -35), TextAlignmentOptions.TopLeft);
         // Cho chữ không bị cắt

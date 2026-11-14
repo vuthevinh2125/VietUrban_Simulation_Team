@@ -227,13 +227,14 @@ public class ReviewManager : MonoBehaviour
     private void BuildHud()
     {
         Canvas canvas = UIKit.CreateCanvas(transform, 50);
-        GameObject panel = UIKit.Panel("RatingInfo", canvas.transform, new Vector2(300, 30), Vector2.zero, new Color(0f, 0f, 0f, 0.55f));
+        GameObject panel = UIKit.Panel("RatingInfo", canvas.transform, new Vector2(300, 30), Vector2.zero, ShopUI.A(ShopUI.Night, 0.82f));
         var rt = (RectTransform)panel.transform;
         rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
         rt.anchoredPosition = new Vector2(10f, -158f); // dưới dòng thời tiết, cùng cột với khung tiền
         hudStars = StarRow(panel.transform, new Vector2(-89f, 0f), 18f);
         hudText = UIKit.Text(panel.transform, "", 16, new Vector2(180, 28), new Vector2(52f, 0f), TextAlignmentOptions.Left);
+        hudText.font = ShopUI.Body;
         hudText.enableAutoSizing = true; hudText.fontSizeMin = 11; hudText.fontSizeMax = 16;
         hudText.textWrappingMode = TextWrappingModes.NoWrap;
     }

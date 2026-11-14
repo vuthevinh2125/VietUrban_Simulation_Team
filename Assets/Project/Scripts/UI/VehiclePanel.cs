@@ -14,11 +14,7 @@ public class VehiclePanel : MonoBehaviour
     public static bool IsOpen => instance != null && instance.root != null && instance.root.activeSelf;
     public static int ClosedFrame { get; private set; } = -1;
 
-    private static readonly Color CardColor = new Color(0.09f, 0.11f, 0.15f, 1f);
-    private static readonly Color BikeColor = new Color(0.1f, 0.62f, 0.62f, 1f);
-    private static readonly Color CarColor = new Color(0.45f, 0.3f, 0.8f, 1f);
-    private static readonly Color Disabled = new Color(0.3f, 0.33f, 0.38f, 1f);
-    private static readonly Color BlueBtn = new Color(0.0f, 0.55f, 0.9f, 1f);
+    private static readonly string[] Paint = { "3E7BC0", "C8161D", "E9E3D6", "4FA36A", "E8B13A", "7A5BB5" };
 
     private class Card
     {
@@ -28,6 +24,9 @@ public class VehiclePanel : MonoBehaviour
         public TMP_Text speedText, boostText;
         public Button button;
         public Image buttonImage;
+        public GameObject stamp, plate, tag;
+        public TMP_Text tagText, lockText;
+        public CanvasGroup group;
     }
 
     private GameObject root;
@@ -79,7 +78,7 @@ public class VehiclePanel : MonoBehaviour
         if (root == null || !root.activeSelf) return;
         int ownedCount = 0;
         foreach (var e in VehicleManager.Catalog) if (VehicleManager.Owns(e.id)) ownedCount++;
-        headerInfo.text = $"Store Lv {StoreProgress.Level}   ·   Money {EconomyManager.Format(EconomyManager.Instance != null ? EconomyManager.Instance.Money : 0f)}   ·   Owned {ownedCount}/{VehicleManager.Catalog.Length}";
+        headerInfo.text = $"Faster vehicles finish deliveries sooner. Owned vehicles park outside - walk up and press <b><color=#F1F3F6>F</color></b> to ride.   Owned {ownedCount}/{VehicleManager.Catalog.Length}";
 
         foreach (Card c in cards)
         {
@@ -87,33 +86,30 @@ public class VehiclePanel : MonoBehaviour
             bool own = VehicleManager.Owns(e.id);
             bool driving = VehicleManager.IsBeingDriven(e.id);
             var result = VehicleManager.CanBuy(e);
-
-            c.badge.text = own ? (driving ? "<color=#FFD54A>IN USE</color>" : "<color=#6BE07A>OWNED</color>") : "";
             bool lvOk = StoreProgress.Level >= e.level;
-            c.level.text = lvOk
-                ? $"<color=#6BE07A>Store Lv {e.level}</color> required"
-                : $"<color=#FF8A7A>Store Lv {e.level}</color> required  (you are Lv {StoreProgress.Level})";
-            c.price.text = own ? "" : e.price <= 0f ? "FREE" : EconomyManager.Format(e.price);
+
+            c.stamp.SetActive(own);
+            c.plate.SetActive(own);
+            c.tag.SetActive(!own && lvOk);
+            c.tagText.text = e.price <= 0f ? "FREE" : EconomyManager.Format(e.price);
+            c.lockText.gameObject.SetActive(!own && !lvOk);
+            c.lockText.text = $"needs store Lv {e.level} · {(e.price <= 0f ? "free" : EconomyManager.Format(e.price))}";
+            c.group.alpha = !own && !lvOk ? 0.72f : 1f;
 
             if (own)
             {
-                c.action.text = driving ? "IN USE" : "BRING TO STORE";
+                c.action.text = driving ? "IN USE" : "CALL";
                 c.button.interactable = !driving;
-                c.buttonImage.color = driving ? Disabled : BlueBtn;
+                c.button.gameObject.SetActive(true);
             }
             else
             {
-                switch (result)
-                {
-                    case VehicleManager.BuyResult.Ok: c.action.text = "BUY"; break;
-                    case VehicleManager.BuyResult.LevelTooLow: c.action.text = $"LOCKED  ·  LV {e.level}"; break;
-                    case VehicleManager.BuyResult.NotEnoughMoney: c.action.text = "NOT ENOUGH MONEY"; break;
-                    default: c.action.text = "UNAVAILABLE"; break;
-                }
-                bool ok = result == VehicleManager.BuyResult.Ok;
-                c.button.interactable = ok;
-                c.buttonImage.color = ok ? UIKit.Green : Disabled;
+                c.action.text = result == VehicleManager.BuyResult.NotEnoughMoney ? "NO MONEY" : "BUY";
+                c.button.interactable = result == VehicleManager.BuyResult.Ok;
+                c.button.gameObject.SetActive(lvOk);
             }
+            c.buttonImage.color = own ? ShopPC.Ink : ShopPC.Red;
+            c.action.color = own ? ShopPC.Gold : ShopPC.Cream;
         }
     }
 
@@ -124,87 +120,109 @@ public class VehiclePanel : MonoBehaviour
         Refresh();
     }
 
-    // ================= Dựng giao diện =================
+    // ================= Dựng giao diện (bản thiết kế 05: giấy đăng ký xe) =================
     private void Build()
     {
         Transform canvas = UIKit.CreateCanvas(transform, 550).transform;
-        root = UIKit.FullScreen("Root", canvas, new Color(0f, 0f, 0f, 0.5f));
-        int n = VehicleManager.Catalog.Length;
-        const float gap = 24f;
-        float W = Mathf.Clamp(n * 314f + (n - 1) * gap + 60f, 1300f, 1860f);   // 3 xe: 1300; 5 xe: 1726
-        float cardW = Mathf.Min(390f, (W - 60f - (n - 1) * gap) / n);
-        GameObject window = UIKit.Panel("Window", root.transform, new Vector2(W, 760), Vector2.zero, UIKit.Window);
-        GameObject header = UIKit.Panel("Header", window.transform, new Vector2(W, 64), new Vector2(0, 348), UIKit.Header);
-        UIKit.Text(header.transform, "VEHICLES", 32, new Vector2(W - 200, 60), Vector2.zero, TextAlignmentOptions.Center, true);
-        UIKit.Btn(header.transform, "X", new Vector2(48, 48), new Vector2(W / 2f - 30f, 0), Close, UIKit.Red);
+        RectTransform c = ShopPC.Computer(canvas, "VEHICLES", Close, out root);
+        headerInfo = ShopPC.Title(c, "VEHICLES", "", out _);
 
-        headerInfo = UIKit.Text(window.transform, "", 20, new Vector2(1200, 30), new Vector2(0, 288), TextAlignmentOptions.Center, false, new Color(0.8f, 0.85f, 0.9f));
-        UIKit.Text(window.transform, "Owned vehicles are parked outside the store - walk up and press <b>[F]</b> to ride. Faster vehicles make deliveries easier.",
-            18, new Vector2(1200, 28), new Vector2(0, 258), TextAlignmentOptions.Center, false, new Color(0.65f, 0.72f, 0.8f));
-
+        int n = Mathf.Max(1, VehicleManager.Catalog.Length);
+        const float gap = 21f, top = 84f, cardH = 480f;
+        float cardW = Mathf.Min(420f, (ShopPC.ContentSize.x - gap * (n - 1)) / n);
         float maxBoost = 1f;
         foreach (var e in VehicleManager.Catalog) maxBoost = Mathf.Max(maxBoost, e.boost);
+        for (int i = 0; i < VehicleManager.Catalog.Length; i++)
+            cards.Add(BuildCard(c, VehicleManager.Catalog[i], i, i * (cardW + gap), top, cardW, cardH, maxBoost));
 
-        const float cardH = 560f;
-        float total = n * cardW + (n - 1) * gap;
-        for (int i = 0; i < n; i++)
-        {
-            var e = VehicleManager.Catalog[i];
-            float x = -total / 2f + cardW / 2f + i * (cardW + gap);
-            cards.Add(BuildCard(window.transform, e, new Vector2(x, -40f), cardW, cardH, maxBoost));
-        }
+        ShopPC.StickyNote(c, "Drive slowly after dark. Not everyone on the road at night is a customer. - bà Lan", 0f, top + cardH + 60f, 780f, 96f, -1f, 31f);
         root.SetActive(false);
     }
 
-    private Card BuildCard(Transform parent, VehicleManager.Entry e, Vector2 pos, float w, float h, float maxBoost)
+    private Card BuildCard(Transform parent, VehicleManager.Entry e, int index, float x, float y, float w, float h, float maxBoost)
     {
         var c = new Card { entry = e };
-        GameObject card = UIKit.Panel("Card_" + e.name, parent, new Vector2(w, h), pos, CardColor);
-        Transform t = card.transform;
+        RectTransform card = ShopPC.Sheet("Card_" + e.name, parent, x, y, w, h, ShopPC.Paper, 0f, 24f);
+        c.group = card.gameObject.AddComponent<CanvasGroup>();
         bool car = e.type == "Car";
-        Color accent = car ? CarColor : BikeColor;
-        float top = h / 2f;
+        Color paint = ShopPC.Hex(System.Convert.ToInt32(Paint[index % Paint.Length], 16));
 
-        // Dải tiêu đề
-        GameObject strip = UIKit.Panel("Title", t, new Vector2(w, 86), new Vector2(0, top - 43), accent);
-        UIKit.Text(strip.transform, e.name, 30, new Vector2(w - 30, 40), new Vector2(0, 12), TextAlignmentOptions.Left, true);
-        UIKit.Text(strip.transform, e.type.ToUpperInvariant() + (e.starter ? "  ·  STARTER" : ""), 16, new Vector2(w - 30, 24), new Vector2(0, -22),
-            TextAlignmentOptions.Left, true, new Color(1f, 1f, 1f, 0.8f));
-        c.badge = UIKit.Text(strip.transform, "", 18, new Vector2(w - 30, 24), new Vector2(0, -22), TextAlignmentOptions.Right, true);
+        // Ảnh: trời + mặt đường + xe
+        float aw = w - 36f;
+        RectTransform art = ShopPC.Box("Art", card, 18f, 18f, aw, 144f, ShopPC.Hex(0xDDE6EE));
+        ShopPC.Box("Road", art, 0f, 98f, aw, 46f, ShopPC.Hex(0x9AA3AE));
+        if (car) DrawCar(art, paint, e.speed >= 14f);
+        else DrawBike(art, paint);
+        RectTransform plate = ShopPC.Box("Plate", art, 9f, 9f, 150f, 30f, Color.white);
+        ShopUI.Frame(plate, plate.sizeDelta, ShopPC.Hex(0x14100A), 3f);
+        int hsh = Mathf.Abs(e.id.GetHashCode());
+        string plateNo = car ? $"51G-{hsh % 900 + 100}.{hsh / 7 % 90 + 10}" : $"29-{(char)('A' + hsh % 26)}1 {hsh % 900 + 100}.{hsh / 7 % 90 + 10}";
+        ShopUI.Text(plate, plateNo, ShopUI.Body, 15, plate.sizeDelta, Vector2.zero, ShopPC.Hex(0x14100A)).fontStyle = FontStyles.Bold;
+        c.plate = plate.gameObject;
 
-        // Mô tả
-        TMP_Text desc = UIKit.Text(t, e.description, 19, new Vector2(w - 40, 96), new Vector2(0, top - 150), TextAlignmentOptions.TopLeft, false,
-            new Color(0.82f, 0.87f, 0.93f));
-        desc.textWrappingMode = TextWrappingModes.Normal;
+        ShopPC.Text(card, e.name.ToUpperInvariant(), ShopUI.Print, 33, 21f, 174f, w - 42f, 42f, ShopPC.Ink, TextAlignmentOptions.Left, 1.5f).enableAutoSizing = true;
+        ShopPC.Text(card, $"{e.type}{(e.starter ? " · starter" : "")} · store Lv {e.level}", ShopUI.Body, 16, 21f, 216f, w - 42f, 24f, ShopPC.Muted, TextAlignmentOptions.Left, 0f, true);
+        TMP_Text desc = ShopPC.Text(card, e.description, ShopUI.Body, 15, 21f, 244f, w - 42f, 66f, ShopPC.Body, TextAlignmentOptions.TopLeft);
+        desc.enableAutoSizing = true; desc.fontSizeMin = 12; desc.fontSizeMax = 15;
 
-        // Tốc độ
-        float y = top - 236;
-        UIKit.Text(t, "Top speed", 18, new Vector2(150, 26), new Vector2(-w / 2f + 95, y), TextAlignmentOptions.Left, false, new Color(0.7f, 0.76f, 0.84f));
-        c.speedBar = Bar(t, new Vector2(-w / 2f + 20, y - 24), w - 140, accent);
-        c.speedText = UIKit.Text(t, "", 18, new Vector2(100, 26), new Vector2(w / 2f - 60, y - 24), TextAlignmentOptions.Right, true);
-        y -= 70;
-        UIKit.Text(t, "Boost [Shift]", 18, new Vector2(150, 26), new Vector2(-w / 2f + 95, y), TextAlignmentOptions.Left, false, new Color(0.7f, 0.76f, 0.84f));
-        c.boostBar = Bar(t, new Vector2(-w / 2f + 20, y - 24), w - 140, accent);
-        c.boostText = UIKit.Text(t, "", 18, new Vector2(100, 26), new Vector2(w / 2f - 60, y - 24), TextAlignmentOptions.Right, true);
-        c.speedBar.fillAmount = e.speed / maxBoost;
-        c.boostBar.fillAmount = e.boost / maxBoost;
+        c.speedBar = StatBar(card, "Speed", 322f, w, e.speed / maxBoost, out c.speedText);
+        c.boostBar = StatBar(card, "Boost", 352f, w, e.boost / maxBoost, out c.boostText);
         c.speedText.text = Kmh(e.speed);
         c.boostText.text = Kmh(e.boost);
 
-        // Yêu cầu cấp + giá
-        c.level = UIKit.Text(t, "", 18, new Vector2(w - 40, 26), new Vector2(0, -h / 2f + 150), TextAlignmentOptions.Center);
-        c.price = UIKit.Text(t, "", 40, new Vector2(w - 40, 50), new Vector2(0, -h / 2f + 108), TextAlignmentOptions.Center, true, new Color(1f, 0.84f, 0.3f));
-
-        // Nút hành động
-        c.button = UIKit.Btn(t, "BUY", new Vector2(w - 50, 58), new Vector2(0, -h / 2f + 44), null, UIKit.Green, 24);
+        float fy = h - 18f - 54f;
+        c.stamp = ShopPC.Stamp(card, "CHÍNH CHỦ · OWNED", ShopPC.At(card.sizeDelta, 21f, fy + 3f, 210f, 48f), 21f, -5f).gameObject;
+        c.tagText = ShopPC.PriceTag(card, "", ShopPC.At(card.sizeDelta, 21f, fy + 5f, 120f, 44f), 33f, -3f);
+        c.tag = c.tagText.transform.parent.gameObject;
+        c.lockText = ShopPC.Text(card, "", ShopUI.Body, 16, 21f, fy, w - 42f, 54f, ShopPC.Muted, TextAlignmentOptions.Left, 0f, true);
+        c.button = ShopPC.Btn(card, "BUY", w - 21f - 130f, fy, 130f, 54f, null, ShopPC.Kind.Red, 22f);
         c.button.onClick.AddListener(() => OnAction(c));
         c.buttonImage = c.button.GetComponent<Image>();
         c.action = c.button.GetComponentInChildren<TMP_Text>();
         return c;
     }
 
+    private static Image StatBar(Transform card, string label, float y, float w, float fill, out TMP_Text value)
+    {
+        ShopPC.Text(card, label, ShopUI.Body, 16, 21f, y - 12f, 75f, 24f, ShopPC.Muted, TextAlignmentOptions.Left, 0f, true);
+        Image bar = ShopPC.HBar(card, ShopPC.At(((RectTransform)card).sizeDelta, 105f, y - 6f, 0f, 12f), w - 105f - 120f, 12f, ShopPC.A(ShopPC.Ink, 0.12f), ShopPC.Red);
+        bar.fillAmount = Mathf.Clamp01(fill);
+        value = ShopPC.Text(card, "", ShopUI.Body, 16, w - 21f - 100f, y - 12f, 100f, 24f, ShopPC.Ink, TextAlignmentOptions.Right, 0f, true);
+        return bar;
+    }
+
+    private static void DrawBike(RectTransform art, Color paint)
+    {
+        Vector2 s = art.sizeDelta;
+        float cx = s.x * 0.5f;
+        Color tyre = ShopPC.Hex(0x14100A), road = ShopPC.Hex(0x9AA3AE);
+        foreach (float wx in new[] { cx - 66f, cx + 66f })
+        {
+            ShopPC.Dot(art, new Vector2(60f, 60f), ShopPC.At(s, wx - 30f, 144f - 66f, 60f, 60f), tyre);
+            ShopPC.Dot(art, new Vector2(39f, 39f), ShopPC.At(s, wx - 19.5f, 144f - 55.5f, 39f, 39f), road);
+        }
+        ShopPC.Box("Frame", art, cx - 66f, 144f - 54f, 132f, 21f, paint, 0f);
+        ShopPC.Box("Body", art, cx - 45f, 144f - 84f, 90f, 33f, paint);
+        ShopPC.Box("Seat", art, cx - 54f, 144f - 93f, 60f, 12f, ShopPC.Hex(0x2A2018));
+        ShopPC.Box("Bar", art, cx + 39f, 144f - 108f, 9f, 42f, ShopPC.Hex(0x2A2018), -18f);
+        ShopPC.Box("Handle", art, cx + 33f, 144f - 111f, 36f, 7.5f, ShopPC.Hex(0x2A2018));
+    }
+
+    private static void DrawCar(RectTransform art, Color paint, bool low)
+    {
+        Vector2 s = art.sizeDelta;
+        float cx = s.x * 0.5f, bw = 255f, bh = low ? 27f : 39f;
+        float left = cx - bw * 0.5f;
+        ShopPC.Box("Body", art, left, 144f - 21f - bh, bw, bh, paint);
+        ShopPC.Box("Cabin", art, left + 57f, 144f - 21f - bh - (low ? 24f : 33f), bw - 108f, low ? 24f : 33f, paint);
+        ShopPC.Box("Window", art, left + 66f, 144f - 21f - bh - (low ? 18f : 27f), bw - 126f, low ? 15f : 22f, ShopPC.A(Color.white, 0.6f));
+        foreach (float wx in new[] { left + 33f, left + bw - 33f - 45f })
+        {
+            ShopPC.Dot(art, new Vector2(45f, 45f), ShopPC.At(s, wx, 144f - 45f, 45f, 45f), ShopPC.Hex(0x14100A));
+            ShopPC.Dot(art, new Vector2(21f, 21f), ShopPC.At(s, wx + 12f, 144f - 33f, 21f, 21f), ShopPC.Hex(0x9AA3AE));
+        }
+    }
+
     private static string Kmh(float speed) => Mathf.RoundToInt(speed * 3.6f).ToString(CultureInfo.InvariantCulture) + " km/h";
 
-    private static Image Bar(Transform parent, Vector2 leftCenter, float width, Color color) =>
-        UIKit.HBar(parent, leftCenter, width, 12f, color);
 }

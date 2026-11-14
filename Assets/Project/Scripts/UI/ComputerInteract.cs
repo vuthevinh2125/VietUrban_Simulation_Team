@@ -27,6 +27,7 @@ public class ComputerInteract : MonoBehaviour
     [Range(0f, 1f)] public float backdropOpacity = 0.6f;
 
     private GameObject backdrop;
+    private float nextSkin;
 
     public bool IsOpen => computerUI != null && computerUI.activeSelf;
 
@@ -92,9 +93,17 @@ public class ComputerInteract : MonoBehaviour
         if (backdrop != null && computerUI != null && backdrop.activeSelf != computerUI.activeSelf)
             backdrop.SetActive(computerUI.activeSelf);
 
+        // Tông màu/phông "tiệm tạp hoá" cho giao diện dựng sẵn trong scene (thẻ hàng sinh ra sau cũng được đổi)
+        if (IsOpen && Time.unscaledTime >= nextSkin)
+        {
+            nextSkin = Time.unscaledTime + 0.4f;
+            ShopUI.Skin(computerUI.transform);
+        }
+
         // UI bị tắt từ chỗ khác (ví dụ nút X) thì nhả khoá
         if (UIState.IsOpenedBy(this) && !IsOpen)
         {
+            ProductsPanel.Hide();
             if (debugLogs && GameDebug.Verbose) Debug.LogWarning("[Computer] UI đã bị tắt từ chỗ khác -> nhả khoá.", this);
             UIState.Close(this);
             return;
@@ -120,6 +129,9 @@ public class ComputerInteract : MonoBehaviour
         EnsureParentsActive();
         if (backdrop != null) backdrop.SetActive(true);
         computerUI.SetActive(true);
+        ShopUI.Skin(computerUI.transform);
+        ProductsPanel.Show(computerUI);     // màn hình đặt hàng kiểu mới phủ lên giao diện cũ
+        nextSkin = Time.unscaledTime + 0.4f;
         UIState.Open(this);
         if (debugLogs && GameDebug.Verbose) LogState("OPEN");
     }
@@ -129,6 +141,7 @@ public class ComputerInteract : MonoBehaviour
     {
         if (computerUI != null) computerUI.SetActive(false);
         if (backdrop != null) backdrop.SetActive(false);
+        ProductsPanel.Hide();
         UIState.Close(this);
         if (debugLogs && GameDebug.Verbose) LogState("CLOSE");
     }
