@@ -31,6 +31,9 @@ public class EntranceDoor : MonoBehaviour
     [Tooltip("Giữ cửa mở thêm bao lâu sau khi người cuối cùng đi qua (giây) - tránh cửa đóng mở liên tục")]
     public float holdOpenTime = 1.5f;
 
+    /// <summary>Khung bao các cánh di chuyển LÚC ĐÓNG (đúng lối đi, không tính kính cố định hai bên). size = 0 nếu chưa Start.</summary>
+    public Bounds OpeningBounds { get; private set; }
+
     private Quaternion[] closedRot, openRot;
     private Vector3[] closedPos, slideOffset; // vị trí world lúc đóng + quãng trượt khi mở
     private bool[] moving;
@@ -81,6 +84,7 @@ public class EntranceDoor : MonoBehaviour
         }
         if (!hasArea) area = new Bounds(transform.position, Vector3.one);
         if (!hasDoor) doorBounds = area;
+        OpeningBounds = doorBounds;
 
         // Cửa kéo: trượt dọc theo trục ngang dài hơn của bộ cửa, mỗi cánh đi về phía nó đang lệch so với tâm
         Vector3 axis = doorBounds.size.x >= doorBounds.size.z ? Vector3.right : Vector3.forward;

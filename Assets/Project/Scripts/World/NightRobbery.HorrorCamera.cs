@@ -8,9 +8,9 @@ using UnityEngine.UI;
 /// "CAMERA CA ĐÊM" (~75 s): lúc đóng cửa, khách đã về hết, người chơi đang ở trong cửa hàng.
 ///  1. Đèn tắt bớt; loa siêu thị tự rè rè, có tiếng thì thầm.
 ///  2. Màn hình an ninh chia 4 ô (cửa ra vào / quầy / dãy kệ / kho): ngoài cửa kính có một "ma váy trắng" tóc xoã, da tái, máu loang.
-///     Phóng to: nó áp bàn tay lên kính. Nhìn tận mắt: không có ai - nhưng dấu tay máu trên kính là thật.
+///     Phóng to: nó áp bàn tay lên kính. Nhìn tận mắt: ngoài cửa không có ai - nhưng trên tường BÊN TRONG, cạnh cửa, có dấu tay máu.
 ///  3. Camera dãy kệ: nó đã ở BÊN TRONG, đầu vặn ngược ra sau. Đèn tắt phụt, đèn sự cố đỏ quạch, máu nhỏ giọt,
-///     trên tường hiện dòng chữ máu "MÀY THẤY TAO RỒI". Camera kho: một con quỷ gầy trơ xương bám ngược trên trần.
+///     dưới sàn một hàng dấu tay máu bò dần về phía chân bạn. Camera kho: một con quỷ gầy trơ xương bám ngược trên trần.
 ///  4. Lựa chọn (6 s): ra dãy kệ kiểm tra / chạy ra cửa / trốn sau quầy gọi bảo vệ - mỗi nhánh một màn rượt / hù riêng, máu bắn màn hình.
 ///  5. "Sáng hôm sau": két thiếu tiền thay bằng tiền âm phủ (nhánh kiểm tra), hoặc chỉ là ký ức rợn người.
 /// "Ma" nằm trên layer riêng: camera an ninh thấy, mắt thường không thấy, trừ lúc hù. Báo cáo cuối ngày chờ đoạn phim xong.
@@ -65,21 +65,23 @@ public partial class NightRobbery
             if (dists[k] > best2) { best2 = dists[k]; d2 = dir; L2 = Mathf.Clamp(dists[k] - 0.8f, 3f, 12f); }
         }
         float ceil = Physics.Raycast(P, Vector3.up, out RaycastHit up, 6f, ~0, QueryTriggerInteraction.Ignore) ? up.point.y - 0.05f : P.y + 1.6f;
-        Vector3 door = StoreDoor(out Vector3 outward, out Bounds storeB);
+        Vector3 door = StoreDoor(out Vector3 outward, out Bounds storeB, out float doorHalfW, P);   // MỘT cửa thật, gần bạn nhất
         door.y = floorY;
         CheckoutCounter counter = CheckoutCounter.All.Count > 0 ? CheckoutCounter.All[0] : FindAnyObjectByType<CheckoutCounter>();
         Vector3 cpos = counter != null ? Floor(counter.transform.position) : Floor(P + F0 * 3f);
-        // Mặt kính cửa thật (dò tia từ ngoài đường vào) để dấu tay nằm đúng trên kính; chỗ đứng nhìn tận mắt lùi vào trong
-        // vừa đủ, không lọt vào tường / kệ (máy quay không bị che)
-        Vector3 glassSide = Vector3.Cross(Vector3.up, outward);
-        Vector3 handAt = Floor(door) + Vector3.up * 1.35f + glassSide * 0.2f + outward * 0.06f;
-        Vector3 probe = Floor(door + outward * 2.5f) + Vector3.up * 1.35f + glassSide * 0.2f;
-        if (Physics.Raycast(probe, -outward, out RaycastHit gh, 4f, ~0, QueryTriggerInteraction.Ignore) && gh.distance > 1.2f)
-            handAt = gh.point + outward * 0.012f;
-        float backOff = 2.5f;
-        if (Physics.Raycast(handAt - outward * 0.15f, -outward, out RaycastHit bh, 3f, ~0, QueryTriggerInteraction.Ignore))
-            backOff = Mathf.Clamp(bh.distance - 0.45f, 0.8f, 2.5f);
-        Vector3 seeEye = Eye(handAt - outward * (0.15f + backOff)) + Vector3.down * 0.05f;
+        // Dấu tay máu: trên mặt TƯỜNG phía trong cửa hàng, ngay cạnh cửa, ngang tầm mắt (nó đứng ngoài kính, nhưng dấu tay lại ở BÊN TRONG).
+        // Không tìm được tường thì dán lên mặt trong của kính cửa.
+        Vector3 handN = -outward;
+        Vector3 handAt = Floor(door) + Vector3.up * 1.45f - outward * 0.06f;
+        if (WallBesideDoor(door, outward, doorHalfW, floorY + 1.45f, P, out Vector3 doorWallHit, out Vector3 doorWallN))
+        { handAt = doorWallHit + doorWallN * 0.002f; handN = doorWallN; }   // Decal tự đẩy ra thêm 1.2 cm
+        // Chỗ đứng nhìn tận mắt: lùi ra khỏi tường theo pháp tuyến vừa đủ (không lọt vào kệ), lệch về phía cửa để thấy cả cửa kính
+        float backOff = 2.2f;
+        if (Physics.Raycast(handAt + handN * 0.05f, handN, out RaycastHit bh, 3f, ~0, QueryTriggerInteraction.Ignore))
+            backOff = Mathf.Clamp(bh.distance - 0.45f, 0.9f, 2.2f);
+        Vector3 toDoor = (door - handAt).WithY(0f);
+        toDoor = toDoor.sqrMagnitude > 0.01f ? toDoor.normalized : Vector3.zero;
+        Vector3 seeEye = Eye(handAt + handN * backOff + toDoor * 0.45f) + Vector3.down * 0.05f;
         Vector3 far = Floor(P + d * L), mid = Floor(P + d * (L * 0.45f)), behindMe = Floor(P - d * 0.6f);
 
         // "Ma váy trắng" (layer riêng: chỉ camera an ninh thấy) + con quỷ trong kho
@@ -128,15 +130,15 @@ public partial class NightRobbery
         yield return Shot(1.6f, null, null, () => (head, head + F0 * 6f), () => Say("", "<i>Phóng to CAM 01.</i>", Color.white));
         if (ghost != null && ghost.cp != null) ghost.cp.Play(ClipPlayer.Has("Pointing") ? "Pointing" : "Walking", false, 0.2f, 0.6f);
         HorrorAudio.Play2D(HorrorAudio.Bang(), 0.5f);
-        HorrorFx.Decal(HorrorFx.Hand(), handAt, outward, Vector3.up, new Vector2(0.24f, 0.28f), Props());
-        HorrorFx.Decal(HorrorFx.Splat(), handAt + Vector3.down * 0.25f + outward * 0.002f, outward, Vector3.up, new Vector2(0.18f, 0.5f), Props(), 0.85f);   // máu chảy xuống từ dấu tay
         yield return Shot(3f, null, null, () => (head, head + F0 * 6f),
-            () => Say("", "<i>Một bóng váy trắng, tóc xoã che kín mặt. Nó áp bàn tay lên kính... để lại một vệt máu.</i>", Color.white));
-        // 4. Nhìn tận mắt: không có ai, nhưng dấu tay máu là thật
+            () => Say("", "<i>Một bóng váy trắng, tóc xoã che kín mặt. Nó áp bàn tay lên kính... nhìn vào trong.</i>", Color.white));
+        // 4. Nhìn tận mắt: ngoài cửa không có ai - nhưng trên TƯỜNG bên trong có dấu tay máu còn ướt
         ShowCctv(-1);
+        HorrorFx.Decal(HorrorFx.Hand(), handAt, handN, Vector3.up, new Vector2(0.24f, 0.28f), Props());
+        HorrorFx.Decal(HorrorFx.Splat(), handAt + Vector3.down * 0.25f + handN * 0.002f, handN, Vector3.up, new Vector2(0.18f, 0.5f), Props(), 0.85f);   // máu chảy xuống từ dấu tay
         heartbeat = HorrorAudio.Play2D(HorrorAudio.Heartbeat(), 0.45f, true);
         yield return Shot(3.4f, null, null, () => (seeEye, handAt),
-            () => Say("Bạn", "Không có ai... Nhưng vết tay máu kia... là thật!", YouSpeak));
+            () => Say("Bạn", "Ngoài cửa không có ai... Nhưng vết tay máu trên tường kia... ở BÊN TRONG!", YouSpeak));
         // 5. Nó đã ở bên trong, đầu vặn ngược
         if (ghost != null)
         {
@@ -150,7 +152,7 @@ public partial class NightRobbery
         yield return Shot(3.6f, null, null, () => (head, head + F0 * 6f),
             () => Say("", "<i>CAM 03. Nó đã ở BÊN TRONG cửa hàng, cuối dãy kệ. Thân quay lưng... nhưng cái đầu vặn ngược, nhìn thẳng vào camera.</i>", Color.white));
         ShowCctv(-1);
-        // 6. Mất điện, đèn sự cố đỏ, chữ máu
+        // 6. Mất điện, đèn sự cố đỏ, dấu tay máu bò về phía bạn
         DimStoreLights(0.03f, 0f);
         redLight = new GameObject("EmergencyLight").AddComponent<Light>();
         redLight.transform.SetParent(Props(), false);
@@ -171,7 +173,7 @@ public partial class NightRobbery
             if (score > bestWall) { bestWall = score; wallP = wh.point; wallN = wh.normal; wallD = wh.distance; }
         }
         wallP = wallP.WithY(floorY + 1.7f);
-        // Chữ máu viết ngay dưới SÀN trước mặt (chỗ chắc chắn nhìn thấy, không bị kệ che)
+        // Dấu tay máu ngay dưới SÀN trước mặt (chỗ chắc chắn nhìn thấy, không bị kệ che). Không dùng chữ viết (bỏ câu xưng "tao / mày").
         Vector3 floorTxt = Floor(P + F0 * 2.3f);
         for (int k = 0; k < 9; k++)
         {
@@ -180,11 +182,14 @@ public partial class NightRobbery
             if (!Physics.Linecast(head, cand + Vector3.up * 0.05f, ~0, QueryTriggerInteraction.Ignore)
                 && !Physics.CheckSphere(cand + Vector3.up * 0.3f, 0.25f, ~0, QueryTriggerInteraction.Ignore)) { floorTxt = cand; F0txt = dirF; break; }
         }
-        HorrorFx.Writing("MÀY THẤY TAO RỒI", floorTxt, Vector3.up, 0.3f, Props(), F0txt);
+        Vector3 sideTxt = Vector3.Cross(Vector3.up, F0txt);
+        for (int i = 0; i < 5; i++)                                   // từ xa (vũng máu) bò lại gần chân bạn, tay trái / phải xen kẽ
+            HorrorFx.Decal(HorrorFx.Hand(), floorTxt + F0txt * (0.5f - i * 0.38f) + sideTxt * (i % 2 == 0 ? 0.13f : -0.13f) + Vector3.up * 0.003f,
+                Vector3.up, -F0txt, new Vector2(0.2f, 0.24f), Props(), 1f - i * 0.1f);
         HorrorFx.Pool(floorTxt + F0txt * 0.6f, 1.4f, Props());
         HorrorFx.Decal(HorrorFx.Drag(), floorTxt - F0txt * 0.7f + Vector3.up * 0.004f, Vector3.up, F0txt, new Vector2(0.7f, 1.6f), Props(), 0.9f);
         yield return Shot(3.4f, null, null, () => (head, floorTxt),
-            () => Say("", "<i>Đèn tắt phụt. Ánh đèn sự cố đỏ quạch. Bạn nhìn xuống... ngay dưới chân, từng chữ máu từ từ hiện ra.</i>", Color.white));
+            () => Say("", "<i>Đèn tắt phụt. Ánh đèn sự cố đỏ quạch. Bạn nhìn xuống... từng dấu tay máu đang bò dần về phía chân bạn.</i>", Color.white));
         // 8. MỒI NHỬ: tiếng hàng rơi ở dãy kệ (dãy đã ghi bằng Shift+F5; chưa ghi thì dùng dãy trước mặt bạn)
         bool hasSpot = LoadF1Spot(out Vector3 spotPos, out Vector3 spotFwd);
         Vector3 S = hasSpot ? Floor(spotPos) : Floor(P);                           // đầu dãy kệ (chỗ đứng nhìn xuống dãy)

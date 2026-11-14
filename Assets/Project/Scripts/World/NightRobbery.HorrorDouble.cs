@@ -6,8 +6,8 @@ using UnityEngine.UI;
 /// "ĐƠN GIAO CHO CHÍNH MÌNH" (~75 s): đang giao hàng đêm, điện thoại rung - đơn lạ: người nhận "Chủ siêu thị VietUrban",
 /// địa chỉ chính cửa hàng của bạn, giờ giao "ngày mai". Không huỷ được. Tin nhắn liên tiếp: "Tôi đang đợi bạn." -
 /// "Bạn quên cái này." kèm một tấm ảnh chụp chính chiếc xe của bạn từ ngay phía sau, vừa chụp. Ngoái lại: đường trống trơn,
-/// chỉ có một vệt máu kéo lê dài dẫn tới tận bánh xe. Bạn vòng về cửa hàng: lẽ ra đang mở nhưng tối om; trên cửa kính chữ máu
-/// "ĐẾN LƯỢT MÀY"; ở quầy là "bạn" (cùng quần áo, mặt tái xám, máu loang) đứng quay lưng - cái đầu vặn ngược 180 độ nhìn ra;
+/// chỉ có một vệt máu kéo lê dài dẫn tới tận bánh xe. Bạn vòng về cửa hàng: lẽ ra đang mở nhưng tối om; trên cửa kính
+/// hai vệt tay máu kéo dài từ trên xuống; ở quầy là "bạn" (cùng quần áo, mặt tái xám, máu loang) đứng quay lưng - cái đầu vặn ngược 180 độ nhìn ra;
 /// rồi nó chậm rãi đi ra cửa, để lại dấu chân máu, áp mặt và hai bàn tay máu lên kính. Lựa chọn (6 s):
 ///  - Mở cửa vào xem: trong tối, dấu chân máu dẫn ra sau quầy; điện thoại trên quầy sáng màn hình "Người nhận: BẠN"... sau lưng: nó.
 ///  - Gọi điện về cửa hàng: nó nhấc máy, giọng của bạn: "...Thế ai đang đứng ngoài cửa kia?" - rồi đập sầm vào kính.
@@ -70,8 +70,9 @@ public partial class NightRobbery
             () => Say("", "<i>Đường phía sau trống trơn. Chỉ có một vệt máu kéo lê thật dài... dẫn tới tận bánh xe của bạn.</i>", Color.white));
 
         // ===== 4. Về cửa hàng =====
-        Vector3 door = StoreDoor(out Vector3 outward, out Bounds store);
         CheckoutCounter counter = CheckoutCounter.All.Count > 0 ? CheckoutCounter.All[0] : FindAnyObjectByType<CheckoutCounter>();
+        // Một cửa thật, gần quầy thu ngân nhất (trước: trung bình 2 cửa = cột tường giữa hai cửa)
+        Vector3 door = StoreDoor(out Vector3 outward, out Bounds store, counter != null ? counter.transform.position : (Vector3?)null);
         Vector3 cpos = counter != null ? (counter.cashierPoint != null ? counter.cashierPoint.position : counter.transform.position) : door - outward * 6f;
         Vector3 toFront = counter != null && counter.customerPoint != null ? counter.customerPoint.position - cpos : outward;
         toFront.y = 0f; toFront = toFront.sqrMagnitude > 0.01f ? toFront.normalized : outward;
@@ -87,11 +88,15 @@ public partial class NightRobbery
         lamp.transform.SetParent(Props(), false);
         lamp.type = LightType.Point; lamp.range = 3.5f; lamp.intensity = 2.4f; lamp.color = new Color(1f, 0.5f, 0.42f);
         lamp.transform.position = cpos + toFront * 0.6f + Vector3.up * 0.9f;
-        HorrorFx.Writing("ĐẾN LƯỢT MÀY", door + Vector3.up * 1.7f + outward * 0.08f, outward, 0.3f, Props());
+        // Hai vệt tay máu kéo dài trên kính (không dùng chữ viết - bỏ câu xưng "mày")
+        Vector3 glassSide = Vector3.Cross(Vector3.up, outward);
+        HorrorFx.Decal(HorrorFx.Drag(), door + Vector3.up * 1.35f + outward * 0.08f + glassSide * 0.22f, outward, Vector3.up, new Vector2(0.32f, 1.1f), Props(), 0.95f);
+        HorrorFx.Decal(HorrorFx.Drag(), door + Vector3.up * 1.25f + outward * 0.081f - glassSide * 0.2f, outward, Vector3.up, new Vector2(0.3f, 0.95f), Props(), 0.9f);
+        HorrorFx.Decal(HorrorFx.Hand(), door + Vector3.up * 1.85f + outward * 0.082f + glassSide * 0.22f, outward, Vector3.up, new Vector2(0.2f, 0.24f), Props());
         yield return Cut("Mười lăm phút sau...", "Bạn vòng xe về cửa hàng. Giờ này cửa hàng lẽ ra vẫn đang mở, đông khách...");
         vYou = vYouWant = 0f;                                    // xe "đứng nguyên" ngoài đường giao hàng
         yield return Shot(3.6f, null, null, () => (outside + outward * 1.5f + Vector3.up * 0.3f, door + Vector3.up * 1.6f),
-            () => Say("", "<i>...nhưng bên trong tối om. Trên cửa kính, ai đó viết nguệch ngoạc bằng máu.</i>", Color.white));
+            () => Say("", "<i>...nhưng bên trong tối om. Trên cửa kính, hai vệt tay máu kéo dài từ trên xuống, như có ai bị lôi đi.</i>", Color.white));
         cam.fieldOfView = 34f;
         yield return Shot(3.2f, null, null, () => (outside, Eye(cpos) + Vector3.down * 0.2f),
             () => Say("", "<i>Chỉ có ngọn đèn quầy thu ngân là sáng. Có người đang đứng đó, quay lưng ra... mặc đúng chiếc áo của bạn.</i>", Color.white));

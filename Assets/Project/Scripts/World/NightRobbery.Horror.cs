@@ -497,29 +497,99 @@ public partial class NightRobbery
     }
 
     // ================= Cửa hàng =================
-    private static Vector3 StoreDoor(out Vector3 outward, out Bounds storeBounds)
+    /// <summary>
+    /// MỘT cửa ra vào thật (tâm khung các cánh cửa, ở mặt sàn cửa hàng): cửa gần điểm near nhất (mặc định: máy quay chính).
+    /// Trước đây lấy TRUNG BÌNH các cửa -> cửa hàng có 2 cửa thì "cửa" rơi vào cột tường giữa hai cửa (ma đứng sau cột,
+    /// CAM 01 bị cột che, dấu tay dán lên mặt ngoài cột). outward: hướng ra phố, vuông góc với mặt cửa.
+    /// halfWidth: nửa bề ngang khung cửa (dọc theo mặt cửa).
+    /// </summary>
+    private static Vector3 StoreDoor(out Vector3 outward, out Bounds storeBounds, Vector3? near = null) =>
+        StoreDoor(out outward, out storeBounds, out _, near);
+
+    private static Vector3 StoreDoor(out Vector3 outward, out Bounds storeBounds, out float halfWidth, Vector3? near = null)
     {
         outward = Vector3.back;
+        halfWidth = 0.9f;
         storeBounds = new Bounds(Vector3.zero, Vector3.one * 40f);
-        EntranceDoor[] doors = FindObjectsByType<EntranceDoor>();
         GameObject store = GameObject.Find("Supermarket_full");
-        Vector3 door = Vector3.zero;
-        if (doors.Length > 0) { foreach (EntranceDoor d in doors) door += d.transform.position; door /= doors.Length; }
+        bool hasStore = false;
         if (store != null)
         {
             Renderer[] rs = store.GetComponentsInChildren<Renderer>();
             if (rs.Length > 0)
             {
                 Bounds b = rs[0].bounds; foreach (Renderer r in rs) b.Encapsulate(r.bounds);
-                storeBounds = b;
-                if (doors.Length == 0) door = new Vector3(b.center.x, b.min.y, b.min.z);
-                door.y = b.min.y;
-                outward = door - b.center; outward.y = 0f;
-                if (outward.sqrMagnitude < 0.01f) outward = Vector3.back;
-                outward.Normalize();
+                storeBounds = b; hasStore = true;
             }
         }
+
+        // Chọn một cửa: tâm khung bao các cánh (kính) của cửa đó, gần điểm near nhất
+        Vector3 refP = near ?? (Camera.main != null ? Camera.main.transform.position : storeBounds.center);
+        Vector3 door = Vector3.zero; Bounds doorB = default; bool found = false; float bestD = float.MaxValue;
+        foreach (EntranceDoor d in FindObjectsByType<EntranceDoor>())
+        {
+            if (d == null) continue;
+            bool any = false; Bounds db = default;
+            // Ưu tiên lối đi lúc ĐÓNG (chỉ các cánh trượt): khung bao mọi "leaf" gồm cả kính cố định hai bên và cánh đang mở
+            // trượt sang bên -> tâm bị lệch khỏi lối đi (chữ máu / dấu tay của Shift+F3 nằm lệch sang kính bên trái)
+            if (d.OpeningBounds.size.sqrMagnitude > 0.0001f) { db = d.OpeningBounds; any = true; }
+            else if (d.leaves != null)
+                foreach (Transform leaf in d.leaves)
+                {
+                    if (leaf == null) continue;
+                    foreach (Renderer r in leaf.GetComponentsInChildren<Renderer>())
+                    { if (!any) { db = r.bounds; any = true; } else db.Encapsulate(r.bounds); }
+                }
+            if (!any) db = new Bounds(d.transform.position, new Vector3(1.8f, 2.2f, 0.1f));
+            float dist = (db.center - refP).WithY(0f).sqrMagnitude;
+            if (dist < bestD) { bestD = dist; door = db.center; doorB = db; found = true; }
+        }
+        if (!found)
+        {
+            door = hasStore ? new Vector3(storeBounds.center.x, storeBounds.min.y, storeBounds.min.z) : Vector3.zero;
+            doorB = new Bounds(door, new Vector3(1.8f, 2.2f, 0.1f));
+        }
+
+        // Hướng ra phố: trục mỏng của khung cửa (vuông góc mặt kính), quay về phía xa tâm cửa hàng
+        Vector3 away = (door - storeBounds.center).WithY(0f);
+        if (found && Mathf.Abs(doorB.size.x - doorB.size.z) > 0.2f)
+        {
+            bool thinX = doorB.size.x < doorB.size.z;
+            outward = thinX ? new Vector3(Mathf.Sign(away.x == 0f ? 1f : away.x), 0f, 0f) : new Vector3(0f, 0f, Mathf.Sign(away.z == 0f ? -1f : away.z));
+            halfWidth = Mathf.Clamp((thinX ? doorB.size.z : doorB.size.x) * 0.5f, 0.5f, 3f);
+        }
+        else
+        {
+            outward = away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back;
+            halfWidth = Mathf.Clamp(Mathf.Max(doorB.size.x, doorB.size.z) * 0.5f, 0.5f, 3f);
+        }
+        if (hasStore) door.y = storeBounds.min.y;
         return door;
+    }
+
+    /// <summary>
+    /// Mặt TƯỜNG phía trong cửa hàng ngay cạnh cửa (ngang tầm mắt), ưu tiên bên gần điểm prefer: dò tia từ trong nhà ra phía cửa,
+    /// chỉ nhận mặt thẳng đứng quay vào trong, không phải cánh cửa / kính. Không tìm được thì trả về false.
+    /// </summary>
+    private static bool WallBesideDoor(Vector3 door, Vector3 outward, float halfWidth, float y, Vector3 prefer, out Vector3 point, out Vector3 normal)
+    {
+        point = default; normal = -outward;
+        Vector3 side = Vector3.Cross(Vector3.up, outward);
+        float sPref = Vector3.Dot(prefer - door, side) >= 0f ? 1f : -1f;
+        float best = float.MaxValue;
+        foreach (float s in new[] { sPref, -sPref })
+            for (float off = halfWidth + 0.3f; off <= halfWidth + 1.6f; off += 0.25f)
+            {
+                Vector3 from = door.WithY(y) + side * (s * off) - outward * 1.4f;   // trong nhà, cách mặt cửa 1.4 m
+                if (!Physics.Raycast(from, outward, out RaycastHit h, 2.2f, ~0, QueryTriggerInteraction.Ignore)) continue;
+                if (Mathf.Abs(h.normal.y) > 0.3f || Vector3.Dot(h.normal, -outward) < 0.7f) continue;    // phải là mặt đứng quay vào trong
+                if (h.collider.GetComponentInParent<EntranceDoor>() != null) continue;                     // không phải cánh cửa
+                if (h.collider.GetComponentInParent<PlayerController>() != null || h.collider.GetComponentInParent<CharacterController>() != null) continue;
+                float score = (s == sPref ? 0f : 10f) + off;                                               // ưu tiên bên gần, sát mép cửa
+                if (score < best) { best = score; point = h.point; normal = h.normal; }
+                break;                                                                                     // bên này đã có tường
+            }
+        return best < float.MaxValue;
     }
 
     /// <summary>Người chơi đang đi bộ trong cửa hàng (không ngồi xe) - trả về PlayerController.</summary>
