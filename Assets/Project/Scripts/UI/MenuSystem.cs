@@ -12,6 +12,7 @@ using UnityEngine.UI;
 ///  - Menu tạm dừng (Esc khi đang chơi): Resume / Save / Settings / Main Menu / Quit.
 ///  - Settings: độ nhạy chuột, âm lượng, nhạc nền (chọn bài), âm lượng nhạc, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần,
 ///    sự kiện kinh dị ban đêm.
+///  - New Game: bảng cảnh báo nội dung (máu me, hù doạ, đám tang) cho chọn chơi có / không có sự kiện kinh dị.
 ///  - Game Over khi hết tiền.
 /// Khi menu mở: thời gian dừng (Time.timeScale = 0), hiện chuột.
 /// </summary>
@@ -24,7 +25,7 @@ public class MenuSystem : MonoBehaviour
     private TMP_Text calDay, calInfo, calSaved, pauseNote, confirmText;
     private GameObject continueTag;
     private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue, horrorValue;
-    private Action confirmAction;
+    private Action confirmAction, confirmNoAction;
     private GameObject settingsReturnTo;
 
     public bool IsMainMenuOpen => mainMenu != null && mainMenu.activeSelf;
@@ -107,12 +108,27 @@ public class MenuSystem : MonoBehaviour
             Confirm("Start a new game?\n<size=75%>Your saved game will be deleted.</size>", () =>
             {
                 SaveManager.DeleteSave();
-                HideAll();
-                Unfreeze();
-                StartTutorial();
+                AskHorror();
             });
             return;
         }
+        AskHorror();
+    }
+
+    /// <summary>
+    /// Cảnh báo nội dung trước khi vào game: có các sự kiện kinh dị ban đêm (máu, hù doạ, đám tang, ma quỷ).
+    /// YES = chơi có sự kiện kinh dị, NO = tắt (đổi lại được trong Settings). Chọn xong mới chiếu cảnh mở đầu.
+    /// </summary>
+    private void AskHorror()
+    {
+        Confirm("CONTENT WARNING\n<size=72%>At night this game has optional horror events: jump scares, blood, ghosts and a funeral scene. " +
+                "They can be turned off at any time in Settings.</size>\n<size=85%>Play with night horror events?</size>",
+            () => { GameSettings.SetHorrorEvents(true); BeginNewGame(); },
+            () => { GameSettings.SetHorrorEvents(false); BeginNewGame(); });
+    }
+
+    private void BeginNewGame()
+    {
         HideAll();
         Unfreeze();
         StartTutorial();
@@ -237,10 +253,11 @@ public class MenuSystem : MonoBehaviour
     }
 
     // ================= Tiện ích =================
-    private void Confirm(string message, Action onYes)
+    private void Confirm(string message, Action onYes, Action onNo = null)
     {
         confirmText.text = message;
         confirmAction = onYes;
+        confirmNoAction = onNo;
         confirmMenu.SetActive(true);
         confirmMenu.transform.SetAsLastSibling();
     }
@@ -394,8 +411,10 @@ public class MenuSystem : MonoBehaviour
         ShopUI.Tape(cw);
         confirmText = ShopUI.Text(cw, "", ShopUI.Body, 30, new Vector2(640, 170), new Vector2(0, 55), ShopUI.Ink);
         confirmText.fontStyle = FontStyles.Bold;
+        confirmText.enableAutoSizing = true;                                   // cảnh báo nội dung dài hơn câu hỏi thường
+        confirmText.fontSizeMin = 16f; confirmText.fontSizeMax = 30f;
         ShopUI.PrintButton(cw, "YES", new Vector2(200, 64), new Vector2(-120, -105), () => { confirmMenu.SetActive(false); confirmAction?.Invoke(); });
-        ShopUI.PrintButton(cw, "NO", new Vector2(200, 64), new Vector2(120, -105), () => confirmMenu.SetActive(false), 2);
+        ShopUI.PrintButton(cw, "NO", new Vector2(200, 64), new Vector2(120, -105), () => { confirmMenu.SetActive(false); confirmNoAction?.Invoke(); }, 2);
 
         HideAll();
     }
