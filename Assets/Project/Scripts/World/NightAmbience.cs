@@ -7,7 +7,7 @@ using UnityEngine;
 ///  - Đèn đường quanh người chơi chập chờn: mỗi vài giây một cột đèn trong bán kính 45 m nháy tắt / sáng chập chờn 1-2 s.
 ///  - Phố vắng tanh: trời tối hẳn thì dừng hết dòng xe ô tô / xe máy, người đi bộ và những người ngồi / đứng ven đường
 ///    (khách tới cửa hàng và người nhận hàng vẫn còn). Sáng ra mọi thứ trở lại.
-/// Tắt trong lúc chiếu đoạn phim. Âm thanh tạo dần từ chiều tối (HorrorAudio.Prewarm) để không khựng game.
+/// Chỉ chạy khi bật "Night horror events" (GameSettings.HorrorEvents). Tắt trong lúc chiếu đoạn phim. Âm thanh tạo dần từ chiều tối (HorrorAudio.Prewarm) để không khựng game.
 /// </summary>
 public class NightAmbience : MonoBehaviour
 {
@@ -71,7 +71,7 @@ public class NightAmbience : MonoBehaviour
         }
 
         Camera cam = Camera.main;
-        bool active = DeepNight && cam != null && !NightRobbery.Playing && !StoreEvents.CutsceneRunning && !IntroCutscene.Playing
+        bool active = GameSettings.HorrorEvents && DeepNight && cam != null && !NightRobbery.Playing && !StoreEvents.CutsceneRunning && !IntroCutscene.Playing
                       && Time.timeScale > 0f && !WeatherSystem.IsSheltered(cam.transform.position);
         UpdateFlickers(active);
         if (wind != null) wind.volume = Mathf.MoveTowards(wind.volume, active ? 0.12f : 0f, Time.unscaledDeltaTime * 0.05f);
@@ -154,7 +154,7 @@ public class NightAmbience : MonoBehaviour
         if (Time.unscaledTime < nextStreetCheck) return;
         nextStreetCheck = Time.unscaledTime + 1f;
         if (NightRobbery.Playing || StoreEvents.CutsceneRunning || IntroCutscene.Playing) return;   // không đổi giữa đoạn phim
-        bool want = DeepNight;
+        bool want = DeepNight && GameSettings.HorrorEvents;               // tắt sự kiện kinh dị: đêm vẫn có xe, có người
         if (want == streetsEmpty) return;
         if (want) EmptyStreets(); else RefillStreets();
     }

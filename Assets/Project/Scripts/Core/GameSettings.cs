@@ -3,20 +3,27 @@ using UnityEngine;
 
 /// <summary>
 /// Cài đặt người chơi (lưu bằng PlayerPrefs): độ nhạy chuột, âm lượng, nhạc nền (chọn bài / ngẫu nhiên / tắt, âm lượng nhạc),
-/// chất lượng đồ hoạ, toàn màn hình, bóng đèn trần.
+/// chất lượng đồ hoạ, toàn màn hình, bóng đèn trần, sự kiện kinh dị ban đêm (bật / tắt).
 /// Bóng đổ của đèn điểm / đèn rọi mặc định TẮT: cửa hàng có hàng trăm đèn trần, bật bóng đổ hết vừa nặng máy
 /// vừa sinh cảnh báo "Reduced additional punctual light shadows..." liên tục.
 /// </summary>
 public static class GameSettings
 {
     private const string KSens = "set.sensitivity", KVol = "set.volume", KQual = "set.quality", KFull = "set.fullscreen", KShadow = "set.lampShadows",
-                         KMusic = "set.music", KMusicVol = "set.musicVolume";
+                         KMusic = "set.music", KMusicVol = "set.musicVolume", KHorror = "set.horrorEvents";
 
     public static float MouseSensitivity { get; private set; } = 2f;
     public static float Volume { get; private set; } = 1f;
     public static int Quality { get; private set; }
     public static bool Fullscreen { get; private set; } = true;
     public static bool LampShadows { get; private set; }
+
+    /// <summary>
+    /// Sự kiện kinh dị ban đêm (camera ca đêm, đám ma nửa đêm, đơn giao cho chính mình) và không khí rợn người về khuya
+    /// (tiếng chó tru, đèn đường chập chờn, phố vắng tanh). Mặc định bật; người chơi tắt được trong Settings
+    /// hoặc ở bảng cảnh báo nội dung khi bắt đầu New Game.
+    /// </summary>
+    public static bool HorrorEvents { get; private set; } = true;
 
     /// <summary>Nhạc nền: 0 = ngẫu nhiên (đổi bài khi hết), 1..N = một bài lặp lại (AudioManager.TrackNames), N + 1 = tắt.</summary>
     public static int Music { get; private set; }
@@ -36,6 +43,7 @@ public static class GameSettings
         LampShadows = PlayerPrefs.GetInt(KShadow, 0) == 1;
         Music = Mathf.Clamp(PlayerPrefs.GetInt(KMusic, 0), 0, MusicOff);
         MusicVolume = PlayerPrefs.GetFloat(KMusicVol, 1f);
+        HorrorEvents = PlayerPrefs.GetInt(KHorror, 1) == 1;
         OnMusicChanged?.Invoke(); // AudioManager có thể đã khởi động trước khi đọc cài đặt
         ApplyAll();
     }
@@ -66,6 +74,7 @@ public static class GameSettings
     }
     public static void SetMusicVolume(float v) { MusicVolume = Mathf.Clamp01(v); PlayerPrefs.SetFloat(KMusicVol, MusicVolume); }
     public static void SetLampShadows(bool v) { LampShadows = v; PlayerPrefs.SetInt(KShadow, v ? 1 : 0); ApplyLampShadows(); }
+    public static void SetHorrorEvents(bool v) { HorrorEvents = v; PlayerPrefs.SetInt(KHorror, v ? 1 : 0); PlayerPrefs.Save(); }
 
     public static string QualityName => QualitySettings.names.Length > 0 ? QualitySettings.names[Mathf.Clamp(Quality, 0, QualitySettings.names.Length - 1)] : "-";
 

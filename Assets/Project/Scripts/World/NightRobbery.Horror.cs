@@ -69,7 +69,7 @@ public partial class NightRobbery
             if (day != cameraRolledDay && gm.ClockHours >= gm.closingHour - 1f)
             {
                 cameraRolledDay = day;
-                cameraPending = day >= 2 && day - lastCameraDay >= 2 && Random.value < cameraChance;
+                cameraPending = GameSettings.HorrorEvents && day >= 2 && day - lastCameraDay >= 2 && Random.value < cameraChance;
             }
             if (cameraPending && gm.IsClosingTime && NPCShopper.Active.Count == 0)
             {
@@ -86,7 +86,7 @@ public partial class NightRobbery
 
         // ===== Ngoài đường: đám ma / đơn giao cho chính mình =====
         bool forceFuneral = cheats && Input.GetKeyDown(KeyCode.F2), forceDouble = cheats && Input.GetKeyDown(KeyCode.F3);
-        if (!forceFuneral && !forceDouble && (Time.time < nextCheck || !NightAmbience.DeepNight)) return false;
+        if (!forceFuneral && !forceDouble && (!GameSettings.HorrorEvents || Time.time < nextCheck || !NightAmbience.DeepNight)) return false;   // tắt trong Settings: chỉ còn phím thử
         if (!DeliveryManager.IsDelivering(out Vector3 dest, out int serial))
         {
             if (forceFuneral || forceDouble) ProgressHUD.Toast("Thử sự kiện: hãy lấy gói hàng giao trước đã.");

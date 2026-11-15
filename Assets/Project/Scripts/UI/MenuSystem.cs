@@ -10,7 +10,8 @@ using UnityEngine.UI;
 ///  - Menu chính khi mở game: Continue (có file lưu) / New Game / Settings / Food Delivery Mode / Quit.
 ///    Food Delivery Mode mở chế độ thứ hai: game nấu ăn - giao hàng của Nam (Assets/FoodDelivery).
 ///  - Menu tạm dừng (Esc khi đang chơi): Resume / Save / Settings / Main Menu / Quit.
-///  - Settings: độ nhạy chuột, âm lượng, nhạc nền (chọn bài), âm lượng nhạc, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần.
+///  - Settings: độ nhạy chuột, âm lượng, nhạc nền (chọn bài), âm lượng nhạc, chất lượng đồ hoạ, toàn màn hình, bóng đổ đèn trần,
+///    sự kiện kinh dị ban đêm.
 ///  - Game Over khi hết tiền.
 /// Khi menu mở: thời gian dừng (Time.timeScale = 0), hiện chuột.
 /// </summary>
@@ -22,7 +23,7 @@ public class MenuSystem : MonoBehaviour
     private Button continueButton;
     private TMP_Text calDay, calInfo, calSaved, pauseNote, confirmText;
     private GameObject continueTag;
-    private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue;
+    private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue, horrorValue;
     private Action confirmAction;
     private GameObject settingsReturnTo;
 
@@ -232,6 +233,7 @@ public class MenuSystem : MonoBehaviour
         qualValue.text = GameSettings.QualityName;
         fullValue.text = GameSettings.Fullscreen ? "On" : "Off";
         shadowValue.text = GameSettings.LampShadows ? "On" : "Off";
+        horrorValue.text = GameSettings.HorrorEvents ? "On" : "Off";
     }
 
     // ================= Tiện ích =================
@@ -366,7 +368,8 @@ public class MenuSystem : MonoBehaviour
         qualValue = SettingRow(sw, "Graphics quality", -40, () => { GameSettings.SetQuality(GameSettings.Quality - 1); RefreshSettings(); }, () => { GameSettings.SetQuality(GameSettings.Quality + 1); RefreshSettings(); });
         fullValue = SettingRow(sw, "Fullscreen", -110, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); }, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); });
         shadowValue = SettingRow(sw, "Lamp shadows (slow)", -180, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); }, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); });
-        ShopUI.PrintButton(sw, "DONE", new Vector2(260, 66), new Vector2(0, -320), CloseSettings);
+        horrorValue = SettingRow(sw, "Night horror events", -250, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); }, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); });
+        ShopUI.PrintButton(sw, "DONE", new Vector2(260, 66), new Vector2(0, -340), CloseSettings);
 
         // --- Game Over: cửa cuốn kéo xuống, dán giấy "SANG NHƯỢNG CỬA HÀNG" ---
         gameOverMenu = ShopUI.Full("GameOver", canvas, new Color(0.5f, 0.52f, 0.55f)).gameObject;
