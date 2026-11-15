@@ -269,16 +269,13 @@ public class GameManager : MonoBehaviour
         if (moneyTextUI != null) moneyTextUI.text = "Money: " + EconomyManager.Format(money);
     }
 
+    /// <summary>Giờ kiểu 24 giờ ("08:24", "20:24"): không cần AM / PM, ô đồng hồ nhỏ trên HUD không bị biển OPEN / CLOSED che mất.</summary>
     public string ClockString
     {
         get
         {
             int totalMins = Mathf.FloorToInt(clockMinutes) % 1440;
-            int hour24 = totalMins / 60, minute = totalMins % 60;
-            string ampm = hour24 >= 12 ? "PM" : "AM";
-            int hour12 = hour24 % 12;
-            if (hour12 == 0) hour12 = 12;
-            return $"{hour12:00}:{minute:00} {ampm}";
+            return $"{totalMins / 60:00}:{totalMins % 60:00}";
         }
     }
 
