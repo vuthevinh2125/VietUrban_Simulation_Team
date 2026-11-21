@@ -505,7 +505,13 @@ public class StoreEvents : MonoBehaviour
     /// <summary>Lời thoại: trong đoạn phim hiện thành phụ đề "Tên: lời"; ngoài ra là bong bóng thoại trên đầu.</summary>
     private static void Say(Component who, string speaker, string text, Color color, float seconds = 2.5f)
     {
-        if (subLine != null) { subLine.text = $"<color=#{ColorUtility.ToHtmlStringRGB(color)}><b>{speaker}:</b></color> {text}"; return; }
+        if (subLine != null)
+        {
+            // Dịch tên và lời riêng rồi mới ghép, vì câu ghép "Tên: lời" không có trong bảng dịch.
+            subLine.textPreprocessor = Loc.Raw;
+            subLine.text = $"<color=#{ColorUtility.ToHtmlStringRGB(color)}><b>{Loc.T(speaker)}:</b></color> {Loc.T(text)}";
+            return;
+        }
         if (who != null) SpeechBubble.Show(who.transform, text, color, 2.1f, seconds);
     }
 

@@ -1370,7 +1370,9 @@ public partial class NightRobbery : MonoBehaviour
     private void Say(string speaker, string text, Color color)
     {
         if (subLine == null) return;
-        subLine.text = string.IsNullOrEmpty(speaker) ? text : $"<color=#{ColorUtility.ToHtmlStringRGB(color)}><b>{speaker}:</b></color> {text}";
+        // Dịch tên và lời riêng rồi mới ghép, vì câu ghép "Tên: lời" không có trong bảng dịch.
+        subLine.textPreprocessor = Loc.Raw;
+        subLine.text = string.IsNullOrEmpty(speaker) ? Loc.T(text) : $"<color=#{ColorUtility.ToHtmlStringRGB(color)}><b>{Loc.T(speaker)}:</b></color> {Loc.T(text)}";
     }
 
     /// <summary>Lời thoại 2.2 s, máy quay giữ góc hiện tại nhưng vẫn bám theo xe.</summary>
