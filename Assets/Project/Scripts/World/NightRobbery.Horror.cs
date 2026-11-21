@@ -59,6 +59,7 @@ public partial class NightRobbery
         {
             if (Busy()) return false;
             if (StorePlayer() == null) { ProgressHUD.Toast("Thử sự kiện: hãy đứng trong cửa hàng (không ngồi xe)."); return false; }
+            TestAtNight(gm);
             StartCoroutine(RunCamera(false));
             return true;
         }
@@ -116,8 +117,21 @@ public partial class NightRobbery
             nextIsFuneral = !nextIsFuneral;
         }
         if (Busy()) return false;
+        if (forceFuneral || forceDouble) TestAtNight(gm);
         StartCoroutine(funeral ? RunFuneral(ride) : RunDouble(ride));
         return true;
+    }
+
+    /// <summary>
+    /// Phím thử Shift+F1/F2/F3 bỏ qua điều kiện giờ để test nhanh, nhưng sự kiện kinh dị chỉ có thật lúc trời tối hẳn
+    /// (NightAmbience.DeepNight). Đang ban ngày thì chỉnh đồng hồ tới tối (như Shift+F12) trước khi chạy, để cảnh luôn đúng giờ.
+    /// </summary>
+    private static void TestAtNight(GameManager gm)
+    {
+        if (gm == null || NightAmbience.DeepNight) return;
+        float sunset = DayNightCycle.Instance != null ? DayNightCycle.Instance.sunsetHour : 18.5f;
+        gm.DebugSetClock(Mathf.Min(sunset + 1.2f, gm.closingHour - 0.4f));
+        ProgressHUD.Toast("(Thử) Sự kiện kinh dị chỉ diễn ra ban đêm - đã chuyển đồng hồ tới tối.");
     }
 
     // Dấu tay máu trên xe (đêm sự kiện): giữ suốt đêm, sáng ra thì biến mất
