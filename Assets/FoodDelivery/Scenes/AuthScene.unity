@@ -10500,7 +10500,7 @@ MonoBehaviour:
   resetMessageText: {fileID: 1529359668}
   resetSendButton: {fileID: 233737472}
   resetSendButtonText: {fileID: 1216338170}
-  gameSceneName: SampleScene
+  gameSceneName: FoodMap
   inputFieldSprite: {fileID: 21300000, guid: 54714ddaac8c1b244855205d30ee08d6, type: 3}
   inputReadonlySprite: {fileID: 21300000, guid: ef851318699ad43438b3ce969622268b, type: 3}
   errorBarSprite: {fileID: 21300000, guid: 2659b26d10c6ecc4ab9887d728c12cae, type: 3}
