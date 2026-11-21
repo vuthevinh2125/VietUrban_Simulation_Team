@@ -20,8 +20,9 @@ public static class FoodModeTestTools
     [MenuItem(Menu + "Move Player To Market")]
     private static void ToMarket()
     {
-        GameObject market = GameObject.Find("Vegetable_market_with_objects");
-        if (market == null) { Fail("Could not find 'Vegetable_market_with_objects' in this scene."); return; }
+        // Nam's map since 22 Nov: the seller is NPC_Market; older maps used the vegetable stall.
+        GameObject market = GameObject.Find("NPC_Market") ?? GameObject.Find("Vegetable_market_with_objects");
+        if (market == null) { Fail("Could not find 'NPC_Market' or 'Vegetable_market_with_objects' in this scene."); return; }
         Transform m = market.transform;
         Vector3 spot = m.position + m.forward * 4f; // đứng trước sạp, quay mặt vào sạp
         Teleport(spot, Quaternion.LookRotation(-m.forward).eulerAngles.y, "the market");
