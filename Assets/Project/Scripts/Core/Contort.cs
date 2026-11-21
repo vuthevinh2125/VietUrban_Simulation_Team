@@ -50,7 +50,7 @@ public class Contort : MonoBehaviour
     void LateUpdate()
     {
         if (anim == null) return;
-        if (cp == null) cp = anim.GetComponent<ClipPlayer>();
+        if (cp == null && Time.frameCount % 15 == 0) cp = anim.GetComponent<ClipPlayer>();   // ClipPlayer có thể được gắn sau; không tìm mỗi frame
         bool animated = cp != null && cp.Current != null;
         if (!animated)
         {
@@ -93,7 +93,11 @@ public class Contort : MonoBehaviour
         }
         if (Mathf.Abs(armStretch - 1f) > 0.01f)
         {
-            foreach (Transform t in new[] { uL, uR, lL, lR }) if (t != null) t.localScale = new Vector3(1f, armStretch, 1f);
+            Vector3 s = new Vector3(1f, armStretch, 1f);
+            if (uL != null) uL.localScale = s;
+            if (uR != null) uR.localScale = s;
+            if (lL != null) lL.localScale = s;
+            if (lR != null) lR.localScale = s;
             if (handL != null) handL.localScale = new Vector3(1f, 1f / (armStretch * armStretch), 1f);
             if (handR != null) handR.localScale = new Vector3(1f, 1f / (armStretch * armStretch), 1f);
         }

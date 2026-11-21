@@ -780,7 +780,7 @@ public partial class NightRobbery
                     }
             }
             tex.SetPixels32(px);
-            tex.Apply(true);
+            tex.Apply(true, true);   // bỏ bản sao trên RAM (không đọc lại texture này nữa) -> đỡ gần một nửa bộ nhớ
             var mat = new Material(src) { name = src.name + "_" + tag, hideFlags = HideFlags.DontSave };
             if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
             mat.mainTexture = tex;

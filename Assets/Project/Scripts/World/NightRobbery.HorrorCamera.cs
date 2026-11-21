@@ -661,6 +661,7 @@ public partial class NightRobbery
             if (f.rt != null) { f.rt.Release(); Destroy(f.rt); }
         }
         feeds.Clear();
+        if (cctvGrain != null && cctvGrain.texture != null) Destroy(cctvGrain.texture);   // texture nhiễu tạo riêng cho mỗi lần dựng
         if (cctvPanel != null) Destroy(cctvPanel);
         cctvPanel = null; cctvGrain = null; cctvClock = null; cctvFocus = -1;
         if (redLight != null) Destroy(redLight.gameObject);

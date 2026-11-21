@@ -131,6 +131,7 @@ public static class HorrorFx
     }
 
     private static readonly Dictionary<Texture, Material> mats = new Dictionary<Texture, Material>();
+    private static readonly Dictionary<(Texture, int), Material> alphaMats = new Dictionary<(Texture, int), Material>();
 
     /// <summary>Dán một vết máu phẳng (quad) tại điểm, mặt quay theo pháp tuyến; up = hướng "trên" của vết (vệt chảy hướng xuống).</summary>
     public static GameObject Decal(Texture2D tex, Vector3 pos, Vector3 normal, Vector3 up, Vector2 size, Transform parent, float alpha = 1f)
@@ -147,7 +148,19 @@ public static class HorrorFx
         if (!mats.TryGetValue(tex, out Material m) || m == null) { m = DecalMaterial(tex); mats[tex] = m; }
         Renderer r = g.GetComponent<Renderer>();
         r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        if (alpha < 0.999f) { var inst = new Material(m); inst.color = new Color(1f, 1f, 1f, alpha); r.sharedMaterial = inst; }
+        if (alpha < 0.999f)
+        {
+            // Dùng chung vật liệu theo (vết máu, độ mờ): trước đây mỗi vết (dấu chân mỗi 0.6 m, 30 giọt trên kính...) tạo một
+            // vật liệu mới và không bao giờ xoá
+            (Texture, int) key = (tex, Mathf.RoundToInt(alpha * 100f));
+            if (!alphaMats.TryGetValue(key, out Material inst) || inst == null)
+            {
+                inst = new Material(m) { name = m.name + "_a" + key.Item2, hideFlags = HideFlags.DontSave };
+                inst.color = new Color(1f, 1f, 1f, key.Item2 / 100f);
+                alphaMats[key] = inst;
+            }
+            r.sharedMaterial = inst;
+        }
         else r.sharedMaterial = m;
         return g;
     }
