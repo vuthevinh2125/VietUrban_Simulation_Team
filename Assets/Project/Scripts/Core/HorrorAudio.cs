@@ -3,7 +3,6 @@ using UnityEngine;
 
 /// <summary>
 /// Âm thanh kinh dị ban đêm, tạo bằng code (không cần file âm thanh). Mỗi clip tạo một lần rồi dùng lại:
-///  - FuneralBand(): nhạc đám ma rùng rợn - hai kèn lệch tông, trống cái, thanh la, ù trầm, tiếng khóc than vọng lại; lặp ~12.8 s.
 ///  - Wail() khóc than, Crack() xương kêu rắc, Scream() tiếng thét không phải người, Whisper() thì thầm, Drip() giọt rơi,
 ///    Breath() tiếng thở khò khè, Bang() đập mạnh vào kính.
 ///  - DogHowl(): chó tru dài hai hơi.     - Owl(): cú kêu "hù... hù-hù".
@@ -74,58 +73,6 @@ public static class HorrorAudio
             case 18: Dread(); return false;
             default: return true;
         }
-    }
-
-    /// <summary>
-    /// Nhạc đám ma (rùng rợn): hai kèn lệch tông nhau (rung "è è" như phách), điệu ngũ cung chậm, cuối mỗi câu kèn trườn tụt xuống;
-    /// trống cái nặng, thanh la; nền là tiếng ù trầm và tiếng khóc than vọng lại - lặp liền mạch ~12.8 s.
-    /// </summary>
-    public static AudioClip FuneralBand() => Funeral();
-
-    /// <summary>Bản nhạc đám ma cũ (kèn lệch tông) - giữ lại để tham khảo.</summary>
-    private static AudioClip FuneralBandOld()
-    {
-        int[] notes = { 7, 8, 7, 5, 3, 5, 7, 3, 2, 3, 0, -1, 0, 0 };
-        float[] beats = { 1.5f, 0.5f, 1, 1, 1, 1, 2, 1, 0.5f, 0.5f, 1.5f, 0.5f, 2, 2 };
-        float beat = 0.8f, total = 0f;
-        foreach (float b in beats) total += b * beat;
-        var start = new float[notes.Length];
-        float acc = 0f;
-        for (int i = 0; i < notes.Length; i++) { start[i] = acc; acc += beats[i] * beat; }
-        double ph1 = 0, ph2 = 0, phW = 0;
-        float lp = 0f, f1 = 196f, wl = 0f;
-        return Make("FuneralBand", total, (i, t) =>
-        {
-            int k = 0;
-            while (k + 1 < notes.Length && t >= start[k + 1]) k++;
-            float noteT = t - start[k], noteLen = beats[k] * beat;
-            float target = 196f * Mathf.Pow(2f, notes[k] / 12f);
-            if (noteLen >= 1.6f && noteT > noteLen * 0.55f) target *= Mathf.Pow(2f, -2.5f * (noteT / noteLen - 0.55f) / 12f * 4f); // trườn tụt xuống cuối câu
-            f1 += (target - f1) * 0.002f;
-            float vib = 1f + 0.018f * Mathf.Sin(t * 2f * Mathf.PI * 4.6f);
-            ph1 += 2 * Mathf.PI * f1 * vib / Rate;
-            ph2 += 2 * Mathf.PI * f1 * 1.034f * vib / Rate;                 // kèn thứ hai lệch ~0.6 cung -> nghe chói, rợn
-            float Horn(double ph) { float s = (float)ph; return Mathf.Sin(s) * 0.5f + Mathf.Sin(3 * s) * 0.45f + Mathf.Sin(5 * s) * 0.3f + Mathf.Sin(7 * s) * 0.18f + Mathf.Sin(2 * s) * 0.12f; }
-            float env = Mathf.Clamp01(noteT / 0.09f) * Mathf.Lerp(1f, 0.65f, noteT / noteLen);
-            float horn = (float)System.Math.Tanh((Horn(ph1) + Horn(ph2) * 0.8f) * 1.3f) * env * 0.5f;
-            // trống cái nặng mỗi 2 phách
-            float dt = t % (beat * 2f);
-            float drum = Mathf.Sin(2 * Mathf.PI * (48f + 50f * Mathf.Exp(-dt * 18f)) * dt) * Mathf.Exp(-dt * 4.5f) * 1.1f;
-            // thanh la mỗi 4 phách
-            float gt = (t + beat) % (beat * 4f);
-            lp += (Noise() - lp) * 0.6f;
-            float gong = (Mathf.Sin(2 * Mathf.PI * 1180f * gt) * 0.4f + Mathf.Sin(2 * Mathf.PI * 1567f * gt) * 0.3f + lp * 0.5f) * Mathf.Exp(-gt * 3f) * 0.3f;
-            // ù trầm (hai nốt cách nửa cung)
-            float drone = (Mathf.Sin(2 * Mathf.PI * 55f * t) + Mathf.Sin(2 * Mathf.PI * 58.3f * t)) * 0.16f;
-            // tiếng khóc than: giọng nữ "ơ..." trườn lên xuống, vọng xa
-            float wt = t % 6.4f;
-            float wf = 520f + 160f * Mathf.Sin(wt * 0.9f) - 120f * wt / 6.4f;
-            phW += 2 * Mathf.PI * wf * (1f + 0.03f * Mathf.Sin(t * 37f)) / Rate;
-            float w = (Mathf.Sin((float)phW) + 0.5f * Mathf.Sin(2 * (float)phW) + 0.25f * Mathf.Sin(3 * (float)phW));
-            wl += (w - wl) * 0.25f;                                       // lọc cho mờ, như vọng lại
-            float wenv = Mathf.Clamp01(wt / 0.8f) * Mathf.Clamp01((4.6f - wt) / 1.2f) * (t % 12.8f < 6.4f ? 1f : 0.6f);
-            return horn + drum + gong + drone + wl * wenv * 0.22f;
-        }, 0.9f, 0.03f);
     }
 
     /// <summary>Tiếng khóc than (giọng nữ, nức nở, trườn giọng xuống), 4.5 s.</summary>

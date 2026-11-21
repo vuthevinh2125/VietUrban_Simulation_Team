@@ -479,25 +479,6 @@ public partial class NightRobbery
         }
     }
 
-    /// <summary>Làm cả đoàn người trắng bệch, xanh tái (khi họ cùng quay lại nhìn).</summary>
-    private void PaleMovers(string role, float k)
-    {
-        foreach (Mover m in movers)
-        {
-            if (m.t == null || m.role != role) continue;
-            foreach (SkinnedMeshRenderer r in m.t.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-            {
-                Material[] ms = r.materials;   // bản riêng từng người
-                foreach (Material mat in ms)
-                {
-                    Color c = Color.Lerp(Color.white, new Color(0.62f, 0.7f, 0.85f), k);
-                    if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", c);
-                    mat.color = c;
-                }
-            }
-        }
-    }
-
     // ================= Cửa hàng =================
     /// <summary>
     /// MỘT cửa ra vào thật (tâm khung các cánh cửa, ở mặt sàn cửa hàng): cửa gần điểm near nhất (mặc định: máy quay chính).

@@ -544,15 +544,6 @@ public partial class NightRobbery
         if (s != null) Destroy(s.gameObject);
     }
 
-    /// <summary>Góc (độ) cần vặn đầu từ hướng thân sang hướng một điểm (để nhìn thẳng vào người chơi).</summary>
-    private static float SignedYaw(Transform t, Vector3 at)
-    {
-        Vector3 to = (at - t.position).WithY(0f);
-        if (to.sqrMagnitude < 0.01f) return 0f;
-        float a = Vector3.SignedAngle(t.forward.WithY(0f), to, Vector3.up);
-        return Mathf.Clamp(a, -175f, 175f);
-    }
-
     private (Vector3, Vector3) FaceCamOf(RigMonster c)
     {
         if (c == null) return (youPos + Vector3.up * 1.5f, youPos + youDir * 10f);

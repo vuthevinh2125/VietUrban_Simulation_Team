@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +6,6 @@ using UnityEngine.UI;
 /// Hiệu ứng máu me cho các sự kiện kinh dị (tạo hết bằng code):
 ///  - Texture vết máu bắn (loang + giọt chảy), dấu bàn tay máu, vết kéo lê.
 ///  - Decal: tấm phẳng dán vết máu lên tường / kính / mặt đường (Sprites/Default: trong suốt, không cần ánh sáng).
-///  - Chữ viết bằng máu (TextMeshPro 3D đỏ thẫm + vệt chảy dưới chữ).
 ///  - Máu bắn lên màn hình (lớp UI mờ dần), mưa giọt máu (hạt rơi).
 /// </summary>
 public static class HorrorFx
@@ -168,35 +166,6 @@ public static class HorrorFx
     /// <summary>Vũng máu trên mặt đất.</summary>
     public static GameObject Pool(Vector3 at, float size, Transform parent) =>
         Decal(Splat(), at, Vector3.up, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) * Vector3.forward, new Vector2(size, size), parent);
-
-    /// <summary>Chữ viết bằng máu (3D) + các vệt chảy dưới chữ.</summary>
-    public static GameObject Writing(string text, Vector3 pos, Vector3 normal, float height, Transform parent, Vector3? textUp = null)
-    {
-        var g = new GameObject("BloodWriting");
-        if (parent != null) g.transform.SetParent(parent, true);
-        normal = normal.sqrMagnitude > 0.001f ? normal.normalized : Vector3.forward;
-        Vector3 upV = textUp ?? Vector3.up;                              // viết dưới sàn: "trên" của chữ = hướng ra xa người đọc
-        if (Mathf.Abs(Vector3.Dot(upV.normalized, normal)) > 0.95f) upV = Vector3.Cross(normal, Vector3.right);
-        upV = Vector3.ProjectOnPlane(upV, normal).normalized;
-        g.transform.SetPositionAndRotation(pos + normal * 0.015f, Quaternion.LookRotation(-normal, upV));
-        var t = g.AddComponent<TextMeshPro>();
-        t.text = text;
-        t.fontSize = height * 10f;
-        t.color = BloodWet;
-        t.alignment = TextAlignmentOptions.Center;
-        t.fontStyle = FontStyles.Bold | FontStyles.Italic;
-        t.textWrappingMode = TextWrappingModes.NoWrap;
-        t.rectTransform.sizeDelta = new Vector2(height * text.Length * 0.8f, height * 1.4f);
-        // vệt chảy
-        Vector3 right = Vector3.Cross(upV, normal).normalized;
-        int drips = Mathf.Clamp(text.Length / 2, 3, 10);
-        for (int i = 0; i < drips; i++)
-        {
-            float x = (i / (float)(drips - 1) - 0.5f) * height * text.Length * 0.55f + Random.Range(-0.05f, 0.05f);
-            Decal(Splat(), pos + right * x - upV * (height * 0.7f), normal, upV, new Vector2(height * 0.5f, height * 1.1f), g.transform, 0.9f);
-        }
-        return g;
-    }
 
     // ================= Máu bắn lên màn hình =================
     public static Texture2D ScreenSplat()
