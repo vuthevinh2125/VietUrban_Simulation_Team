@@ -63,7 +63,7 @@ public partial class NightRobbery : MonoBehaviour
     {
         GameManager.OnNewDay -= OnNewDay;
         if (Instance == this) { Instance = null; GameManager.HoldDayEnd = null; }
-        if (Playing) Time.timeScale = 1f;
+        if (Playing) { Time.timeScale = 1f; CutsceneView.Unmute(); }
         Playing = false;
     }
 
@@ -1291,6 +1291,7 @@ public partial class NightRobbery : MonoBehaviour
         var camGo = new GameObject("RobberyCamera");
         cam = camGo.AddComponent<Camera>();
         if (like != null) cam.CopyFrom(like);
+        CutsceneView.Mute(like);   // camera chính thôi vẽ lại cảnh bên dưới camera phim
         cam.targetTexture = null;
         cam.depth = 96f;
         cam.fieldOfView = 52f;
@@ -1349,6 +1350,7 @@ public partial class NightRobbery : MonoBehaviour
         SpeechBubble.ViewCamera = prevBubbleCam;
         Cursor.lockState = prevLock; Cursor.visible = prevCursor;
         if (cam != null) Destroy(cam.gameObject);
+        CutsceneView.Unmute();
         cam = null; canvas = null; subLine = titleText = hintText = null; fade = null;
     }
 

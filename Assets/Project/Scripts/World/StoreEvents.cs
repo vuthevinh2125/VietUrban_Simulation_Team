@@ -366,6 +366,7 @@ public class StoreEvents : MonoBehaviour
         var camGo = new GameObject("EventCamera");
         Camera cam = camGo.AddComponent<Camera>();
         if (like != null) cam.CopyFrom(like);
+        CutsceneView.Mute(like);   // camera chính thôi vẽ lại cảnh bên dưới camera phim
         cam.targetTexture = null;
         cam.depth = 95f;
         cam.fieldOfView = 50f;
@@ -447,6 +448,7 @@ public class StoreEvents : MonoBehaviour
         PlayerController.InputFrozen = wasFrozen;
         SpeechBubble.ViewCamera = prevBubbleCam;
         Destroy(camGo);
+        CutsceneView.Unmute();
         CutsceneRunning = false;
     }
 
