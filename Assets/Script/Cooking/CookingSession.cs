@@ -251,7 +251,7 @@ public class CookingSession : InteractableObject
             return new CookingResult();
         }
         CookingResult result = new CookingResult();
-        HashSet<string> recipeIds = new HashSet<string>();
+        Dictionary<string, float> requiredAmounts = new Dictionary<string, float>();
         foreach (RecipeIngredient need in currentRecipe.Ingredients)
         {
             if (need == null || need.ingredient == null)
@@ -259,19 +259,24 @@ public class CookingSession : InteractableObject
                 continue;
             }
 
-            recipeIds.Add(need.ingredient.itemId);
+            string ingredientId = need.ingredient.itemId;
+            float currentRequiredAmount;
+            requiredAmounts.TryGetValue(ingredientId, out currentRequiredAmount);
+            requiredAmounts[ingredientId] = currentRequiredAmount + Mathf.Max(0f, need.amount);
         }
 
-        foreach (string ingredientId in recipeIds)
+        foreach (KeyValuePair<string, float> requirement in requiredAmounts)
         {
-            if (!addedAmount.TryGetValue(ingredientId, out float have) || have <= 0f)
+            float have;
+            if (!addedAmount.TryGetValue(requirement.Key, out have) ||
+                have + 0.0001f < requirement.Value)
             {
                 result.ingredientMissingCount++;
             }
         }
         foreach (var pair in addedAmount)
         {
-            if (!recipeIds.Contains(pair.Key))
+            if (!requiredAmounts.ContainsKey(pair.Key))
             {
                 result.ingredientExtraCount++;
             }

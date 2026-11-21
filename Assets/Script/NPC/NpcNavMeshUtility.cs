@@ -58,7 +58,8 @@ public static class NpcNavMeshUtility
         return false;
     }
 
-    public static bool TryGetReachablePosition(NavMeshAgent agent, float roamingRadius, out Vector3 position)
+    public static bool TryGetReachablePosition(NavMeshAgent agent, float roamingRadius,
+        float referenceHeight, float heightTolerance, out Vector3 position)
     {
         if (agent == null || !agent.isOnNavMesh)
         {
@@ -80,6 +81,10 @@ public static class NpcNavMeshUtility
                 {
                     continue;
                 }
+                if (Mathf.Abs(hit.position.y - referenceHeight) > heightTolerance)
+                {
+                    continue;
+                }
 
                 float minimumDistance = Mathf.Min(4f, currentRadius * 0.5f);
                 if (Vector3.Distance(agent.nextPosition, hit.position) < minimumDistance)
@@ -87,8 +92,8 @@ public static class NpcNavMeshUtility
                     continue;
                 }
 
-                NavMeshPath path = new NavMeshPath();
-                if (agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
+                NavMeshPath path;
+                if (TryGetPathWithinHeight(agent, hit.position, referenceHeight, heightTolerance, out path))
                 {
                     position = hit.position;
                     return true;
@@ -98,6 +103,27 @@ public static class NpcNavMeshUtility
 
         position = Vector3.zero;
         return false;
+    }
+
+    public static bool TryGetPathWithinHeight(NavMeshAgent agent, Vector3 destination,
+        float referenceHeight, float heightTolerance, out NavMeshPath path)
+    {
+        path = new NavMeshPath();
+        return agent != null && agent.isOnNavMesh && agent.CalculatePath(destination, path) &&
+            path.status == NavMeshPathStatus.PathComplete &&
+            StaysWithinHeight(path.corners, referenceHeight, heightTolerance);
+    }
+
+    private static bool StaysWithinHeight(Vector3[] corners, float referenceHeight, float heightTolerance)
+    {
+        foreach (Vector3 corner in corners)
+        {
+            if (Mathf.Abs(corner.y - referenceHeight) > heightTolerance)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void BuildTrianglesIfNeeded()

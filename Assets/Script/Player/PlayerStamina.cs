@@ -8,6 +8,7 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private OrderManager orderManager;
     [SerializeField] private DeliveryInventory deliveryInventory;
     [SerializeField] private CharacterController playerCharacterController;
+    [SerializeField] private StarterAssets.StarterAssetsInputs playerInputs;
 
     private DateTime lastGameTime = DateTime.MinValue;
     private bool recovering;
@@ -66,6 +67,10 @@ public class PlayerStamina : MonoBehaviour
         if (playerCharacterController == null)
         {
             playerCharacterController = FindAnyObjectByType<CharacterController>();
+        }
+        if (playerInputs == null && playerCharacterController != null)
+        {
+            playerInputs = playerCharacterController.GetComponent<StarterAssets.StarterAssetsInputs>();
         }
         ClampCurrentStamina();
     }
@@ -147,18 +152,40 @@ public class PlayerStamina : MonoBehaviour
 
     private float GetActiveDrainRate()
     {
+        float drainPerMinute = 0f;
+
         if (orderManager != null && orderManager.SelectedOrder != null &&
             orderManager.SelectedOrder.OrderStatus == Order.OrderState.Making)
         {
-            return staminaConfig.cookingDrainPerGameMinute;
+            drainPerMinute += staminaConfig.cookingDrainPerGameMinute;
         }
 
         if (HasPackageAndIsMoving())
         {
-            return staminaConfig.shippingDrainPerGameMinute;
+            drainPerMinute += staminaConfig.shippingDrainPerGameMinute;
         }
 
-        return 0f;
+        if (IsMoving())
+        {
+            bool isSprinting = playerInputs != null && playerInputs.sprint;
+            drainPerMinute += isSprinting
+                ? staminaConfig.sprintingDrainPerGameMinute
+                : staminaConfig.walkingDrainPerGameMinute;
+        }
+
+        return drainPerMinute;
+    }
+
+    private bool IsMoving()
+    {
+        if (playerCharacterController == null)
+        {
+            return false;
+        }
+
+        Vector3 horizontalVelocity = playerCharacterController.velocity;
+        horizontalVelocity.y = 0f;
+        return horizontalVelocity.sqrMagnitude > 0.01f;
     }
 
     private bool HasPackageAndIsMoving()
@@ -168,9 +195,7 @@ public class PlayerStamina : MonoBehaviour
             return false;
         }
 
-        Vector3 horizontalVelocity = playerCharacterController.velocity;
-        horizontalVelocity.y = 0f;
-        return horizontalVelocity.sqrMagnitude > 0.01f;
+        return IsMoving();
     }
 
     private void ChangeStamina(float amount)

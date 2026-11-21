@@ -22,13 +22,15 @@ public class NpcPopulationSpawner : MonoBehaviour
     [SerializeField, Min(0f)] private float spawnRadius = 40f;
     [SerializeField, Min(0.1f)] private float sampleRadius = 4f;
     [SerializeField, Min(0f)] private float minimumSpawnSeparation = 5f;
+    [SerializeField, Min(0f)] private float maxSpawnHeightDifference = 1.5f;
+    [SerializeField, Min(0f)] private float maxRoamingHeightDifference = 1.5f;
+    [SerializeField, Min(0f)] private float playerStopPadding = 0.8f;
     [SerializeField, Range(0f, 1f)] private float activityVisitChance = 0.2f;
     [SerializeField, Min(1f)] private float roamingRadius = 35f;
     [SerializeField, Min(0f)] private float minTimeRoaming = 2f;
     [SerializeField, Min(0f)] private float maxTimeRoaming = 8f;
     [SerializeField] private Transform[] houseEntrances;
     [SerializeField] private Transform[] shopSpots;
-    [SerializeField] private Transform[] parkSpots;
     [SerializeField] private List<NpcResidentData> residents = new List<NpcResidentData>();
 
     private readonly List<NpcController> activeResidents = new List<NpcController>();
@@ -38,7 +40,46 @@ public class NpcPopulationSpawner : MonoBehaviour
 
     private void Start()
     {
+        EnsurePlayerObstacle();
         SpawnPopulation();
+    }
+
+    private void EnsurePlayerObstacle()
+    {
+        if (player == null)
+        {
+            StarterAssets.FirstPersonController playerController = FindAnyObjectByType<StarterAssets.FirstPersonController>();
+            if (playerController != null)
+            {
+                player = playerController.transform;
+            }
+        }
+
+        if (player == null)
+        {
+            Debug.LogWarning("npc spawner could not find the player; NPC avoidance is disabled", this);
+            return;
+        }
+
+        CharacterController characterController = player.GetComponent<CharacterController>();
+        if (characterController == null)
+        {
+            Debug.LogWarning("player needs a CharacterController for NPC avoidance", player);
+            return;
+        }
+
+        NavMeshObstacle obstacle = player.GetComponent<NavMeshObstacle>();
+        if (obstacle == null)
+        {
+            obstacle = player.gameObject.AddComponent<NavMeshObstacle>();
+        }
+
+        obstacle.shape = NavMeshObstacleShape.Capsule;
+        obstacle.center = characterController.center;
+        obstacle.radius = characterController.radius + playerStopPadding;
+        obstacle.height = characterController.height;
+        obstacle.carving = false;
+        obstacle.enabled = true;
     }
 
     public NpcController GetRandomResident()
@@ -98,8 +139,9 @@ public class NpcPopulationSpawner : MonoBehaviour
             NpcController selectedPrefab = GetRandomNpcPrefab();
             NpcController resident = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity, transform);
             resident.Configure(residentData.behaviorType, residentData.residentName, residentData.deliveryAddress,
-                residentData.homeEntrance, houseEntrances, shopSpots, parkSpots, activityVisitChance,
-                roamingRadius, minTimeRoaming, maxTimeRoaming);
+                residentData.homeEntrance, houseEntrances, shopSpots, activityVisitChance,
+                roamingRadius, minTimeRoaming, maxTimeRoaming, player,
+                maxRoamingHeightDifference, playerStopPadding);
             activeResidents.Add(resident);
             spawnPositions.Add(spawnPosition);
         }
@@ -178,7 +220,9 @@ public class NpcPopulationSpawner : MonoBehaviour
                 }
             }
 
-            if (foundPosition && IsFarEnoughFromOtherSpawnPoints(candidate))
+            float groundHeight = player != null ? player.position.y : transform.position.y;
+            if (foundPosition && Mathf.Abs(candidate.y - groundHeight) <= maxSpawnHeightDifference &&
+                IsFarEnoughFromOtherSpawnPoints(candidate))
             {
                 spawnPosition = candidate;
                 return true;

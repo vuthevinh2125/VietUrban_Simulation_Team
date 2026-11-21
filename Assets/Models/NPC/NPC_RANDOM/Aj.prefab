@@ -96,8 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0884702faf6ec5142bc1719c30d8ae81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NpcController
-  behaviorType: 1
-  wandererHomeVisitChance: 0.2
+  behaviorType: 0
   minTimeInside: 10
   maxTimeInside: 30
   minTimeAtActivity: 5

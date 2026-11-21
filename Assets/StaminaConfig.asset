@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: StaminaConfig
   m_EditorClassIdentifier: Assembly-CSharp::StaminaConfig
   maximumStamina: 100
-  cookingDrainPerGameMinute: 1
-  shippingDrainPerGameMinute: 1
+  walkingDrainPerGameMinute: 0.15
+  sprintingDrainPerGameMinute: 0.3
+  cookingDrainPerGameMinute: 0.5
+  shippingDrainPerGameMinute: 0.5
   restingRecoveryPerGameMinute: 2
   sleepingRecoveryPerGameMinute: 8
   sleepTimeMultiplier: 8

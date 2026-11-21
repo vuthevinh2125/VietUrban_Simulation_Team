@@ -151764,7 +151764,7 @@ MonoBehaviour:
   firstOrderDelayGameMinutes: 0
   minSpawnIntervalGameMinutes: 30
   maxSpawnIntervalGameMinutes: 60
-  expectedDeliveryGameMinutes: 600
+  expectedDeliveryGameMinutes: 60
 --- !u!4 &864275898
 Transform:
   m_ObjectHideFlags: 0
@@ -305291,6 +305291,9 @@ MonoBehaviour:
   spawnRadius: 40
   sampleRadius: 4
   minimumSpawnSeparation: 5
+  maxSpawnHeightDifference: 1.5
+  maxRoamingHeightDifference: 1.5
+  playerStopPadding: 0.8
   activityVisitChance: 0.2
   roamingRadius: 35
   minTimeRoaming: 2
@@ -305332,12 +305335,6 @@ MonoBehaviour:
   - {fileID: 567838685}
   - {fileID: 497004950}
   - {fileID: 1729006214}
-  parkSpots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   residents:
   - residentName: Joyce Cantu
     deliveryAddress: 119 Le Thanh Tong Street, Ha Long City
@@ -305346,7 +305343,7 @@ MonoBehaviour:
   - residentName: Legacy Archer
     deliveryAddress: 53d Hang Bai
     homeEntrance: {fileID: 1718149255}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Anakin Ahmed
     deliveryAddress: 52 Tue Tinh Street
     homeEntrance: {fileID: 1465627250}
@@ -305354,7 +305351,7 @@ MonoBehaviour:
   - residentName: Jolie Glover
     deliveryAddress: 39 Nguyen Dinh Chieu
     homeEntrance: {fileID: 1935911149}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Mack Haynes
     deliveryAddress: 25/106 Hoang Quoc Viet St, Tu Liem DC
     homeEntrance: {fileID: 974794384}
@@ -305362,7 +305359,7 @@ MonoBehaviour:
   - residentName: Lexi Burton
     deliveryAddress: 307-A8 Phuong Mai, Dongda Dist
     homeEntrance: {fileID: 919665239}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: 'Zander Adkins '
     deliveryAddress: Room No103 M3-M4 Building, Nguyen Chi Thanh Str
     homeEntrance: {fileID: 1587495034}
@@ -305370,7 +305367,7 @@ MonoBehaviour:
   - residentName: Emelia Morrow
     deliveryAddress: No 8, Pham Ngoc Thach Street
     homeEntrance: {fileID: 150481154}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Kyree Harrington
     deliveryAddress: Rm.401, 40 Ly Thuong Kiet Str
     homeEntrance: {fileID: 1025915912}
@@ -305378,7 +305375,7 @@ MonoBehaviour:
   - residentName: Ephraim Randolph
     deliveryAddress: 53d Hang Bai
     homeEntrance: {fileID: 1787840235}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Kailey Joseph
     deliveryAddress: Rm.401, 40 Ly Thuong Kiet Str
     homeEntrance: {fileID: 326674751}
@@ -305386,7 +305383,7 @@ MonoBehaviour:
   - residentName: Kyle Short
     deliveryAddress: 13th Flr., 49 Hai Ba Trung Dist.
     homeEntrance: {fileID: 1021387100}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Cheyenne Hughes
     deliveryAddress: 108 Cach Mang Thang Tam
     homeEntrance: {fileID: 1360059946}
@@ -305394,7 +305391,7 @@ MonoBehaviour:
   - residentName: Everett Christensen
     deliveryAddress: 50/4 Do Tan Phong
     homeEntrance: {fileID: 1672696920}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Carmen Perry
     deliveryAddress: 17 An Duong Street, Lane 32
     homeEntrance: {fileID: 1258076481}
@@ -305402,7 +305399,7 @@ MonoBehaviour:
   - residentName: Waylon McIntyre
     deliveryAddress: 13B Nguyen Hong Dao
     homeEntrance: {fileID: 1620160938}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Rebekah Holland
     deliveryAddress: 369 Truong Chinh, Pleiku City
     homeEntrance: {fileID: 1500344224}
@@ -305410,7 +305407,7 @@ MonoBehaviour:
   - residentName: Brady Meadows
     deliveryAddress: No. 11 Ben Chuong Duong, Ward Nguyen Thai Binh
     homeEntrance: {fileID: 804311755}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Pearl King
     deliveryAddress: 384, Vo Van Ngan, Ward Binh Tho
     homeEntrance: {fileID: 2119861177}
@@ -305418,7 +305415,7 @@ MonoBehaviour:
   - residentName: Julian Singleton
     deliveryAddress: 192 30 thang 4 street
     homeEntrance: {fileID: 864114844}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Malaysia Velazquez
     deliveryAddress: 246 Tran Hung Dao, Ward My Xuyen
     homeEntrance: {fileID: 1458832361}
@@ -305426,7 +305423,7 @@ MonoBehaviour:
   - residentName: Drew Walton
     deliveryAddress: 633/12/31 Hong Bang Street
     homeEntrance: {fileID: 1330894093}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Scarlet Booth
     deliveryAddress: 259 NGUYEN SON STREET
     homeEntrance: {fileID: 1028528905}
@@ -305434,7 +305431,7 @@ MonoBehaviour:
   - residentName: Chaim Harper
     deliveryAddress: 19/5, Lot III-26
     homeEntrance: {fileID: 413118973}
-    behaviorType: 1
+    behaviorType: 0
   - residentName: Ana Humphrey
     deliveryAddress: No. 39 Tran Phu, Van Quan, Ha Dong
     homeEntrance: {fileID: 905283968}
@@ -313239,6 +313236,10 @@ PrefabInstance:
     - target: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: MoveSpeed
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: SprintSpeed
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: GroundLayers.m_Bits

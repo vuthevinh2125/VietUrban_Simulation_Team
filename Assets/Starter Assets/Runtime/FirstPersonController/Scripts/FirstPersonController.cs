@@ -112,9 +112,20 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			UpdateSprintInput();
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
+		}
+
+		private void UpdateSprintInput()
+		{
+#if ENABLE_INPUT_SYSTEM
+			if (_input != null && Keyboard.current != null)
+			{
+				_input.SprintInput(Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
+			}
+#endif
 		}
 
 		private void LateUpdate()
