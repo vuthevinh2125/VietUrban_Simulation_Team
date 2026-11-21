@@ -6,3 +6,11 @@
 # Nam's food-delivery project came from a repo without Git LFS, so its files are stored as normal Git files.
 # Turn the LFS filter off for that folder, otherwise Git reports them as "should have been pointers".
 Assets/FoodDelivery/** !filter !diff !merge
+
+# The Firebase SDK that came with Nam's login (22 Nov) is kept at the paths the SDK expects,
+# outside Assets/FoodDelivery. It is stored as normal Git files too.
+Assets/Firebase/** !filter !diff !merge
+Assets/ExternalDependencyManager/** !filter !diff !merge
+Assets/Editor[[:space:]]Default[[:space:]]Resources/Firebase/** !filter !diff !merge
+Assets/Plugins/iOS/** !filter !diff !merge
+Assets/Plugins/tvOS/** !filter !diff !merge
