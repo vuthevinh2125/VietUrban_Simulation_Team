@@ -1,0 +1,1225 @@
+# VietUrban localisation table. Columns: source text, English, Vietnamese, Chinese, Japanese, Korean. Cells use C# escapes (\n, \").
+src	en	vi	zh	ja	ko
+Student	Student	Sinh viên	学生	学生	학생
+Office worker	Office worker	Nhân viên văn phòng	上班族	会社員	회사원
+Homemaker	Homemaker	Nội trợ	家庭主妇	主婦	주부
+Retiree	Retiree	Người cao tuổi	退休老人	年金生活者	은퇴자
+Shipper	Shipper	Shipper	外卖骑手	配達員	배달원
+Mr. Minh	Mr. Minh	Anh Minh	明先生	ミンさん	민 씨
+Ms. Lan	Ms. Lan	Chị Lan	兰女士	ランさん	란 씨
+Mrs. Hoa	Mrs. Hoa	Cô Hoa	华太太	ホアさん	화 여사
+Mr. Tuan	Mr. Tuan	Anh Tuấn	俊先生	トゥアンさん	뚜언 씨
+Ms. Thu	Ms. Thu	Chị Thu	秋女士	トゥーさん	투 씨
+Mr. Nam	Mr. Nam	Anh Nam	南先生	ナムさん	남 씨
+Ms. Mai	Ms. Mai	Chị Mai	梅女士	マイさん	마이 씨
+Mr. Hung	Mr. Hung	Anh Hùng	雄先生	フンさん	흥 씨
+Over here!	Over here!	Ở đây này!	这边!	こっちです!	여기요!
+Thank you!	Thank you!	Cảm ơn nhé!	谢谢!	ありがとう!	고마워요!
+Finally... thanks.	Finally... thanks.	Mãi mới tới... cảm ơn.	终于到了……谢谢。	やっと来た……どうも。	드디어 왔네요... 고마워요.
+Sold out?!	Sold out?!	Hết hàng rồi?!	卖完了?!	売り切れ?!	품절이야?!
+Expired food?!	Expired food?!	Đồ hết hạn?!	过期食品?!	期限切れ?!	유통기한 지났잖아?!
+This store is dirty!	This store is dirty!	Cửa hàng bẩn quá!	这家店好脏!	この店、汚い!	가게가 너무 더러워!
+Too expensive!	Too expensive!	Đắt quá!	太贵了!	高すぎる!	너무 비싸!
+Great price!	Great price!	Giá hời quá!	价格真划算!	お買い得!	가격 좋다!
+Pricey...	Pricey...	Hơi đắt...	有点贵……	ちょっと高いな……	좀 비싸네...
+{0}/5 stars	{0}/5 stars	{0}/5 sao	{0}/5 星	★{0}/5	{0}/5점
+quầy thu ngân	checkout	quầy thu ngân	收银台	レジ	계산대
+A shoplifter got away with {0} of goods!	A shoplifter got away with {0} of goods!	Kẻ trộm đã tẩu thoát với {0} hàng hoá!	小偷带着价值 {0} 的商品逃走了!	万引き犯が {0} 分の商品を持って逃げた!	도둑이 {0}어치 물건을 들고 달아났습니다!
+THIEF!	THIEF!	CÓ TRỘM!	有小偷!	泥棒!	도둑이야!
+Anti-theft alarm! A shoplifter is running away - catch them!	Anti-theft alarm! A shoplifter is running away - catch them!	Còi chống trộm! Có kẻ trộm đang chạy - bắt lấy!	防盗警报!小偷正在逃跑——快抓住他!	防犯ブザー!万引き犯が逃走中——捕まえろ!	도난 경보! 도둑이 도망치고 있어요 - 잡으세요!
+Recovered stolen goods	Recovered stolen goods	Thu hồi hàng bị trộm	追回被盗商品	盗品を取り戻した	도난품 회수
+Sorry!	Sorry!	Xin lỗi!	对不起!	すみません!	죄송합니다!
+Thief caught! Recovered {0}.	Thief caught! Recovered {0}.	Đã bắt được trộm! Thu hồi {0}.	抓到小偷了!追回 {0}。	泥棒を捕まえた!{0} を取り戻した。	도둑을 잡았다! {0} 회수.
+No boxes to restock	No boxes to restock	Không có thùng nào để xếp kệ	没有可补货的箱子	補充する箱がない	채울 상자가 없음
+Threw away {0} expired	Threw away {0} expired	Đã vứt {0} món hết hạn	已丢弃 {0} 件过期品	期限切れ {0} 個を処分	유통기한 지난 {0}개 폐기
+Restocking {0} (HOT)	Restocking {0} (HOT)	Đang xếp {0} (BÁN CHẠY)	正在补货 {0}(热销)	{0} を補充中(売れ筋)	{0} 채우는 중 (인기)
+Requires level {0}	Requires level {0}	Cần cấp {0}	需要等级 {0}	レベル {0} が必要	레벨 {0} 필요
+Max 4 cashiers	Max 4 cashiers	Tối đa 4 thu ngân	最多 4 名收银员	レジ係は最大 4 人	계산원 최대 4명
+Unlock more counters	Unlock more counters	Mở thêm quầy thu ngân	解锁更多收银台	レジを増やしてください	계산대를 더 여세요
+Max restockers	Max restockers	Đã đủ số nhân viên xếp kệ	补货员已满	品出し係が上限です	진열 직원 최대
+Cashier	Cashier	Thu ngân	收银员	レジ係	계산원
+Max guards	Max guards	Đã đủ số bảo vệ	保安已满	警備員が上限です	경비원 최대
+Max janitors	Max janitors	Đã đủ số lao công	清洁工已满	清掃員が上限です	청소부 최대
+Staff wages ({0} cashier, {1} restocker, {2} guard, {3} janitor)	Staff wages ({0} cashier, {1} restocker, {2} guard, {3} janitor)	Lương nhân viên ({0} thu ngân, {1} xếp kệ, {2} bảo vệ, {3} lao công)	员工工资({0} 名收银员、{1} 名补货员、{2} 名保安、{3} 名清洁工)	人件費(レジ係 {0}、品出し {1}、警備 {2}、清掃 {3})	직원 급여 (계산원 {0}, 진열 {1}, 경비 {2}, 청소 {3})
+Stop right there!	Stop right there!	Đứng lại!	站住!	止まれ!	거기 서!
+Gotcha!	Gotcha!	Tóm được rồi!	抓到你了!	捕まえた!	잡았다!
+Ambulance	Ambulance	Xe cứu thương	救护车	救急車	구급차
+Sedan	Sedan	Sedan	轿车	セダン	세단
+Taxi	Taxi	Taxi	出租车	タクシー	택시
+Classic	Classic	Cổ điển	经典	クラシック	클래식
+Shuffle	Shuffle	Ngẫu nhiên	随机播放	シャッフル	셔플
+Off	Off	Tắt	关	オフ	끔
+On	On	Bật	开	オン	켬
+Can't save while {0} customer(s) are in the store.\nClose the store and serve them first.	Can't save while {0} customer(s) are in the store.\nClose the store and serve them first.	Không thể lưu khi còn {0} khách trong cửa hàng.\nHãy đóng cửa và phục vụ họ trước.	店内还有 {0} 位顾客,无法存档。\n请先关店并为他们结账。	店内にお客さんが {0} 人いるため保存できません。\n閉店して先に会計を済ませてください。	매장에 손님 {0}명이 있어 저장할 수 없습니다.\n문을 닫고 먼저 계산해 주세요.
+Game saved	Game saved	Đã lưu game	已存档	セーブしました	저장 완료
+Welcome back! Day {0}	Welcome back! Day {0}	Chào mừng trở lại! Ngày {0}	欢迎回来!第 {0} 天	おかえりなさい!{0} 日目	다시 오신 걸 환영해요! {0}일차
+Day {0} · {1}	Day {0} · {1}	Ngày {0} · {1}	第 {0} 天 · {1}	{0} 日目 · {1}	{0}일차 · {1}
+Week {0}	Week {0}	Tuần {0}	第 {0} 周	第 {0} 週	{0}주차
+Drinks	Drinks	Đồ uống	饮料	飲み物	음료
+Hot drinks	Hot drinks	Đồ uống nóng	热饮	温かい飲み物	따뜻한 음료
+Alcohol	Alcohol	Đồ uống có cồn	酒类	お酒	주류
+Breakfast	Breakfast	Đồ ăn sáng	早餐	朝食	아침 식사
+Snacks	Snacks	Đồ ăn vặt	零食	お菓子	과자
+Fresh food	Fresh food	Đồ tươi	生鲜食品	生鮮食品	신선식품
+Frozen	Frozen	Đồ đông lạnh	冷冻食品	冷凍食品	냉동식품
+Household	Household	Đồ gia dụng	家居用品	日用品	생활용품
+Pet	Pet	Đồ thú cưng	宠物用品	ペット用品	반려동물 용품
+Pantry	Pantry	Đồ khô	干货	乾物	식료품
+<color=#6BE07A>demand VERY HIGH</color>	<color=#6BE07A>demand VERY HIGH</color>	<color=#6BE07A>nhu cầu RẤT CAO</color>	<color=#6BE07A>需求 非常高</color>	<color=#6BE07A>需要 とても高い</color>	<color=#6BE07A>수요 매우 높음</color>
+<color=#A6E36B>demand high</color>	<color=#A6E36B>demand high</color>	<color=#A6E36B>nhu cầu cao</color>	<color=#A6E36B>需求高</color>	<color=#A6E36B>需要 高い</color>	<color=#A6E36B>수요 높음</color>
+<color=#FF8A7A>demand low</color>	<color=#FF8A7A>demand low</color>	<color=#FF8A7A>nhu cầu thấp</color>	<color=#FF8A7A>需求低</color>	<color=#FF8A7A>需要 低い</color>	<color=#FF8A7A>수요 낮음</color>
+<color=#FFC46B>demand below normal</color>	<color=#FFC46B>demand below normal</color>	<color=#FFC46B>nhu cầu dưới mức thường</color>	<color=#FFC46B>需求低于平常</color>	<color=#FFC46B>需要 やや低い</color>	<color=#FFC46B>수요 평소보다 낮음</color>
+<color=#B8C2CC>demand normal</color>	<color=#B8C2CC>demand normal</color>	<color=#B8C2CC>nhu cầu bình thường</color>	<color=#B8C2CC>需求正常</color>	<color=#B8C2CC>需要 普通</color>	<color=#B8C2CC>수요 보통</color>
+<color=#6BE07A><b>HOT</b></color>	<color=#6BE07A><b>HOT</b></color>	<color=#6BE07A><b>BÁN CHẠY</b></color>	<color=#6BE07A><b>热销</b></color>	<color=#6BE07A><b>売れ筋</b></color>	<color=#6BE07A><b>인기</b></color>
+<color=#FF8A7A><b>LOW</b></color>	<color=#FF8A7A><b>LOW</b></color>	<color=#FF8A7A><b>Ế</b></color>	<color=#FF8A7A><b>滞销</b></color>	<color=#FF8A7A><b>不人気</b></color>	<color=#FF8A7A><b>비인기</b></color>
+{0} {1}°C: {2} and {3} sell fast; {4} is slow right now.	{0} {1}°C: {2} and {3} sell fast; {4} is slow right now.	{0} {1}°C: {2} và {3} bán chạy; {4} đang ế.	{0} {1}°C:{2} 和 {3} 卖得快;{4} 目前滞销。	{0} {1}°C:{2} と {3} がよく売れ、{4} は今は売れ行きが鈍い。	{0} {1}°C: {2}, {3} 잘 팔림; {4}은(는) 지금 안 팔림.
+Daily rent	Daily rent	Tiền thuê mặt bằng	每日租金	家賃(日額)	일일 임대료
+Closing time: {0} expired item(s) were thrown away.	Closing time: {0} expired item(s) were thrown away.	Đóng cửa: đã vứt {0} món hết hạn.	打烊:已丢弃 {0} 件过期商品。	閉店:期限切れ {0} 個を処分しました。	마감: 유통기한 지난 {0}개를 버렸습니다.
+Basic Groceries	Basic Groceries	Tạp hoá cơ bản	基础杂货	基本食料品	기본 식료품
+Cereals	Cereals	Ngũ cốc	麦片	シリアル	시리얼
+Pasta	Pasta	Mì Ý	意大利面	パスタ	파스타
+Sugar	Sugar	Đường	糖	砂糖	설탕
+Salt	Salt	Muối	盐	塩	소금
+Soda	Soda	Nước ngọt	汽水	炭酸飲料	탄산음료
+Snacks & Sweets	Snacks & Sweets	Bánh kẹo	零食与糖果	お菓子・スイーツ	과자·간식
+Chips	Chips	Khoai tây chiên	薯片	ポテトチップス	감자칩
+Cake	Cake	Bánh ngọt	蛋糕	ケーキ	케이크
+Oil	Oil	Dầu ăn	食用油	油	식용유
+Sauce	Sauce	Nước sốt	酱料	ソース	소스
+Pepper	Pepper	Tiêu	胡椒	コショウ	후추
+Fruit & Vegetables	Fruit & Vegetables	Rau củ quả	果蔬	青果	과일·채소
+Apple	Apple	Táo	苹果	リンゴ	사과
+Artichoke	Artichoke	Atiso	洋蓟	アーティチョーク	아티초크
+Avocado	Avocado	Bơ	牛油果	アボカド	아보카도
+Banana	Banana	Chuối	香蕉	バナナ	바나나
+Carrot	Carrot	Cà rốt	胡萝卜	ニンジン	당근
+Clementine	Clementine	Quýt	小柑橘	クレメンタイン	귤
+Garlic	Garlic	Tỏi	大蒜	ニンニク	마늘
+Grapefruit	Grapefruit	Bưởi	西柚	グレープフルーツ	자몽
+Kiwi	Kiwi	Kiwi	猕猴桃	キウイ	키위
+Lemon	Lemon	Chanh	柠檬	レモン	레몬
+Mango	Mango	Xoài	芒果	マンゴー	망고
+Melon	Melon	Dưa lưới	甜瓜	メロン	멜론
+Mushroom	Mushroom	Nấm	蘑菇	キノコ	버섯
+Onion	Onion	Hành tây	洋葱	タマネギ	양파
+Papaya	Papaya	Đu đủ	木瓜	パパイヤ	파파야
+Pineapple	Pineapple	Dứa	菠萝	パイナップル	파인애플
+Pumpkin	Pumpkin	Bí ngô	南瓜	カボチャ	호박
+Squash	Squash	Bí	西葫芦	スクワッシュ	스쿼시
+Tomato	Tomato	Cà chua	番茄	トマト	토마토
+Watermelon	Watermelon	Dưa hấu	西瓜	スイカ	수박
+Zucchini	Zucchini	Bí xanh	西葫芦	ズッキーニ	주키니
+Hot & Cold Drinks	Hot & Cold Drinks	Đồ uống nóng & lạnh	冷热饮品	ホット&コールドドリンク	온·냉 음료
+Milk	Milk	Sữa	牛奶	牛乳	우유
+Coffee	Coffee	Cà phê	咖啡	コーヒー	커피
+Capsule	Capsule	Cà phê viên nén	咖啡胶囊	コーヒーカプセル	커피 캡슐
+Teabox	Teabox	Trà hộp	盒装茶	紅茶の箱	차 상자
+Cleaning	Cleaning	Đồ tẩy rửa	清洁用品	掃除用品	청소용품
+Bleach	Bleach	Nước tẩy	漂白剂	漂白剤	표백제
+Cleanser	Cleanser	Nước lau	清洁剂	クレンザー	세정제
+Laundry	Laundry	Bột giặt	洗衣液	洗濯洗剤	세탁 세제
+Personal Care	Personal Care	Chăm sóc cá nhân	个人护理	パーソナルケア	개인 위생
+Shampoo	Shampoo	Dầu gội	洗发水	シャンプー	샴푸
+Soap	Soap	Xà phòng	香皂	石けん	비누
+Toothpaste	Toothpaste	Kem đánh răng	牙膏	歯みがき粉	치약
+Dairy & Deli	Dairy & Deli	Sữa & đồ nguội	乳制品与熟食	乳製品・惣菜	유제품·델리
+Butter	Butter	Bơ sữa	黄油	バター	버터
+Cheese	Cheese	Phô mai	奶酪	チーズ	치즈
+Cream	Cream	Kem tươi	奶油	クリーム	크림
+Ham	Ham	Giăm bông	火腿	ハム	햄
+Yoghurt	Yoghurt	Sữa chua	酸奶	ヨーグルト	요거트
+Pet Supplies	Pet Supplies	Đồ thú cưng	宠物用品	ペット用品	반려동물 용품
+Frozen & Meat	Frozen & Meat	Đông lạnh & thịt	冷冻与肉类	冷凍・精肉	냉동·육류
+Pizza	Pizza	Pizza	披萨	ピザ	피자
+Sushis	Sushis	Sushi	寿司	寿司	초밥
+Chicken	Chicken	Thịt gà	鸡肉	鶏肉	닭고기
+Beer	Beer	Bia	啤酒	ビール	맥주
+Owned	Owned	Đã có	已拥有	所有済み	보유 중
+Requires store level {0}	Requires store level {0}	Cần cửa hàng cấp {0}	需要商店等级 {0}	店舗レベル {0} が必要	매장 레벨 {0} 필요
+Not enough money	Not enough money	Không đủ tiền	资金不足	お金が足りない	돈이 부족합니다
+License: {0}	License: {0}	Giấy phép: {0}	许可证:{0}	営業許可:{0}	허가증: {0}
+no sales data yet - default estimate	no sales data yet - default estimate	chưa có số liệu bán - ước lượng mặc định	尚无销售数据——使用默认估计	販売データなし――既定の見積もり	판매 데이터 없음 - 기본 추정치
+{0} {1}°C x{2}	{0} {1}°C x{2}	{0} {1}°C x{2}	{0} {1}°C x{2}	{0} {1}°C x{2}	{0} {1}°C x{2}
+It was okay.	It was okay.	Cũng được.	还行。	まあまあでした。	괜찮았어요.
+The floor was really dirty.	The floor was really dirty.	Sàn bẩn quá.	地板太脏了。	床がすごく汚れていた。	바닥이 정말 더러웠어요.
+Please clean the store!	Please clean the store!	Dọn dẹp cửa hàng đi!	请把店打扫一下!	店を掃除してください!	가게 청소 좀 해 주세요!
+Messy and dirty.	Messy and dirty.	Bừa bộn và bẩn.	又乱又脏。	散らかっていて汚い。	지저분하고 더러워요.
+Clean and tidy store.	Clean and tidy store.	Cửa hàng sạch sẽ, gọn gàng.	店里干净整洁。	清潔で整った店。	깨끗하고 정돈된 가게.
+Spotless!	Spotless!	Sạch bong!	一尘不染!	ピカピカ!	티끌 하나 없어요!
+Very clean, nice place.	Very clean, nice place.	Rất sạch, chỗ dễ chịu.	很干净,好地方。	とても清潔で良い店。	아주 깨끗하고 좋은 곳.
+Not bad.	Not bad.	Không tệ.	还不错。	悪くない。	나쁘지 않아요.
+Average store.	Average store.	Cửa hàng bình thường.	一般的店。	普通の店。	평범한 가게.
+Could be better.	Could be better.	Có thể tốt hơn.	还可以更好。	もう少し頑張って。	더 좋아질 수 있어요.
+Pick up box	Pick up box	Nhặt thùng	拿起箱子	箱を持つ	상자 들기
+Unknown item	Unknown item	Món không rõ	未知物品	不明な商品	알 수 없는 물품
+<color=#FF6B6B>Thief! Press [3] to grab the bat, then swing [LMB]!</color>	<color=#FF6B6B>Thief! Press [3] to grab the bat, then swing [LMB]!</color>	<color=#FF6B6B>Có trộm! Bấm [3] lấy gậy rồi vung [Chuột trái]!</color>	<color=#FF6B6B>有小偷!按 [3] 拿起球棒,然后 [左键] 挥击!</color>	<color=#FF6B6B>泥棒!【3】でバットを持ち、【左クリック】で振れ!</color>	<color=#FF6B6B>도둑이다! [3]으로 방망이를 들고 [좌클릭]으로 휘두르세요!</color>
+{0}   [F] Move	{0}   [F] Move	{0}   [F] Di chuyển	{0}   [F] 移动	{0}   [F] 移動	{0}   [F] 옮기기
+[LMB] Scan {0} {1}\n{2}	[LMB] Scan {0} {1}\n{2}	[Chuột trái] Quét {0} {1}\n{2}	[左键] 扫描 {0} {1}\n{2}	[左クリック] スキャン {0} {1}\n{2}	[좌클릭] 스캔 {0} {1}\n{2}
+[E] Use computer	[E] Use computer	[E] Dùng máy tính	[E] 使用电脑	[E] パソコンを使う	[E] 컴퓨터 사용
+[E] Pick up furniture: {0}	[E] Pick up furniture: {0}	[E] Nhấc nội thất: {0}	[E] 拿起家具:{0}	[E] 家具を持つ:{0}	[E] 가구 들기: {0}
+[E] Take box: {0} ({1}/{2})	[E] Take box: {0} ({1}/{2})	[E] Lấy thùng: {0} ({1}/{2})	[E] 取箱子:{0}({1}/{2})	[E] 箱を取る:{0}({1}/{2})	[E] 상자 꺼내기: {0} ({1}/{2})
+Storage rack  {0}/{1} boxes   [F] Move	Storage rack  {0}/{1} boxes   [F] Move	Kệ kho  {0}/{1} thùng   [F] Di chuyển	仓储货架  {0}/{1} 箱   [F] 移动	保管ラック  {0}/{1} 箱   [F] 移動	창고 선반  {0}/{1}상자   [F] 옮기기
+[E] Pick up box: {0} ({1}/{2})	[E] Pick up box: {0} ({1}/{2})	[E] Nhặt thùng: {0} ({1}/{2})	[E] 拿起箱子:{0}({1}/{2})	[E] 箱を持つ:{0}({1}/{2})	[E] 상자 들기: {0} ({1}/{2})
+   [F] Move	   [F] Move	   [F] Di chuyển	   [F] 移动	   [F] 移動	   [F] 옮기기
+\n<color=#FF8A7A>{0} expired</color>   [R] Throw away	\n<color=#FF8A7A>{0} expired</color>   [R] Throw away	\n<color=#FF8A7A>{0} món hết hạn</color>   [R] Vứt bỏ	\n<color=#FF8A7A>{0} 件过期</color>   [R] 丢弃	\n<color=#FF8A7A>期限切れ {0} 個</color>   [R] 処分	\n<color=#FF8A7A>{0}개 유통기한 지남</color>   [R] 버리기
+\n<color=#FFD54A>Expires in {0} h</color>	\n<color=#FFD54A>Expires in {0} h</color>	\n<color=#FFD54A>Hết hạn sau {0} giờ</color>	\n<color=#FFD54A>{0} 小时后过期</color>	\n<color=#FFD54A>あと {0} 時間で期限切れ</color>	\n<color=#FFD54A>{0}시간 후 유통기한 만료</color>
+\n<size=85%>Fresh for {0} more days</size>	\n<size=85%>Fresh for {0} more days</size>	\n<size=85%>Còn tươi {0} ngày nữa</size>	\n<size=85%>还能保鲜 {0} 天</size>	\n<size=85%>あと {0} 日新鮮</size>	\n<size=85%>{0}일 더 신선함</size>
+Threw away {0} expired {1}.	Threw away {0} expired {1}.	Đã vứt {0} {1} hết hạn.	已丢弃 {0} 件过期的{1}。	期限切れの{1}を {0} 個処分した。	유통기한 지난 {1} {0}개를 버렸습니다.
+Price {0}  (Market {1})\n[LMB] Set price{2}{3}	Price {0}  (Market {1})\n[LMB] Set price{2}{3}	Giá {0}  (Thị trường {1})\n[Chuột trái] Đặt giá{2}{3}	售价 {0}(市场价 {1})\n[左键] 定价{2}{3}	価格 {0}(相場 {1})\n[左クリック] 価格設定{2}{3}	가격 {0}  (시세 {1})\n[좌클릭] 가격 설정{2}{3}
+Empty box   [E] Throw away	Empty box   [E] Throw away	Thùng rỗng   [E] Vứt bỏ	空箱子   [E] 丢弃	空き箱   [E] 捨てる	빈 상자   [E] 버리기
+{0}   [E] Drop box	{0}   [E] Drop box	{0}   [E] Đặt thùng xuống	{0}   [E] 放下箱子	{0}   [E] 箱を置く	{0}   [E] 상자 내려놓기
+Box is empty	Box is empty	Thùng đã hết hàng	箱子空了	箱が空です	상자가 비었습니다
+[LMB] Place	[LMB] Place	[Chuột trái] Đặt	[左键] 放置	[左クリック] 置く	[좌클릭] 놓기
+   [RMB] Take back	   [RMB] Take back	   [Chuột phải] Lấy lại	   [右键] 取回	   [右クリック] 戻す	   [우클릭] 회수
+Shelf: {0} {1}/{2}   |   Box: {3}\n{4}{5}   [E] Drop	Shelf: {0} {1}/{2}   |   Box: {3}\n{4}{5}   [E] Drop	Kệ: {0} {1}/{2}   |   Thùng: {3}\n{4}{5}   [E] Đặt xuống	货架:{0} {1}/{2}   |   箱子:{3}\n{4}{5}   [E] 放下	棚:{0} {1}/{2}   |   箱:{3}\n{4}{5}   [E] 置く	선반: {0} {1}/{2}   |   상자: {3}\n{4}{5}   [E] 내려놓기
+Clean!	Clean!	Sạch rồi!	干净了!	きれいになった!	깨끗해!
+[Hold LMB] Sweep	[Hold LMB] Sweep	[Giữ chuột trái] Quét	[按住左键] 清扫	[左クリック長押し] 掃く	[좌클릭 유지] 쓸기
+Dirty spots: {0}	Dirty spots: {0}	Vết bẩn: {0}	污渍:{0}	汚れ:{0}	얼룩: {0}
+<color=#FF6B6B>Thief! Get close and swing [LMB]!</color>	<color=#FF6B6B>Thief! Get close and swing [LMB]!</color>	<color=#FF6B6B>Có trộm! Lại gần và vung [Chuột trái]!</color>	<color=#FF6B6B>有小偷!靠近后 [左键] 挥击!</color>	<color=#FF6B6B>泥棒!近づいて【左クリック】で振れ!</color>	<color=#FF6B6B>도둑이다! 가까이 가서 [좌클릭]으로 휘두르세요!</color>
+[LMB] Swing	[LMB] Swing	[Chuột trái] Vung gậy	[左键] 挥击	[左クリック] 振る	[좌클릭] 휘두르기
+This car only has the chase camera.	This car only has the chase camera.	Xe này chỉ có góc nhìn từ phía sau.	这辆车只有追尾视角。	この車は後方視点のみです。	이 차는 추적 카메라만 있습니다.
+  <color=#FF8A7A>Lv {0}</color>	  <color=#FF8A7A>Lv {0}</color>	  <color=#FF8A7A>Cấp {0}</color>	  <color=#FF8A7A>等级 {0}</color>	  <color=#FF8A7A>Lv {0}</color>	  <color=#FF8A7A>Lv {0}</color>
+<color=#FFD54A>FOR SALE</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>Buy on the computer > Vehicles</color></size>	<color=#FFD54A>FOR SALE</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>Buy on the computer > Vehicles</color></size>	<color=#FFD54A>CẦN BÁN</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>Mua trên máy tính > Xe</color></size>	<color=#FFD54A>出售</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>在电脑 > 车辆 中购买</color></size>	<color=#FFD54A>販売中</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>パソコン > 乗り物 で購入</color></size>	<color=#FFD54A>판매 중</color>\n<size=80%>{0}  {1}{2}</size>\n<size=60%><color=#CFE3F5>컴퓨터 > 차량에서 구매</color></size>
+{0} is for sale ({1}). Buy it on the computer > Vehicles.	{0} is for sale ({1}). Buy it on the computer > Vehicles.	{0} đang được bán ({1}). Mua trên máy tính > Xe.	{0} 正在出售({1})。请在电脑 > 车辆 中购买。	{0} が販売中({1})。パソコン > 乗り物 で購入できます。	{0} 판매 중 ({1}). 컴퓨터 > 차량에서 구매하세요.
+Motorbike	Motorbike	Xe máy	摩托车	バイク	오토바이
+Your trusty starter bike. Cheap, light and easy to park anywhere.	Your trusty starter bike. Cheap, light and easy to park anywhere.	Chiếc xe máy đầu tiên đáng tin cậy. Rẻ, nhẹ, đỗ đâu cũng dễ.	你可靠的入门摩托。便宜、轻巧,随处好停。	頼れる最初のバイク。安くて軽く、どこにでも停めやすい。	믿음직한 첫 오토바이. 싸고 가볍고 어디든 주차하기 쉬워요.
+Premium scooter with a stronger engine - finish deliveries before the timer runs out.	Premium scooter with a stronger engine - finish deliveries before the timer runs out.	Xe tay ga cao cấp, máy khoẻ hơn - giao hàng kịp trước khi hết giờ.	高级踏板车,发动机更强——赶在时间耗尽前完成配送。	パワフルな高級スクーター。時間切れ前に配達を済ませよう。	더 강한 엔진의 프리미엄 스쿠터 - 시간 안에 배달을 끝내세요.
+Classic Sedan	Classic Sedan	Sedan cổ điển	经典轿车	クラシックセダン	클래식 세단
+Car	Car	Ô tô	汽车	車	자동차
+A roomy family sedan. The cheapest way to drive a car on deliveries.	A roomy family sedan. The cheapest way to drive a car on deliveries.	Sedan gia đình rộng rãi. Cách rẻ nhất để đi giao hàng bằng ô tô.	宽敞的家用轿车。开车送货最便宜的选择。	広々としたファミリーセダン。車で配達する一番安い方法。	넓은 가족용 세단. 차로 배달하는 가장 저렴한 방법.
+Tocus City Car	Tocus City Car	Xe thành phố Tocus	Tocus 城市小车	Tocus シティカー	Tocus 시티카
+Quick and nimble city car. Stable at high speed on the long avenues.	Quick and nimble city car. Stable at high speed on the long avenues.	Xe thành phố nhanh nhẹn. Chạy tốc độ cao trên đại lộ vẫn vững.	灵活快速的城市车,在长街上高速行驶也很稳。	俊敏なシティカー。長い大通りでも高速で安定。	빠르고 민첩한 시티카. 긴 대로에서 고속에도 안정적.
+Sports Coupe	Sports Coupe	Xe thể thao Coupe	跑车	スポーツクーペ	스포츠 쿠페
+The fastest car in the city. A reward for a successful store owner.	The fastest car in the city. A reward for a successful store owner.	Chiếc xe nhanh nhất thành phố. Phần thưởng cho chủ cửa hàng thành đạt.	全城最快的车,成功店主的奖励。	街で一番速い車。成功した店主へのご褒美。	도시에서 가장 빠른 차. 성공한 가게 주인을 위한 보상.
+You bought the {0}! It's parked outside the store - press [F] to ride.	You bought the {0}! It's parked outside the store - press [F] to ride.	Bạn đã mua {0}! Xe đỗ ngoài cửa hàng - bấm [F] để lên xe.	你买下了 {0}!它停在店外——按 [F] 乘坐。	{0} を購入しました!店の前に停めてあります――[F] で乗車。	{0}을(를) 구매했습니다! 가게 밖에 주차됨 - [F]로 탑승.
+{0} is parked outside the store.	{0} is parked outside the store.	{0} đang đỗ ngoài cửa hàng.	{0} 停在店外。	{0} は店の前に停めてあります。	{0}이(가) 가게 밖에 주차되어 있습니다.
+Added {0} box(es) of {1}	Added {0} box(es) of {1}	Đã thêm {0} thùng {1}	已添加 {0} 箱{1}	{1} を {0} 箱追加	{1} {0}상자 추가
+Cart is empty!	Cart is empty!	Giỏ hàng trống!	购物车是空的!	カートが空です!	장바구니가 비었습니다!
+No delivery point set up	No delivery point set up	Chưa đặt điểm nhận hàng	未设置收货点	納品場所が未設定	배송 지점이 없습니다
+{0} cannot be delivered	{0} cannot be delivered	Không giao được {0}	{0} 无法配送	{0} は配送できません	{0}은(는) 배송할 수 없습니다
+Order {0} box(es)	Order {0} box(es)	Đặt {0} thùng	订购 {0} 箱	{0} 箱を注文	{0}상자 주문
+Not enough money: the cart holds {0} box(es) for {1}, you have {2}. Remove boxes with -, or right-click Buy to empty the cart.	Not enough money: the cart holds {0} box(es) for {1}, you have {2}. Remove boxes with -, or right-click Buy to empty the cart.	Không đủ tiền: giỏ có {0} thùng, giá {1}, bạn có {2}. Bớt thùng bằng nút -, hoặc chuột phải vào Mua để xoá giỏ.	资金不足:购物车有 {0} 箱,共 {1},你只有 {2}。用 - 减少箱数,或右键点击“购买”清空购物车。	お金が足りません:カートは {0} 箱で {1}、所持金は {2}。- で減らすか、購入を右クリックしてカートを空にしてください。	돈이 부족합니다: 장바구니 {0}상자, {1}, 보유 {2}. -로 줄이거나 구매를 우클릭해 비우세요.
+Order placed! {0} box(es) delivered.	Order placed! {0} box(es) delivered.	Đã đặt hàng! Đã giao {0} thùng.	下单成功!已送达 {0} 箱。	注文完了!{0} 箱が届きました。	주문 완료! {0}상자가 도착했습니다.
+Store expansion	Store expansion	Mở rộng cửa hàng	商店扩建	店舗拡張	매장 확장
+Buy {0} first	Buy {0} first	Hãy mua {0} trước	请先购买 {0}	先に {0} を購入	먼저 {0}을(를) 구매하세요
+Expansion: {0}	Expansion: {0}	Mở rộng: {0}	扩建:{0}	拡張:{0}	확장: {0}
+{0} is now open!	{0} is now open!	{0} đã mở cửa!	{0} 已开放!	{0} がオープンしました!	{0} 오픈!
+Closing time - serve the last customers	Closing time - serve the last customers	Đến giờ đóng cửa - phục vụ nốt khách cuối	打烊时间——招待最后的顾客	閉店時間――最後のお客さんを接客	마감 시간 - 마지막 손님을 응대하세요
+[LMB] Close store	[LMB] Close store	[Chuột trái] Đóng cửa	[左键] 关店	[左クリック] 閉店	[좌클릭] 영업 종료
+[LMB] Open store	[LMB] Open store	[Chuột trái] Mở cửa	[左键] 开店	[左クリック] 開店	[좌클릭] 영업 시작
+OPEN	OPEN	MỞ CỬA	营业中	営業中	영업 중
+CLOSED	CLOSED	ĐÓNG CỬA	已打烊	閉店	영업 종료
+Fixture	Fixture	Kệ cố định	固定货架	備え付け棚	고정 진열대
+Shelf	Shelf	Kệ	货架	棚	선반
+[E] Drop box	[E] Drop box	[E] Đặt thùng xuống	[E] 放下箱子	[E] 箱を置く	[E] 상자 내려놓기
+[F] Cancel	[F] Cancel	[F] Huỷ	[F] 取消	[F] キャンセル	[F] 취소
+[Click LMB] Place	[Click LMB] Place	[Bấm chuột trái] Đặt	[左键单击] 放置	[左クリック] 設置	[좌클릭] 배치
+<color=#FF6B6B>Can't place here</color>	<color=#FF6B6B>Can't place here</color>	<color=#FF6B6B>Không đặt được ở đây</color>	<color=#FF6B6B>无法放在这里</color>	<color=#FF6B6B>ここには置けない</color>	<color=#FF6B6B>여기에 놓을 수 없음</color>
+{0}\n{1}   [Hold LMB + drag] Rotate   [Q/R] 90°   {2}	{0}\n{1}   [Hold LMB + drag] Rotate   [Q/R] 90°   {2}	{0}\n{1}   [Giữ chuột trái + kéo] Xoay   [Q/R] 90°   {2}	{0}\n{1}   [按住左键拖动] 旋转   [Q/R] 90°   {2}	{0}\n{1}   [左クリック長押し+ドラッグ] 回転   [Q/R] 90°   {2}	{0}\n{1}   [좌클릭 유지+드래그] 회전   [Q/R] 90°   {2}
+Empty	Empty	Trống	空	空	비어 있음
+Shelf has no slots	Shelf has no slots	Kệ không có ô trống	货架没有格位	棚に置き場がない	선반에 칸이 없습니다
+Shelf is full	Shelf is full	Kệ đã đầy	货架已满	棚がいっぱい	선반이 가득 찼습니다
+This shelf is for {0}	This shelf is for {0}	Kệ này dành cho {0}	此货架用于{0}	この棚は{0}用です	이 선반은 {0}용입니다
+Only {0} products here	Only {0} products here	Chỉ bày {0} ở đây	这里只放{0}	ここは{0}専用	여기는 {0}만 진열
+Shelf is empty	Shelf is empty	Kệ trống	货架是空的	棚が空です	선반이 비었습니다
+Only expired items left	Only expired items left	Chỉ còn hàng hết hạn	只剩过期商品	期限切れ品しか残っていない	유통기한 지난 상품만 남음
+Box is full	Box is full	Thùng đã đầy	箱子满了	箱がいっぱい	상자가 가득 찼습니다
+Box holds {0}	Box holds {0}	Thùng chứa {0}	箱子装的是{0}	箱の中身は{0}	상자에 {0}이(가) 들어 있음
+Cash {0}	Cash {0}	Tiền mặt {0}	现金 {0}	現金 {0}	현금 {0}
+Card	Card	Thẻ	刷卡	カード	카드
+Customer paid {0} item(s) by {1}	Customer paid {0} item(s) by {1}	Khách đã trả {0} món bằng {1}	顾客用{1}支付了 {0} 件商品	お客さんが {0} 点を{1}で支払った	손님이 {0}개를 {1}(으)로 결제했습니다
+Too much change given	Too much change given	Thối tiền dư	找零找多了	お釣りを渡しすぎた	거스름돈을 너무 많이 줬습니다
+Waiting customers: {0}	Waiting customers: {0}	Khách đang chờ: {0}	等待中的顾客:{0}	待っているお客さん:{0}	대기 손님: {0}
+No customers	No customers	Không có khách	没有顾客	お客さんなし	손님 없음
+Customer pays cash {0} for {1} - click the cash	Customer pays cash {0} for {1} - click the cash	Khách trả tiền mặt {0} cho {1} - bấm vào tiền	顾客用现金 {0} 支付 {1}——点击现金	お客さんが {1} に現金 {0} を出した――お金をクリック	손님이 {1}에 대해 현금 {0}을(를) 냈습니다 - 현금을 클릭하세요
+Customer pays by card {0} - click the card	Customer pays by card {0} - click the card	Khách trả bằng thẻ {0} - bấm vào thẻ	顾客刷卡支付 {0}——点击银行卡	お客さんがカードで {0} を支払う――カードをクリック	손님이 카드로 {0} 결제 - 카드를 클릭하세요
+Total {0} - customer is getting the money...	Total {0} - customer is getting the money...	Tổng {0} - khách đang lấy tiền...	合计 {0}——顾客正在掏钱……	合計 {0}――お客さんがお金を出しています……	합계 {0} - 손님이 돈을 꺼내는 중...
+Total {0} | Items left: {1}	Total {0} | Items left: {1}	Tổng {0} | Còn lại: {1} món	合计 {0} | 剩余商品:{1}	合計 {0} | 残り:{1} 点	합계 {0} | 남은 물건: {1}
+Item	Item	Món hàng	商品	商品	상품
+Checkout counter	Checkout counter	Quầy thu ngân	收银台	レジカウンター	계산대
+All counters open	All counters open	Đã mở hết quầy	所有收银台已开放	全レジ開放済み	모든 계산대 개방
+Unlock {0}	Unlock {0}	Mở {0}	解锁 {0}	{0} を開放	{0} 잠금 해제
+GIVE CHANGE	GIVE CHANGE	THỐI TIỀN	找零	お釣りを渡す	거스름돈 주기
+CARD PAYMENT	CARD PAYMENT	THANH TOÁN THẺ	刷卡支付	カード払い	카드 결제
+{0} WAITING IN LINE	{0} WAITING IN LINE	{0} NGƯỜI ĐANG XẾP HÀNG	{0} 人在排队	{0} 人が待っています	{0}명 대기 중
+NOBODY ELSE IN LINE	NOBODY ELSE IN LINE	KHÔNG CÒN AI XẾP HÀNG	后面没人排队了	後ろに誰も並んでいません	더 이상 대기 손님 없음
+24 Hai Bà Trưng · Day {0} · {1}	24 Hai Bà Trưng · Day {0} · {1}	24 Hai Bà Trưng · Ngày {0} · {1}	24 Hai Bà Trưng · 第 {0} 天 · {1}	24 Hai Bà Trưng · {0} 日目 · {1}	24 Hai Bà Trưng · {0}일차 · {1}
+\"Here is {0}, dear.\"	\"Here is {0}, dear.\"	\"Gửi cháu {0} nhé.\"	“给你 {0}。”	「はい、{0} ね。」	"여기 {0}이에요."
+CASH	CASH	TIỀN MẶT	现金	現金	현금
+exactly right	exactly right	vừa đủ	刚刚好	ちょうど	정확함
+Correct change! Press Enter or HAND OVER CHANGE.	Correct change! Press Enter or HAND OVER CHANGE.	Thối đúng rồi! Bấm Enter hoặc ĐƯA TIỀN THỐI.	找零正确!按 Enter 或点击“交付找零”。	お釣りぴったり!Enter か「お釣りを渡す」を押して。	거스름돈 정확! Enter 또는 거스름돈 건네기를 누르세요.
+too much: you lose {0}	too much: you lose {0}	dư: bạn mất {0}	多了:你损失 {0}	多すぎ:{0} の損	초과: {0} 손해
+Too much change is your loss.	Too much change is your loss.	Thối dư là bạn chịu lỗ.	找多了算你亏。	お釣りの渡しすぎはあなたの損。	거스름돈을 더 주면 손해예요.
+\"Card, please.\"	\"Card, please.\"	\"Cho cô quẹt thẻ nhé.\"	“刷卡吧。”	「カードでお願い。」	"카드로 할게요."
+CARD	CARD	THẺ	银行卡	カード	카드
+Type the total from the receipt on the card machine, then press Enter.	Type the total from the receipt on the card machine, then press Enter.	Nhập số tổng trên hoá đơn vào máy quẹt thẻ rồi bấm Enter.	在刷卡机上输入收据上的总额,然后按 Enter。	レシートの合計を端末に入力して Enter を押してください。	영수증의 합계를 카드 단말기에 입력하고 Enter를 누르세요.
+HAND OVER CHANGE	HAND OVER CHANGE	ĐƯA TIỀN THỐI	交付找零	お釣りを渡す	거스름돈 건네기
+CHARGE THE CARD	CHARGE THE CARD	QUẸT THẺ	刷卡收款	カードで決済	카드 결제하기
+... and {0} more	... and {0} more	... và {0} món nữa	……还有 {0} 件	……ほか {0} 点	... 외 {0}개
+(items on the counter)	(items on the counter)	(hàng trên quầy)	(柜台上的商品)	(カウンターの商品)	(계산대 위 상품)
+Wrong amount! Try again.	Wrong amount! Try again.	Sai số tiền! Thử lại.	金额错误!请重试。	金額が違います!もう一度。	금액이 틀렸어요! 다시 하세요.
+TOTAL	TOTAL	TỔNG	合计	合計	합계
+CHANGE	CHANGE	TIỀN THỐI	找零	お釣り	거스름돈
+Cash	Cash	Tiền mặt	现金	現金	현금
+Due	Due	Phải trả	应付	請求額	청구액
+CHANGE DUE	CHANGE DUE	CẦN THỐI	应找零	お釣り	거스름돈
+IN YOUR HAND	IN YOUR HAND	TRÊN TAY	手里	手元	손에 든 돈
+NGĂN KÉO TIỀN · CASH DRAWER	CASH DRAWER	NGĂN KÉO TIỀN	钱箱	レジの引き出し	돈 서랍
+TAKE IT BACK	TAKE IT BACK	LẤY LẠI	拿回	戻す	되돌리기
+CLEAR	CLEAR	XOÁ	清除	クリア	지우기
+DEL	DEL	XOÁ	删除	削除	삭제
+Check the total on the receipt twice. A wrong number makes the customer wait. - bà Lan	Check the total on the receipt twice. A wrong number makes the customer wait. - Grandma Lan	Xem số tổng trên hoá đơn hai lần. Nhập sai là khách phải chờ. - bà Lan	收据上的总额要看两遍,输错了顾客就得等。——兰奶奶	レシートの合計は二度確認して。間違えるとお客さんを待たせるよ。――ランおばあちゃん	영수증 합계는 두 번 확인하렴. 틀리면 손님이 기다려야 해. - 란 할머니
+Notes	Notes	Tiền giấy	纸币	紙幣	지폐
+Coins	Coins	Tiền xu	硬币	硬貨	동전
+Take back	Take back	Lấy lại	拿回	戻す	되돌리기
+Hand over	Hand over	Đưa tiền	交付	渡す	건네기
+Later	Later	Để sau	稍后	後で	나중에
+Too much change is your loss · too little hurts your rating	Too much change is your loss · too little hurts your rating	Thối dư là bạn lỗ · thối thiếu thì bị chấm điểm thấp	找多了你亏 · 找少了影响评分	渡しすぎは損 · 足りないと評価が下がる	더 주면 손해 · 덜 주면 평점 하락
+Type amount	Type amount	Nhập số tiền	输入金额	金額を入力	금액 입력
+Delete	Delete	Xoá	删除	削除	삭제
+Charge	Charge	Thu tiền	收款	決済	결제
+Type exactly the total on the receipt	Type exactly the total on the receipt	Nhập đúng số tổng trên hoá đơn	准确输入收据上的总额	レシートの合計を正確に入力	영수증 합계를 정확히 입력
+[LMB] Take cash {0}  (total {1})	[LMB] Take cash {0}  (total {1})	[Chuột trái] Nhận tiền mặt {0}  (tổng {1})	[左键] 收取现金 {0}(合计 {1})	[左クリック] 現金 {0} を受け取る(合計 {1})	[좌클릭] 현금 {0} 받기 (합계 {1})
+[LMB] Take card  (total {0})	[LMB] Take card  (total {0})	[Chuột trái] Nhận thẻ  (tổng {0})	[左键] 接过银行卡(合计 {0})	[左クリック] カードを受け取る(合計 {0})	[좌클릭] 카드 받기 (합계 {0})
+PRODUCT	PRODUCT	MẶT HÀNG	商品	商品	상품
+IN STOCK	IN STOCK	TỒN KHO	库存	在庫	재고
+WILL SELL	WILL SELL	SẼ BÁN	预计售出	売れる見込み	예상 판매
+SHOULD HAVE	SHOULD HAVE	NÊN CÓ	应备数量	必要数	필요 수량
+ORDER	ORDER	ĐẶT	订购	注文	주문
+WHY	WHY	VÌ SAO	原因	理由	이유
+what to order tonight - no sales history yet, so these are first guesses	what to order tonight - no sales history yet, so these are first guesses	tối nay nên nhập gì - chưa có lịch sử bán nên đây là ước đoán ban đầu	今晚该进什么货——还没有销售记录,以下是初步估计	今夜の仕入れ――まだ販売履歴がないので最初の見当です	오늘 밤 주문할 것 - 판매 기록이 없어 첫 추측입니다
+TODAY: {0} h left	TODAY: {0} h left	HÔM NAY: còn {0} giờ	今天:还剩 {0} 小时	今日:残り {0} 時間	오늘: {0}시간 남음
+TODAY: closed	TODAY: closed	HÔM NAY: đã đóng cửa	今天:已打烊	今日:閉店	오늘: 영업 종료
+{0}      TOMORROW {1} (radio, right ~{2}% of days): {3}	{0}      TOMORROW {1} (radio, right ~{2}% of days): {3}	{0}      NGÀY MAI {1} (đài báo, đúng ~{2}% số ngày): {3}	{0}      明天 {1}(广播预报,约 {2}% 的日子准确):{3}	{0}      明日 {1}(ラジオ予報、的中率 約{2}%):{3}	{0}      내일 {1} (라디오 예보, 적중률 약 {2}%): {3}
+{0} · normal demand	{0} · normal demand	{0} · nhu cầu bình thường	{0} · 需求正常	{0} · 需要は普通	{0} · 수요 보통
+Fresh food: I order a little less than I think I can sell. Spoiled food is money in the bin. - bà Lan	Fresh food: I order a little less than I think I can sell. Spoiled food is money in the bin. - Grandma Lan	Đồ tươi: bà nhập ít hơn số bà nghĩ sẽ bán được một chút. Đồ hỏng là tiền vứt vào thùng rác. - bà Lan	生鲜:我总比预计能卖的少进一点。坏掉的食物就是扔进垃圾桶的钱。——兰奶奶	生鮮は売れると思う量より少し少なめに仕入れるの。傷んだ食べ物はお金をゴミ箱に捨てるのと同じ。――ランおばあちゃん	신선식품은 팔 수 있다고 생각하는 것보다 조금 적게 주문해. 상한 음식은 쓰레기통에 버린 돈이야. - 란 할머니
+Nothing to order right now. The shelves will last until tomorrow. - bà Lan	Nothing to order right now. The shelves will last until tomorrow. - Grandma Lan	Giờ chưa cần nhập gì. Hàng trên kệ đủ bán đến mai. - bà Lan	现在不用进货,货架上的东西够卖到明天。——兰奶奶	今は仕入れ不要。棚の品は明日までもつわ。――ランおばあちゃん	지금은 주문할 게 없어. 진열대 물건이 내일까지 버틸 거야. - 란 할머니
+ADD ALL {0} TO CART · {1}	ADD ALL {0} TO CART · {1}	THÊM CẢ {0} VÀO GIỎ · {1}	全部 {0} 件加入购物车 · {1}	{0} 件すべてカートへ · {1}	{0}개 모두 담기 · {1}
+ADD ALL TO CART	ADD ALL TO CART	THÊM TẤT CẢ VÀO GIỎ	全部加入购物车	すべてカートへ	모두 장바구니에 담기
+IN CART	IN CART	ĐÃ VÀO GIỎ	已加入	カート内	담김
+ADD	ADD	THÊM	添加	追加	담기
+Added {0} suggested product(s) to the cart. Press <b>Buy</b> to order.	Added {0} suggested product(s) to the cart. Press <b>Buy</b> to order.	Đã thêm {0} mặt hàng gợi ý vào giỏ. Bấm <b>Mua</b> để đặt hàng.	已将 {0} 件建议商品加入购物车。点击<b>购买</b>下单。	おすすめ商品 {0} 件をカートに追加。<b>購入</b>で注文。	추천 상품 {0}개를 담았습니다. <b>구매</b>를 눌러 주문하세요.
+ADVISOR	ADVISOR	SỔ TAY	进货顾问	仕入れ帳	주문 도우미
+SỔ TAY BÀ LAN	GRANDMA LAN'S NOTEBOOK	SỔ TAY BÀ LAN	兰奶奶的笔记本	ランおばあちゃんの手帳	란 할머니의 수첩
+No products in the store yet - order a few products first, then come back after a day of sales.	No products in the store yet - order a few products first, then come back after a day of sales.	Cửa hàng chưa có hàng - hãy nhập vài mặt hàng trước, bán một ngày rồi quay lại.	店里还没有商品——先进几样货,卖一天后再来看。	まだ商品がありません――いくつか仕入れて、1日売ってから戻ってきて。	아직 상품이 없습니다 - 먼저 몇 가지 주문하고 하루 판매 후 다시 오세요.
+Product	Product	Mặt hàng	商品	商品	상품
+Why	Why	Vì sao	原因	理由	이유
+Buy	Buy	Mua	购买	購入	구매
+Cart emptied.	Cart emptied.	Đã xoá giỏ hàng.	购物车已清空。	カートを空にしました。	장바구니를 비웠습니다.
+VIỆC HÔM NAY · TO DO	TODAY'S TO-DO	VIỆC HÔM NAY	今日待办	今日のやること	오늘 할 일
+Serve {0} customers - {1}	Serve {0} customers - {1}	Phục vụ {0} khách - {1}	服务 {0} 位顾客 - {1}	お客さん {0} 人を接客 - {1}	손님 {0}명 응대 - {1}
+Rating 4.0 or more ({0})	Rating 4.0 or more ({0})	Đánh giá từ 4.0 ({0})	评分 4.0 以上({0})	評価 4.0 以上({0})	평점 4.0 이상 ({0})
+{0} deliveries - {1} done	{0} deliveries - {1} done	{0} đơn giao - xong {1}	{0} 单配送 - 已完成 {1}	配達 {0} 件 - {1} 件完了	배달 {0}건 - {1}건 완료
+TEAR THE PAGE · DAY {0}	TEAR THE PAGE · DAY {0}	XÉ LỊCH · NGÀY {0}	撕下日历 · 第 {0} 天	日めくり · {0} 日目	달력 넘기기 · {0}일차
+Sales	Sales	Doanh thu	销售额	売上	매출
+Products bought	Products bought	Tiền nhập hàng	进货支出	仕入れ	상품 구입
+Rent	Rent	Tiền thuê	租金	家賃	임대료
+Wages	Wages	Lương	工资	人件費	급여
+Upgrades	Upgrades	Nâng cấp	升级	設備投資	업그레이드
+Other	Other	Khác	其他	その他	기타
+{0} customers served, {1} items sold	{0} customers served, {1} items sold	Đã phục vụ {0} khách, bán {1} món	服务了 {0} 位顾客,售出 {1} 件商品	お客さん {0} 人を接客、{1} 点販売	손님 {0}명 응대, {1}개 판매
+Visitors: {0}	Visitors: {0}	Khách ghé: {0}	到店顾客:{0}	来店客:{0}	방문객: {0}
+Spoiled: {0} item(s), {1} lost	Spoiled: {0} item(s), {1} lost	Hỏng: {0} món, mất {1}	变质:{0} 件,损失 {1}	廃棄:{0} 点、損失 {1}	폐기: {0}개, 손실 {1}
+Balance:  {0}  ->  {1}	Balance:  {0}  ->  {1}	Số dư:  {0}  ->  {1}	余额:{0}  ->  {1}	残高:{0}  ->  {1}	잔액:  {0}  ->  {1}
+ĐÃ THU TIỀN	PAID	ĐÃ THU TIỀN	已收款	入金済	수금 완료
+THUA LỖ	LOSS	THUA LỖ	亏损	赤字	적자
+NGÀY · DAY	DAY	NGÀY	日	日	일
+STORE CLOSED	STORE CLOSED	ĐÃ ĐÓNG CỬA	已打烊	閉店	영업 종료
+END OF DAY	END OF DAY	CUỐI NGÀY	今日结算	本日の締め	마감 정산
+HOÁ ĐƠN BÁN LẺ	DAILY RECEIPT	HOÁ ĐƠN BÁN LẺ	零售发票	売上伝票	판매 영수증
+DAILY TAKINGS · LIÊN 1: LƯU	DAILY TAKINGS · COPY 1: KEEP	DOANH THU NGÀY · LIÊN 1: LƯU	每日营业额 · 第一联:存根	本日の売上 · 控え	일일 매출 · 1부: 보관
+No.	No.	Số	编号	No.	번호
+NỘI DUNG · ITEM	ITEM	NỘI DUNG	项目	項目	항목
+THÀNH TIỀN	AMOUNT	THÀNH TIỀN	金额	金額	금액
+CỘNG · PROFIT	PROFIT	CỘNG	合计利润	利益	이익
+TEAR THE PAGE	TEAR THE PAGE	XÉ LỊCH	撕下日历	日めくり	달력 넘기기
++ {0} for each new room	+ {0} for each new room	+ {0} cho mỗi phòng mới	每间新房间 + {0}	新しい部屋ごとに + {0}	새 방마다 + {0}
+built · owned	built · owned	đã xây · đã có	已建 · 已拥有	建設済み · 所有	건설됨 · 보유
+{0} · adds to the daily rent	{0} · adds to the daily rent	{0} · cộng vào tiền thuê mỗi ngày	{0} · 计入每日租金	{0} · 毎日の家賃に加算	{0} · 일일 임대료에 추가
+needs store Lv {0} · {1}	needs store Lv {0} · {1}	cần cửa hàng cấp {0} · {1}	需要商店等级 {0} · {1}	店舗レベル {0} が必要 · {1}	매장 레벨 {0} 필요 · {1}
+EXPAND	EXPAND	MỞ RỘNG	扩建	拡張	확장
+MẶT BẰNG · FLOOR PLAN 1:100	FLOOR PLAN 1:100	MẶT BẰNG 1:100	平面图 1:100	平面図 1:100	평면도 1:100
+MAIN HALL	MAIN HALL	SẢNH CHÍNH	主厅	メインホール	메인 홀
+Shelves and checkout · owned	Shelves and checkout · owned	Kệ hàng và quầy thu ngân · đã có	货架与收银台 · 已拥有	棚とレジ · 所有	선반과 계산대 · 보유
+ENTRANCE · HAI BÀ TRƯNG	ENTRANCE · HAI BÀ TRƯNG	LỐI VÀO · HAI BÀ TRƯNG	入口 · HAI BÀ TRƯNG	入口 · HAI BÀ TRƯNG	입구 · HAI BÀ TRƯNG
+No expansions yet.\nRun Tools > Store Setup > 15 / 16 in the editor.	No expansions yet.\nRun Tools > Store Setup > 15 / 16 in the editor.	Chưa có phần mở rộng.\nChạy Tools > Store Setup > 15 / 16 trong editor.	尚无扩建。\n请在编辑器中运行 Tools > Store Setup > 15 / 16。	拡張がありません。\nエディターで Tools > Store Setup > 15 / 16 を実行してください。	확장이 없습니다.\n에디터에서 Tools > Store Setup > 15 / 16을 실행하세요.
+BUILD	BUILD	XÂY	建造	建設	건설
+Yellow dashed rooms can be built now. Every new room adds to the rent paid each night.	Yellow dashed rooms can be built now. Every new room adds to the rent paid each night.	Phòng viền vàng nét đứt xây được ngay. Mỗi phòng mới làm tăng tiền thuê trả mỗi tối.	黄色虚线的房间现在可以建造。每间新房间都会增加每晚的租金。	黄色の点線の部屋は今すぐ建てられます。部屋が増えるごとに毎晩の家賃が上がります。	노란 점선 방은 지금 지을 수 있습니다. 새 방마다 매일 밤 임대료가 늘어납니다.
+RENT · PAID EVERY NIGHT	RENT · PAID EVERY NIGHT	TIỀN THUÊ · TRẢ MỖI TỐI	租金 · 每晚支付	家賃 · 毎晩支払い	임대료 · 매일 밤 지불
+ROOMS BUILT	ROOMS BUILT	SỐ PHÒNG ĐÃ XÂY	已建房间	建設済みの部屋	건설된 방
+Do not build before the shelves are full. Empty rooms still cost rent. - bà Lan	Do not build before the shelves are full. Empty rooms still cost rent. - Grandma Lan	Đừng xây khi kệ chưa đầy. Phòng trống vẫn phải trả tiền thuê. - bà Lan	货架没摆满之前别扩建,空房间也要交租。——兰奶奶	棚がいっぱいになる前に建てちゃだめ。空き部屋にも家賃がかかるわ。――ランおばあちゃん	진열대가 차기 전엔 짓지 마. 빈 방도 임대료가 나가. - 란 할머니
+No furniture yet. Run Tools > Store Setup > 9. Build Furniture Catalog.	No furniture yet. Run Tools > Store Setup > 9. Build Furniture Catalog.	Chưa có nội thất. Chạy Tools > Store Setup > 9. Build Furniture Catalog.	尚无家具。请运行 Tools > Store Setup > 9. Build Furniture Catalog。	家具がありません。Tools > Store Setup > 9. Build Furniture Catalog を実行してください。	가구가 없습니다. Tools > Store Setup > 9. Build Furniture Catalog를 실행하세요.
+Buy here, then pick up the box outside and press <b><color=#F1F3F6>LMB</color></b> to place it. <b><color=#F1F3F6>R</color></b> rotates.	Buy here, then pick up the box outside and press <b><color=#F1F3F6>LMB</color></b> to place it. <b><color=#F1F3F6>R</color></b> rotates.	Mua ở đây, rồi nhặt thùng ngoài cửa và bấm <b><color=#F1F3F6>chuột trái</color></b> để đặt. <b><color=#F1F3F6>R</color></b> để xoay.	在这里购买,然后到店外拿起箱子,按<b><color=#F1F3F6>左键</color></b>放置,<b><color=#F1F3F6>R</color></b> 旋转。	ここで購入し、外の箱を持って<b><color=#F1F3F6>左クリック</color></b>で設置。<b><color=#F1F3F6>R</color></b> で回転。	여기서 구매한 뒤 밖에 있는 상자를 들고 <b><color=#F1F3F6>좌클릭</color></b>으로 배치. <b><color=#F1F3F6>R</color></b>로 회전.
+Needs store Lv {0}	Needs store Lv {0}	Cần cửa hàng cấp {0}	需要商店等级 {0}	店舗レベル {0} が必要	매장 레벨 {0} 필요
+Lv {0} · {1}	Lv {0} · {1}	Cấp {0} · {1}	等级 {0} · {1}	Lv {0} · {1}	Lv {0} · {1}
+Furniture: {0}	Furniture: {0}	Nội thất: {0}	家具:{0}	家具:{0}	가구: {0}
+{0} delivered! Pick up the box outside to place it.	{0} delivered! Pick up the box outside to place it.	Đã giao {0}! Nhặt thùng ngoài cửa để lắp đặt.	{0} 已送达!到店外拿起箱子进行摆放。	{0} が届きました!外の箱を持って設置してください。	{0} 도착! 밖의 상자를 들어 배치하세요.
+FURNITURE	FURNITURE	NỘI THẤT	家具	家具	가구
+Fresh	Fresh	Tươi	生鲜	生鮮	신선
+fresh / cold products	fresh / cold products	hàng tươi / lạnh	生鲜 / 冷藏商品	生鮮・冷蔵品	신선·냉장 상품
+Storage	Storage	Kho	仓储	保管	보관
+box storage	box storage	chứa thùng	存放箱子	箱の保管	상자 보관
+dry products	dry products	hàng khô	干货	乾物	건조 식품
+BUY	BUY	MUA	购买	購入	구매
+My dear,	My dear,	Cháu yêu,	亲爱的孩子:	愛する孫へ	사랑하는 손주에게,
+Thirty years ago I opened this little shop with one shelf of rice, a basket of eggs and a coffee pot. The whole street came to me for breakfast.	Thirty years ago I opened this little shop with one shelf of rice, a basket of eggs and a coffee pot. The whole street came to me for breakfast.	Ba mươi năm trước bà mở cửa hàng nhỏ này với một kệ gạo, một rổ trứng và một ấm cà phê. Cả phố tìm đến bà ăn sáng.	三十年前,我开了这家小店,只有一架大米、一篮鸡蛋和一壶咖啡。整条街的人都来我这儿吃早饭。	三十年前、お米の棚ひとつと卵のかご、コーヒーポットだけでこの小さな店を開いたの。通りのみんなが朝ごはんを食べに来てくれた。	삼십 년 전 나는 쌀 한 선반, 달걀 한 바구니, 커피 주전자 하나로 이 작은 가게를 열었단다. 온 동네 사람들이 아침을 먹으러 왔지.
+My knees are tired now, and it is time for me to rest. So the shop is yours. It is small, and most of the shelves are empty.	My knees are tired now, and it is time for me to rest. So the shop is yours. It is small, and most of the shelves are empty.	Giờ đầu gối bà mỏi rồi, đã đến lúc bà nghỉ ngơi. Nên cửa hàng là của cháu. Nó nhỏ, và phần lớn kệ còn trống.	如今我的膝盖累了,是时候休息了。所以这家店交给你。它很小,大部分货架还空着。	膝ももう疲れたし、そろそろ休む時ね。だからこの店はあなたのもの。小さくて、棚もほとんど空っぽだけど。	이제 무릎이 지쳤고 쉴 때가 됐구나. 그러니 이 가게는 네 것이야. 작고, 선반도 대부분 비어 있단다.
+Open early. Keep it clean. Be fair with your prices. Take care of the neighbours, and they will take care of you.	Open early. Keep it clean. Be fair with your prices. Take care of the neighbours, and they will take care of you.	Mở cửa sớm. Giữ cho sạch sẽ. Bán giá phải chăng. Quan tâm hàng xóm, rồi họ sẽ quan tâm cháu.	早点开门,保持干净,价格公道。照顾好邻居,他们也会照顾你。	早く開けて、清潔に、値段は公平に。ご近所を大切にすれば、みんなもあなたを大切にしてくれる。	일찍 문을 열고, 깨끗이 하고, 값은 공정하게. 이웃을 챙기면 이웃도 너를 챙겨 줄 거야.
+Write back and tell me your plans.	Write back and tell me your plans.	Viết thư cho bà biết cháu định làm gì nhé.	回信告诉我你的打算吧。	返事をちょうだい、どうするつもりか教えて。	답장으로 네 계획을 알려 주렴.
+<align=right>- Grandma Lan</align>	<align=right>- Grandma Lan</align>	<align=right>- Bà Lan</align>	<align=right>——兰奶奶</align>	<align=right>――ランおばあちゃん</align>	<align=right>- 란 할머니</align>
+\"I'll keep your prices fair, Grandma.\"	\"I'll keep your prices fair, Grandma.\"	\"Cháu sẽ giữ giá phải chăng, bà ạ.\"	“奶奶,我会把价格定得公道。”	「おばあちゃん、値段は公平にするよ。」	"할머니, 값은 공정하게 받을게요."
+\"I'll make it the biggest store in VietUrban!\"	\"I'll make it the biggest store in VietUrban!\"	\"Cháu sẽ biến nó thành cửa hàng lớn nhất VietUrban!\"	“我要把它做成 VietUrban 最大的商店!”	「VietUrban 一の大きな店にしてみせる!」	"VietUrban에서 제일 큰 가게로 만들 거예요!"
+\"I'll take care of the neighbours, just like you did.\"	\"I'll take care of the neighbours, just like you did.\"	\"Cháu sẽ quan tâm hàng xóm, như bà vẫn làm.\"	“我会像您一样照顾好邻居。”	「おばあちゃんみたいに、ご近所を大切にするよ。」	"할머니처럼 이웃을 잘 챙길게요."
+Fresh eggs and hot coffee!	Fresh eggs and hot coffee!	Trứng tươi, cà phê nóng đây!	新鲜鸡蛋,热咖啡!	新鮮な卵に熱いコーヒー!	신선한 달걀, 따뜻한 커피!
+Thirty years ago, a young woman named Lan opened a tiny grocery on this street corner.	Thirty years ago, a young woman named Lan opened a tiny grocery on this street corner.	Ba mươi năm trước, một cô gái tên Lan mở một tiệm tạp hoá nhỏ ở góc phố này.	三十年前,一位名叫兰的年轻女子在这个街角开了一家小杂货店。	三十年前、ランという若い女性がこの街角に小さな食料品店を開いた。	삼십 년 전, 란이라는 젊은 여인이 이 길모퉁이에 작은 구멍가게를 열었다.
+Come in, come in!	Come in, come in!	Vào đây, vào đây!	进来,快进来!	いらっしゃい、どうぞ!	어서 오세요, 어서요!
+Every morning, the whole street came to her for breakfast.	Every morning, the whole street came to her for breakfast.	Mỗi sáng, cả phố tìm đến cô ăn sáng.	每天早上,整条街的人都来她这里吃早饭。	毎朝、通りのみんなが彼女の店に朝ごはんを食べに来た。	매일 아침, 온 동네가 그녀에게 아침을 먹으러 왔다.
+Thirty years later, the street has grown into VietUrban - a city of motorbikes, street food and neon signs.	Thirty years later, the street has grown into VietUrban - a city of motorbikes, street food and neon signs.	Ba mươi năm sau, con phố đã thành VietUrban - thành phố của xe máy, đồ ăn đường phố và biển hiệu đèn neon.	三十年后,这条街发展成了 VietUrban——一座满是摩托车、街头小吃和霓虹招牌的城市。	三十年後、通りは VietUrban になった――バイクと屋台とネオンの街に。	삼십 년 후, 그 거리는 VietUrban이 되었다 - 오토바이와 길거리 음식, 네온사인의 도시.
+Grandma Lan's shop is still here. This morning, a letter arrived for you.	Grandma Lan's shop is still here. This morning, a letter arrived for you.	Tiệm của bà Lan vẫn ở đây. Sáng nay, có một lá thư gửi cho bạn.	兰奶奶的店还在这里。今天早上,有一封寄给你的信。	ランおばあちゃんの店は今もここにある。今朝、あなた宛ての手紙が届いた。	란 할머니의 가게는 아직 여기 있다. 오늘 아침, 당신에게 편지가 왔다.
+One small hall is open. The rest of the building is empty - for now.	One small hall is open. The rest of the building is empty - for now.	Một gian nhỏ đã mở. Phần còn lại của toà nhà vẫn trống - tạm thời.	一个小厅已经开放,楼里其余的地方暂时还空着。	小さなホールがひとつ開いている。建物の残りは空っぽ――今のところは。	작은 홀 하나가 열려 있다. 건물의 나머지는 비어 있다 - 아직은.
+Stock the shelves, keep the street happy, and grow Grandma's shop into the best supermarket in town.	Stock the shelves, keep the street happy, and grow Grandma's shop into the best supermarket in town.	Xếp đầy kệ, làm cả phố hài lòng, và biến tiệm của bà thành siêu thị tốt nhất thành phố.	摆满货架,让街坊满意,把奶奶的小店发展成城里最好的超市。	棚を満たし、街の人を笑顔にして、おばあちゃんの店を街一番のスーパーに育てよう。	진열대를 채우고, 동네를 즐겁게 하고, 할머니의 가게를 도시 최고의 슈퍼마켓으로 키우자.
+Thirty years later, the street has grown into VietUrban - a city around a quiet green lake,	Thirty years later, the street has grown into VietUrban - a city around a quiet green lake,	Ba mươi năm sau, con phố đã thành VietUrban - thành phố quanh một hồ nước xanh yên bình,	三十年后,这条街发展成了 VietUrban——一座环绕着宁静绿湖的城市,	三十年後、通りは VietUrban になった――静かな緑の湖を囲む街、	삼십 년 후, 그 거리는 VietUrban이 되었다 - 고요한 초록 호수를 둘러싼 도시,
+with lantern-lit old streets, street food on every corner and a river of motorbikes.	with lantern-lit old streets, street food on every corner and a river of motorbikes.	với phố cổ treo đèn lồng, góc nào cũng có đồ ăn đường phố và dòng xe máy như sông.	有挂满灯笼的老街、遍地的街头小吃和川流不息的摩托车。	提灯の灯る旧市街、どの角にも屋台、そしてバイクの川。	등불 켜진 옛 거리, 모퉁이마다 길거리 음식, 그리고 오토바이의 강.
+And right in the middle of it all, on Hai Ba Trung street...	And right in the middle of it all, on Hai Ba Trung street...	Và ngay giữa lòng thành phố, trên phố Hai Bà Trưng...	而就在这一切的中心,海婆征街上……	そしてその真ん中、ハイバーチュン通りに……	그리고 그 한가운데, 하이바쯩 거리에...
+Dear Grandma,	Dear Grandma,	Bà kính yêu,	亲爱的奶奶:	おばあちゃんへ	사랑하는 할머니께,
+<size=80%>Sent.</size>	<size=80%>Sent.</size>	<size=80%>Đã gửi.</size>	<size=80%>已寄出。</size>	<size=80%>送信しました。</size>	<size=80%>보냈습니다.</size>
+<size=80%>Page {0} / {1}</size>	<size=80%>Page {0} / {1}</size>	<size=80%>Trang {0} / {1}</size>	<size=80%>第 {0} / {1} 页</size>	<size=80%>{0} / {1} ページ</size>	<size=80%>{0} / {1}쪽</size>
+Write back	Write back	Viết thư trả lời	回信	返事を書く	답장 쓰기
+Next page	Next page	Trang sau	下一页	次のページ	다음 쪽
+<size=80%>Choose your reply</size>	<size=80%>Choose your reply</size>	<size=80%>Chọn câu trả lời</size>	<size=80%>选择你的回复</size>	<size=80%>返事を選んでください</size>	<size=80%>답장을 고르세요</size>
+[Space] Skip	[Space] Skip	[Space] Bỏ qua	[空格] 跳过	[Space] スキップ	[Space] 건너뛰기
+SUPERMARKET SIMULATOR	SUPERMARKET SIMULATOR	MÔ PHỎNG SIÊU THỊ	超市模拟器	スーパーマーケットシミュレーター	슈퍼마켓 시뮬레이터
+A license adds a new group of products to the market. {0} of {1} granted.	A license adds a new group of products to the market. {0} of {1} granted.	Mỗi giấy phép mở thêm một nhóm hàng ở chợ. Đã cấp {0}/{1}.	每张许可证会在市场里增加一类商品。已获得 {0}/{1}。	許可ごとに市場に新しい商品群が加わります。取得済み {0}/{1}。	허가증마다 시장에 새 상품군이 추가됩니다. {1}개 중 {0}개 취득.
+needs store Lv {0}	needs store Lv {0}	cần cửa hàng cấp {0}	需要商店等级 {0}	店舗レベル {0} が必要	매장 레벨 {0} 필요
+LICENSES	LICENSES	GIẤY PHÉP	许可证	営業許可	허가증
+GIẤY PHÉP KINH DOANH · No. {0}	BUSINESS LICENSE · No. {0}	GIẤY PHÉP KINH DOANH · Số {0}	营业执照 · 编号 {0}	営業許可証 · No. {0}	사업 허가증 · 제{0}호
+ĐÃ CẤP · GRANTED	GRANTED	ĐÃ CẤP	已批准	許可済	승인됨
+Drinks next. People buy them hot when it rains and cold when it is over 32°C. - bà Lan	Drinks next. People buy them hot when it rains and cold when it is over 32°C. - Grandma Lan	Tiếp theo là đồ uống. Trời mưa người ta mua đồ nóng, trên 32°C thì mua đồ lạnh. - bà Lan	下一个是饮料。下雨时大家买热的,超过 32°C 就买冷的。——兰奶奶	次は飲み物ね。雨の日は温かいの、32°C を超えたら冷たいのが売れるわ。――ランおばあちゃん	다음은 음료야. 비 오면 따뜻한 걸, 32°C가 넘으면 차가운 걸 사지. - 란 할머니
+Start a new game?\n<size=75%>Your saved game will be deleted.</size>	Start a new game?\n<size=75%>Your saved game will be deleted.</size>	Bắt đầu game mới?\n<size=75%>Bản lưu hiện tại sẽ bị xoá.</size>	开始新游戏?\n<size=75%>你的存档将被删除。</size>	新しいゲームを始めますか?\n<size=75%>セーブデータは削除されます。</size>	새 게임을 시작할까요?\n<size=75%>저장된 게임이 삭제됩니다.</size>
+CONTENT WARNING	CONTENT WARNING	CẢNH BÁO NỘI DUNG	内容警告	コンテンツに関する注意	콘텐츠 경고
+At night this game has optional horror events: jump scares, blood, ghosts and a funeral scene. They can be turned off at any time in Settings.	At night this game has optional horror events: jump scares, blood, ghosts and a funeral scene. They can be turned off at any time in Settings.	Ban đêm game có các sự kiện kinh dị (có thể tắt): hù doạ bất ngờ, máu, ma và một cảnh đám tang. Bạn có thể tắt bất cứ lúc nào trong Cài đặt.	本游戏在夜间有可选的恐怖事件:突然惊吓、血腥、鬼魂和一段葬礼场景。可随时在设置中关闭。	夜には任意のホラーイベントがあります:驚かせる演出、血、幽霊、葬儀の場面。設定でいつでもオフにできます。	이 게임에는 밤에 선택 가능한 공포 이벤트가 있습니다: 깜짝 놀람, 피, 유령, 장례식 장면. 설정에서 언제든 끌 수 있습니다.
+Play with night horror events?	Play with night horror events?	Chơi có sự kiện kinh dị ban đêm?	开启夜间恐怖事件吗?	夜のホラーイベントを有効にしますか?	밤 공포 이벤트를 켜고 플레이할까요?
+Welcome to your new supermarket!	Welcome to your new supermarket!	Chào mừng đến với siêu thị mới của bạn!	欢迎来到你的新超市!	新しいスーパーへようこそ!	새 슈퍼마켓에 오신 것을 환영합니다!
+No saved game	No saved game	Chưa có bản lưu	没有存档	セーブデータなし	저장된 게임 없음
+Saved game found	Saved game found	Đã có bản lưu	找到存档	セーブデータあり	저장된 게임 있음
+{0} · Store Lv {1}	{0} · Store Lv {1}	{0} · Cửa hàng cấp {1}	{0} · 商店等级 {1}	{0} · 店舗 Lv {1}	{0} · 매장 Lv {1}
+Day {0}, {1}	Day {0}, {1}	Ngày {0}, {1}	第 {0} 天,{1}	{0} 日目、{1}	{0}일차, {1}
+Return to main menu?\n<size=75%>Progress since your last save will be lost.</size>	Return to main menu?\n<size=75%>Progress since your last save will be lost.</size>	Về menu chính?\n<size=75%>Tiến trình từ lần lưu cuối sẽ mất.</size>	返回主菜单?\n<size=75%>上次存档后的进度将丢失。</size>	メインメニューに戻りますか?\n<size=75%>最後のセーブ以降の進行は失われます。</size>	메인 메뉴로 돌아갈까요?\n<size=75%>마지막 저장 이후 진행이 사라집니다.</size>
+Quit the game?\n<size=75%>Progress since your last save will be lost.</size>	Quit the game?\n<size=75%>Progress since your last save will be lost.</size>	Thoát game?\n<size=75%>Tiến trình từ lần lưu cuối sẽ mất.</size>	退出游戏?\n<size=75%>上次存档后的进度将丢失。</size>	ゲームを終了しますか?\n<size=75%>最後のセーブ以降の進行は失われます。</size>	게임을 종료할까요?\n<size=75%>마지막 저장 이후 진행이 사라집니다.</size>
+CONTINUE	CONTINUE	TIẾP TỤC	继续	つづきから	이어하기
+New Game	New Game	Chơi mới	新游戏	はじめから	새 게임
+open the shop from day 1	open the shop from day 1	mở tiệm từ ngày đầu	从第 1 天开店	1 日目から開店	1일차부터 가게 열기
+Food Delivery	Food Delivery	Giao đồ ăn	外卖配送	フードデリバリー	음식 배달
+mode 2: cook and deliver	mode 2: cook and deliver	chế độ 2: nấu và giao	模式 2:烹饪与配送	モード 2:料理して配達	모드 2: 요리하고 배달
+Settings	Settings	Cài đặt	设置	設定	설정
+sound, mouse, graphics	sound, mouse, graphics	âm thanh, chuột, đồ hoạ	声音、鼠标、画面	サウンド・マウス・グラフィック	소리, 마우스, 그래픽
+Quit	Quit	Thoát	退出	終了	종료
+close up for tonight	close up for tonight	đóng cửa nghỉ tối nay	今晚打烊	今夜は店じまい	오늘 밤은 문 닫기
+WASD move · Mouse look · E / LMB interact · Esc pause	WASD move · Mouse look · E / LMB interact · Esc pause	WASD di chuyển · Chuột nhìn · E / chuột trái tương tác · Esc tạm dừng	WASD 移动 · 鼠标 视角 · E / 左键 互动 · Esc 暂停	WASD 移動 · マウス 視点 · E/左クリック 操作 · Esc 一時停止	WASD 이동 · 마우스 시점 · E / 좌클릭 상호작용 · Esc 일시정지
+TẠM NGHỈ	ON A BREAK	TẠM NGHỈ	暂停营业	休憩中	잠시 휴업
+PAUSED · BACK IN 5 MINUTES	PAUSED · BACK IN 5 MINUTES	TẠM DỪNG · QUAY LẠI SAU 5 PHÚT	暂停 · 5 分钟后回来	一時停止 · 5 分後に戻ります	일시정지 · 5분 후 돌아옵니다
+Resume	Resume	Tiếp tục	继续	再開	계속하기
+Save game	Save game	Lưu game	保存游戏	セーブ	게임 저장
+Main menu	Main menu	Menu chính	主菜单	メインメニュー	메인 메뉴
+HÔM NAY · TODAY SO FAR	TODAY SO FAR	HÔM NAY	今日概况	今日のここまで	오늘 현황
+MẸO · TIP	TIP	MẸO	小贴士	ヒント	팁
+Fresh food spoils. Look at a shelf and press R to throw out bad items before the health inspector finds them.	Fresh food spoils. Look at a shelf and press R to throw out bad items before the health inspector finds them.	Đồ tươi sẽ hỏng. Nhìn vào kệ và bấm R để vứt hàng hỏng trước khi thanh tra vệ sinh phát hiện.	生鲜会变质。看着货架按 R,在卫生检查员发现之前扔掉坏掉的商品。	生鮮品は傷みます。棚を見て R を押し、衛生検査員に見つかる前に処分しましょう。	신선식품은 상합니다. 선반을 보고 R을 눌러 위생 검사관이 오기 전에 버리세요.
+PHIẾU CÀI ĐẶT · SETTINGS	SETTINGS	PHIẾU CÀI ĐẶT	设置	設定	설정
+Mouse sensitivity	Mouse sensitivity	Độ nhạy chuột	鼠标灵敏度	マウス感度	마우스 감도
+Volume	Volume	Âm lượng	音量	音量	음량
+Music	Music	Nhạc nền	音乐	音楽	음악
+Music volume	Music volume	Âm lượng nhạc	音乐音量	音楽の音量	음악 음량
+Graphics quality	Graphics quality	Chất lượng đồ hoạ	画质	画質	그래픽 품질
+Fullscreen	Fullscreen	Toàn màn hình	全屏	フルスクリーン	전체 화면
+Lamp shadows (slow)	Lamp shadows (slow)	Bóng đèn trần (nặng máy)	灯光阴影(较慢)	照明の影(重い)	조명 그림자 (느림)
+Night horror events	Night horror events	Sự kiện kinh dị ban đêm	夜间恐怖事件	夜のホラーイベント	밤 공포 이벤트
+Language	Language	Ngôn ngữ	语言	言語	언어
+DONE	DONE	XONG	完成	完了	완료
+SANG NHƯỢNG	SHOP FOR SALE	SANG NHƯỢNG	店铺转让	店舗譲渡	가게 양도
+CỬA HÀNG	CLOSED DOWN	CỬA HÀNG	关门大吉	閉店	폐업
+SHOP FOR TRANSFER · GAME OVER	GAME OVER	CỬA HÀNG CẦN SANG NHƯỢNG · THUA CUỘC	游戏结束	ゲームオーバー	게임 오버
+Your supermarket ran out of money.	Your supermarket ran out of money.	Siêu thị của bạn đã hết tiền.	你的超市资金耗尽了。	スーパーの資金が尽きました。	슈퍼마켓의 돈이 바닥났습니다.
+Your saved game has been deleted - start a New Game to try again.	Your saved game has been deleted - start a New Game to try again.	Bản lưu đã bị xoá - hãy Chơi mới để thử lại.	你的存档已被删除——开始新游戏再试一次。	セーブデータは削除されました――はじめからやり直してください。	저장된 게임이 삭제되었습니다 - 새 게임으로 다시 도전하세요.
+MAIN MENU	MAIN MENU	MENU CHÍNH	主菜单	メインメニュー	메인 메뉴
+QUIT	QUIT	THOÁT	退出	終了	종료
+English	English	English	English	English	English
+Tiếng Việt	Tiếng Việt	Tiếng Việt	Tiếng Việt	Tiếng Việt	Tiếng Việt
+中文	中文	中文	中文	中文	中文
+日本語	日本語	日本語	日本語	日本語	日本語
+한국어	한국어	한국어	한국어	한국어	한국어
+Confirm	Confirm	Xác nhận	确认	決定	확인
+YES	YES	CÓ	是	はい	예
+NO	NO	KHÔNG	否	いいえ	아니요
+per item	per item	mỗi món	每件	1 点あたり	개당
+{0} · per item	{0} · per item	{0} · mỗi món	{0} · 每件	{0} · 1 点あたり	{0} · 개당
+MARKET UP TODAY	MARKET UP TODAY	HÔM NAY GIÁ TĂNG	今日市场价上涨	今日の相場は上昇	오늘 시세 상승
+MARKET DOWN TODAY	MARKET DOWN TODAY	HÔM NAY GIÁ GIẢM	今日市场价下跌	今日の相場は下落	오늘 시세 하락
+{0} per box · box costs {1}	{0} per box · box costs {1}	{0} mỗi thùng · giá thùng {1}	每箱 {0} 件 · 每箱 {1}	1 箱 {0} 個 · 箱の価格 {1}	상자당 {0}개 · 상자 가격 {1}
+A bargain. People will fill their baskets and come back tomorrow.	A bargain. People will fill their baskets and come back tomorrow.	Giá hời. Khách sẽ mua đầy giỏ và mai lại tới.	很划算。顾客会装满篮子,明天还会再来。	お買い得。お客さんはかごいっぱいに買って、明日も来てくれる。	싸요. 손님들이 바구니를 채우고 내일 또 올 거예요.
+A fair price. Nobody will complain.	A fair price. Nobody will complain.	Giá phải chăng. Không ai phàn nàn.	价格公道,没人会抱怨。	適正価格。誰も文句は言わない。	적정 가격. 아무도 불평하지 않아요.
+A little high. Most people still buy, a few put it back.	A little high. Most people still buy, a few put it back.	Hơi cao. Phần lớn vẫn mua, vài người đặt lại.	有点贵。大多数人还会买,少数人会放回去。	少し高め。ほとんどの人は買うが、何人かは棚に戻す。	조금 비싸요. 대부분은 사지만 몇 명은 내려놓아요.
+Expensive. Only a few will buy it at this price.	Expensive. Only a few will buy it at this price.	Đắt. Chỉ vài người mua với giá này.	太贵了,这个价格只有少数人会买。	高い。この値段で買う人はわずか。	비싸요. 이 가격엔 몇 명만 살 거예요.
+Too expensive! Nobody will buy it at this price.	Too expensive! Nobody will buy it at this price.	Đắt quá! Không ai mua với giá này.	太贵了!这个价格没人会买。	高すぎ!この値段では誰も買わない。	너무 비싸요! 이 가격엔 아무도 안 사요.
+BẢNG GIÁ · SET PRICE	SET PRICE	BẢNG GIÁ	定价	価格設定	가격 설정
+YOU PAY	YOU PAY	GIÁ NHẬP	进价	仕入れ値	매입가
+MARKET PRICE	MARKET PRICE	GIÁ THỊ TRƯỜNG	市场价	相場	시세
+YOU KEEP	YOU KEEP	BẠN LÃI	你赚	利益	이익
+WHAT CUSTOMERS WILL THINK	WHAT CUSTOMERS WILL THINK	KHÁCH SẼ NGHĨ GÌ	顾客会怎么想	お客さんの反応	손님 반응
+Bargain	Bargain	Rẻ	划算	お買い得	저렴
+Fair	Fair	Phải chăng	公道	適正	적정
+High	High	Cao	偏高	高め	높음
+too expensive: some walk out	too expensive: some walk out	đắt quá: có người bỏ về	太贵:有人会离开	高すぎ:帰る人もいる	너무 비쌈: 일부는 나가 버림
+PUT UP THE SIGN	PUT UP THE SIGN	TREO BIỂN GIÁ	挂上价签	値札を出す	가격표 걸기
+Change 10¢	Change 10¢	Đổi 10¢	调整 10¢	10¢ ずつ変更	10¢ 변경
+Change $1	Change $1	Đổi $1	调整 $1	$1 ずつ変更	$1 변경
+Market price	Market price	Giá thị trường	市场价	相場	시세
+Cancel	Cancel	Huỷ	取消	キャンセル	취소
+Type a price, or use − and +	Type a price, or use − and +	Nhập giá, hoặc dùng − và +	输入价格,或使用 − 和 +	価格を入力するか − と + を使う	가격을 입력하거나 −, +를 사용하세요
+Food	Food	Thực phẩm	食品	食品	식품
+ALL	ALL	TẤT CẢ	全部	すべて	전체
+PRODUCTS	PRODUCTS	HÀNG HOÁ	商品	商品	상품
+Tạp hoá bà Lan · Day {0} · {1}	Tạp hoá bà Lan · Day {0} · {1}	Tạp hoá bà Lan · Ngày {0} · {1}	Tạp hoá bà Lan · 第 {0} 天 · {1}	Tạp hoá bà Lan · {0} 日目 · {1}	Tạp hoá bà Lan · {0}일차 · {1}
+{0} left, about {1} will sell by tomorrow night	{0} left, about {1} will sell by tomorrow night	còn {0}, khoảng {1} sẽ bán hết trước tối mai	剩 {0},到明晚大约能卖 {1}	残り {0}、明日の夜までに約 {1} 売れる見込み	{0} 남음, 내일 밤까지 약 {1} 판매 예상
+The shelves will last until tomorrow. Order only what you will sell. Boxes that sit around still cost money.	The shelves will last until tomorrow. Order only what you will sell. Boxes that sit around still cost money.	Hàng trên kệ đủ đến mai. Chỉ nhập những gì bán được. Thùng để không vẫn là tiền.	货架上的货够卖到明天。只进能卖掉的货,堆着的箱子也是钱。	棚の品は明日までもちます。売れる分だけ仕入れて。置きっぱなしの箱もお金です。	진열대는 내일까지 충분해요. 팔릴 만큼만 주문하세요. 쌓아 둔 상자도 돈이에요.
+FOOD	FOOD	THỰC PHẨM	食品	食品	식품
+HOUSEHOLD	HOUSEHOLD	GIA DỤNG	家居	日用品	생활용품
+Search {0} products	Search {0} products	Tìm trong {0} mặt hàng	搜索 {0} 种商品	{0} 商品を検索	상품 {0}개 검색
+<size=85%>... and {0} more</size>	<size=85%>... and {0} more</size>	<size=85%>... và {0} món nữa</size>	<size=85%>……还有 {0} 件</size>	<size=85%>……ほか {0} 点</size>	<size=85%>... 외 {0}개</size>
+<color=#7A756A>Nothing yet. Press ADD on a product.</color>	<color=#7A756A>Nothing yet. Press ADD on a product.</color>	<color=#7A756A>Chưa có gì. Bấm THÊM ở một mặt hàng.</color>	<color=#7A756A>还没有商品。点击商品上的“添加”。</color>	<color=#7A756A>まだ空です。商品の「追加」を押して。</color>	<color=#7A756A>아직 없어요. 상품의 담기를 누르세요.</color>
+You have {0} · after: {1}	You have {0} · after: {1}	Bạn có {0} · sau khi mua: {1}	你有 {0} · 购买后:{1}	所持金 {0} · 購入後:{1}	보유 {0} · 구매 후: {1}
+You have {0}	You have {0}	Bạn có {0}	你有 {0}	所持金 {0}	보유 {0}
+SHELF	SHELF	KỆ	货架	棚	선반
+FRESH	FRESH	TƯƠI	生鲜	生鮮	신선
+FRIDGE	FRIDGE	TỦ LẠNH	冰柜	冷蔵	냉장
+Search	Search	Tìm kiếm	搜索	検索	검색
+No products match. Clear the search, pick ALL, or buy a license for more products.	No products match. Clear the search, pick ALL, or buy a license for more products.	Không có mặt hàng phù hợp. Xoá ô tìm, chọn TẤT CẢ, hoặc mua giấy phép để có thêm hàng.	没有匹配的商品。清空搜索、选择“全部”,或购买许可证解锁更多商品。	該当する商品がありません。検索を消すか「すべて」を選ぶか、許可を買って商品を増やして。	일치하는 상품이 없어요. 검색을 지우거나 전체를 고르거나 허가증을 사세요.
+PHIẾU NHẬP HÀNG	PURCHASE ORDER	PHIẾU NHẬP HÀNG	进货单	仕入れ伝票	구매 주문서
+EMPTY THE CART	EMPTY THE CART	XOÁ GIỎ HÀNG	清空购物车	カートを空にする	장바구니 비우기
+GIÁ NHẬP · 1 BOX	PRICE · 1 BOX	GIÁ NHẬP · 1 THÙNG	进价 · 1 箱	仕入れ値 · 1 箱	매입가 · 1상자
+{0}{1} per box · {2}	{0}{1} per box · {2}	{0}{1} mỗi thùng · {2}	每箱 {0}{1} · {2}	1 箱 {0}{1} · {2}	상자당 {0}{1} · {2}
+IN THE CART	IN THE CART	TRONG GIỎ	购物车内	カート内	장바구니 안
+CLOSING	CLOSING	SẮP ĐÓNG	即将打烊	閉店間際	마감 중
+STORE LEVEL {0}	STORE LEVEL {0}	CỬA HÀNG CẤP {0}	商店等级 {0}	店舗レベル {0}	매장 레벨 {0}
+New license available: {0}	New license available: {0}	Có giấy phép mới: {0}	新许可证可用:{0}	新しい許可が取得可能:{0}	새 허가증 가능: {0}
+License purchased! New products are in the market.	License purchased! New products are in the market.	Đã mua giấy phép! Chợ đã có hàng mới.	已购买许可证!市场上有新商品了。	許可を取得!市場に新商品が並びました。	허가증 구매! 시장에 새 상품이 들어왔어요.
+STORE LV {0}	STORE LV {0}	CỬA HÀNG CẤP {0}	商店 LV {0}	店舗 LV {0}	매장 LV {0}
+{0} / {1} XP	{0} / {1} XP	{0} / {1} XP	{0} / {1} 经验	{0} / {1} XP	{0} / {1} XP
+DAY	DAY	NGÀY	天	日	일
+TIỀN QUỸ · CASH	CASH	TIỀN QUỸ	现金	所持金	현금
+LOA PHƯỜNG · NOTICE	NOTICE	LOA PHƯỜNG	通知	お知らせ	알림
+NHIỆT LIỆT CHÀO MỪNG	CONGRATULATIONS	NHIỆT LIỆT CHÀO MỪNG	热烈祝贺	おめでとう	축하합니다
+Stats	Stats	Thống kê	统计	統計	통계
+Advisor	Advisor	Sổ tay	进货顾问	仕入れ帳	주문 도우미
+Expand	Expand	Mở rộng	扩建	拡張	확장
+Staff	Staff	Nhân viên	员工	スタッフ	직원
+Licenses	Licenses	Giấy phép	许可证	営業許可	허가증
+All	All	Tất cả	全部	すべて	전체
+STAFF	STAFF	NHÂN VIÊN	员工	スタッフ	직원
+VEHICLES	VEHICLES	XE	车辆	乗り物	차량
+STATS	STATS	THỐNG KÊ	统计	統計	통계
+BÀ LAN MART	BÀ LAN MART	BÀ LAN MART	BÀ LAN MART	BÀ LAN MART	BÀ LAN MART
+Close	Close	Đóng	关闭	閉じる	닫기
+Store level {0} · wages are paid at the end of each day	Store level {0} · wages are paid at the end of each day	Cửa hàng cấp {0} · lương trả vào cuối mỗi ngày	商店等级 {0} · 工资在每天结束时支付	店舗レベル {0} · 給料は毎日の終わりに支払い	매장 레벨 {0} · 급여는 매일 마감 때 지급
+Daily wages  <b><color=#FF9F8A><size=27>{0}</size></color></b>	Daily wages  <b><color=#FF9F8A><size=27>{0}</size></color></b>	Lương mỗi ngày  <b><color=#FF9F8A><size=27>{0}</size></color></b>	每日工资  <b><color=#FF9F8A><size=27>{0}</size></color></b>	日給合計  <b><color=#FF9F8A><size=27>{0}</size></color></b>	일일 급여  <b><color=#FF9F8A><size=27>{0}</size></color></b>
+CHECKOUT COUNTERS	CHECKOUT COUNTERS	QUẦY THU NGÂN	收银台	レジカウンター	계산대
+CHECKOUT COUNTER {0}	CHECKOUT COUNTER {0}	QUẦY THU NGÂN {0}	收银台 {0}	レジ {0}	계산대 {0}
+All {0} counters are open. Each open counter can have one cashier.	All {0} counters are open. Each open counter can have one cashier.	Cả {0} quầy đã mở. Mỗi quầy có thể có một thu ngân.	{0} 个收银台全部开放。每个收银台可配一名收银员。	{0} 台のレジがすべて開放済み。各レジに 1 人ずつレジ係を置けます。	계산대 {0}개 모두 개방. 계산대마다 계산원 한 명을 둘 수 있어요.
+Another counter halves the queue at rush hour. It needs its own cashier.  <color=#AEB6C2>Open {0}/{1} · needs store Lv {2}</color>	Another counter halves the queue at rush hour. It needs its own cashier.  <color=#AEB6C2>Open {0}/{1} · needs store Lv {2}</color>	Thêm một quầy giúp hàng chờ giờ cao điểm giảm một nửa. Quầy cần thu ngân riêng.  <color=#AEB6C2>Đã mở {0}/{1} · cần cửa hàng cấp {2}</color>	多一个收银台能让高峰时段排队减半,但需要单独的收银员。  <color=#AEB6C2>已开放 {0}/{1} · 需要商店等级 {2}</color>	レジを増やすとピーク時の行列が半分に。専用のレジ係が必要です。  <color=#AEB6C2>開放 {0}/{1} · 店舗 Lv {2} が必要</color>	계산대를 하나 더 열면 혼잡 시간 대기줄이 절반으로. 전담 계산원이 필요해요.  <color=#AEB6C2>개방 {0}/{1} · 매장 Lv {2} 필요</color>
+UNLOCK · {0}	UNLOCK · {0}	MỞ · {0}	解锁 · {0}	開放 · {0}	잠금 해제 · {0}
+Hired {0}/{1}	Hired {0}/{1}	Đã thuê {0}/{1}	已雇用 {0}/{1}	雇用中 {0}/{1}	고용 {0}/{1}
+position open	position open	đang tuyển	职位空缺	募集中	채용 중
+Scans items and takes payment at a counter.	Scans items and takes payment at a counter.	Quét hàng và thu tiền ở quầy.	在收银台扫描商品并收款。	レジで商品をスキャンして会計する。	계산대에서 상품을 스캔하고 결제를 받아요.
+Restocker	Restocker	Nhân viên xếp kệ	补货员	品出し係	진열 직원
+Carries boxes to shelves that sell that product and refills them.	Carries boxes to shelves that sell that product and refills them.	Mang thùng tới kệ bán món đó và xếp đầy lại.	把箱子搬到对应商品的货架并补满。	箱をその商品の棚に運んで補充する。	상자를 해당 상품 선반으로 옮겨 채워요.
+Guard	Guard	Bảo vệ	保安	警備員	경비원
+Stands outside the entrance and chases down shoplifters for you.	Stands outside the entrance and chases down shoplifters for you.	Đứng ngoài lối vào và đuổi bắt kẻ trộm giúp bạn.	守在门口,替你追捕小偷。	入口の外に立ち、万引き犯を追いかける。	입구 밖에 서서 도둑을 쫓아 줘요.
+Janitor	Janitor	Lao công	清洁工	清掃員	청소부
+Finds dirty spots on the floor and sweeps them, so customers stay happy.	Finds dirty spots on the floor and sweeps them, so customers stay happy.	Tìm vết bẩn trên sàn và quét sạch để khách hài lòng.	找到地上的污渍并清扫,让顾客满意。	床の汚れを見つけて掃除し、お客さんを満足させる。	바닥의 얼룩을 찾아 쓸어서 손님을 만족시켜요.
+UNLOCK	UNLOCK	MỞ KHOÁ	解锁	開放	잠금 해제
+ĐƠN XIN VIỆC · JOB APPLICATION	JOB APPLICATION	ĐƠN XIN VIỆC	求职申请	応募書類	입사 지원서
+Wage	Wage	Lương	工资	給料	급여
+{0} / day	{0} / day	{0} / ngày	{0} / 天	{0} / 日	{0} / 일
+ĐÃ NHẬN · HIRED	HIRED	ĐÃ NHẬN	已录用	採用	채용됨
+Not hired yet	Not hired yet	Chưa thuê	尚未雇用	未採用	아직 미고용
+HIRE	HIRE	THUÊ	雇用	雇う	고용
+FIRE	FIRE	CHO NGHỈ	解雇	解雇	해고
+What customers wrote when they left	What customers wrote when they left	Khách viết gì khi ra về	顾客离开时写下的评价	お客さんが帰り際に書いた感想	손님들이 떠나며 남긴 글
+SALES PER DAY	SALES PER DAY	DOANH THU THEO NGÀY	每日销售额	日別売上	일별 매출
+SALES PER WEEK	SALES PER WEEK	DOANH THU THEO TUẦN	每周销售额	週別売上	주별 매출
+SALES PER MONTH	SALES PER MONTH	DOANH THU THEO THÁNG	每月销售额	月別売上	월별 매출
+No days recorded yet	No days recorded yet	Chưa có ngày nào được ghi	还没有记录	記録された日がありません	기록된 날이 없습니다
+Best day: Day {0} ({1}), {2}	Best day: Day {0} ({1}), {2}	Ngày tốt nhất: Ngày {0} ({1}), {2}	最佳日:第 {0} 天({1}),{2}	最高の日:{0} 日目({1})、{2}	최고의 날: {0}일차 ({1}), {2}
+Blue = sales · thin red = costs · click a column	Blue = sales · thin red = costs · click a column	Xanh = doanh thu · đỏ mảnh = chi phí · bấm vào cột	蓝色 = 销售额 · 细红线 = 成本 · 点击柱状条	青 = 売上 · 細い赤 = 費用 · 列をクリック	파랑 = 매출 · 가는 빨강 = 비용 · 막대 클릭
+No sales yet	No sales yet	Chưa có doanh thu	还没有销售	まだ売上なし	아직 매출 없음
+{0}% margin	{0}% margin	biên lãi {0}%	利润率 {0}%	利益率 {0}%	마진 {0}%
+no sales	no sales	chưa bán	无销售	売上なし	매출 없음
+{0} a day	{0} a day	{0} mỗi ngày	每天 {0}	1 日 {0}	하루 {0}
+{0} items sold	{0} items sold	đã bán {0} món	售出 {0} 件	{0} 点販売	{0}개 판매
+no reviews yet	no reviews yet	chưa có đánh giá	暂无评价	まだレビューなし	아직 리뷰 없음
+No reviews yet. Customers write one when they leave.	No reviews yet. Customers write one when they leave.	Chưa có đánh giá. Khách sẽ viết khi ra về.	暂无评价。顾客离开时会写评价。	まだレビューはありません。お客さんが帰る時に書きます。	아직 리뷰가 없어요. 손님이 떠날 때 작성해요.
+SỔ CÁI · LEDGER	LEDGER	SỔ CÁI	账本	台帳	장부
+WEEK	WEEK	TUẦN	周	週	주
+MONTH	MONTH	THÁNG	月	月	월
+REVIEWS	REVIEWS	ĐÁNH GIÁ	评价	レビュー	리뷰
+SALES	SALES	DOANH THU	销售额	売上	매출
+PROFIT	PROFIT	LÃI	利润	利益	이익
+CUSTOMERS	CUSTOMERS	KHÁCH	顾客	来客	손님
+RATING	RATING	ĐÁNH GIÁ	评分	評価	평점
+No data yet.\nFinish a day (end-of-day report) to start the ledger.	No data yet.\nFinish a day (end-of-day report) to start the ledger.	Chưa có số liệu.\nHết một ngày (báo cáo cuối ngày) để bắt đầu ghi sổ.	暂无数据。\n结束一天(日终报告)后开始记账。	データがありません。\n1 日を終える(日報)と記録が始まります。	데이터가 없어요.\n하루를 마치면(일일 보고서) 장부가 시작돼요.
+BEST SELLERS · ITEMS SOLD	BEST SELLERS · ITEMS SOLD	BÁN CHẠY · SỐ MÓN ĐÃ BÁN	畅销 · 售出数量	売れ筋 · 販売数	베스트셀러 · 판매 수
+CUSTOMERS SAY	CUSTOMERS SAY	KHÁCH NÓI	顾客评价	お客さんの声	손님 후기
+Stock	Stock	Hàng hoá	库存	品揃え	재고
+Prices	Prices	Giá cả	价格	価格	가격
+Checkout	Checkout	Thanh toán	结账	レジ	계산
+Cleanliness	Cleanliness	Sạch sẽ	卫生	清潔さ	청결
+Reviews	Reviews	Đánh giá	评价	レビュー	리뷰
+STORE RATING	STORE RATING	ĐÁNH GIÁ CỬA HÀNG	商店评分	店舗評価	매장 평점
+WHAT CUSTOMERS SAY ABOUT	WHAT CUSTOMERS SAY ABOUT	KHÁCH NÓI GÌ VỀ	顾客怎么评价	お客さんの評価	손님들이 말하는
+LATEST REVIEWS	LATEST REVIEWS	ĐÁNH GIÁ MỚI NHẤT	最新评价	最新レビュー	최신 리뷰
+Average of the last {0} reviews  ·  {1} total	Average of the last {0} reviews  ·  {1} total	Trung bình {0} đánh giá gần nhất  ·  tổng {1}	最近 {0} 条评价的平均  ·  共 {1} 条	直近 {0} 件の平均  ·  合計 {1} 件	최근 리뷰 {0}개 평균  ·  총 {1}개
+No reviews yet - customers rate the store when they leave.	No reviews yet - customers rate the store when they leave.	Chưa có đánh giá - khách chấm điểm khi ra về.	暂无评价——顾客离开时会给商店评分。	まだレビューなし――お客さんは帰る時に評価します。	아직 리뷰 없음 - 손님이 떠날 때 평가해요.
+After {0} reviews the rating starts to affect how many customers visit.	After {0} reviews the rating starts to affect how many customers visit.	Sau {0} đánh giá, điểm số bắt đầu ảnh hưởng tới lượng khách.	{0} 条评价后,评分开始影响来客数量。	{0} 件以降、評価が来客数に影響し始めます。	리뷰 {0}개 이후부터 평점이 방문객 수에 영향을 줘요.
+Keep shelves full, prices fair, lines short and floors clean.	Keep shelves full, prices fair, lines short and floors clean.	Giữ kệ đầy, giá phải chăng, hàng chờ ngắn và sàn sạch.	保持货架充足、价格公道、队伍短、地面干净。	棚を満たし、値段は公平に、行列は短く、床はきれいに。	진열대는 가득, 가격은 공정하게, 줄은 짧게, 바닥은 깨끗하게.
+<color=#9FB0C4>No reviews yet.</color>	<color=#9FB0C4>No reviews yet.</color>	<color=#9FB0C4>Chưa có đánh giá.</color>	<color=#9FB0C4>暂无评价。</color>	<color=#9FB0C4>まだレビューなし。</color>	<color=#9FB0C4>아직 리뷰 없음.</color>
+Order products	Order products	Đặt hàng	订购商品	商品を注文	상품 주문
+Walk to the <b>computer</b> at the counter and press <b>E</b>.\nAdd a product to the cart and press <b>Buy</b>.	Walk to the <b>computer</b> at the counter and press <b>E</b>.\nAdd a product to the cart and press <b>Buy</b>.	Đi tới <b>máy tính</b> ở quầy và bấm <b>E</b>.\nThêm một mặt hàng vào giỏ rồi bấm <b>Mua</b>.	走到柜台的<b>电脑</b>前按 <b>E</b>。\n把商品加入购物车,然后点击<b>购买</b>。	カウンターの<b>パソコン</b>で <b>E</b> を押す。\n商品をカートに入れて<b>購入</b>を押す。	계산대의 <b>컴퓨터</b>로 가서 <b>E</b>를 누르세요.\n상품을 장바구니에 담고 <b>구매</b>를 누르세요.
+Pick up the box	Pick up the box	Nhặt thùng hàng	拿起箱子	箱を持つ	상자 들기
+Your boxes are delivered <b>outside the store</b>.\nLook at a box and press <b>E</b> to pick it up.	Your boxes are delivered <b>outside the store</b>.\nLook at a box and press <b>E</b> to pick it up.	Thùng hàng được giao <b>ngoài cửa hàng</b>.\nNhìn vào thùng và bấm <b>E</b> để nhặt.	箱子会送到<b>店外</b>。\n看着箱子按 <b>E</b> 拿起。	箱は<b>店の外</b>に届きます。\n箱を見て <b>E</b> で持ち上げる。	상자는 <b>가게 밖</b>으로 배송돼요.\n상자를 보고 <b>E</b>를 눌러 드세요.
+Stock a shelf	Stock a shelf	Xếp hàng lên kệ	上架商品	棚に並べる	선반 채우기
+Carry the box to an empty shelf.\nHold <b>Left Mouse</b> to place products. Press <b>E</b> to drop the box.	Carry the box to an empty shelf.\nHold <b>Left Mouse</b> to place products. Press <b>E</b> to drop the box.	Mang thùng tới một kệ trống.\nGiữ <b>chuột trái</b> để xếp hàng. Bấm <b>E</b> để đặt thùng xuống.	把箱子搬到空货架。\n按住<b>鼠标左键</b>摆放商品,按 <b>E</b> 放下箱子。	箱を空の棚へ運ぶ。\n<b>左クリック</b>長押しで商品を並べ、<b>E</b> で箱を置く。	상자를 빈 선반으로 옮기세요.\n<b>왼쪽 마우스</b>를 누른 채 상품을 놓고 <b>E</b>로 상자를 내려놓으세요.
+Set the price	Set the price	Đặt giá	设定价格	価格を決める	가격 정하기
+With empty hands, look at the shelf and click <b>Left Mouse</b>.\nSet a price close to the <b>market price</b> and press <b>Confirm</b>.	With empty hands, look at the shelf and click <b>Left Mouse</b>.\nSet a price close to the <b>market price</b> and press <b>Confirm</b>.	Tay không, nhìn vào kệ và bấm <b>chuột trái</b>.\nĐặt giá gần <b>giá thị trường</b> rồi bấm <b>Xác nhận</b>.	空着手看向货架并点击<b>鼠标左键</b>。\n设定接近<b>市场价</b>的价格,然后点击<b>确认</b>。	手ぶらで棚を見て<b>左クリック</b>。\n<b>相場</b>に近い価格にして<b>決定</b>を押す。	빈손으로 선반을 보고 <b>왼쪽 마우스</b>를 클릭하세요.\n<b>시세</b>에 가까운 가격으로 정하고 <b>확인</b>을 누르세요.
+Open the store	Open the store	Mở cửa hàng	开店营业	開店する	가게 열기
+Find the <b>OPEN / CLOSED</b> sign near the entrance and click it.\nCustomers will start coming in.	Find the <b>OPEN / CLOSED</b> sign near the entrance and click it.\nCustomers will start coming in.	Tìm biển <b>MỞ / ĐÓNG CỬA</b> gần lối vào và bấm vào.\nKhách sẽ bắt đầu vào.	找到入口附近的<b>营业 / 打烊</b>牌子并点击。\n顾客就会开始进店。	入口近くの<b>OPEN / CLOSED</b> 看板をクリック。\nお客さんが入り始めます。	입구 근처의 <b>OPEN / CLOSED</b> 표지판을 클릭하세요.\n손님이 들어오기 시작해요.
+Serve a customer	Serve a customer	Phục vụ khách	招待顾客	接客する	손님 응대
+When a customer is at the counter, click each item to <b>scan</b> it.\nThen click their <b>cash or card</b> and finish the payment.	When a customer is at the counter, click each item to <b>scan</b> it.\nThen click their <b>cash or card</b> and finish the payment.	Khi khách tới quầy, bấm vào từng món để <b>quét</b>.\nRồi bấm vào <b>tiền mặt hoặc thẻ</b> của khách và hoàn tất thanh toán.	顾客到柜台后,点击每件商品进行<b>扫描</b>。\n然后点击顾客的<b>现金或银行卡</b>完成付款。	お客さんがレジに来たら、商品をクリックして<b>スキャン</b>。\n次に<b>現金かカード</b>をクリックして会計を終える。	손님이 계산대에 오면 상품을 하나씩 클릭해 <b>스캔</b>하세요.\n그다음 <b>현금이나 카드</b>를 클릭해 결제를 끝내세요.
+Tutorial complete! Keep your shelves stocked\nand grow your supermarket.	Tutorial complete! Keep your shelves stocked\nand grow your supermarket.	Xong hướng dẫn! Giữ kệ luôn đầy hàng\nvà phát triển siêu thị của bạn.	教程完成!保持货架充足,\n让你的超市不断壮大。	チュートリアル完了!棚を満たし続けて\nスーパーを大きくしよう。	튜토리얼 완료! 진열대를 계속 채우고\n슈퍼마켓을 키우세요.
+TUTORIAL  {0}/{1}      <size=80%>[H] hide</size>	TUTORIAL  {0}/{1}      <size=80%>[H] hide</size>	HƯỚNG DẪN  {0}/{1}      <size=80%>[H] ẩn</size>	教程  {0}/{1}      <size=80%>[H] 隐藏</size>	チュートリアル  {0}/{1}      <size=80%>[H] 隠す</size>	튜토리얼  {0}/{1}      <size=80%>[H] 숨기기</size>
+Tutorial	Tutorial	Hướng dẫn	教程	チュートリアル	튜토리얼
+Faster vehicles finish deliveries sooner. Owned vehicles park outside - walk up and press <b><color=#F1F3F6>F</color></b> to ride.   Owned {0}/{1}	Faster vehicles finish deliveries sooner. Owned vehicles park outside - walk up and press <b><color=#F1F3F6>F</color></b> to ride.   Owned {0}/{1}	Xe nhanh hơn giao hàng sớm hơn. Xe đã mua đỗ ngoài cửa - lại gần và bấm <b><color=#F1F3F6>F</color></b> để lên xe.   Đã có {0}/{1}	车越快,送货越早。已拥有的车停在店外——走近按 <b><color=#F1F3F6>F</color></b> 乘坐。   已拥有 {0}/{1}	速い乗り物ほど配達が早く終わる。所有車は外に停車――近づいて <b><color=#F1F3F6>F</color></b> で乗車。   所有 {0}/{1}	빠른 차일수록 배달이 빨라요. 보유 차량은 밖에 주차 - 다가가 <b><color=#F1F3F6>F</color></b>로 탑승.   보유 {0}/{1}
+FREE	FREE	MIỄN PHÍ	免费	無料	무료
+IN USE	IN USE	ĐANG DÙNG	使用中	使用中	사용 중
+CALL	CALL	GỌI XE	叫车	呼ぶ	호출
+NO MONEY	NO MONEY	KHÔNG ĐỦ TIỀN	钱不够	お金不足	돈 부족
+Drive slowly after dark. Not everyone on the road at night is a customer. - bà Lan	Drive slowly after dark. Not everyone on the road at night is a customer. - Grandma Lan	Tối rồi thì đi chậm thôi. Không phải ai ngoài đường ban đêm cũng là khách đâu. - bà Lan	天黑后慢点开。夜里路上的人可不都是顾客。——兰奶奶	暗くなったらゆっくり走って。夜の道にいるのがみんなお客さんとは限らないよ。――ランおばあちゃん	어두워지면 천천히 달려. 밤길의 사람이 다 손님은 아니란다. - 란 할머니
+Boost	Boost	Tăng tốc	加速	ブースト	부스트
+CHÍNH CHỦ · OWNED	OWNED	CHÍNH CHỦ	已拥有	所有	보유
+The delivery order was cancelled (new day).	The delivery order was cancelled (new day).	Đơn giao hàng đã bị huỷ (sang ngày mới).	配送订单已取消(新的一天)。	配達注文はキャンセルされました(日付が変わったため)。	배달 주문이 취소되었습니다(새로운 날).
+New delivery order! [J] Accept   [K] Decline	New delivery order! [J] Accept   [K] Decline	Có đơn giao hàng mới! [J] Nhận   [K] Từ chối	新的配送订单![J] 接受   [K] 拒绝	新しい配達注文![J] 受ける   [K] 断る	새 배달 주문! [J] 수락   [K] 거절
+<b><color=#FFD54A>DELIVERY ORDER</color></b>  <size=80%>({0}s)</size>\n{1}\nTo: <b>{2}</b>  ·  {3} m\n	<b><color=#FFD54A>DELIVERY ORDER</color></b>  <size=80%>({0}s)</size>\n{1}\nTo: <b>{2}</b>  ·  {3} m\n	<b><color=#FFD54A>ĐƠN GIAO HÀNG</color></b>  <size=80%>({0}s)</size>\n{1}\nTới: <b>{2}</b>  ·  {3} m\n	<b><color=#FFD54A>配送订单</color></b>  <size=80%>({0}秒)</size>\n{1}\n送至:<b>{2}</b>  ·  {3} 米\n	<b><color=#FFD54A>配達注文</color></b>  <size=80%>({0}秒)</size>\n{1}\n届け先:<b>{2}</b>  ·  {3} m\n	<b><color=#FFD54A>배달 주문</color></b>  <size=80%>({0}초)</size>\n{1}\n받는 곳: <b>{2}</b>  ·  {3} m\n
+Pay {0} + delivery fee {1}\n<color=#8CFF8C>[J] Accept</color>   <color=#FF8A7A>[K] Decline</color>	Pay {0} + delivery fee {1}\n<color=#8CFF8C>[J] Accept</color>   <color=#FF8A7A>[K] Decline</color>	Thanh toán {0} + phí giao {1}\n<color=#8CFF8C>[J] Nhận</color>   <color=#FF8A7A>[K] Từ chối</color>	付款 {0} + 配送费 {1}\n<color=#8CFF8C>[J] 接受</color>   <color=#FF8A7A>[K] 拒绝</color>	代金 {0} + 配達料 {1}\n<color=#8CFF8C>[J] 受ける</color>   <color=#FF8A7A>[K] 断る</color>	결제 {0} + 배달비 {1}\n<color=#8CFF8C>[J] 수락</color>   <color=#FF8A7A>[K] 거절</color>
+<color=#8CFF8C>[E] Pick up the package</color>	<color=#8CFF8C>[E] Pick up the package</color>	<color=#8CFF8C>[E] Lấy gói hàng</color>	<color=#8CFF8C>[E] 取包裹</color>	<color=#8CFF8C>[E] 荷物を受け取る</color>	<color=#8CFF8C>[E] 소포 집기</color>
+Pick up the package at the delivery spot  {0}	Pick up the package at the delivery spot  {0}	Lấy gói hàng ở điểm giao  {0}	到取货点取包裹  {0}	配達場所で荷物を受け取る  {0}	배달 지점에서 소포를 집으세요  {0}
+\nTime left {0}	\nTime left {0}	\nCòn {0}	\n剩余时间 {0}	\n残り時間 {0}	\n남은 시간 {0}
+<b><color=#FFD54A>DELIVERY</color></b> to <b>{0}</b>	<b><color=#FFD54A>DELIVERY</color></b> to <b>{0}</b>	<b><color=#FFD54A>GIAO HÀNG</color></b> tới <b>{0}</b>	<b><color=#FFD54A>配送</color></b>至<b>{0}</b>	<b>{0}</b> へ<b><color=#FFD54A>配達</color></b>	<b>{0}</b>(으)로 <b><color=#FFD54A>배달</color></b>
+<color=#8CFF8C>[E] Hand over the package to {0}</color>	<color=#8CFF8C>[E] Hand over the package to {0}</color>	<color=#8CFF8C>[E] Đưa gói hàng cho {0}</color>	<color=#8CFF8C>[E] 把包裹交给{0}</color>	<color=#8CFF8C>[E] {0} に荷物を渡す</color>	<color=#8CFF8C>[E] {0}에게 소포 전달</color>
+<size=80%>Walk up to {0} to hand over the package</size>	<size=80%>Walk up to {0} to hand over the package</size>	<size=80%>Đi tới chỗ {0} để đưa gói hàng</size>	<size=80%>走到{0}面前交付包裹</size>	<size=80%>{0} のところまで歩いて荷物を渡す</size>	<size=80%>{0}에게 걸어가 소포를 전달하세요</size>
+<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>	<size=80%>Follow the route on the minimap · [M] Map · [F] near a bike / car to ride</size>	<size=80%>Đi theo đường trên bản đồ nhỏ · [M] Bản đồ · [F] gần xe máy / ô tô để lên xe</size>	<size=80%>沿小地图上的路线前进 · [M] 地图 · 靠近摩托 / 汽车按 [F] 乘坐</size>	<size=80%>ミニマップのルートに従う · [M] 地図 · バイク/車の近くで [F] 乗車</size>	<size=80%>미니맵 경로를 따라가세요 · [M] 지도 · 오토바이/차 근처에서 [F] 탑승</size>
+Not enough stock on the shelves for this order.	Not enough stock on the shelves for this order.	Kệ không đủ hàng cho đơn này.	货架上的库存不够这张订单。	この注文には棚の在庫が足りません。	이 주문에 필요한 재고가 선반에 부족해요.
+Order packed! Pick up the package outside the store.	Order packed! Pick up the package outside the store.	Đã đóng gói! Lấy gói hàng ngoài cửa hàng.	订单已打包!到店外取包裹。	梱包完了!店の外で荷物を受け取って。	포장 완료! 가게 밖에서 소포를 집으세요.
+Delivery to {0}	Delivery to {0}	Giao hàng tới {0}	配送至 {0}	{0} への配達	{0} 배달
+Delivered (late, no tip). +{0}	Delivered (late, no tip). +{0}	Đã giao (trễ, không có tiền tip). +{0}	已送达(迟到,无小费)。+{0}	配達完了(遅れたのでチップなし)。+{0}	배달 완료 (지각, 팁 없음). +{0}
+The customer cancelled the delivery - it took too long.	The customer cancelled the delivery - it took too long.	Khách đã huỷ đơn - giao lâu quá.	顾客取消了配送——太慢了。	お客さんが配達をキャンセル――時間がかかりすぎた。	손님이 배달을 취소했어요 - 너무 오래 걸렸어요.
+DELIVERY	DELIVERY	GIAO HÀNG	配送	配達	배달
+PHIẾU GIAO HÀNG · DELIVERY SLIP	DELIVERY SLIP	PHIẾU GIAO HÀNG	配送单	配達伝票	배달 전표
+Balance {0}	Balance {0}	Số dư {0}	余额 {0}	残高 {0}	잔액 {0}
+A new day! Market prices have changed.	A new day! Market prices have changed.	Ngày mới! Giá thị trường đã thay đổi.	新的一天!市场价格变了。	新しい一日!相場が変わりました。	새로운 날! 시세가 바뀌었어요.
+<color=#5BE36B>OPEN</color>	<color=#5BE36B>OPEN</color>	<color=#5BE36B>MỞ CỬA</color>	<color=#5BE36B>营业中</color>	<color=#5BE36B>営業中</color>	<color=#5BE36B>영업 중</color>
+<color=#FFB347>CLOSING</color>	<color=#FFB347>CLOSING</color>	<color=#FFB347>SẮP ĐÓNG</color>	<color=#FFB347>即将打烊</color>	<color=#FFB347>閉店間際</color>	<color=#FFB347>마감 중</color>
+<color=#FF6B6B>CLOSED</color>	<color=#FF6B6B>CLOSED</color>	<color=#FF6B6B>ĐÓNG CỬA</color>	<color=#FF6B6B>已打烊</color>	<color=#FF6B6B>閉店</color>	<color=#FF6B6B>영업 종료</color>
+<color=#FFD54A>Delivery: {0} ({1} m)</color>   	<color=#FFD54A>Delivery: {0} ({1} m)</color>   	<color=#FFD54A>Giao hàng: {0} ({1} m)</color>   	<color=#FFD54A>配送:{0}({1} 米)</color>   	<color=#FFD54A>配達:{0}({1} m)</color>   	<color=#FFD54A>배달: {0} ({1} m)</color>   
+{0}<color=#40D9FF>Arrow = You</color>   <color=#33C05A>S = Store</color>   <color=#FFD54A>P / ! = Delivery</color>   <color=#FF4033>Red = Thief</color>   <color=#5A8CFF>Blue = Guard</color>   ·   Scroll: zoom   Drag: move   [Space] Me   [M] Close	{0}<color=#40D9FF>Arrow = You</color>   <color=#33C05A>S = Store</color>   <color=#FFD54A>P / ! = Delivery</color>   <color=#FF4033>Red = Thief</color>   <color=#5A8CFF>Blue = Guard</color>   ·   Scroll: zoom   Drag: move   [Space] Me   [M] Close	{0}<color=#40D9FF>Mũi tên = Bạn</color>   <color=#33C05A>S = Cửa hàng</color>   <color=#FFD54A>P / ! = Giao hàng</color>   <color=#FF4033>Đỏ = Kẻ trộm</color>   <color=#5A8CFF>Xanh = Bảo vệ</color>   ·   Cuộn: phóng to   Kéo: di chuyển   [Space] Vị trí của tôi   [M] Đóng	{0}<color=#40D9FF>箭头 = 你</color>   <color=#33C05A>S = 商店</color>   <color=#FFD54A>P / ! = 配送</color>   <color=#FF4033>红 = 小偷</color>   <color=#5A8CFF>蓝 = 保安</color>   ·   滚轮:缩放   拖动:移动   [空格] 回到我   [M] 关闭	{0}<color=#40D9FF>矢印 = 自分</color>   <color=#33C05A>S = 店</color>   <color=#FFD54A>P / ! = 配達</color>   <color=#FF4033>赤 = 泥棒</color>   <color=#5A8CFF>青 = 警備員</color>   ·   ホイール:ズーム   ドラッグ:移動   [Space] 現在地   [M] 閉じる	{0}<color=#40D9FF>화살표 = 나</color>   <color=#33C05A>S = 가게</color>   <color=#FFD54A>P / ! = 배달</color>   <color=#FF4033>빨강 = 도둑</color>   <color=#5A8CFF>파랑 = 경비원</color>   ·   스크롤: 확대   드래그: 이동   [Space] 내 위치   [M] 닫기
+[M] Map	[M] Map	[M] Bản đồ	[M] 地图	[M] 地図	[M] 지도
+MAP	MAP	BẢN ĐỒ	地图	地図	지도
+<b>BẢN TIN SÁNG</b> {0}, camera hành trình của một tài xế giao hàng đã vạch mặt nhóm \"ăn vạ\" - clip được chia sẻ khắp mạng.	<b>MORNING NEWS</b> {0}, a delivery driver's dashcam exposed a staged-accident gang - the clip has gone viral.	<b>BẢN TIN SÁNG</b> {0}, camera hành trình của một tài xế giao hàng đã vạch mặt nhóm \"ăn vạ\" - clip được chia sẻ khắp mạng.	<b>早间新闻</b> {0},一名外卖司机的行车记录仪揭穿了“碰瓷”团伙——视频在网上疯传。	<b>朝のニュース</b> {0}、配達ドライバーのドライブレコーダーが当たり屋グループの手口を暴いた――動画は拡散中。	<b>아침 뉴스</b> {0}, 한 배달 기사의 블랙박스가 보험 사기단을 폭로했다 - 영상이 온라인에 퍼지고 있다.
+<b>BẢN TIN SÁNG</b> {0}, công an tạm giữ nhóm 4 người dàn cảnh va chạm giao thông để cưỡng đoạt tiền.	<b>MORNING NEWS</b> {0}, police detained a gang of 4 who staged traffic accidents to extort money.	<b>BẢN TIN SÁNG</b> {0}, công an tạm giữ nhóm 4 người dàn cảnh va chạm giao thông để cưỡng đoạt tiền.	<b>早间新闻</b> {0},警方拘留了一个制造交通事故勒索钱财的四人团伙。	<b>朝のニュース</b> {0}、交通事故を装って金を脅し取っていた4人組を警察が拘束。	<b>아침 뉴스</b> {0}, 경찰이 교통사고를 꾸며 돈을 갈취한 4인조를 붙잡았다.
+<b>BẢN TIN SÁNG</b> {0}, lại thêm một tài xế bị nhóm \"ăn vạ\" dàn cảnh lấy tiền. Công an khuyên lắp camera hành trình và gọi 113.	<b>MORNING NEWS</b> {0}, another driver was conned by a staged-accident gang. Police advise fitting a dashcam and calling 113.	<b>BẢN TIN SÁNG</b> {0}, lại thêm một tài xế bị nhóm \"ăn vạ\" dàn cảnh lấy tiền. Công an khuyên lắp camera hành trình và gọi 113.	<b>早间新闻</b> {0},又一名司机遭“碰瓷”团伙设局敲诈。警方建议安装行车记录仪并拨打 113。	<b>朝のニュース</b> {0}、また一人のドライバーが当たり屋にお金を取られた。警察はドライブレコーダーの設置と 113 への通報を呼びかけている。	<b>아침 뉴스</b> {0}, 또 한 명의 운전자가 보험 사기단에게 돈을 뜯겼다. 경찰은 블랙박스 설치와 113 신고를 권고했다.
+<b>BẢN TIN SÁNG</b> Clip \"tài xế tông người rồi bỏ chạy\" {0} lan truyền trên mạng. Cửa hàng bị đánh giá 1 sao.	<b>MORNING NEWS</b> A clip of a \"hit-and-run driver\" {0} is spreading online. The store got a 1-star review.	<b>BẢN TIN SÁNG</b> Clip \"tài xế tông người rồi bỏ chạy\" {0} lan truyền trên mạng. Cửa hàng bị đánh giá 1 sao.	<b>早间新闻</b> “司机撞人逃逸”视频 {0} 在网上流传。商店收到一条一星差评。	<b>朝のニュース</b> 「人をはねて逃げたドライバー」の動画 {0} がネットで拡散。店に星1つの評価がついた。	<b>아침 뉴스</b> "사람을 치고 달아난 운전자" 영상 {0}이(가) 온라인에 퍼졌다. 가게가 별점 1점을 받았다.
+Bạn	You	Bạn	你	あなた	나
+Đường đêm thoáng thật, chắc kịp giờ giao.	The roads are so clear at night - I'll make it in time.	Đường đêm thoáng thật, chắc kịp giờ giao.	夜里路真空,应该能准时送到。	夜の道はすいてるな、間に合いそうだ。	밤길이 한산하네, 제시간에 도착하겠어.
+Đường thoáng, chắc kịp giờ giao.	The road's clear - I'll make it in time.	Đường thoáng, chắc kịp giờ giao.	路很空,应该能准时送到。	道がすいてる、間に合いそうだ。	길이 한산하네, 제시간에 도착하겠어.
+<i>Một chiếc xe máy chở hai người rú ga vượt lên bên trái...</i>	<i>A motorbike with two riders revs and overtakes on your left...</i>	<i>Một chiếc xe máy chở hai người rú ga vượt lên bên trái...</i>	<i>一辆载着两个人的摩托车轰着油门从左边超了上来……</i>	<i>二人乗りのバイクがエンジンをふかして左から追い抜いていく……</i>	<i>두 명이 탄 오토바이가 굉음을 내며 왼쪽으로 추월한다...</i>
+<i>...tạt thẳng vào đầu xe bạn rồi phanh gấp!</i>	<i>...cuts right in front of you and slams on the brakes!</i>	<i>...tạt thẳng vào đầu xe bạn rồi phanh gấp!</i>	<i>……直接切到你车前,猛地刹车!</i>	<i>……真ん前に割り込んで急ブレーキ!</i>	<i>...바로 앞으로 끼어들더니 급정거한다!</i>
+<i>Bạn đạp phanh hết cỡ - không kịp...</i>	<i>You stamp on the brakes - too late...</i>	<i>Bạn đạp phanh hết cỡ - không kịp...</i>	<i>你一脚把刹车踩到底——来不及了……</i>	<i>ブレーキを思いきり踏む――間に合わない……</i>	<i>브레이크를 힘껏 밟지만 - 늦었다...</i>
+<i>RẦM! Đầu xe bạn húc vào đuôi xe máy - chiếc xe đổ nghiêng, trượt đi một đoạn.</i>	<i>BANG! Your bumper hits the back of the bike - it tips over and slides along the road.</i>	<i>RẦM! Đầu xe bạn húc vào đuôi xe máy - chiếc xe đổ nghiêng, trượt đi một đoạn.</i>	<i>砰!你的车头撞上摩托车尾——摩托车侧翻,滑出去一段。</i>	<i>ドン!車の先がバイクの後ろにぶつかり――バイクは横倒しになって滑っていく。</i>	<i>쾅! 차 앞부분이 오토바이 뒤를 받았다 - 오토바이가 옆으로 넘어져 미끄러진다.</i>
+Nó tự phanh gấp trước mũi xe mình mà! Mình chỉ chạm nhẹ thôi...	It braked right in front of me on purpose! I barely touched it...	Nó tự phanh gấp trước mũi xe mình mà! Mình chỉ chạm nhẹ thôi...	是它自己在我车前急刹的!我只是轻轻碰了一下……	向こうが目の前で急ブレーキをかけたんだ!軽く触れただけなのに……	자기가 내 앞에서 급정거했잖아! 살짝 닿았을 뿐인데...
+Nạn nhân	\"Victim\"	Nạn nhân	“受害者”	「被害者」	"피해자"
+Á á á! Cái chân tôi! Gãy chân rồi!	Aaargh! My leg! My leg's broken!	Á á á! Cái chân tôi! Gãy chân rồi!	啊啊啊!我的腿!腿断了!	うわああ!足が!足が折れた!	아아악! 내 다리! 다리가 부러졌어!
+Đồng bọn	Accomplice	Đồng bọn	同伙	仲間	일당
+Đâm người ta rồi định chạy à?! Xuống xe! Đền 5 triệu ngay!	You hit someone and think you can drive off?! Get out! Pay 5 million dong, now!	Đâm người ta rồi định chạy à?! Xuống xe! Đền 5 triệu ngay!	撞了人还想跑?!下车!马上赔五百万!	人をはねて逃げる気か?!降りろ!今すぐ500万ドン払え!	사람을 쳐 놓고 도망가려고?! 내려! 당장 500만 동 물어내!
+Nhìn cái gì? Xuống đây nói chuyện!	What are you looking at? Get down here and talk!	Nhìn cái gì? Xuống đây nói chuyện!	看什么看?下来说话!	何見てんだ?降りて話をしろ!	뭘 봐? 내려와서 얘기해!
+<i>Từ đâu, hai \"người nhà\" chạy ào tới, vây kín đầu xe.</i>	<i>Out of nowhere, two \"relatives\" rush over and block the front of your car.</i>	<i>Từ đâu, hai \"người nhà\" chạy ào tới, vây kín đầu xe.</i>	<i>不知从哪儿冲出两个“家属”,把你的车头围得严严实实。</i>	<i>どこからともなく「家族」が二人駆け寄り、車の前をふさぐ。</i>	<i>어디선가 "가족" 두 명이 달려와 차 앞을 막아선다.</i>
+Ối giời ơi... gãy thật rồi...	Oh God... it's really broken...	Ối giời ơi... gãy thật rồi...	哎哟天哪……真的断了……	ああ……本当に折れてる……	아이고... 진짜 부러졌어...
+<i>Người qua đường bắt đầu xúm lại. Phía sau, xe cộ ùn lại, còi inh ỏi.</i>	<i>Passers-by start to gather. Behind you, traffic backs up, horns blaring.</i>	<i>Người qua đường bắt đầu xúm lại. Phía sau, xe cộ ùn lại, còi inh ỏi.</i>	<i>路人开始围过来。后面车辆堵成一片,喇叭声响个不停。</i>	<i>通行人が集まり始める。後ろでは車が詰まり、クラクションが鳴りやまない。</i>	<i>행인들이 모여들기 시작한다. 뒤로는 차가 밀리고 경적이 요란하다.</i>
+Đưa tiền cho xong chuyện	Pay them to end it	Đưa tiền cho xong chuyện	给钱了事	金を払って済ませる	돈을 주고 끝낸다
+Khoá cửa, gọi 113	Lock the doors, call 113	Khoá cửa, gọi 113	锁门,拨打 113	ドアをロックして 113 に通報	문을 잠그고 113에 신고
+Mở camera hành trình ra đối chất	Show them the dashcam	Mở camera hành trình ra đối chất	打开行车记录仪对质	ドラレコの映像を見せる	블랙박스를 보여 준다
+Lùi xe, vòng qua bỏ đi	Reverse and drive around them	Lùi xe, vòng qua bỏ đi	倒车,绕过去离开	バックして回り込んで去る	후진해서 돌아 나간다
+<i>Hắn đếm tiền, nhếch mép. \"Nạn nhân\" bỗng đi lại bình thường, dựng xe phóng mất.</i>	<i>He counts the money and smirks. The \"victim\" suddenly walks just fine, picks up the bike and speeds off.</i>	<i>Hắn đếm tiền, nhếch mép. \"Nạn nhân\" bỗng đi lại bình thường, dựng xe phóng mất.</i>	<i>他数着钱,嘴角一撇。“受害者”突然走路如常,扶起摩托车一溜烟跑了。</i>	<i>男は金を数えてにやりと笑う。「被害者」は急に普通に歩き出し、バイクを起こして走り去った。</i>	<i>그는 돈을 세며 비웃는다. "피해자"는 갑자기 멀쩡히 걸어가 오토바이를 세우고 사라진다.</i>
+<i>Cạch - bạn khoá cửa, bấm 113. Bên ngoài, chúng đập rầm rầm vào cửa kính.</i>	<i>Click - you lock the doors and dial 113. Outside, they pound on the windows.</i>	<i>Cạch - bạn khoá cửa, bấm 113. Bên ngoài, chúng đập rầm rầm vào cửa kính.</i>	<i>咔嗒——你锁上车门,拨打 113。外面,他们砰砰地砸着车窗。</i>	<i>カチッ――ドアをロックして 113 を押す。外では奴らが窓をドンドン叩く。</i>	<i>찰칵 - 문을 잠그고 113을 누른다. 밖에서 그들이 창문을 쾅쾅 두드린다.</i>
+Mở cửa ra! Có mở không thì bảo!	Open the door! Open it, I said!	Mở cửa ra! Có mở không thì bảo!	开门!叫你开门听见没有!	ドアを開けろ!開けろって言ってんだ!	문 열어! 열라고 했지!
+Ngồi yên chờ công an	Sit tight and wait for the police	Ngồi yên chờ công an	坐着别动,等警察来	じっと警察を待つ	가만히 경찰을 기다린다
+Hạ kính nói chuyện cho êm	Lower the window and calm things down	Hạ kính nói chuyện cho êm	摇下车窗好好谈	窓を下げて穏便に話す	창문을 내리고 차분히 얘기한다
+<i>Cả nhóm dựng xe, rồ ga bỏ chạy.</i>	<i>The whole gang picks up the bike and races off.</i>	<i>Cả nhóm dựng xe, rồ ga bỏ chạy.</i>	<i>那伙人扶起摩托车,一踩油门跑了。</i>	<i>一味はバイクを起こし、エンジンをふかして逃げていった。</i>	<i>일당은 오토바이를 세우고 급히 달아난다.</i>
+<i>Tay bạn run, nhưng vẫn ngồi im, giữ chặt khoá cửa.</i>	<i>Your hands are shaking, but you stay put and keep the doors locked.</i>	<i>Tay bạn run, nhưng vẫn ngồi im, giữ chặt khoá cửa.</i>	<i>你的手在发抖,但还是坐着不动,紧紧锁着车门。</i>	<i>手が震える。それでもじっと座り、ドアのロックを離さない。</i>	<i>손이 떨리지만 가만히 앉아 문을 꼭 잠가 둔다.</i>
+Ngồi im... công an sắp tới rồi.	Stay calm... the police are almost here.	Ngồi im... công an sắp tới rồi.	别动……警察快到了。	じっとして……警察はもうすぐ来る。	가만히... 경찰이 곧 올 거야.
+Camera hành trình quay hết rồi đấy. Có muốn xem lại không?	The dashcam recorded everything. Want to watch it?	Camera hành trình quay hết rồi đấy. Có muốn xem lại không?	行车记录仪全都拍下来了。要不要看看?	ドラレコが全部撮ってるよ。見てみる?	블랙박스에 다 찍혔어요. 다시 볼래요?
+<i>\"Nạn nhân\" bỗng đứng bật dậy, chân tay lành lặn như chưa có gì.</i>	<i>The \"victim\" suddenly jumps up, arms and legs perfectly fine.</i>	<i>\"Nạn nhân\" bỗng đứng bật dậy, chân tay lành lặn như chưa có gì.</i>	<i>“受害者”突然一跃而起,手脚完好,像什么事都没发生。</i>	<i>「被害者」が急に飛び起きた。手足は何ともない。</i>	<i>"피해자"가 갑자기 벌떡 일어선다. 팔다리가 멀쩡하다.</i>
+Thôi... nhầm, nhầm! Đi thôi!	Uh... our mistake, our mistake! Let's go!	Thôi... nhầm, nhầm! Đi thôi!	算了……搞错了,搞错了!走!	いや……人違いだ!行くぞ!	됐어... 착각이야, 착각! 가자!
+<i>Cả nhóm cuống cuồng dựng xe, chuồn thẳng.</i>	<i>The gang scrambles to pick up the bike and bolts.</i>	<i>Cả nhóm cuống cuồng dựng xe, chuồn thẳng.</i>	<i>那伙人手忙脚乱地扶起车,溜得飞快。</i>	<i>一味は慌ててバイクを起こし、一目散に逃げた。</i>	<i>일당은 허둥지둥 오토바이를 세우고 줄행랑친다.</i>
+Camera à? Đưa đây! Đập nát nó luôn!	A camera? Give it here! I'll smash it!	Camera à? Đưa đây! Đập nát nó luôn!	记录仪?拿来!砸烂它!	カメラだと?よこせ!ぶっ壊してやる!	카메라? 이리 내! 박살 내 주지!
+Lái xe đi ngay	Drive away now	Lái xe đi ngay	马上开车走	すぐに車を出す	당장 차를 몬다
+<i>Bạn chần chừ - chúng giật được camera và ví rồi bỏ chạy.</i>	<i>You hesitate - they grab the camera and your wallet and run.</i>	<i>Bạn chần chừ - chúng giật được camera và ví rồi bỏ chạy.</i>	<i>你犹豫了一下——他们抢走了记录仪和钱包跑了。</i>	<i>ためらった隙に――奴らはカメラと財布を奪って逃げた。</i>	<i>망설이는 사이 - 그들이 카메라와 지갑을 낚아채 달아난다.</i>
+Im lặng là đồng ý nhé. 7 triệu, không mặc cả!	Silence means yes. 7 million dong, no haggling!	Im lặng là đồng ý nhé. 7 triệu, không mặc cả!	不说话就是同意了。七百万,不还价!	黙ってるなら決まりだな。700万ドン、値切りはなしだ!	말 없으면 동의한 걸로 알지. 700만 동, 흥정 없어!
+<i>Chúng nhét tiền vào túi rồi đi như chưa có chuyện gì.</i>	<i>They pocket the money and walk off as if nothing happened.</i>	<i>Chúng nhét tiền vào túi rồi đi như chưa có chuyện gì.</i>	<i>他们把钱塞进口袋,像什么都没发生过一样走了。</i>	<i>奴らは金をポケットに入れ、何事もなかったように去っていった。</i>	<i>그들은 돈을 주머니에 넣고 아무 일 없었다는 듯 가 버린다.</i>
+Đúng là may có cái camera... Đi giao hàng tiếp thôi.	Lucky I had that camera... Back to the delivery.	Đúng là may có cái camera... Đi giao hàng tiếp thôi.	幸好有行车记录仪……继续送货吧。	ドラレコがあって助かった……配達に戻ろう。	블랙박스가 있어서 다행이다... 배달하러 가자.
+Hú vía. Lần sau cứ khoá cửa gọi 113 là chuẩn.	That was close. Next time: lock the doors and call 113.	Hú vía. Lần sau cứ khoá cửa gọi 113 là chuẩn.	好险。下次就锁门报 113。	危なかった。次からはロックして 113 だ。	식겁했네. 다음엔 문 잠그고 113에 신고하자.
+Thoát rồi... nhưng chắc chúng nó quay clip mình rồi.	Got away... but they probably filmed me.	Thoát rồi... nhưng chắc chúng nó quay clip mình rồi.	逃掉了……可他们八成拍了我的视频。	逃げ切った……でもたぶん動画を撮られた。	빠져나왔다... 하지만 날 찍었겠지.
+Thoát rồi. Clip camera vẫn còn, lát nữa nộp cho công an.	Got away. I still have the dashcam clip - I'll give it to the police.	Thoát rồi. Clip camera vẫn còn, lát nữa nộp cho công an.	逃掉了。记录仪视频还在,待会儿交给警察。	逃げ切った。ドラレコの映像は残ってる、後で警察に渡そう。	빠져나왔다. 블랙박스 영상은 남아 있으니 나중에 경찰에 내자.
+Mất cả điện thoại lẫn ví... Đáng lẽ không nên hạ kính.	Lost my phone and wallet... I shouldn't have lowered the window.	Mất cả điện thoại lẫn ví... Đáng lẽ không nên hạ kính.	手机和钱包都没了……真不该摇下车窗。	スマホも財布もなくした……窓を下げるんじゃなかった。	폰이랑 지갑을 다 잃었네... 창문을 내리지 말 걸.
+Mất tiền oan... Phải lắp camera hành trình mới được.	Money down the drain... I need a dashcam.	Mất tiền oan... Phải lắp camera hành trình mới được.	白白丢了钱……得装个行车记录仪了。	とんだ損をした……ドラレコをつけなきゃ。	억울하게 돈을 날렸네... 블랙박스를 달아야겠어.
+<i>Bạn gài số lùi, lùi gấp vài mét...</i>	<i>You shift into reverse and back up a few metres...</i>	<i>Bạn gài số lùi, lùi gấp vài mét...</i>	<i>你挂上倒挡,猛地倒退了几米……</i>	<i>ギアをバックに入れ、数メートル急いで下がる……</i>	<i>후진 기어를 넣고 몇 미터 급히 물러난다...</i>
+<i>...rồi đánh lái vòng qua chiếc xe máy, tăng tốc. Phía sau, ai đó giơ điện thoại lên quay.</i>	<i>...then swerve around the bike and speed up. Behind you, someone raises a phone to film.</i>	<i>...rồi đánh lái vòng qua chiếc xe máy, tăng tốc. Phía sau, ai đó giơ điện thoại lên quay.</i>	<i>……然后打方向绕过摩托车,加速离开。身后有人举起手机在拍。</i>	<i>……ハンドルを切ってバイクをよけ、加速する。後ろで誰かがスマホを掲げて撮っている。</i>	<i>...핸들을 꺾어 오토바이를 돌아 가속한다. 뒤에서 누군가 휴대폰을 들어 찍는다.</i>
+<i>...rồi đánh lái vòng qua chiếc xe máy, tăng tốc bỏ lại cả nhóm.</i>	<i>...then swerve around the bike and leave the whole gang behind.</i>	<i>...rồi đánh lái vòng qua chiếc xe máy, tăng tốc bỏ lại cả nhóm.</i>	<i>……然后打方向绕过摩托车,加速把那伙人甩在身后。</i>	<i>……ハンドルを切ってバイクをよけ、一味を置き去りにする。</i>	<i>...핸들을 꺾어 오토바이를 돌아 일당을 따돌린다.</i>
+Tông người rồi bỏ chạy kìa! Quay lại biển số nó!	Hit-and-run! Film the number plate!	Tông người rồi bỏ chạy kìa! Quay lại biển số nó!	撞了人就跑啦!把车牌拍下来!	ひき逃げだ!ナンバーを撮れ!	뺑소니다! 번호판 찍어!
+Đứng lại! Mày nhớ mặt tao đấy!	Stop! You'd better remember my face!	Đứng lại! Mày nhớ mặt tao đấy!	站住!你给我记住了!	待て!この顔、覚えとけよ!	거기 서! 내 얼굴 기억해 둬!
+Paid off a staged-accident scam	Paid off a staged-accident scam	Trả tiền cho nhóm ăn vạ	向碰瓷团伙付钱	当たり屋に金を払った	보험 사기단에 돈을 줌
+<color=#FF8A7A>Bạn bị nhóm \"ăn vạ\" lấy {0}. Đơn hàng vẫn còn - đi giao tiếp nhé.</color>	<color=#FF8A7A>The scam gang took {0}. The order is still with you - keep delivering.</color>	<color=#FF8A7A>Bạn bị nhóm \"ăn vạ\" lấy {0}. Đơn hàng vẫn còn - đi giao tiếp nhé.</color>	<color=#FF8A7A>你被碰瓷团伙拿走了 {0}。订单还在——继续送货吧。</color>	<color=#FF8A7A>当たり屋に {0} 取られた。荷物はまだある――配達を続けよう。</color>	<color=#FF8A7A>보험 사기단이 {0}을(를) 가져갔어요. 주문은 남아 있으니 계속 배달하세요.</color>
+Phone and wallet snatched in a scam	Phone and wallet snatched in a scam	Bị giật điện thoại và ví	手机和钱包被抢	スマホと財布を奪われた	사기로 폰과 지갑을 빼앗김
+<color=#FF8A7A>Bị giật điện thoại và ví! Mất {0}. Đơn hàng vẫn còn trên xe.</color>	<color=#FF8A7A>Phone and wallet snatched! You lost {0}. The order is still in the car.</color>	<color=#FF8A7A>Bị giật điện thoại và ví! Mất {0}. Đơn hàng vẫn còn trên xe.</color>	<color=#FF8A7A>手机和钱包被抢了!损失 {0}。订单还在车上。</color>	<color=#FF8A7A>スマホと財布を奪われた!{0} の損失。荷物はまだ車にある。</color>	<color=#FF8A7A>폰과 지갑을 빼앗겼다! {0} 손실. 주문은 아직 차에 있어요.</color>
+Dashcam exposed a scam	Dashcam exposed a scam	Camera hành trình vạch mặt nhóm ăn vạ	行车记录仪揭穿碰瓷	ドラレコが当たり屋を暴いた	블랙박스로 사기 폭로
+<color=#6BE37B>Camera hành trình đã vạch mặt nhóm ăn vạ! +$20, +8 XP. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>Your dashcam exposed the scam gang! +$20, +8 XP. Keep delivering.</color>	<color=#6BE37B>Camera hành trình đã vạch mặt nhóm ăn vạ! +$20, +8 XP. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>行车记录仪揭穿了碰瓷团伙!+$20,+8 经验。继续送货吧。</color>	<color=#6BE37B>ドラレコが当たり屋を暴いた!+$20、+8 XP。配達を続けよう。</color>	<color=#6BE37B>블랙박스가 사기단을 폭로했어요! +$20, +8 XP. 계속 배달하세요.</color>
+Police reward (scam ring)	Police reward (scam ring)	Công an thưởng (nhóm ăn vạ)	警方奖励(碰瓷团伙)	警察からの謝礼(当たり屋)	경찰 포상 (사기단)
+<color=#6BE37B>Công an đã bắt nhóm ăn vạ. Thưởng +$60, +12 XP. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>The police arrested the scam gang. Reward +$60, +12 XP. Keep delivering.</color>	<color=#6BE37B>Công an đã bắt nhóm ăn vạ. Thưởng +$60, +12 XP. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>警方抓获了碰瓷团伙。奖励 +$60,+12 经验。继续送货吧。</color>	<color=#6BE37B>警察が当たり屋を逮捕。謝礼 +$60、+12 XP。配達を続けよう。</color>	<color=#6BE37B>경찰이 사기단을 체포했어요. 포상 +$60, +12 XP. 계속 배달하세요.</color>
+<color=#6BE37B>Bạn lái đi kịp, không mất gì. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>You drove off in time and lost nothing. Keep delivering.</color>	<color=#6BE37B>Bạn lái đi kịp, không mất gì. Đi giao hàng tiếp nhé.</color>	<color=#6BE37B>你及时开走了,什么都没损失。继续送货吧。</color>	<color=#6BE37B>間一髪で走り去り、何も失わなかった。配達を続けよう。</color>	<color=#6BE37B>제때 빠져나와 잃은 게 없어요. 계속 배달하세요.</color>
+Viral clip	Viral clip	Clip lan truyền	视频疯传	動画が拡散	영상 확산
+<color=#FFB86B>Thoát được, không mất tiền - nhưng có người quay clip. Cửa hàng nhận một đánh giá xấu.</color>	<color=#FFB86B>You got away without paying - but someone filmed it. The store got a bad review.</color>	<color=#FFB86B>Thoát được, không mất tiền - nhưng có người quay clip. Cửa hàng nhận một đánh giá xấu.</color>	<color=#FFB86B>逃掉了,没损失钱——但有人拍了视频。商店收到一条差评。</color>	<color=#FFB86B>お金は取られずに逃げたが――誰かが撮影していた。店に悪いレビューがついた。</color>	<color=#FFB86B>돈은 안 뺏기고 빠져나왔지만 - 누가 영상을 찍었어요. 가게가 나쁜 리뷰를 받았어요.</color>
+Được rồi, được rồi... đừng đập nữa.	Okay, okay... stop banging.	Được rồi, được rồi... đừng đập nữa.	好了好了……别砸了。	わかった、わかった……叩くのはやめてくれ。	알았어, 알았어... 그만 두드려.
+Bình tĩnh đã anh, có gì từ từ nói chuyện.	Calm down, let's talk this through.	Bình tĩnh đã anh, có gì từ từ nói chuyện.	大哥冷静点,有话好好说。	落ち着いて、ゆっくり話しましょう。	진정하세요, 차근차근 얘기해요.
+Từ từ cái gì? Người ta nằm kia kìa! Năm triệu, không nói nhiều!	Talk what? He's lying right there! Five million, no arguments!	Từ từ cái gì? Người ta nằm kia kìa! Năm triệu, không nói nhiều!	好好说什么?人还躺在那儿呢!五百万,少废话!	何がゆっくりだ?人が倒れてんだぞ!500万、つべこべ言うな!	차근차근은 무슨? 사람이 저기 쓰러져 있잖아! 500만, 말 많이 하지 마!
+Tôi làm gì có nhiều thế... Tôi chỉ còn từng này thôi.	I don't have that much... this is all I've got.	Tôi làm gì có nhiều thế... Tôi chỉ còn từng này thôi.	我哪有那么多……我就剩这些了。	そんなに持ってない……これしかないんだ。	그렇게 많이 없어요... 이게 전부예요.
+Đây, cầm lấy rồi đi cho.	Here, take it and go.	Đây, cầm lấy rồi đi cho.	给,拿去,快走吧。	ほら、持って行ってくれ。	여기요, 받고 가세요.
+Ít thế này à? Thôi, coi như hôm nay mày gặp may.	That's it? Fine - today's your lucky day.	Ít thế này à? Thôi, coi như hôm nay mày gặp may.	就这么点?算了,算你今天走运。	これだけか?まあいい、今日はついてたな。	이것뿐이야? 됐다, 오늘 운 좋은 줄 알아.
+Anh bình tĩnh, công an đang tới rồi đấy...	Calm down, the police are on their way...	Anh bình tĩnh, công an đang tới rồi đấy...	你冷静点,警察已经在路上了……	落ち着いて、警察がもう向かってますよ……	진정하세요, 경찰이 오고 있어요...
+Công an à? Thế cái này tao cầm hộ nhé!	Police, huh? Then I'll hold on to this for you!	Công an à? Thế cái này tao cầm hộ nhé!	警察?那这个我先替你拿着!	警察だと?じゃあこれは預かっとくぜ!	경찰? 그럼 이건 내가 맡아 두지!
+<i>Một bàn tay thò vào giật phăng điện thoại và ví trên ghế!</i>	<i>A hand reaches in and snatches the phone and wallet off the seat!</i>	<i>Một bàn tay thò vào giật phăng điện thoại và ví trên ghế!</i>	<i>一只手伸进来,一把抢走座位上的手机和钱包!</i>	<i>手が伸びてきて、座席のスマホと財布をひったくった!</i>	<i>손 하나가 들어와 좌석 위 폰과 지갑을 낚아챈다!</i>
+Này! Trả đây! Cướp! Cướp!	Hey! Give it back! Thief! Thief!	Này! Trả đây! Cướp! Cướp!	喂!还给我!抢劫!抢劫啊!	おい!返せ!泥棒!泥棒!	야! 돌려줘! 강도야! 강도!
+Đền tiền!	Pay up!	Đền tiền!	赔钱!	金払え!	돈 물어내!
+Xuống xe ngay!	Get out of the car!	Xuống xe ngay!	马上下车!	今すぐ降りろ!	당장 내려!
+Mở cửa ra!	Open the door!	Mở cửa ra!	开门!	ドアを開けろ!	문 열어!
+Đâm người rồi định chạy à?!	Hit someone and run, huh?!	Đâm người rồi định chạy à?!	撞了人还想跑?!	人をはねて逃げる気か?!	사람 치고 도망가려고?!
+5 triệu, không nói nhiều!	5 million, no arguments!	5 triệu, không nói nhiều!	五百万,少废话!	500万、つべこべ言うな!	500만, 말 많이 하지 마!
+Mày có biết tao là ai không?!	Do you know who I am?!	Mày có biết tao là ai không?!	你知道我是谁吗?!	俺が誰だか分かってんのか?!	내가 누군지 알아?!
+Á á... cái chân!	Argh... my leg!	Á á... cái chân!	啊啊……我的腿!	うう……足が!	아아... 내 다리!
+Gãy rồi... gãy thật rồi!	It's broken... really broken!	Gãy rồi... gãy thật rồi!	断了……真断了!	折れた……本当に折れた!	부러졌어... 진짜 부러졌어!
+Ối giời ơi!	Oh my God!	Ối giời ơi!	哎哟天哪!	ああ、なんてこった!	아이고!
+Đau quá...!	It hurts...!	Đau quá...!	好疼……!	痛い……!	너무 아파...!
+Không đền thì đừng hòng đi!	You're not leaving till you pay!	Không đền thì đừng hòng đi!	不赔钱别想走!	払わなきゃ帰さねえぞ!	안 물어내면 못 가!
+Quay lại biển số nó!	Film the number plate!	Quay lại biển số nó!	把车牌拍下来!	ナンバーを撮れ!	번호판 찍어!
+Anh tôi gãy chân rồi!	My brother's leg is broken!	Anh tôi gãy chân rồi!	我哥的腿断了!	兄貴の足が折れたんだ!	우리 형 다리가 부러졌어!
+Gọi người nhà ra đây!	Get the family over here!	Gọi người nhà ra đây!	叫家里人过来!	家族を呼べ!	가족들 불러!
+Đền ngay!	Pay now!	Đền ngay!	马上赔!	今すぐ払え!	당장 물어내!
+Ăn vạ đấy, tôi thấy hết!	It's a scam, I saw everything!	Ăn vạ đấy, tôi thấy hết!	是碰瓷,我全看见了!	当たり屋だよ、全部見てた!	보험 사기야, 내가 다 봤어!
+Gọi công an đi!	Call the police!	Gọi công an đi!	报警啊!	警察を呼べ!	경찰 불러!
+Lại cái trò này...	This trick again...	Lại cái trò này...	又是这一套……	またこの手口か……	또 이 수법이야...
+Quay video lại đi!	Record a video!	Quay video lại đi!	快拍视频!	動画を撮っとけ!	영상 찍어!
+Thôi đưa ít tiền cho xong.	Just give them some money and be done.	Thôi đưa ít tiền cho xong.	算了,给点钱了事吧。	少し払って終わりにしなよ。	그냥 돈 좀 주고 끝내.
+Xe máy tự phanh mà!	The bike braked on its own!	Xe máy tự phanh mà!	是摩托车自己急刹的!	バイクが自分で急ブレーキかけたんだ!	오토바이가 혼자 급정거했잖아!
+Ai đúng ai sai đây?	So who's in the right?	Ai đúng ai sai đây?	到底谁对谁错?	どっちが悪いんだ?	누가 잘못한 거야?
+Người nhà	\"Relative\"	Người nhà	“家属”	「家族」	"가족"
+CSGT	Traffic police	CSGT	交警	交通警察	교통경찰
+Người xem	Onlooker	Người xem	围观者	野次馬	구경꾼
+Tất cả đứng yên!	Everyone stay where you are!	Tất cả đứng yên!	所有人不许动!	全員動くな!	모두 그 자리에!
+Xuất trình giấy tờ!	Show me your papers!	Xuất trình giấy tờ!	出示证件!	書類を見せなさい!	서류 보여 주세요!
+Ai là người bị nạn?	Who's the victim here?	Ai là người bị nạn?	谁是受害人?	被害者は誰だ?	피해자가 누구죠?
+Về đồn làm việc!	You're coming to the station!	Về đồn làm việc!	回派出所说清楚!	署まで来てもらおう!	서로 같이 갑시다!
+Mười phút sau...	Ten minutes later...	Mười phút sau...	十分钟后……	十分後……	10분 후...
+Còi hú. Công an phường và CSGT tới nơi - cả nhóm bị đưa về đồn.	Sirens wail. Ward police and traffic police arrive - the whole gang is taken to the station.	Còi hú. Công an phường và CSGT tới nơi - cả nhóm bị đưa về đồn.	警笛长鸣。街道派出所民警和交警赶到——整个团伙被带回派出所。	サイレンが鳴り響く。警察と交通警察が到着――一味は全員署へ連行された。	사이렌이 울린다. 지구대 경찰과 교통경찰이 도착 - 일당 전원이 경찰서로 연행된다.
+<i>Còi hú vang. Xe CSGT lao tới, đèn xanh đỏ nhấp nháy.</i>	<i>Sirens wail. A traffic police car races up, lights flashing red and blue.</i>	<i>Còi hú vang. Xe CSGT lao tới, đèn xanh đỏ nhấp nháy.</i>	<i>警笛大作。交警车疾驰而来,红蓝警灯闪烁。</i>	<i>サイレンが響く。パトカーが赤と青の光を点滅させて駆けつける。</i>	<i>사이렌이 울려 퍼진다. 교통경찰 차가 빨강 파랑 불빛을 번쩍이며 달려온다.</i>
+Tất cả đứng yên! Xuất trình giấy tờ!	Everyone freeze! Show me your papers!	Tất cả đứng yên! Xuất trình giấy tờ!	所有人不许动!出示证件!	全員動くな!書類を見せなさい!	모두 그대로! 서류 보여 주세요!
+<i>\"Nạn nhân\" bỗng khỏi đau chân, đứng bật dậy định chuồn.</i>	<i>The \"victim's\" leg is suddenly fine - he jumps up and tries to slip away.</i>	<i>\"Nạn nhân\" bỗng khỏi đau chân, đứng bật dậy định chuồn.</i>	<i>“受害者”的腿突然不疼了,一跃而起想溜。</i>	<i>「被害者」の足が急に治り、飛び起きて逃げようとする。</i>	<i>"피해자"의 다리가 갑자기 멀쩡해지더니 벌떡 일어나 도망치려 한다.</i>
+Dàn cảnh va chạm để cưỡng đoạt tiền à? Cả nhóm về đồn làm việc!	Staging accidents to extort money, eh? The lot of you, to the station!	Dàn cảnh va chạm để cưỡng đoạt tiền à? Cả nhóm về đồn làm việc!	制造事故敲诈钱财?全部回派出所!	事故を装って金を脅し取ってたのか?全員署まで来い!	사고를 꾸며 돈을 뜯어? 전부 서로 갑시다!
+Một lúc sau...	A little later...	Một lúc sau...	过了一会儿……	しばらくして……	잠시 후...
+Cả nhóm bị đưa về đồn. Camera hành trình của bạn là bằng chứng.	The gang is taken to the station. Your dashcam footage is the evidence.	Cả nhóm bị đưa về đồn. Camera hành trình của bạn là bằng chứng.	整个团伙被带回派出所。你的行车记录仪就是证据。	一味は署へ連行された。あなたのドラレコ映像が証拠だ。	일당이 경찰서로 연행됐다. 당신의 블랙박스가 증거다.
+(Thử) Trời đã tối - cửa hàng vẫn mở.	(Test) It's dark now - the store is still open.	(Thử) Trời đã tối - cửa hàng vẫn mở.	(测试)天已经黑了——商店仍在营业。	(テスト)暗くなった――店はまだ営業中。	(테스트) 날이 어두워졌어요 - 가게는 아직 영업 중.
+(Thử) Đã ghi đầu dãy kệ cho sự kiện camera ca đêm (Shift+F1).	(Test) Saved the aisle start for the night-shift camera event (Shift+F1).	(Thử) Đã ghi đầu dãy kệ cho sự kiện camera ca đêm (Shift+F1).	(测试)已记录夜班监控事件的货架起点(Shift+F1)。	(テスト)夜勤カメライベント用の通路の始点を記録(Shift+F1)。	(테스트) 야간 카메라 이벤트용 통로 시작점을 저장했어요 (Shift+F1).
+Thử sự kiện: hãy đứng trong cửa hàng (không ngồi xe).	Event test: stand inside the store (not in a vehicle).	Thử sự kiện: hãy đứng trong cửa hàng (không ngồi xe).	测试事件:请站在店内(不要坐在车上)。	イベントテスト:店内に立ってください(乗車中は不可)。	이벤트 테스트: 가게 안에 서 있으세요 (차량 탑승 X).
+Thử sự kiện: hãy lấy gói hàng giao trước đã.	Event test: pick up a delivery package first.	Thử sự kiện: hãy lấy gói hàng giao trước đã.	测试事件:请先取配送包裹。	イベントテスト:先に配達の荷物を受け取ってください。	이벤트 테스트: 먼저 배달 소포를 집으세요.
+Thử sự kiện: hãy lên xe máy hoặc ô tô trước đã.	Event test: get on a motorbike or into a car first.	Thử sự kiện: hãy lên xe máy hoặc ô tô trước đã.	测试事件:请先骑上摩托车或坐进汽车。	イベントテスト:先にバイクか車に乗ってください。	이벤트 테스트: 먼저 오토바이나 차에 타세요.
+(Thử) Sự kiện kinh dị chỉ diễn ra ban đêm - đã chuyển đồng hồ tới tối.	(Test) Horror events only happen at night - the clock was moved to the evening.	(Thử) Sự kiện kinh dị chỉ diễn ra ban đêm - đã chuyển đồng hồ tới tối.	(测试)恐怖事件只在夜间发生——已将时钟调到晚上。	(テスト)ホラーイベントは夜だけ――時計を夜に進めました。	(테스트) 공포 이벤트는 밤에만 일어나요 - 시계를 저녁으로 옮겼어요.
+<color=#FF6B5B>●</color>  <b>VietUrban Giao Hàng</b>   <size=70%><color=#9AA3AE>bây giờ</color></size>	<color=#FF6B5B>●</color>  <b>VietUrban Delivery</b>   <size=70%><color=#9AA3AE>now</color></size>	<color=#FF6B5B>●</color>  <b>VietUrban Giao Hàng</b>   <size=70%><color=#9AA3AE>bây giờ</color></size>	<color=#FF6B5B>●</color>  <b>VietUrban 配送</b>   <size=70%><color=#9AA3AE>刚刚</color></size>	<color=#FF6B5B>●</color>  <b>VietUrban デリバリー</b>   <size=70%><color=#9AA3AE>たった今</color></size>	<color=#FF6B5B>●</color>  <b>VietUrban 배달</b>   <size=70%><color=#9AA3AE>지금</color></size>
+CAM 01 - CỬA RA VÀO	CAM 01 - ENTRANCE	CAM 01 - CỬA RA VÀO	CAM 01 - 出入口	CAM 01 - 入口	CAM 01 - 출입구
+CAM 02 - QUẦY THU NGÂN	CAM 02 - CHECKOUT	CAM 02 - QUẦY THU NGÂN	CAM 02 - 收银台	CAM 02 - レジ	CAM 02 - 계산대
+CAM 03 - DÃY KỆ GIỮA	CAM 03 - MIDDLE AISLE	CAM 03 - DÃY KỆ GIỮA	CAM 03 - 中间货架	CAM 03 - 中央の通路	CAM 03 - 가운데 통로
+CAM 04 - KHO HÀNG	CAM 04 - STOCKROOM	CAM 04 - KHO HÀNG	CAM 04 - 仓库	CAM 04 - 倉庫	CAM 04 - 창고
+CA ĐÊM	NIGHT SHIFT	CA ĐÊM	夜班	夜勤	야간 근무
+{0} - cửa hàng đã đóng cửa	{0} - the store is closed	{0} - cửa hàng đã đóng cửa	{0} - 商店已打烊	{0} - 閉店後	{0} - 가게 문을 닫았다
+Khách về hết rồi. Xem lại camera lần cuối rồi khoá cửa về.	Everyone's gone home. One last look at the cameras, then lock up.	Khách về hết rồi. Xem lại camera lần cuối rồi khoá cửa về.	客人都走了。最后看一眼监控,然后锁门回家。	お客さんはみんな帰った。最後にカメラを確認して鍵を閉めよう。	손님은 다 갔다. 카메라를 마지막으로 확인하고 문 잠그고 가자.
+<i>Loa siêu thị bỗng rè rè... rồi một giọng thì thầm, không nghe rõ chữ.</i>	<i>The store speakers suddenly crackle... then a voice whispers, the words unclear.</i>	<i>Loa siêu thị bỗng rè rè... rồi một giọng thì thầm, không nghe rõ chữ.</i>	<i>超市的喇叭突然沙沙作响……接着传来一阵听不清字句的低语。</i>	<i>店内スピーカーが急にザーッと鳴り……聞き取れない囁き声がする。</i>	<i>매장 스피커가 갑자기 지직거리더니... 알아들을 수 없는 속삭임이 들린다.</i>
+Ai... ai bật loa đấy?	Who... who turned on the speakers?	Ai... ai bật loa đấy?	谁……谁开的喇叭?	誰……誰がスピーカーを?	누... 누가 스피커를 켰지?
+<i>Bốn ô camera. Cửa ra vào... có ai đó đứng sát ngoài cửa kính.</i>	<i>Four camera feeds. The entrance... someone is standing right outside the glass door.</i>	<i>Bốn ô camera. Cửa ra vào... có ai đó đứng sát ngoài cửa kính.</i>	<i>四个监控画面。出入口……有人紧贴着玻璃门站在外面。</i>	<i>四つのカメラ映像。入口……ガラス戸のすぐ外に誰かが立っている。</i>	<i>카메라 화면 네 개. 출입구... 누군가 유리문 바로 밖에 서 있다.</i>
+<i>Phóng to CAM 01.</i>	<i>Zoom in on CAM 01.</i>	<i>Phóng to CAM 01.</i>	<i>放大 CAM 01。</i>	<i>CAM 01 を拡大。</i>	<i>CAM 01 확대.</i>
+<i>Một bóng váy trắng, tóc xoã che kín mặt. Nó áp bàn tay lên kính... nhìn vào trong.</i>	<i>A figure in a white dress, hair hanging over its face. It presses a hand to the glass... looking in.</i>	<i>Một bóng váy trắng, tóc xoã che kín mặt. Nó áp bàn tay lên kính... nhìn vào trong.</i>	<i>一个穿白裙的身影,长发遮住了脸。它把手贴在玻璃上……往里看。</i>	<i>白いワンピースの影、垂れた髪が顔を覆っている。ガラスに手を当てて……中をのぞいている。</i>	<i>하얀 원피스를 입은 형체, 늘어진 머리카락이 얼굴을 가린다. 유리에 손을 대고... 안을 들여다본다.</i>
+Ngoài cửa không có ai... Nhưng vết tay máu trên tường kia... ở BÊN TRONG!	There's nobody outside... but that bloody handprint on the wall... it's INSIDE!	Ngoài cửa không có ai... Nhưng vết tay máu trên tường kia... ở BÊN TRONG!	门外没有人……可墙上那个血手印……在里面!	外には誰もいない……でも壁のあの血の手形……内側だ!	밖엔 아무도 없어... 그런데 벽에 저 피 묻은 손자국... 안쪽이야!
+<i>CAM 03. Nó đã ở BÊN TRONG cửa hàng, cuối dãy kệ. Thân quay lưng... nhưng cái đầu vặn ngược, nhìn thẳng vào camera.</i>	<i>CAM 03. It's INSIDE the store now, at the end of the aisle. Its body faces away... but its head is twisted all the way round, staring straight into the camera.</i>	<i>CAM 03. Nó đã ở BÊN TRONG cửa hàng, cuối dãy kệ. Thân quay lưng... nhưng cái đầu vặn ngược, nhìn thẳng vào camera.</i>	<i>CAM 03。它已经在店里了,在货架尽头。身体背对着……脑袋却拧向后面,直直盯着镜头。</i>	<i>CAM 03。それはもう店の中、通路の奥にいる。体は背を向けているのに……首だけが真後ろにねじれ、カメラをまっすぐ見ている。</i>	<i>CAM 03. 그것은 이미 가게 안, 통로 끝에 있다. 몸은 등을 돌렸는데... 머리가 뒤로 꺾여 카메라를 똑바로 보고 있다.</i>
+<i>Đèn tắt phụt. Ánh đèn sự cố đỏ quạch. Bạn nhìn xuống... từng dấu tay máu đang bò dần về phía chân bạn.</i>	<i>The lights cut out. Dim red emergency light. You look down... bloody handprints are crawling towards your feet.</i>	<i>Đèn tắt phụt. Ánh đèn sự cố đỏ quạch. Bạn nhìn xuống... từng dấu tay máu đang bò dần về phía chân bạn.</i>	<i>灯一下子灭了。应急灯泛着暗红。你低头一看……一个个血手印正慢慢爬向你的脚。</i>	<i>明かりが消えた。非常灯の赤黒い光。足元を見ると……血の手形が一つずつこちらへ這い寄ってくる。</i>	<i>불이 꺼졌다. 붉은 비상등. 발밑을 보니... 피 묻은 손자국들이 하나씩 발 쪽으로 기어 온다.</i>
+<i>RẦM... lộp cộp lộp cộp. Có tiếng hàng rơi loảng xoảng trong dãy kệ đằng kia.</i>	<i>CRASH... clatter clatter. Something knocks goods off a shelf down that aisle.</i>	<i>RẦM... lộp cộp lộp cộp. Có tiếng hàng rơi loảng xoảng trong dãy kệ đằng kia.</i>	<i>砰……噼里啪啦。那边货架间传来商品哗啦掉落的声音。</i>	<i>ガシャン……ゴトゴト。向こうの通路で商品が崩れ落ちる音。</i>	<i>쿵... 와르르. 저쪽 통로에서 물건이 쏟아지는 소리가 난다.</i>
+Hàng rơi à...?	Did something fall...?	Hàng rơi à...?	东西掉了……?	商品が落ちた……?	물건이 떨어졌나...?
+Ra cuối dãy kiểm tra	Check the end of the aisle	Ra cuối dãy kiểm tra	去货架尽头看看	通路の奥を確かめる	통로 끝을 확인한다
+Chạy ra cửa	Run for the door	Chạy ra cửa	冲向门口	出口へ走る	문으로 달려간다
+Trốn sau quầy, gọi bảo vệ	Hide behind the counter, call the guard	Trốn sau quầy, gọi bảo vệ	躲到柜台后,打给保安	カウンターの陰に隠れて警備員に電話	계산대 뒤에 숨어 경비원에게 전화
+<i>Bạn rời quầy, chậm rãi đi ra phía dãy kệ.</i>	<i>You leave the counter and walk slowly towards the aisle.</i>	<i>Bạn rời quầy, chậm rãi đi ra phía dãy kệ.</i>	<i>你离开柜台,慢慢走向货架。</i>	<i>カウンターを離れ、ゆっくり通路へ向かう。</i>	<i>계산대를 떠나 천천히 통로 쪽으로 걸어간다.</i>
+<i>Hàng rơi vương vãi giữa lối đi. Dãy kệ tối om, chỉ có ánh đèn đỏ.</i>	<i>Goods are scattered across the aisle. It's pitch dark, only the red light.</i>	<i>Hàng rơi vương vãi giữa lối đi. Dãy kệ tối om, chỉ có ánh đèn đỏ.</i>	<i>商品散落在过道中间。货架间漆黑一片,只有红光。</i>	<i>通路に商品が散らばっている。真っ暗で、赤い光だけ。</i>	<i>통로 한가운데 물건이 흩어져 있다. 칠흑같이 어둡고 붉은 불빛뿐.</i>
+<i>VỤT! Một bóng trắng chạy vụt qua cuối dãy.</i>	<i>WHOOSH! A white shape darts across the end of the aisle.</i>	<i>VỤT! Một bóng trắng chạy vụt qua cuối dãy.</i>	<i>嗖!一道白影从货架尽头一闪而过。</i>	<i>シュッ!白い影が通路の奥を走り抜けた。</i>	<i>휙! 하얀 그림자가 통로 끝을 스쳐 지나간다.</i>
+Cái gì... vừa chạy qua?!	What... just ran past?!	Cái gì... vừa chạy qua?!	什么……刚刚跑过去了?!	今……何かが走った?!	뭐... 뭐가 지나갔어?!
+<i>Bạn ra tới cuối dãy. Ngó sang trái...</i>	<i>You reach the end of the aisle. You look left...</i>	<i>Bạn ra tới cuối dãy. Ngó sang trái...</i>	<i>你走到货架尽头。往左看……</i>	<i>通路の奥に着く。左を見る……</i>	<i>통로 끝에 도착했다. 왼쪽을 본다...</i>
+<i>...ngó sang phải...</i>	<i>...you look right...</i>	<i>...ngó sang phải...</i>	<i>……往右看……</i>	<i>……右を見る……</i>	<i>...오른쪽을 본다...</i>
+Không có ai cả... chắc mình hoa mắt rồi.	Nobody... I must be seeing things.	Không có ai cả... chắc mình hoa mắt rồi.	一个人也没有……肯定是我眼花了。	誰もいない……見間違いか。	아무도 없네... 내가 헛것을 봤나 봐.
+<i>Bạn thở ra, quay người đi về quầy thu ngân...</i>	<i>You breathe out and turn back towards the checkout...</i>	<i>Bạn thở ra, quay người đi về quầy thu ngân...</i>	<i>你松了口气,转身走回收银台……</i>	<i>ほっと息をつき、レジへ戻ろうと振り返る……</i>	<i>숨을 내쉬고 계산대 쪽으로 몸을 돌린다...</i>
+Bạn tỉnh dậy trên sàn cửa hàng lúc trời hửng sáng, người dính đầy máu - không phải máu của bạn. Trong két, một xấp tiền âm phủ nằm lẫn với tiền thật.	You wake up on the store floor at dawn, covered in blood - not your own. In the till, a wad of hell money lies among the real cash.	Bạn tỉnh dậy trên sàn cửa hàng lúc trời hửng sáng, người dính đầy máu - không phải máu của bạn. Trong két, một xấp tiền âm phủ nằm lẫn với tiền thật.	天蒙蒙亮时,你在店里的地板上醒来,浑身是血——不是你的血。收银机里,一沓冥币混在真钞中。	夜明け、店の床で目を覚ますと全身血まみれ――自分の血ではない。レジの中には本物のお金に混じって冥銭の束が。	동틀 무렵 가게 바닥에서 깨어났다. 온몸이 피투성이다 - 내 피가 아니다. 금고 안에는 진짜 돈 사이에 저승 돈 한 뭉치가 섞여 있다.
+<i>Cửa kính khoá chặt. Bạn đập cửa, giật tay nắm... không nhúc nhích.</i>	<i>The glass door is locked tight. You bang on it, yank the handle... it won't budge.</i>	<i>Cửa kính khoá chặt. Bạn đập cửa, giật tay nắm... không nhúc nhích.</i>	<i>玻璃门锁得死死的。你拍门、猛拉把手……纹丝不动。</i>	<i>ガラス戸は固く閉ざされている。叩き、取っ手を引くが……びくともしない。</i>	<i>유리문이 꽉 잠겼다. 문을 두드리고 손잡이를 당겨도... 꿈쩍하지 않는다.</i>
+<i>RẦM! Một thứ gầy trơ xương lao sầm vào kính, há hàm răng nhọn hoắt, móng tay cào ken két.</i>	<i>BANG! Something skeletal slams into the glass, jaws wide with needle teeth, nails screeching on the pane.</i>	<i>RẦM! Một thứ gầy trơ xương lao sầm vào kính, há hàm răng nhọn hoắt, móng tay cào ken két.</i>	<i>砰!一个瘦得只剩骨头的东西猛撞在玻璃上,张开尖利的牙,指甲刮得吱吱作响。</i>	<i>ドン!骨と皮だけの何かがガラスに激突し、尖った歯をむき出しにして爪でキーッと引っかく。</i>	<i>쾅! 뼈만 남은 무언가가 유리에 부딪쳐, 날카로운 이빨을 드러내고 손톱으로 끼익 긁는다.</i>
+<i>Sau lưng bạn... có tiếng thở.</i>	<i>Behind you... something is breathing.</i>	<i>Sau lưng bạn... có tiếng thở.</i>	<i>你身后……有呼吸声。</i>	<i>背後で……息遣いがする。</i>	<i>등 뒤에서... 숨소리가 들린다.</i>
+Bạn không nhớ mình ra khỏi cửa hàng bằng cách nào. Sáng ra, cửa kính chi chít dấu tay máu - in từ BÊN NGOÀI.	You don't remember how you got out of the store. In the morning, the glass is covered in bloody handprints - made from the OUTSIDE.	Bạn không nhớ mình ra khỏi cửa hàng bằng cách nào. Sáng ra, cửa kính chi chít dấu tay máu - in từ BÊN NGOÀI.	你不记得自己是怎么出的店。早上,玻璃门上布满血手印——是从外面按上去的。	どうやって店を出たのか覚えていない。朝、ガラス戸は血の手形だらけだった――外側から付いたものだ。	어떻게 가게를 빠져나왔는지 기억나지 않는다. 아침이 되자 유리문엔 피 묻은 손자국이 가득했다 - 바깥에서 찍힌.
+Bảo vệ (điện thoại)	Guard (on the phone)	Bảo vệ (điện thoại)	保安(电话)	警備員(電話)	경비원 (전화)
+Alô? Cửa hàng anh khoá rồi mà. Với lại... camera số 3 với số 4 hỏng từ tuần trước, đã thay đâu?	Hello? I locked the store already. And... cameras 3 and 4 broke last week - they haven't been replaced.	Alô? Cửa hàng anh khoá rồi mà. Với lại... camera số 3 với số 4 hỏng từ tuần trước, đã thay đâu?	喂?店我已经锁了啊。再说……3 号和 4 号摄像头上周就坏了,还没换呢。	もしもし?店はもう鍵かけたよ。それに……3番と4番のカメラは先週から壊れてて、まだ替えてないぞ?	여보세요? 가게는 이미 잠갔는데요. 그리고... 3번이랑 4번 카메라는 지난주에 고장 나서 아직 안 바꿨어요.
+<i>Bạn bịt chặt miệng. Một đôi chân trần bê bết máu chậm rãi đi tới... để lại dấu chân đỏ.</i>	<i>You clamp a hand over your mouth. A pair of bare, bloody feet walks slowly closer... leaving red footprints.</i>	<i>Bạn bịt chặt miệng. Một đôi chân trần bê bết máu chậm rãi đi tới... để lại dấu chân đỏ.</i>	<i>你死死捂住嘴。一双沾满血的赤脚慢慢走近……留下红色的脚印。</i>	<i>口を強く押さえる。血まみれの裸足がゆっくり近づいてくる……赤い足跡を残して。</i>	<i>입을 꽉 틀어막는다. 피투성이 맨발이 천천히 다가온다... 붉은 발자국을 남기며.</i>
+<i>Nó dừng lại. Ngay trước mặt bạn. Cái cổ từ từ gập xuống... tóc xoã chạm đất, máu nhỏ tong tỏng. Nó đang tìm.</i>	<i>It stops. Right in front of you. Its neck slowly bends down... hair touching the floor, blood dripping. It's searching.</i>	<i>Nó dừng lại. Ngay trước mặt bạn. Cái cổ từ từ gập xuống... tóc xoã chạm đất, máu nhỏ tong tỏng. Nó đang tìm.</i>	<i>它停住了,就在你面前。脖子慢慢弯下来……长发垂到地上,血滴答滴答地落。它在找。</i>	<i>それが止まった。目の前で。首がゆっくり折れ曲がり……髪が床に垂れ、血がぽたぽた落ちる。探している。</i>	<i>그것이 멈췄다. 바로 눈앞에서. 목이 천천히 꺾여 내려오고... 머리카락이 바닥에 닿고 피가 뚝뚝 떨어진다. 찾고 있다.</i>
+<i>Rồi nó lê bước đi tiếp... khuất dần.</i>	<i>Then it drags itself onwards... and fades away.</i>	<i>Rồi nó lê bước đi tiếp... khuất dần.</i>	<i>然后它拖着步子继续走……渐渐消失。</i>	<i>やがてそれは足を引きずって進み……見えなくなった。</i>	<i>그러다 발을 끌며 계속 걸어가... 점점 사라진다.</i>
+<i>Im lặng. Hoàn toàn im lặng.</i>	<i>Silence. Complete silence.</i>	<i>Im lặng. Hoàn toàn im lặng.</i>	<i>寂静。死一般的寂静。</i>	<i>静寂。完全な静寂。</i>	<i>정적. 완전한 정적.</i>
+<i>Có thứ gì đó nhỏ giọt lên vai bạn. Bạn từ từ ngẩng lên...</i>	<i>Something drips onto your shoulder. You slowly look up...</i>	<i>Có thứ gì đó nhỏ giọt lên vai bạn. Bạn từ từ ngẩng lên...</i>	<i>有什么东西滴到了你肩上。你慢慢抬起头……</i>	<i>何かが肩に滴り落ちた。ゆっくりと見上げる……</i>	<i>무언가 어깨 위로 뚝 떨어진다. 천천히 고개를 든다...</i>
+Bảo vệ tới thì cửa hàng trống trơn. Trên trần nhà phía trên quầy... có những vết móng cào sâu hoắm, vẫn còn rỉ máu.	When the guard arrives, the store is empty. On the ceiling above the counter... deep claw marks, still oozing blood.	Bảo vệ tới thì cửa hàng trống trơn. Trên trần nhà phía trên quầy... có những vết móng cào sâu hoắm, vẫn còn rỉ máu.	保安赶到时,店里空无一人。柜台上方的天花板上……有几道很深的抓痕,还在渗血。	警備員が来た時、店には誰もいなかった。カウンターの上の天井には……深い爪痕が残り、まだ血がにじんでいた。	경비원이 왔을 때 가게는 텅 비어 있었다. 계산대 위 천장에는... 깊은 손톱자국이 남아 아직도 피가 배어 나왔다.
+SÁNG HÔM SAU	THE NEXT MORNING	SÁNG HÔM SAU	第二天早上	翌朝	다음 날 아침
+Cash swapped for hell money (night shift)	Cash swapped for hell money (night shift)	Tiền thật bị đổi thành tiền âm phủ (ca đêm)	现金被换成冥币(夜班)	現金が冥銭にすり替わった(夜勤)	현금이 저승 돈으로 바뀜 (야간 근무)
+<color=#FF8A7A>Két thu ngân thiếu {0} - thay vào đó là một xấp tiền âm phủ dính máu.</color>	<color=#FF8A7A>The till is {0} short - in its place, a bloodstained wad of hell money.</color>	<color=#FF8A7A>Két thu ngân thiếu {0} - thay vào đó là một xấp tiền âm phủ dính máu.</color>	<color=#FF8A7A>收银机里少了 {0}——取而代之的是一沓沾血的冥币。</color>	<color=#FF8A7A>レジから {0} 消えた――代わりに血のついた冥銭の束が。</color>	<color=#FF8A7A>금고에서 {0}이(가) 사라졌다 - 대신 피 묻은 저승 돈 뭉치가 있다.</color>
+<color=#BFD7FF>Ca đêm kết thúc. Bạn tự hứa sẽ không bao giờ ở lại cửa hàng một mình nữa.</color>	<color=#BFD7FF>The night shift is over. You promise yourself never to stay in the store alone again.</color>	<color=#BFD7FF>Ca đêm kết thúc. Bạn tự hứa sẽ không bao giờ ở lại cửa hàng một mình nữa.</color>	<color=#BFD7FF>夜班结束了。你发誓再也不一个人留在店里。</color>	<color=#BFD7FF>夜勤が終わった。もう二度と一人で店に残らないと心に誓う。</color>	<color=#BFD7FF>야간 근무가 끝났다. 다시는 혼자 가게에 남지 않겠다고 다짐한다.</color>
+<b>BẢN TIN SÁNG</b> Người dân quanh siêu thị VietUrban kể đêm qua nghe tiếng thét và thấy một bóng váy trắng đứng sau cửa kính rất lâu sau giờ đóng cửa.	<b>MORNING NEWS</b> Residents near the VietUrban supermarket say they heard screams last night and saw a figure in a white dress standing behind the glass long after closing time.	<b>BẢN TIN SÁNG</b> Người dân quanh siêu thị VietUrban kể đêm qua nghe tiếng thét và thấy một bóng váy trắng đứng sau cửa kính rất lâu sau giờ đóng cửa.	<b>早间新闻</b> VietUrban 超市附近的居民说,昨晚听到尖叫声,还看见一个白裙身影在打烊很久后仍站在玻璃门后。	<b>朝のニュース</b> VietUrban スーパーの近隣住民によると、昨夜悲鳴が聞こえ、閉店後もずっと白いワンピースの人影がガラス戸の向こうに立っていたという。	<b>아침 뉴스</b> VietUrban 슈퍼마켓 근처 주민들은 어젯밤 비명을 들었고, 영업이 끝난 한참 뒤까지 하얀 원피스를 입은 형체가 유리문 뒤에 서 있는 것을 봤다고 말했다.
+ĐƠN HÀNG ĐÊM	NIGHT ORDER	ĐƠN HÀNG ĐÊM	深夜订单	深夜の注文	심야 주문
+Đơn cuối rồi. Giao xong là về đóng cửa hàng.	Last order. Deliver this, then go back and close the store.	Đơn cuối rồi. Giao xong là về đóng cửa hàng.	最后一单了。送完就回去关店。	最後の注文だ。届けたら店を閉めに戻ろう。	마지막 주문이다. 배달하고 돌아가서 가게 문 닫자.
+Đơn mới #0000 - giao gấp	New order #0000 - urgent	Đơn mới #0000 - giao gấp	新订单 #0000 - 加急	新規注文 #0000 - 至急	새 주문 #0000 - 긴급
+Người nhận: <b>CHỦ SIÊU THỊ VIETURBAN</b>\nĐịa chỉ: <b>Siêu thị VietUrban</b> (cửa hàng của bạn)\nGiao lúc: <color=#FF6B5B>22:47 - {0} (ngày mai)</color>	Recipient: <b>OWNER OF VIETURBAN SUPERMARKET</b>\nAddress: <b>VietUrban Supermarket</b> (your store)\nDeliver at: <color=#FF6B5B>22:47 - {0} (tomorrow)</color>	Người nhận: <b>CHỦ SIÊU THỊ VIETURBAN</b>\nĐịa chỉ: <b>Siêu thị VietUrban</b> (cửa hàng của bạn)\nGiao lúc: <color=#FF6B5B>22:47 - {0} (ngày mai)</color>	收件人:<b>VIETURBAN 超市店主</b>\n地址:<b>VietUrban 超市</b>(你的店)\n送达时间:<color=#FF6B5B>22:47 - {0}(明天)</color>	受取人:<b>VIETURBAN スーパーの店主</b>\n住所:<b>VietUrban スーパー</b>(あなたの店)\nお届け:<color=#FF6B5B>22:47 - {0}(明日)</color>	받는 사람: <b>VIETURBAN 슈퍼마켓 주인</b>\n주소: <b>VietUrban 슈퍼마켓</b> (당신의 가게)\n배달 시각: <color=#FF6B5B>22:47 - {0} (내일)</color>
+Đơn gửi tới... chính cửa hàng mình? Người nhận là mình? Lỗi app à?	The order is for... my own store? The recipient is me? An app glitch?	Đơn gửi tới... chính cửa hàng mình? Người nhận là mình? Lỗi app à?	订单送到……我自己的店?收件人是我?软件出错了吗?	届け先が……自分の店?受取人が自分?アプリのバグか?	주문이... 내 가게로? 받는 사람이 나라고? 앱 오류인가?
+<i>Bạn bấm huỷ. Đơn không huỷ được. Bấm lại... màn hình nhiễu sọc.</i>	<i>You tap cancel. It won't cancel. You tap again... the screen fills with static stripes.</i>	<i>Bạn bấm huỷ. Đơn không huỷ được. Bấm lại... màn hình nhiễu sọc.</i>	<i>你点了取消,取消不了。再点……屏幕上满是雪花条纹。</i>	<i>キャンセルを押す。キャンセルできない。もう一度……画面にノイズの縞が走る。</i>	<i>취소를 누른다. 취소가 안 된다. 다시 누르자... 화면에 노이즈 줄무늬가 낀다.</i>
+Tin nhắn từ: Người nhận #0000	Message from: Recipient #0000	Tin nhắn từ: Người nhận #0000	来自:收件人 #0000 的消息	メッセージ:受取人 #0000	메시지: 받는 사람 #0000
+<i>Tôi đang đợi bạn.</i>	<i>I'm waiting for you.</i>	<i>Tôi đang đợi bạn.</i>	<i>我在等你。</i>	<i>待ってるよ。</i>	<i>기다리고 있어요.</i>
+<i>Bạn quên cái này.</i>   <color=#9AA3AE>[ảnh - vừa xong]</color>	<i>You forgot this.</i>   <color=#9AA3AE>[photo - just now]</color>	<i>Bạn quên cái này.</i>   <color=#9AA3AE>[ảnh - vừa xong]</color>	<i>你落下了这个。</i>   <color=#9AA3AE>[照片 - 刚刚]</color>	<i>忘れ物だよ。</i>   <color=#9AA3AE>[写真 - たった今]</color>	<i>이거 두고 갔어요.</i>   <color=#9AA3AE>[사진 - 방금]</color>
+Ảnh chụp xe mình... từ ngay phía sau. Và người đứng sau xe... mặc đúng cái áo của mình?!	A photo of my bike... from right behind me. And the person standing behind it... is wearing my clothes?!	Ảnh chụp xe mình... từ ngay phía sau. Và người đứng sau xe... mặc đúng cái áo của mình?!	一张我车子的照片……就从正后方拍的。而站在车后的人……穿着和我一模一样的衣服?!	自分の乗り物の写真……すぐ後ろから。そして後ろに立っている人……自分と同じ服を着てる?!	내 차를 찍은 사진... 바로 뒤에서. 그리고 뒤에 서 있는 사람이... 내 옷을 입고 있어?!
+<i>Đường phía sau trống trơn. Chỉ có một vệt máu kéo lê thật dài... dẫn tới tận bánh xe của bạn.</i>	<i>The road behind is empty. Just a long smear of blood... leading right up to your wheel.</i>	<i>Đường phía sau trống trơn. Chỉ có một vệt máu kéo lê thật dài... dẫn tới tận bánh xe của bạn.</i>	<i>身后的路空空荡荡。只有一道长长的拖拽血痕……一直延伸到你的车轮下。</i>	<i>後ろの道には誰もいない。ただ長く引きずった血の跡が……あなたの車輪まで続いている。</i>	<i>뒤쪽 길은 텅 비었다. 길게 끌린 핏자국만이... 당신의 바퀴까지 이어져 있다.</i>
+Mười lăm phút sau...	Fifteen minutes later...	Mười lăm phút sau...	十五分钟后……	十五分後……	15분 후...
+Bạn vòng xe về cửa hàng. Giờ này cửa hàng lẽ ra vẫn đang mở, đông khách...	You head back to the store. At this hour it should still be open and busy...	Bạn vòng xe về cửa hàng. Giờ này cửa hàng lẽ ra vẫn đang mở, đông khách...	你掉头回店。这个时间店里本该还在营业、人很多……	店に戻る。この時間なら、まだ営業中でにぎわっているはず……	가게로 돌아간다. 이 시간이면 아직 영업 중이고 손님이 많아야 하는데...
+<i>...nhưng bên trong tối om. Trên cửa kính, hai vệt tay máu kéo dài từ trên xuống, như có ai bị lôi đi.</i>	<i>...but inside it's pitch dark. On the glass, two bloody hand smears run down from top to bottom, as if someone was dragged away.</i>	<i>...nhưng bên trong tối om. Trên cửa kính, hai vệt tay máu kéo dài từ trên xuống, như có ai bị lôi đi.</i>	<i>……可里面漆黑一片。玻璃门上,两道血手印从上往下拖出长长的痕迹,像有人被拖走了。</i>	<i>……だが中は真っ暗。ガラス戸には上から下へ二本の血の手の跡が伸びている。誰かが引きずられていったように。</i>	<i>...그런데 안은 칠흑같이 어둡다. 유리문엔 피 묻은 손자국 두 줄이 위에서 아래로 길게 끌려 있다. 누군가 끌려간 것처럼.</i>
+<i>Chỉ có ngọn đèn quầy thu ngân là sáng. Có người đang đứng đó, quay lưng ra... mặc đúng chiếc áo của bạn.</i>	<i>Only the checkout light is on. Someone is standing there with their back to you... wearing your clothes.</i>	<i>Chỉ có ngọn đèn quầy thu ngân là sáng. Có người đang đứng đó, quay lưng ra... mặc đúng chiếc áo của bạn.</i>	<i>只有收银台的灯亮着。有个人背对着站在那里……穿着和你一模一样的衣服。</i>	<i>レジの明かりだけが点いている。誰かが背を向けて立っている……あなたと同じ服で。</i>	<i>계산대 불빛만 켜져 있다. 누군가 등을 돌리고 서 있다... 당신과 똑같은 옷을 입고.</i>
+<i>Cái đầu từ từ... vặn ngược ra sau, kêu răng rắc. Khuôn mặt tái xám, bê bết máu - là khuôn mặt của bạn.</i>	<i>Its head slowly... twists all the way round with a crack. A grey, blood-smeared face - your face.</i>	<i>Cái đầu từ từ... vặn ngược ra sau, kêu răng rắc. Khuôn mặt tái xám, bê bết máu - là khuôn mặt của bạn.</i>	<i>它的头慢慢地……咔咔地拧向背后。一张灰白、满是血污的脸——是你的脸。</i>	<i>その首がゆっくりと……バキバキと音を立てて後ろへねじれる。血にまみれた灰色の顔――あなたの顔だ。</i>	<i>그 머리가 천천히... 우두둑 소리를 내며 뒤로 꺾인다. 잿빛에 피범벅인 얼굴 - 당신의 얼굴이다.</i>
+<i>Nó chậm rãi bước ra phía cửa. Mỗi bước để lại một dấu chân máu.</i>	<i>It walks slowly to the door. Every step leaves a bloody footprint.</i>	<i>Nó chậm rãi bước ra phía cửa. Mỗi bước để lại một dấu chân máu.</i>	<i>它慢慢走向门口,每一步都留下一个血脚印。</i>	<i>それはゆっくり入口へ歩いてくる。一歩ごとに血の足跡を残して。</i>	<i>그것이 천천히 문 쪽으로 걸어온다. 걸음마다 피 묻은 발자국을 남기며.</i>
+<i>RẦM. Nó áp mặt và hai bàn tay máu lên kính, nhìn thẳng vào bạn. Môi nó mấp máy: \"vào... đi...\"</i>	<i>BANG. It presses its face and bloody hands to the glass, staring right at you. Its lips move: \"come... in...\"</i>	<i>RẦM. Nó áp mặt và hai bàn tay máu lên kính, nhìn thẳng vào bạn. Môi nó mấp máy: \"vào... đi...\"</i>	<i>砰。它把脸和血淋淋的双手贴在玻璃上,直直盯着你。嘴唇翕动:“进……来……”</i>	<i>ドン。顔と血まみれの両手をガラスに押しつけ、あなたをじっと見る。唇が動く。「入って……おいで……」</i>	<i>쾅. 그것이 얼굴과 피 묻은 두 손을 유리에 대고 당신을 똑바로 본다. 입술이 달싹인다: "들어... 와..."</i>
+Mở cửa vào xem	Open the door and go in	Mở cửa vào xem	开门进去看看	ドアを開けて入る	문을 열고 들어간다
+Gọi điện về cửa hàng	Call the store	Gọi điện về cửa hàng	给店里打电话	店に電話する	가게에 전화한다
+Quay xe bỏ chạy	Turn around and flee	Quay xe bỏ chạy	掉头逃跑	引き返して逃げる	차를 돌려 도망친다
+<i>Bạn bước vào. Nó đã biến mất. Dấu chân máu dẫn ngược vào phía sau quầy...</i>	<i>You step inside. It's gone. The bloody footprints lead back behind the counter...</i>	<i>Bạn bước vào. Nó đã biến mất. Dấu chân máu dẫn ngược vào phía sau quầy...</i>	<i>你走进去。它不见了。血脚印反向通向柜台后面……</i>	<i>中に入る。それは消えていた。血の足跡がカウンターの奥へと続いている……</i>	<i>안으로 들어선다. 그것은 사라졌다. 피 묻은 발자국이 계산대 뒤로 이어져 있다...</i>
+<i>Đèn bỗng chập chờn...</i>	<i>The lights start to flicker...</i>	<i>Đèn bỗng chập chờn...</i>	<i>灯光突然闪烁起来……</i>	<i>明かりがちらつき始める……</i>	<i>불빛이 갑자기 깜빡인다...</i>
+Đơn #0000 - đã tới nơi	Order #0000 - arrived	Đơn #0000 - đã tới nơi	订单 #0000 - 已送达	注文 #0000 - 到着しました	주문 #0000 - 도착
+Người nhận đang ở <b>ngay sau lưng bạn</b>.	The recipient is <b>right behind you</b>.	Người nhận đang ở <b>ngay sau lưng bạn</b>.	收件人就在<b>你身后</b>。	受取人は<b>あなたのすぐ後ろ</b>にいます。	받는 사람이 <b>바로 당신 뒤에</b> 있습니다.
+<i>Trên quầy, một chiếc điện thoại sáng màn hình. Người nhận: chính là BẠN.</i>	<i>On the counter, a phone screen lights up. Recipient: YOU.</i>	<i>Trên quầy, một chiếc điện thoại sáng màn hình. Người nhận: chính là BẠN.</i>	<i>柜台上,一部手机亮着屏幕。收件人:就是你。</i>	<i>カウンターの上でスマホの画面が光る。受取人:あなた自身。</i>	<i>계산대 위 휴대폰 화면이 켜진다. 받는 사람: 바로 당신.</i>
+<i>Sau lưng... có tiếng thở. Đúng nhịp thở của bạn.</i>	<i>Behind you... breathing. Exactly in time with your own.</i>	<i>Sau lưng... có tiếng thở. Đúng nhịp thở của bạn.</i>	<i>身后……有呼吸声。和你的呼吸节奏一模一样。</i>	<i>背後で……息遣い。あなたの呼吸とぴったり同じリズムで。</i>	<i>등 뒤에서... 숨소리. 당신의 숨결과 똑같은 박자로.</i>
+<i>Bạn bấm gọi số cửa hàng. Trong kia, điện thoại ở quầy đổ chuông... Nó quay đầu lại, nhìn chiếc điện thoại.</i>	<i>You dial the store. Inside, the phone on the counter rings... It turns its head and looks at the phone.</i>	<i>Bạn bấm gọi số cửa hàng. Trong kia, điện thoại ở quầy đổ chuông... Nó quay đầu lại, nhìn chiếc điện thoại.</i>	<i>你拨通店里的电话。里面,柜台上的电话响了……它转过头,看着那部电话。</i>	<i>店に電話をかける。中でカウンターの電話が鳴る……それが振り向き、電話を見つめる。</i>	<i>가게 번호로 전화를 건다. 안에서 계산대 전화가 울린다... 그것이 고개를 돌려 전화를 본다.</i>
+Giọng của bạn	Your voice	Giọng của bạn	你的声音	あなたの声	당신의 목소리
+Alô? Ai đấy? Tôi đang ở cửa hàng đây mà.	Hello? Who is this? I'm at the store right now.	Alô? Ai đấy? Tôi đang ở cửa hàng đây mà.	喂?谁啊?我现在就在店里啊。	もしもし?誰?今、店にいるけど。	여보세요? 누구세요? 저 지금 가게에 있는데요.
+...Thế ai đang đứng ngoài cửa kia?	...Then who's standing outside the door?	...Thế ai đang đứng ngoài cửa kia?	……那站在门外的是谁?	……じゃあ、外に立ってるのは誰?	...그럼 문밖에 서 있는 건 누구지?
+Bạn đứng chết lặng một lúc lâu, rồi quay xe chạy thục mạng.	You stand frozen for a long moment, then turn and flee as fast as you can.	Bạn đứng chết lặng một lúc lâu, rồi quay xe chạy thục mạng.	你呆立了很久,然后掉头拼命逃跑。	しばらく立ち尽くし、それから必死で逃げ出した。	한참을 얼어붙어 있다가 차를 돌려 죽어라 달아났다.
+Bạn quay xe, chạy thục mạng ra khỏi con phố.	You turn around and race out of the street as fast as you can.	Bạn quay xe, chạy thục mạng ra khỏi con phố.	你掉头,拼命冲出这条街。	引き返し、必死で通りから逃げ出した。	차를 돌려 죽어라 그 거리를 빠져나갔다.
+<i>Bạn liếc gương chiếu hậu... nó đang CHẠY theo, đầu vặn ngược, nhanh hơn cả xe.</i>	<i>You glance in the mirror... it's RUNNING after you, head twisted backwards, faster than your vehicle.</i>	<i>Bạn liếc gương chiếu hậu... nó đang CHẠY theo, đầu vặn ngược, nhanh hơn cả xe.</i>	<i>你瞥了一眼后视镜……它正追着跑,头拧向后面,比车还快。</i>	<i>ミラーをちらりと見ると……それが追いかけて走ってくる。首を後ろにねじったまま、車より速く。</i>	<i>백미러를 흘끗 보니... 그것이 쫓아 달려오고 있다. 머리가 뒤로 꺾인 채 차보다 빠르게.</i>
+<i>Bạn giật mình. Xe vẫn đứng nguyên giữa đường giao hàng, máy vẫn nổ. Chưa hề đi đâu cả.</i>	<i>You jolt awake. Your vehicle is still standing on the delivery route, engine running. You never went anywhere.</i>	<i>Bạn giật mình. Xe vẫn đứng nguyên giữa đường giao hàng, máy vẫn nổ. Chưa hề đi đâu cả.</i>	<i>你猛地一惊。车还停在送货的路上,发动机还在响。你根本哪儿也没去。</i>	<i>はっと我に返る。乗り物は配達ルートの途中に停まったまま、エンジンもかかっている。どこにも行っていなかった。</i>	<i>화들짝 정신이 든다. 차는 여전히 배달 경로 한가운데 서 있고 시동도 켜져 있다. 어디에도 가지 않았다.</i>
+<i>...Nhưng trên xe có những dấu bàn tay máu. Cỡ bàn tay y hệt tay bạn.</i>	<i>...But there are bloody handprints on your vehicle. Exactly the size of your hands.</i>	<i>...Nhưng trên xe có những dấu bàn tay máu. Cỡ bàn tay y hệt tay bạn.</i>	<i>……可车上有好几个血手印,大小和你的手一模一样。</i>	<i>……だが乗り物には血の手形がついている。あなたの手とまったく同じ大きさの。</i>	<i>...하지만 차에는 피 묻은 손자국이 있다. 당신 손과 똑같은 크기의.</i>
+Đơn #0000 đã giao thành công	Order #0000 delivered successfully	Đơn #0000 đã giao thành công	订单 #0000 已成功送达	注文 #0000 配達完了	주문 #0000 배달 완료
+Người nhận đã ký: <b>chữ ký giống hệt chữ ký của bạn</b>.\nGiao lúc 22:47 - {0}.	Signed by the recipient: <b>a signature identical to yours</b>.\nDelivered at 22:47 - {0}.	Người nhận đã ký: <b>chữ ký giống hệt chữ ký của bạn</b>.\nGiao lúc 22:47 - {0}.	收件人已签收:<b>签名和你的一模一样</b>。\n送达时间 22:47 - {0}。	受取人のサイン:<b>あなたのサインとまったく同じ</b>。\n22:47 配達 - {0}。	받는 사람 서명: <b>당신의 서명과 똑같음</b>.\n22:47 배달 - {0}.
+Mình... mình phải về nhà. Ngay bây giờ.	I... I have to go home. Right now.	Mình... mình phải về nhà. Ngay bây giờ.	我……我得回家。就现在。	俺……帰らなきゃ。今すぐ。	나... 나 집에 가야겠어. 지금 당장.
+<color=#BFD7FF>Tay bạn vẫn còn run... +5 XP (gan dạ).</color>	<color=#BFD7FF>Your hands are still shaking... +5 XP (bravery).</color>	<color=#BFD7FF>Tay bạn vẫn còn run... +5 XP (gan dạ).</color>	<color=#BFD7FF>你的手还在发抖……+5 经验(胆量)。</color>	<color=#BFD7FF>手がまだ震えている……+5 XP(度胸)。</color>	<color=#BFD7FF>손이 아직도 떨린다... +5 XP (담력).</color>
+Mưa đêm, đường vắng tanh...	Rain at night, the streets deserted...	Mưa đêm, đường vắng tanh...	夜雨,街上空无一人……	夜の雨、道には誰もいない……	밤비, 거리는 텅 비었다...
+Khuya rồi, đường vắng tanh...	Late at night, the streets deserted...	Khuya rồi, đường vắng tanh...	夜深了,街上空无一人……	夜更け、道には誰もいない……	밤이 깊었다, 거리는 텅 비었다...
+Tiếng kèn đám ma... Giờ này mà vẫn còn đưa tang à?	Funeral horns... A funeral procession at this hour?	Tiếng kèn đám ma... Giờ này mà vẫn còn đưa tang à?	丧礼的唢呐声……这个时间还在出殡?	葬式のラッパの音……こんな時間に葬列?	장례 나팔 소리... 이 시간에 장례 행렬이라고?
+<i>Một đoàn đưa tang lặng lẽ băng qua đường. Áo sô trắng, khăn tang, mũ mấn; ai cũng cầm nắm hương, khói bay mù mịt. Vàng mã rơi lả tả.</i>	<i>A funeral procession silently crosses the road. White mourning robes, headbands and hoods; everyone holds a fistful of incense, smoke everywhere. Paper offerings flutter down.</i>	<i>Một đoàn đưa tang lặng lẽ băng qua đường. Áo sô trắng, khăn tang, mũ mấn; ai cũng cầm nắm hương, khói bay mù mịt. Vàng mã rơi lả tả.</i>	<i>一支送葬队伍静静地横穿马路。白色孝服、孝带、孝帽;每人手持一把香,烟雾弥漫。纸钱纷纷飘落。</i>	<i>葬列が静かに道を横切る。白い喪服、喪の鉢巻、頭巾。誰もが線香の束を持ち、煙が立ちこめる。紙銭がひらひらと舞い落ちる。</i>	<i>장례 행렬이 조용히 길을 건넌다. 하얀 상복, 머리띠, 두건. 모두 향 한 움큼을 들었고 연기가 자욱하다. 종이돈이 흩날린다.</i>
+<i>Chiếc quan tài sơn đỏ, trên nắp đặt bát hương và hai ngọn nến... máu đang rỉ ra từ khe nắp, nhỏ giọt xuống đường.</i>	<i>A red-lacquered coffin, an incense bowl and two candles on its lid... blood is seeping from under the lid, dripping onto the road.</i>	<i>Chiếc quan tài sơn đỏ, trên nắp đặt bát hương và hai ngọn nến... máu đang rỉ ra từ khe nắp, nhỏ giọt xuống đường.</i>	<i>一口朱漆棺材,棺盖上放着香炉和两根蜡烛……血正从棺盖缝里渗出来,滴落在路上。</i>	<i>朱塗りの棺、蓋の上には香炉と二本のろうそく……蓋の隙間から血がにじみ出て、道に滴っている。</i>	<i>붉은 칠을 한 관, 뚜껑 위에 향로와 촛불 두 개... 뚜껑 틈으로 피가 스며 나와 길 위로 떨어진다.</i>
+<i>Gương mặt người nào cũng trắng bệch, mắt mở trừng trừng không chớp. Không ai khóc cả.</i>	<i>Every face is deathly pale, eyes wide open and unblinking. Nobody is crying.</i>	<i>Gương mặt người nào cũng trắng bệch, mắt mở trừng trừng không chớp. Không ai khóc cả.</i>	<i>每个人的脸都惨白,眼睛瞪得大大的,一眨不眨。没有一个人在哭。</i>	<i>どの顔も蒼白で、目を見開いたまま瞬きひとつしない。誰も泣いていない。</i>	<i>모두의 얼굴이 창백하고, 눈을 부릅뜬 채 깜빡이지 않는다. 아무도 울지 않는다.</i>
+<i>Tiếng kèn tắt ngấm. Cả đoàn đứng sững giữa đường... quay lưng về phía bạn.</i>	<i>The horns stop dead. The whole procession freezes in the road... with their backs to you.</i>	<i>Tiếng kèn tắt ngấm. Cả đoàn đứng sững giữa đường... quay lưng về phía bạn.</i>	<i>唢呐声戛然而止。整支队伍僵立在路中间……背对着你。</i>	<i>ラッパの音がぴたりと止む。葬列は道の真ん中で立ち止まり……こちらに背を向けている。</i>	<i>나팔 소리가 뚝 끊긴다. 행렬 전체가 길 한가운데 멈춰 선다... 당신에게 등을 돌린 채.</i>
+<i>Cộc... cộc... cộc. Có tiếng gõ từ BÊN TRONG quan tài.</i>	<i>Knock... knock... knock. Something is knocking from INSIDE the coffin.</i>	<i>Cộc... cộc... cộc. Có tiếng gõ từ BÊN TRONG quan tài.</i>	<i>咚……咚……咚。棺材里面传来敲击声。</i>	<i>コン……コン……コン。棺の内側から叩く音がする。</i>	<i>똑... 똑... 똑. 관 안쪽에서 두드리는 소리가 난다.</i>
+Bấm còi giục họ đi	Honk to hurry them along	Bấm còi giục họ đi	按喇叭催他们走	クラクションで急かす	경적을 울려 재촉한다
+Tắt máy, cúi đầu chờ	Turn off the engine, bow your head and wait	Tắt máy, cúi đầu chờ	熄火,低头等待	エンジンを切り、頭を下げて待つ	시동을 끄고 고개 숙여 기다린다
+Tắt máy, cúi đầu chờ trong xe	Turn off the engine, bow your head and wait in the car	Tắt máy, cúi đầu chờ trong xe	熄火,在车里低头等待	エンジンを切り、車内で頭を下げて待つ	시동을 끄고 차 안에서 고개 숙여 기다린다
+Quay đầu xe, đi đường khác	Turn around, take another road	Quay đầu xe, đi đường khác	掉头,走别的路	引き返して別の道を行く	차를 돌려 다른 길로 간다
+Bạn quay đầu, rẽ sang phố khác...	You turn around and take another street...	Bạn quay đầu, rẽ sang phố khác...	你掉头,拐进另一条街……	引き返し、別の通りへ曲がる……	차를 돌려 다른 거리로 꺾는다...
+Bạn quay đầu xe, rẽ vào một con phố khác. Tiếng cười vẫn văng vẳng sau lưng.	You turn around and take another street. The laughter still echoes behind you.	Bạn quay đầu xe, rẽ vào một con phố khác. Tiếng cười vẫn văng vẳng sau lưng.	你掉头拐进另一条街。笑声仍在身后隐隐回荡。	引き返して別の通りへ入る。笑い声がまだ背後でかすかに響いている。	차를 돌려 다른 거리로 들어선다. 웃음소리가 아직도 등 뒤에서 아련히 들린다.
+Không thể nào... lại là họ?!	It can't be... them again?!	Không thể nào... lại là họ?!	不可能……又是他们?!	そんな……また奴らか?!	말도 안 돼... 또 그 사람들이야?!
+<i>Họ đứng chờ sẵn giữa đường, đầu vặn ngược, vẫn đang cười.</i>	<i>They're already waiting in the road, heads twisted backwards, still laughing.</i>	<i>Họ đứng chờ sẵn giữa đường, đầu vặn ngược, vẫn đang cười.</i>	<i>他们早已等在路中间,脑袋拧向后面,还在笑。</i>	<i>彼らは道の真ん中で待ち構えていた。首を後ろにねじったまま、まだ笑っている。</i>	<i>그들은 이미 길 한가운데서 기다리고 있다. 머리가 뒤로 꺾인 채, 여전히 웃으며.</i>
+Không nhìn thấy gì hết... không nhìn thấy gì hết... đi giao hàng thôi.	I didn't see anything... I didn't see anything... just deliver.	Không nhìn thấy gì hết... không nhìn thấy gì hết... đi giao hàng thôi.	什么都没看见……什么都没看见……送货去吧。	何も見てない……何も見てない……配達に行こう。	아무것도 못 봤어... 아무것도 못 봤어... 배달이나 가자.
+<b>BẢN TIN SÁNG</b> {0} {1}, nhiều người kể nghe tiếng kèn đám ma và tiếng cười rất đông lúc nửa đêm, sáng ra thấy vệt máu dài trên đường. Phường xác nhận: <b>không có đám tang nào</b> được đăng ký.	<b>MORNING NEWS</b> {0} {1}, many people say they heard funeral horns and a crowd laughing at midnight, and found a long trail of blood on the road in the morning. The ward confirms: <b>no funeral</b> was registered.	<b>BẢN TIN SÁNG</b> {0} {1}, nhiều người kể nghe tiếng kèn đám ma và tiếng cười rất đông lúc nửa đêm, sáng ra thấy vệt máu dài trên đường. Phường xác nhận: <b>không có đám tang nào</b> được đăng ký.	<b>早间新闻</b> {0} {1},许多人说午夜听到丧礼唢呐和一大群人的笑声,早上发现路上有一道长长的血迹。街道证实:<b>没有登记任何丧事</b>。	<b>朝のニュース</b> {0} {1}、真夜中に葬式のラッパと大勢の笑い声を聞いたという人が多く、朝には道に長い血の跡があった。区は<b>葬儀の届け出は一件もない</b>と確認した。	<b>아침 뉴스</b> {0} {1}, 많은 사람이 한밤중에 장례 나팔 소리와 여러 사람의 웃음소리를 들었고, 아침에 길 위에서 긴 핏자국을 발견했다. 동사무소는 <b>등록된 장례가 없다</b>고 확인했다.
+<i>Họ đặt quan tài xuống giữa đường. Cạch... Nắp quan tài từ từ trượt ra.</i>	<i>They set the coffin down in the road. Clack... the lid slowly slides open.</i>	<i>Họ đặt quan tài xuống giữa đường. Cạch... Nắp quan tài từ từ trượt ra.</i>	<i>他们把棺材放在路中间。咔……棺盖慢慢滑开。</i>	<i>彼らは棺を道の真ん中に下ろす。カタッ……蓋がゆっくりとずれていく。</i>	<i>그들이 관을 길 한가운데 내려놓는다. 덜컥... 관 뚜껑이 천천히 밀려난다.</i>
+<i>Một ông cụ tóc bạc, da trắng bệch, máu khô bê bết khoé miệng... từ từ NGỒI DẬY trong quan tài. Ngồi im phăng phắc, mắt nhìn thẳng vào bạn.</i>	<i>A white-haired old man, deathly pale, dried blood caked around his mouth... slowly SITS UP in the coffin. He sits perfectly still, staring straight at you.</i>	<i>Một ông cụ tóc bạc, da trắng bệch, máu khô bê bết khoé miệng... từ từ NGỒI DẬY trong quan tài. Ngồi im phăng phắc, mắt nhìn thẳng vào bạn.</i>	<i>一个白发老人,皮肤惨白,嘴角沾满干涸的血……在棺材里慢慢坐了起来。一动不动,直直地盯着你。</i>	<i>白髪の老人。肌は蒼白で、口元には乾いた血がこびりついている……棺の中でゆっくりと起き上がった。微動だにせず、まっすぐあなたを見ている。</i>	<i>백발의 노인, 창백한 피부, 입가에 말라붙은 피... 관 속에서 천천히 일어나 앉는다. 미동도 없이 당신을 똑바로 본다.</i>
+Ông cụ	The old man	Ông cụ	老人	老人	노인
+<i>Khà... khà... khà khà khà khà...</i>	<i>Heh... heh... heh heh heh heh...</i>	<i>Khà... khà... khà khà khà khà...</i>	<i>嘿……嘿……嘿嘿嘿嘿……</i>	<i>クク……クク……ククククク……</i>	<i>크... 크... 크크크크...</i>
+<i>Rắc. Rắc. Rắc. Từng cái đầu vặn ngược ra sau lưng... nhìn thẳng vào bạn.</i>	<i>Crack. Crack. Crack. One by one, their heads twist all the way round... staring straight at you.</i>	<i>Rắc. Rắc. Rắc. Từng cái đầu vặn ngược ra sau lưng... nhìn thẳng vào bạn.</i>	<i>咔。咔。咔。一颗颗脑袋拧向背后……直直盯着你。</i>	<i>バキッ。バキッ。バキッ。一人ずつ首が真後ろへねじれ……あなたを見つめる。</i>	<i>우두둑. 우두둑. 우두둑. 머리들이 하나씩 뒤로 꺾이며... 당신을 똑바로 본다.</i>
+<i>Rồi cả đoàn... cùng CƯỜI theo. Tiếng cười dội khắp con phố vắng. Máu ứa ra từ những cái miệng đang há hốc.</i>	<i>Then the whole procession... starts LAUGHING. The laughter echoes down the empty street. Blood oozes from their gaping mouths.</i>	<i>Rồi cả đoàn... cùng CƯỜI theo. Tiếng cười dội khắp con phố vắng. Máu ứa ra từ những cái miệng đang há hốc.</i>	<i>接着整支队伍……一起笑了起来。笑声在空荡的街上回荡。血从张大的嘴里涌出。</i>	<i>そして葬列全体が……一斉に笑い出す。笑い声が無人の通りに響き渡る。開いた口から血があふれ出る。</i>	<i>그러자 행렬 전체가... 함께 웃기 시작한다. 웃음소리가 텅 빈 거리에 울려 퍼진다. 벌어진 입에서 피가 흘러나온다.</i>
+<i>Cười... cười mãi không dứt.</i>	<i>Laughing... laughing without end.</i>	<i>Cười... cười mãi không dứt.</i>	<i>笑……笑个不停。</i>	<i>笑い……笑いがいつまでも止まない。</i>	<i>웃음... 끝없는 웃음.</i>
+<i>Bạn tắt máy, cúi đầu thật thấp, nhắm chặt mắt. Tiếng cười cứ vang mãi... vang mãi... rồi nhỏ dần.</i>	<i>You turn off the engine, bow your head low and shut your eyes tight. The laughter goes on... and on... then slowly fades.</i>	<i>Bạn tắt máy, cúi đầu thật thấp, nhắm chặt mắt. Tiếng cười cứ vang mãi... vang mãi... rồi nhỏ dần.</i>	<i>你熄了火,把头埋得很低,紧闭双眼。笑声一直响着……响着……然后渐渐变小。</i>	<i>エンジンを切り、深く頭を下げ、目を固く閉じる。笑い声は続き……続き……やがて小さくなっていく。</i>	<i>시동을 끄고 고개를 깊이 숙인 채 눈을 꼭 감는다. 웃음소리는 계속... 계속 울리다가... 점점 작아진다.</i>
+<i>...Im lặng.</i>	<i>...Silence.</i>	<i>...Im lặng.</i>	<i>……寂静。</i>	<i>……静寂。</i>	<i>...정적.</i>
+<i>Bạn mở mắt. Con phố trống trơn. Giữa đường chỉ còn vàng mã, một vũng máu... và một nắm hương vẫn đang cháy.</i>	<i>You open your eyes. The street is empty. In the road there's only paper offerings, a pool of blood... and a fistful of incense still burning.</i>	<i>Bạn mở mắt. Con phố trống trơn. Giữa đường chỉ còn vàng mã, một vũng máu... và một nắm hương vẫn đang cháy.</i>	<i>你睁开眼。街上空无一人。路中间只剩纸钱、一摊血……和一把还在燃烧的香。</i>	<i>目を開ける。通りには誰もいない。道の真ん中には紙銭と血だまり……そしてまだ燃えている線香の束だけ。</i>	<i>눈을 뜬다. 거리는 텅 비었다. 길 한가운데엔 종이돈과 피 웅덩이... 그리고 아직 타고 있는 향 한 움큼뿐.</i>
+Thôi... giao nốt đơn rồi về. Đừng nghĩ gì nữa.	Just... finish the delivery and go home. Don't think about it.	Thôi... giao nốt đơn rồi về. Đừng nghĩ gì nữa.	算了……送完这单就回去。别再想了。	もういい……配達を済ませて帰ろう。考えるな。	됐어... 이 주문만 배달하고 가자. 생각하지 마.
+<i>Ven đường phía trước... hình như có ai đứng nhìn?</i>	<i>By the road up ahead... is someone standing there watching?</i>	<i>Ven đường phía trước... hình như có ai đứng nhìn?</i>	<i>前面路边……好像有人站着在看?</i>	<i>前方の道端に……誰かが立って見ている?</i>	<i>앞쪽 길가에... 누가 서서 보고 있는 것 같은데?</i>
+<i>Lại nữa. Bên kia đường. Một khuôn mặt trắng bệch... đang cười.</i>	<i>Again. Across the road. A deathly white face... smiling.</i>	<i>Lại nữa. Bên kia đường. Một khuôn mặt trắng bệch... đang cười.</i>	<i>又来了。马路对面。一张惨白的脸……在笑。</i>	<i>また。道の向こう側。真っ白な顔が……笑っている。</i>	<i>또다. 길 건너편. 새하얀 얼굴이... 웃고 있다.</i>
+<i>Nó đứng ngay giữa đường! Người nó giật giật như hình bị nhiễu...</i>	<i>It's standing right in the middle of the road! Its body twitches like a glitching picture...</i>	<i>Nó đứng ngay giữa đường! Người nó giật giật như hình bị nhiễu...</i>	<i>它就站在路中间!身体一抽一抽的,像信号不好的画面……</i>	<i>道の真ん中に立っている!体がノイズの入った映像のようにガクガク震える……</i>	<i>길 한가운데 서 있다! 몸이 지직거리는 화면처럼 경련한다...</i>
+<i>Lần nào nó cũng gần hơn.</i>	<i>Every time, it's closer.</i>	<i>Lần nào nó cũng gần hơn.</i>	<i>每一次都更近。</i>	<i>そのたびに近づいてくる。</i>	<i>볼 때마다 더 가까워진다.</i>
+<i>Gần hơn nữa...</i>	<i>Closer still...</i>	<i>Gần hơn nữa...</i>	<i>更近了……</i>	<i>もっと近く……</i>	<i>더 가까이...</i>
+<i>Một quãng dài không thấy gì nữa. Bạn thở ra...</i>	<i>A long stretch with nothing. You breathe out...</i>	<i>Một quãng dài không thấy gì nữa. Bạn thở ra...</i>	<i>很长一段路什么都没再出现。你松了口气……</i>	<i>しばらく何も見えない。ほっと息をつく……</i>	<i>한참 동안 아무것도 보이지 않는다. 숨을 내쉰다...</i>
+<i>Tách... tách... Có gì đó nhỏ xuống kính mũ bảo hiểm. Màu đỏ.</i>	<i>Drip... drip... Something drips onto your helmet visor. Red.</i>	<i>Tách... tách... Có gì đó nhỏ xuống kính mũ bảo hiểm. Màu đỏ.</i>	<i>滴……滴……有什么东西滴在头盔面罩上。红色的。</i>	<i>ポタ……ポタ……何かがヘルメットのシールドに落ちる。赤い。</i>	<i>똑... 똑... 무언가 헬멧 바이저 위로 떨어진다. 빨갛다.</i>
+<i>Tách... tách... Có gì đó nhỏ xuống kính chắn gió. Màu đỏ.</i>	<i>Drip... drip... Something drips onto the windscreen. Red.</i>	<i>Tách... tách... Có gì đó nhỏ xuống kính chắn gió. Màu đỏ.</i>	<i>滴……滴……有什么东西滴在挡风玻璃上。红色的。</i>	<i>ポタ……ポタ……何かがフロントガラスに落ちる。赤い。</i>	<i>똑... 똑... 무언가 앞유리 위로 떨어진다. 빨갛다.</i>
+<i>Xe dừng giữa đường. Trên yên và tay lái... in đầy dấu bàn tay máu.</i>	<i>The bike stops in the road. The seat and handlebars... are covered in bloody handprints.</i>	<i>Xe dừng giữa đường. Trên yên và tay lái... in đầy dấu bàn tay máu.</i>	<i>车停在路中间。车座和车把上……满是血手印。</i>	<i>バイクが道の真ん中で止まる。シートとハンドルには……血の手形がびっしり。</i>	<i>오토바이가 길 한가운데 멈춘다. 안장과 핸들에... 피 묻은 손자국이 가득하다.</i>
+<i>Xe dừng giữa đường. Trên cửa kính... in đầy dấu bàn tay máu.</i>	<i>The car stops in the road. The windows... are covered in bloody handprints.</i>	<i>Xe dừng giữa đường. Trên cửa kính... in đầy dấu bàn tay máu.</i>	<i>车停在路中间。车窗上……满是血手印。</i>	<i>車が道の真ん中で止まる。窓には……血の手形がびっしり。</i>	<i>차가 길 한가운데 멈춘다. 창문에... 피 묻은 손자국이 가득하다.</i>
+Giao xong đơn này... mình về. Ngay.	After this delivery... I'm going home. Right away.	Giao xong đơn này... mình về. Ngay.	送完这单……我就回家。马上。	これを届けたら……帰る。すぐに。	이것만 배달하고... 집에 갈 거야. 당장.
+<i>BÍNNN! Tiếng còi xé toạc màn đêm.</i>	<i>HONNNK! The horn tears through the night.</i>	<i>BÍNNN! Tiếng còi xé toạc màn đêm.</i>	<i>嘀——!喇叭声划破夜空。</i>	<i>プァーン!クラクションが夜を切り裂く。</i>	<i>빠앙! 경적 소리가 밤을 찢는다.</i>
+<i>Tiếng cười tắt phụt. Im lặng. Ông cụ trong quan tài há miệng thật rộng... rồi trèo ra ngoài.</i>	<i>The laughter cuts off. Silence. The old man in the coffin opens his mouth impossibly wide... and climbs out.</i>	<i>Tiếng cười tắt phụt. Im lặng. Ông cụ trong quan tài há miệng thật rộng... rồi trèo ra ngoài.</i>	<i>笑声戛然而止。一片寂静。棺材里的老人把嘴张得大大的……然后爬了出来。</i>	<i>笑い声がぷつりと止む。静寂。棺の中の老人が口を大きく開け……外へ這い出してきた。</i>	<i>웃음소리가 뚝 그친다. 정적. 관 속 노인이 입을 크게 벌리더니... 밖으로 기어 나온다.</i>
+<i>Cả đoàn đổ rạp xuống, bò bốn chân như nhện, lao về phía bạn.</i>	<i>The whole procession drops down and scuttles towards you on all fours like spiders.</i>	<i>Cả đoàn đổ rạp xuống, bò bốn chân như nhện, lao về phía bạn.</i>	<i>整支队伍趴倒在地,像蜘蛛一样四肢着地,朝你扑来。</i>	<i>葬列全体が地面に伏し、蜘蛛のように四つん這いでこちらへ突進してくる。</i>	<i>행렬 전체가 엎드려 거미처럼 네 발로 기어 당신에게 달려든다.</i>
+<i>Đèn đường sáng lại. Con phố trống trơn - chỉ còn vàng mã, nắm hương cháy dở và một vũng máu lớn giữa đường.</i>	<i>The streetlights come back on. The street is empty - only paper offerings, half-burnt incense and a large pool of blood in the road.</i>	<i>Đèn đường sáng lại. Con phố trống trơn - chỉ còn vàng mã, nắm hương cháy dở và một vũng máu lớn giữa đường.</i>	<i>路灯重新亮起。街上空无一人——只剩纸钱、烧了一半的香,和路中间一大摊血。</i>	<i>街灯が再び灯る。通りには誰もいない――紙銭と燃えさしの線香、そして道の真ん中の大きな血だまりだけ。</i>	<i>가로등이 다시 켜진다. 거리는 텅 비었다 - 종이돈과 타다 만 향, 그리고 길 한가운데 커다란 피 웅덩이뿐.</i>
+<i>Trên yên xe và tay lái... in đầy những dấu bàn tay máu.</i>	<i>The seat and handlebars... are covered in bloody handprints.</i>	<i>Trên yên xe và tay lái... in đầy những dấu bàn tay máu.</i>	<i>车座和车把上……满是血手印。</i>	<i>シートとハンドルには……血の手形がびっしり。</i>	<i>안장과 핸들에... 피 묻은 손자국이 가득하다.</i>
+<i>Trên cửa kính xe... in đầy những dấu bàn tay máu.</i>	<i>The car windows... are covered in bloody handprints.</i>	<i>Trên cửa kính xe... in đầy những dấu bàn tay máu.</i>	<i>车窗上……满是血手印。</i>	<i>車の窓には……血の手形がびっしり。</i>	<i>차 창문에... 피 묻은 손자국이 가득하다.</i>
+A stranger's lucky money (funeral night)	A stranger's lucky money (funeral night)	Tiền lộc của người lạ (đêm đám ma)	陌生人的红包(送葬之夜)	見知らぬ人のお年玉(葬列の夜)	낯선 이의 복돈 (장례 행렬의 밤)
+<color=#BFD7FF>Về tới nơi, trong túi bạn có thêm một phong bao đỏ dính máu: +$20 \"lộc\", +6 XP.</color>	<color=#BFD7FF>When you arrive, there's a bloodstained red envelope in your pocket: +$20 \"luck money\", +6 XP.</color>	<color=#BFD7FF>Về tới nơi, trong túi bạn có thêm một phong bao đỏ dính máu: +$20 \"lộc\", +6 XP.</color>	<color=#BFD7FF>到了之后,你口袋里多了一个沾血的红包:+$20“彩头”,+6 经验。</color>	<color=#BFD7FF>着いてみると、ポケットに血のついた赤い封筒が:+$20 の「お年玉」、+6 XP。</color>	<color=#BFD7FF>도착해 보니 주머니에 피 묻은 빨간 봉투가 있다: +$20 "복돈", +6 XP.</color>
+Cash turned into joss paper (funeral night)	Cash turned into joss paper (funeral night)	Tiền mặt hoá thành vàng mã (đêm đám ma)	现金变成纸钱(送葬之夜)	現金が紙銭に変わった(葬列の夜)	현금이 종이돈으로 변함 (장례 행렬의 밤)
+<color=#FF8A7A>Mở ví ra... toàn vàng mã dính máu. Mất {0} tiền mặt.</color>	<color=#FF8A7A>You open your wallet... it's full of bloodstained joss paper. You lost {0} in cash.</color>	<color=#FF8A7A>Mở ví ra... toàn vàng mã dính máu. Mất {0} tiền mặt.</color>	<color=#FF8A7A>打开钱包……全是沾血的纸钱。损失 {0} 现金。</color>	<color=#FF8A7A>財布を開けると……血のついた紙銭ばかり。現金 {0} を失った。</color>	<color=#FF8A7A>지갑을 열어 보니... 피 묻은 종이돈뿐. 현금 {0}을(를) 잃었다.</color>
+Thử sự kiện cướp: hãy lấy gói hàng giao trước đã.	Robbery test: pick up a delivery package first.	Thử sự kiện cướp: hãy lấy gói hàng giao trước đã.	测试抢劫事件:请先取配送包裹。	強盗イベントテスト:先に配達の荷物を受け取ってください。	강도 이벤트 테스트: 먼저 배달 소포를 집으세요.
+Đêm qua	Last night	Đêm qua	昨晚	昨夜	어젯밤
+ĐƠN HÀNG BUỔI SÁNG	MORNING ORDER	ĐƠN HÀNG BUỔI SÁNG	早间订单	朝の注文	아침 주문
+ĐƠN HÀNG GIỮA TRƯA	MIDDAY ORDER	ĐƠN HÀNG GIỮA TRƯA	午间订单	昼の注文	점심 주문
+ĐƠN HÀNG BUỔI CHIỀU	AFTERNOON ORDER	ĐƠN HÀNG BUỔI CHIỀU	下午订单	午後の注文	오후 주문
+ĐƠN HÀNG LÚC CHẠNG VẠNG	DUSK ORDER	ĐƠN HÀNG LÚC CHẠNG VẠNG	傍晚订单	夕暮れの注文	해 질 녘 주문
+buổi sáng	in the morning	buổi sáng	早上	朝	아침에
+giữa trưa	at midday	giữa trưa	中午	昼	한낮에
+buổi chiều	in the afternoon	buổi chiều	下午	午後	오후에
+lúc chạng vạng	at dusk	lúc chạng vạng	傍晚	夕暮れ	해 질 녘에
+sau khi trời tối	after dark	sau khi trời tối	天黑以后	日没後	해가 진 뒤
+Giông to thế này, phố chẳng còn ai...	A storm like this - not a soul on the streets...	Giông to thế này, phố chẳng còn ai...	这么大的雷雨,街上一个人都没有……	こんな嵐じゃ、通りには誰もいない……	이런 폭풍에 거리엔 아무도 없네...
+Mưa thế này, phố đêm vắng tanh...	Rain like this - the night streets are deserted...	Mưa thế này, phố đêm vắng tanh...	下这么大的雨,夜里的街空荡荡的……	この雨じゃ、夜の通りはがらがらだ……	비가 이렇게 오니 밤거리가 텅 비었네...
+Mưa thế này, đường vắng hẳn...	Rain like this - the roads are empty...	Mưa thế này, đường vắng hẳn...	下这么大的雨,路上都没人了……	この雨じゃ、道はすっかりがらがらだ……	비가 이렇게 오니 길이 한산하네...
+Sương mù dày quá, chẳng nhìn rõ gì phía trước...	The fog's so thick, I can't see anything ahead...	Sương mù dày quá, chẳng nhìn rõ gì phía trước...	雾太浓了,前面什么都看不清……	霧が濃すぎて、前がよく見えない……	안개가 너무 짙어서 앞이 하나도 안 보여...
+Sắp tới rồi... sớm thế này đoạn này vẫn còn vắng.	Almost there... this early, this stretch is still empty.	Sắp tới rồi... sớm thế này đoạn này vẫn còn vắng.	快到了……这么早,这段路还没什么人。	もうすぐだ……こんなに早いと、この辺はまだ人がいない。	거의 다 왔다... 이렇게 이른 시간엔 이 구간이 아직 한산하네.
+Trưa nắng chang chang, người ta đi nghỉ trưa hết rồi...	Blazing midday sun - everyone's gone for their lunch break...	Trưa nắng chang chang, người ta đi nghỉ trưa hết rồi...	中午烈日当头,大家都去午休了……	真昼の炎天下、みんな昼休みに行ってしまった……	뙤약볕 한낮, 다들 점심 쉬러 갔네...
+Giờ nghỉ trưa, đoạn này vắng hoe.	Lunch break - this stretch is deserted.	Giờ nghỉ trưa, đoạn này vắng hoe.	午休时间,这段路空荡荡的。	昼休み、この辺はがらんとしている。	점심시간이라 이 구간이 텅 비었네.
+Sắp tới rồi... đoạn phố này lúc nào cũng vắng.	Almost there... this street is always empty.	Sắp tới rồi... đoạn phố này lúc nào cũng vắng.	快到了……这段街总是没什么人。	もうすぐだ……この通りはいつも人がいない。	거의 다 왔다... 이 거리는 늘 한산해.
+Trời sắp tối rồi, giao nhanh còn về.	It's getting dark - deliver fast and head back.	Trời sắp tối rồi, giao nhanh còn về.	天快黑了,赶紧送完回去。	もうすぐ暗くなる、早く届けて帰ろう。	곧 어두워지겠네, 빨리 배달하고 돌아가자.
+Sắp tới rồi... phố đêm nay vắng thật.	Almost there... the streets really are empty tonight.	Sắp tới rồi... phố đêm nay vắng thật.	快到了……今晚街上真冷清。	もうすぐだ……今夜は本当に人がいない。	거의 다 왔다... 오늘 밤 거리는 정말 한산하네.
+Đơn đêm toàn tiền mặt. Đi!	Night orders are all cash. Go!	Đơn đêm toàn tiền mặt. Đi!	夜里的单全是现金。上!	夜の注文は全部現金だ。行くぞ!	밤 주문은 다 현금이야. 가자!
+Mưa thế này chẳng ai để ý đâu. Đi!	Nobody will notice in this rain. Go!	Mưa thế này chẳng ai để ý đâu. Đi!	下这么大雨没人会注意。上!	この雨じゃ誰も気づかない。行くぞ!	이 빗속엔 아무도 신경 안 써. 가자!
+Đường vắng, chẳng ai nhìn đâu. Đi!	The road's empty, nobody's watching. Go!	Đường vắng, chẳng ai nhìn đâu. Đi!	路上没人,没人看着。上!	道はがらがら、誰も見てない。行くぞ!	길이 한산해, 아무도 안 봐. 가자!
+Cái đèn pha kia... bám sau mình ba dãy phố rồi.	Those headlights... have been following me for three blocks.	Cái đèn pha kia... bám sau mình ba dãy phố rồi.	那对车灯……已经跟了我三个街区了。	あのヘッドライト……もう三ブロックもついてくる。	저 전조등... 세 블록째 날 따라오고 있어.
+Cái xe máy kia... bám sau mình ba dãy phố rồi.	That motorbike... has been following me for three blocks.	Cái xe máy kia... bám sau mình ba dãy phố rồi.	那辆摩托车……已经跟了我三个街区了。	あのバイク……もう三ブロックもついてくる。	저 오토바이... 세 블록째 날 따라오고 있어.
+dưới làn mưa	in the rain	dưới làn mưa	在雨中	雨の中で	빗속에서
+trong màn sương	in the fog	trong màn sương	在雾中	霧の中で	안개 속에서
+dưới ánh đèn đường	under the streetlight	dưới ánh đèn đường	在路灯下	街灯の下で	가로등 아래서
+trong ánh chiều nhập nhoạng	in the fading evening light	trong ánh chiều nhập nhoạng	在昏暗的暮色中	薄暗い夕暮れの中で	어스름한 저녁 빛 속에서
+dưới nắng	in the sunlight	dưới nắng	在阳光下	日差しの中で	햇빛 아래서
+giữa ban ngày	in broad daylight	giữa ban ngày	光天化日之下	白昼堂々	대낮에
+<i>Lưỡi dao loé lên {0}.</i>	<i>A blade flashes {0}.</i>	<i>Lưỡi dao loé lên {0}.</i>	<i>刀刃{0}一闪。</i>	<i>{0}刃がきらりと光る。</i>	<i>{0} 칼날이 번뜩인다.</i>
+Sáng qua	Yesterday morning	Sáng qua	昨天早上	昨日の朝	어제 아침
+Trưa qua	Yesterday at midday	Trưa qua	昨天中午	昨日の昼	어제 점심
+Chiều qua	Yesterday afternoon	Chiều qua	昨天下午	昨日の午後	어제 오후
+Chiều tối qua	Yesterday evening	Chiều tối qua	昨天傍晚	昨日の夕方	어제 저녁
+<b>BẢN TIN SÁNG</b> {0} {1}, CSGT bắt giữ hai tên cướp đi xe máy nhờ một shipper dũng cảm.	<b>MORNING NEWS</b> {0} {1}, traffic police caught two motorbike robbers thanks to a brave delivery rider.	<b>BẢN TIN SÁNG</b> {0} {1}, CSGT bắt giữ hai tên cướp đi xe máy nhờ một shipper dũng cảm.	<b>早间新闻</b> {0} {1},多亏一名勇敢的外卖员,交警抓获了两名骑摩托车的劫匪。	<b>朝のニュース</b> {0} {1}、勇敢な配達員のおかげで、交通警察がバイクの強盗二人を逮捕。	<b>아침 뉴스</b> {0} {1}, 용감한 배달 기사 덕분에 교통경찰이 오토바이 강도 두 명을 붙잡았다.
+<b>BẢN TIN SÁNG</b> {0} {1}, một shipper bị cướp. Công an khuyên shipper đi đường đông người, cảnh giác với xe bám đuôi.	<b>MORNING NEWS</b> {0} {1}, a delivery rider was robbed. Police advise riders to use busy roads and watch out for vehicles following them.	<b>BẢN TIN SÁNG</b> {0} {1}, một shipper bị cướp. Công an khuyên shipper đi đường đông người, cảnh giác với xe bám đuôi.	<b>早间新闻</b> {0} {1},一名外卖员遭抢劫。警方建议外卖员走人多的路,警惕尾随车辆。	<b>朝のニュース</b> {0} {1}、配達員が強盗に遭った。警察は人通りの多い道を使い、尾行車に注意するよう呼びかけている。	<b>아침 뉴스</b> {0} {1}, 배달 기사가 강도를 당했다. 경찰은 사람이 많은 길로 다니고 뒤따르는 차량을 경계하라고 당부했다.
+<b>BẢN TIN SÁNG</b> {0} {1}, một shipper đã thoát khỏi hai tên cướp.	<b>MORNING NEWS</b> {0} {1}, a delivery rider escaped from two robbers.	<b>BẢN TIN SÁNG</b> {0} {1}, một shipper đã thoát khỏi hai tên cướp.	<b>早间新闻</b> {0} {1},一名外卖员从两名劫匪手中逃脱。	<b>朝のニュース</b> {0} {1}、配達員が二人組の強盗から逃げ切った。	<b>아침 뉴스</b> {0} {1}, 배달 기사가 강도 두 명에게서 벗어났다.
+Tên cướp	Robber	Tên cướp	劫匪	強盗	강도
+Thấy con xe có túi giao hàng kia không? Nó đấy.	See that bike with the delivery bag? That's the one.	Thấy con xe có túi giao hàng kia không? Nó đấy.	看到那辆挂着外卖箱的车没?就是它。	あの配達バッグのバイク、見えるか?あれだ。	저 배달 가방 단 오토바이 보여? 저거야.
+Tên cướp 2	Robber 2	Tên cướp 2	劫匪 2	強盗 2	강도 2
+Tăng tốc một chút	Speed up a little	Tăng tốc một chút	稍微加速	少しスピードを上げる	속도를 조금 높인다
+Bình tĩnh, cứ chạy bình thường	Stay calm, ride normally	Bình tĩnh, cứ chạy bình thường	冷静,照常骑	落ち着いて普通に走る	침착하게 평소처럼 달린다
+Giảm tốc cho chúng vượt	Slow down and let them pass	Giảm tốc cho chúng vượt	减速让他们超过去	減速して追い越させる	속도를 줄여 추월시킨다
+Nó thấy mình rồi! Bám chặt vào!	It's spotted us! Stay on it!	Nó thấy mình rồi! Bám chặt vào!	被它发现了!跟紧!	気づかれた!しっかりついていけ!	들켰다! 바짝 따라붙어!
+Giảm tốc chờ bọn anh à? Lịch sự ghê.	Slowing down to wait for us? How polite.	Giảm tốc chờ bọn anh à? Lịch sự ghê.	减速等我们?真有礼貌。	俺たちを待ってくれてるのか?礼儀正しいねえ。	우리 기다려 주는 거야? 예의 바르네.
+<i>Tiếng máy xe phía sau mỗi lúc một gần... một gần hơn.</i>	<i>The engine noise behind you gets closer... and closer.</i>	<i>Tiếng máy xe phía sau mỗi lúc một gần... một gần hơn.</i>	<i>身后的发动机声越来越近……越来越近。</i>	<i>後ろのエンジン音がどんどん近づいてくる……さらに近く。</i>	<i>뒤쪽 엔진 소리가 점점 가까워진다... 더 가까이.</i>
+<i>Một chiếc xe máy không biển số áp sát ngay bên cạnh.</i>	<i>A motorbike with no number plate pulls up right beside you.</i>	<i>Một chiếc xe máy không biển số áp sát ngay bên cạnh.</i>	<i>一辆没有车牌的摩托车贴到了你旁边。</i>	<i>ナンバーのないバイクがすぐ横にぴったりつけてきた。</i>	<i>번호판 없는 오토바이가 바로 옆에 바짝 붙는다.</i>
+Dừng xe! Đưa gói hàng với tiền đây - NGAY!	Pull over! Hand over the package and the money - NOW!	Dừng xe! Đưa gói hàng với tiền đây - NGAY!	停车!把包裹和钱交出来——马上!	止まれ!荷物と金をよこせ――今すぐだ!	차 세워! 소포랑 돈 내놔 - 당장!
+Vặn ga bỏ chạy	Open the throttle and flee	Vặn ga bỏ chạy	拧油门逃跑	アクセルを開けて逃げる	액셀을 당겨 도망친다
+Đưa gói hàng	Hand over the package	Đưa gói hàng	交出包裹	荷物を渡す	소포를 건넨다
+Hô \"Cướp! Cướp! Cứu với!\"	Shout \"Thief! Thief! Help!\"	Hô \"Cướp! Cướp! Cứu với!\"	大喊“抢劫!抢劫!救命!”	「強盗!強盗!助けて!」と叫ぶ	"강도야! 강도! 살려 주세요!" 외친다
+Đạp xe chúng ra	Kick their bike away	Đạp xe chúng ra	一脚把他们的车踹开	奴らのバイクを蹴り飛ばす	그들의 오토바이를 걷어찬다
+Cắt quai túi nó đi!	Cut the bag strap!	Cắt quai túi nó đi!	把它的包带割断!	バッグのひもを切れ!	가방 끈을 잘라!
+Lạng xe tránh	Swerve away	Lạng xe tránh	甩车躲开	車体を振ってかわす	핸들을 꺾어 피한다
+Thúc cùi chỏ vào tay cầm dao	Elbow the knife hand	Thúc cùi chỏ vào tay cầm dao	用肘击持刀的手	ナイフを持つ手に肘打ち	칼 든 손을 팔꿈치로 친다
+Cúi rạp người, bám chặt tay lái	Duck low and grip the handlebars	Cúi rạp người, bám chặt tay lái	俯低身子,紧握车把	身を伏せてハンドルを握りしめる	몸을 숙이고 핸들을 꽉 잡는다
+<i>Lưỡi dao vung xuống...</i>	<i>The blade swings down...</i>	<i>Lưỡi dao vung xuống...</i>	<i>刀刃劈了下来……</i>	<i>刃が振り下ろされる……</i>	<i>칼날이 내리쳐진다...</i>
+<i>Chậm quá. Lưỡi dao cắt đứt quai túi - gói hàng mất rồi.</i>	<i>Too slow. The blade slices through the strap - the package is gone.</i>	<i>Chậm quá. Lưỡi dao cắt đứt quai túi - gói hàng mất rồi.</i>	<i>太慢了。刀割断了包带——包裹没了。</i>	<i>遅すぎた。刃がひもを切り――荷物は奪われた。</i>	<i>너무 느렸다. 칼날이 끈을 잘랐다 - 소포를 잃었다.</i>
+<i>Không kịp. Lưỡi dao cắt đứt quai túi - gói hàng mất rồi.</i>	<i>Too late. The blade slices through the strap - the package is gone.</i>	<i>Không kịp. Lưỡi dao cắt đứt quai túi - gói hàng mất rồi.</i>	<i>来不及了。刀割断了包带——包裹没了。</i>	<i>間に合わない。刃がひもを切り――荷物は奪われた。</i>	<i>늦었다. 칼날이 끈을 잘랐다 - 소포를 잃었다.</i>
+Được rồi! Chạy, chạy!	Got it! Go, go!	Được rồi! Chạy, chạy!	到手了!跑,快跑!	やった!行け、行け!	됐다! 튀어, 튀어!
+<i>Bạn lạng xe gấp - lưỡi dao chém vào không khí.</i>	<i>You swerve hard - the blade slashes at empty air.</i>	<i>Bạn lạng xe gấp - lưỡi dao chém vào không khí.</i>	<i>你猛地一甩车——刀砍了个空。</i>	<i>急に車体を振る――刃は空を切った。</i>	<i>급히 핸들을 꺾는다 - 칼날이 허공을 가른다.</i>
+<i>Cùi chỏ bạn thúc trúng cổ tay hắn. Hắn ôm tay, suýt rơi cả dao!</i>	<i>Your elbow hits his wrist. He clutches his hand and nearly drops the knife!</i>	<i>Cùi chỏ bạn thúc trúng cổ tay hắn. Hắn ôm tay, suýt rơi cả dao!</i>	<i>你的手肘正中他的手腕。他捂着手,刀差点掉了!</i>	<i>肘が男の手首に命中。男は手を押さえ、ナイフを落としかけた!</i>	<i>팔꿈치가 그의 손목을 정통으로 쳤다. 그가 손을 움켜쥐며 칼을 떨어뜨릴 뻔한다!</i>
+<i>Bạn cúi rạp xuống - lưỡi dao rít qua ngay trên mũ bảo hiểm.</i>	<i>You duck low - the blade whistles just over your helmet.</i>	<i>Bạn cúi rạp xuống - lưỡi dao rít qua ngay trên mũ bảo hiểm.</i>	<i>你俯下身——刀刃擦着头盔呼啸而过。</i>	<i>身を伏せる――刃がヘルメットのすぐ上をかすめていく。</i>	<i>몸을 숙인다 - 칼날이 헬멧 바로 위를 스쳐 지나간다.</i>
+Đứng lại, thằng ranh-!	Stop, you little-!	Đứng lại, thằng ranh-!	站住,你这小子——!	待て、このガキ――!	거기 서, 이 자식-!
+<i>Một chiếc taxi từ ngõ lao ra - chắn ngang làn đường!</i>	<i>A taxi shoots out of an alley - blocking the lane!</i>	<i>Một chiếc taxi từ ngõ lao ra - chắn ngang làn đường!</i>	<i>一辆出租车从巷子里冲出来——横挡在车道上!</i>	<i>路地からタクシーが飛び出し――車線をふさいだ!</i>	<i>골목에서 택시가 튀어나와 - 차선을 가로막는다!</i>
+<i>Chiếc ô tô phía trước phanh khựng giữa làn, nháy đèn khẩn cấp!</i>	<i>The car ahead brakes hard in the lane, hazard lights flashing!</i>	<i>Chiếc ô tô phía trước phanh khựng giữa làn, nháy đèn khẩn cấp!</i>	<i>前面的汽车在车道中间急刹,打着双闪!</i>	<i>前の車が車線の真ん中で急停止、ハザードを点滅させる!</i>	<i>앞차가 차선 한가운데서 급정거하며 비상등을 켠다!</i>
+<i>Hai chiếc ô tô đỗ song song chắn đường - chỉ còn một khe hẹp ở giữa!</i>	<i>Two cars parked side by side block the road - there's only a narrow gap between them!</i>	<i>Hai chiếc ô tô đỗ song song chắn đường - chỉ còn một khe hẹp ở giữa!</i>	<i>两辆汽车并排停着挡住了路——中间只剩一条窄缝!</i>	<i>二台の車が並んで道をふさいでいる――間にはわずかな隙間しかない!</i>	<i>차 두 대가 나란히 서서 길을 막았다 - 가운데 좁은 틈만 남았다!</i>
+Lách qua khe hở	Squeeze through the gap	Lách qua khe hở	从缝隙钻过去	隙間をすり抜ける	틈새로 빠져나간다
+Leo lên vỉa hè	Mount the pavement	Leo lên vỉa hè	冲上人行道	歩道に乗り上げる	인도로 올라간다
+Lạng vòng qua	Swerve around it	Lạng vòng qua	绕过去	よけて回り込む	돌아서 피한다
+Phanh gấp	Brake hard	Phanh gấp	急刹车	急ブレーキ	급정거
+Luồn qua khe giữa hai xe	Thread through the gap between the cars	Luồn qua khe giữa hai xe	从两车之间穿过去	二台の間をすり抜ける	두 차 사이로 빠져나간다
+Cắt qua vỉa hè	Cut across the pavement	Cắt qua vỉa hè	从人行道抄过去	歩道を突っ切る	인도를 가로지른다
+<i>Bạn lách qua được! Phía sau, bọn cướp phải phanh gấp.</i>	<i>You make it through! Behind you, the robbers have to brake hard.</i>	<i>Bạn lách qua được! Phía sau, bọn cướp phải phanh gấp.</i>	<i>你钻过去了!后面的劫匪只好急刹。</i>	<i>すり抜けた!後ろで強盗たちが急ブレーキをかける。</i>	<i>빠져나왔다! 뒤에서 강도들이 급정거한다.</i>
+Á! Nhanh lên, nó chạy mất bây giờ!	Argh! Hurry, it's getting away!	Á! Nhanh lên, nó chạy mất bây giờ!	啊!快点,它要跑了!	うわっ!急げ、逃げられるぞ!	악! 빨리, 도망가잖아!
+<i>Bạn cứng người - phanh trượt, dừng cách đầu xe chỉ một gang tay.</i>	<i>You freeze - the brakes skid and you stop a hand's breadth from the car.</i>	<i>Bạn cứng người - phanh trượt, dừng cách đầu xe chỉ một gang tay.</i>	<i>你僵住了——刹车打滑,停在离车头只有一拃远的地方。</i>	<i>体がこわばる――ブレーキが滑り、車まで手のひら一つ分のところで止まった。</i>	<i>몸이 굳는다 - 브레이크가 미끄러지며 차 앞 한 뼘 거리에서 멈춘다.</i>
+<i>Bánh xe trượt trên mặt đường ướt. Xe bạn trượt dài rồi dừng hẳn.</i>	<i>Your wheels slide on the wet road. You skid a long way and come to a stop.</i>	<i>Bánh xe trượt trên mặt đường ướt. Xe bạn trượt dài rồi dừng hẳn.</i>	<i>车轮在湿滑的路面上打滑。你的车滑出很远才停下。</i>	<i>濡れた路面でタイヤが滑る。長く滑ってようやく止まった。</i>	<i>젖은 노면에서 바퀴가 미끄러진다. 한참 미끄러지다 완전히 멈춘다.</i>
+<i>Bánh xe trượt trên vệt cát. Xe bạn trượt dài rồi dừng hẳn.</i>	<i>Your wheels slide on a patch of sand. You skid a long way and come to a stop.</i>	<i>Bánh xe trượt trên vệt cát. Xe bạn trượt dài rồi dừng hẳn.</i>	<i>车轮在一片沙子上打滑。你的车滑出很远才停下。</i>	<i>砂の上でタイヤが滑る。長く滑ってようやく止まった。</i>	<i>모래 위에서 바퀴가 미끄러진다. 한참 미끄러지다 완전히 멈춘다.</i>
+Hết đường chạy rồi nhé, shipper.	Nowhere left to run, delivery boy.	Hết đường chạy rồi nhé, shipper.	没路可跑了吧,送货的。	もう逃げ場はないぜ、配達屋。	더는 도망칠 데 없지, 배달부.
+Rẽ vào ngõ hẹp	Turn into a narrow alley	Rẽ vào ngõ hẹp	拐进窄巷	細い路地に入る	좁은 골목으로 꺾는다
+Phóng về chốt CSGT	Race to the traffic police post	Phóng về chốt CSGT	冲向交警岗亭	交通警察の詰所へ飛ばす	교통경찰 초소로 달린다
+Phanh gấp cho chúng vượt qua	Brake hard and let them overshoot	Phanh gấp cho chúng vượt qua	急刹让他们冲过头	急ブレーキで追い越させる	급정거해서 그들을 지나쳐 보낸다
+Hai dãy phố sau...	Two blocks later...	Hai dãy phố sau...	两个街区后……	二ブロック先で……	두 블록 뒤...
+Tiếng còi. Đèn xanh đỏ nhấp nháy. CSGT bước ra vẫy gậy chặn bọn cướp lại.	A whistle. Red and blue lights flash. A traffic officer steps out and waves his baton to stop the robbers.	Tiếng còi. Đèn xanh đỏ nhấp nháy. CSGT bước ra vẫy gậy chặn bọn cướp lại.	哨声响起。红蓝灯闪烁。交警走出来挥动指挥棒拦下了劫匪。	笛の音。赤と青のライトが点滅。交通警察が出てきて警棒を振り、強盗を止めた。	호루라기 소리. 빨강 파랑 불빛이 번쩍인다. 교통경찰이 나와 경광봉을 흔들며 강도들을 막는다.
+<i>Lốp rít lên. Chúng vụt thẳng qua mặt bạn.</i>	<i>Tyres screech. They shoot straight past you.</i>	<i>Lốp rít lên. Chúng vụt thẳng qua mặt bạn.</i>	<i>轮胎尖啸。他们从你面前直冲过去。</i>	<i>タイヤがきしむ。奴らはあなたの目の前を走り抜けた。</i>	<i>타이어가 비명을 지른다. 그들이 당신 앞을 쌩 지나간다.</i>
+<i>Bạn chần chừ chậm mất một giây.</i>	<i>You hesitate a second too long.</i>	<i>Bạn chần chừ chậm mất một giây.</i>	<i>你犹豫了一秒,慢了一步。</i>	<i>一秒ためらって遅れた。</i>	<i>1초 망설이다 늦었다.</i>
+Được rồi! Được rồi... cầm lấy đi.	Okay! Okay... take it.	Được rồi! Được rồi... cầm lấy đi.	好!好……拿去吧。	わかった!わかった……持ってけ。	알았어! 알았어... 가져가.
+<i>Một bàn tay đeo găng giật phăng chiếc túi khỏi vai bạn.</i>	<i>A gloved hand rips the bag off your shoulder.</i>	<i>Một bàn tay đeo găng giật phăng chiếc túi khỏi vai bạn.</i>	<i>一只戴手套的手一把扯走了你肩上的包。</i>	<i>手袋をはめた手が肩からバッグをひったくる。</i>	<i>장갑 낀 손이 어깨에서 가방을 낚아챈다.</i>
+Khôn đấy. Cứ thế mà đi, đừng ngoái lại.	Smart. Keep going, don't look back.	Khôn đấy. Cứ thế mà đi, đừng ngoái lại.	算你聪明。继续走,别回头。	賢いな。そのまま行け、振り向くなよ。	현명하네. 그대로 가, 뒤돌아보지 말고.
+CƯỚP! CƯỚP! Ai cứu với!	THIEF! THIEF! Somebody help!	CƯỚP! CƯỚP! Ai cứu với!	抢劫!抢劫!谁来救救我!	強盗!強盗!誰か助けて!	강도야! 강도! 누가 좀 도와주세요!
+Chẳng ai tới đâu, thằng ngốc. Đưa đây!	Nobody's coming, idiot. Hand it over!	Chẳng ai tới đâu, thằng ngốc. Đưa đây!	没人会来的,蠢货。拿来!	誰も来やしねえよ、バカが。よこせ!	아무도 안 와, 멍청아. 내놔!
+Tránh xa tao ra!	Get away from me!	Tránh xa tao ra!	离我远点!	近寄るな!	나한테서 떨어져!
+<i>Bạn dồn hết sức, đạp thẳng vào sườn xe chúng!</i>	<i>With all your strength, you kick the side of their bike!</i>	<i>Bạn dồn hết sức, đạp thẳng vào sườn xe chúng!</i>	<i>你使出全身力气,一脚踹在他们车的侧面!</i>	<i>渾身の力で、奴らのバイクの横腹を蹴り飛ばす!</i>	<i>온 힘을 다해 그들의 오토바이 옆구리를 걷어찬다!</i>
+<i>Xe chúng chao đảo, đổ nghiêng, trượt dài trên {0}!</i>	<i>Their bike wobbles, tips over and slides along the {0}!</i>	<i>Xe chúng chao đảo, đổ nghiêng, trượt dài trên {0}!</i>	<i>他们的车摇晃着侧翻,在{0}上滑出老远!</i>	<i>奴らのバイクはふらつき、横倒しになって{0}を滑っていく!</i>	<i>그들의 오토바이가 휘청이다 넘어져 {0} 위를 길게 미끄러진다!</i>
+mặt đường ướt	wet road	mặt đường ướt	湿滑的路面	濡れた路面	젖은 노면
+mặt đường	road	mặt đường	路面	路面	노면
+Á! Chân tao! Đuổi theo nó mau!	Argh! My leg! Get after it!	Á! Chân tao! Đuổi theo nó mau!	啊!我的腿!快追!	うっ!足が!早く追え!	악! 내 다리! 빨리 쫓아가!
+<i>Hụt! Chúng lạng xe tránh được.</i>	<i>Missed! They swerve out of the way.</i>	<i>Hụt! Chúng lạng xe tránh được.</i>	<i>没踹中!他们甩车躲开了。</i>	<i>外れた!奴らは車体を振ってかわした。</i>	<i>빗나갔다! 그들이 핸들을 꺾어 피했다.</i>
+Mày muốn chết à?!	You want to die?!	Mày muốn chết à?!	你找死啊?!	死にてえのか?!	죽고 싶어?!
+Ngu thế. Giờ thì nôn cả tiền ra!	Stupid. Now cough up the money too!	Ngu thế. Giờ thì nôn cả tiền ra!	真蠢。现在把钱也吐出来!	バカだな。今度は金も出してもらうぜ!	멍청하긴. 이제 돈까지 토해 내!
+<i>Bạn đứng hình. Chúng tạt ngang chặn đầu.</i>	<i>You freeze. They cut across and block your way.</i>	<i>Bạn đứng hình. Chúng tạt ngang chặn đầu.</i>	<i>你愣住了。他们横插过来挡住去路。</i>	<i>固まってしまう。奴らが前に割り込んで道をふさぐ。</i>	<i>얼어붙었다. 그들이 앞을 가로막는다.</i>
+<i>Phía sau, bọn cướp lồm cồm dựng xe dậy - không đuổi nổi nữa.</i>	<i>Behind you, the robbers scramble to pick up their bike - they can't catch you now.</i>	<i>Phía sau, bọn cướp lồm cồm dựng xe dậy - không đuổi nổi nữa.</i>	<i>身后,劫匪们手忙脚乱地扶起车——再也追不上了。</i>	<i>後ろで強盗たちがもたもたとバイクを起こしている――もう追ってこられない。</i>	<i>뒤에서 강도들이 허둥지둥 오토바이를 세운다 - 더는 못 쫓아온다.</i>
+Mẹ kiếp! Thôi bỏ đi, chuồn!	Damn it! Forget it, let's go!	Mẹ kiếp! Thôi bỏ đi, chuồn!	妈的!算了,撤!	くそっ!もういい、ずらかるぞ!	젠장! 됐어, 튀자!
+Bắt được rồi... bắt được thật rồi. Thở đi nào. Đi giao nốt đơn thôi.	They got caught... they really got caught. Breathe. Let's finish the delivery.	Bắt được rồi... bắt được thật rồi. Thở đi nào. Đi giao nốt đơn thôi.	抓到了……真的抓到了。喘口气。把这单送完吧。	捕まった……本当に捕まった。深呼吸しよう。配達を済ませよう。	잡혔다... 진짜 잡혔어. 숨 좀 쉬자. 남은 배달하러 가자.
+Tay vẫn còn run... Thôi, đi giao nốt đơn.	My hands are still shaking... Well, let's finish the delivery.	Tay vẫn còn run... Thôi, đi giao nốt đơn.	手还在抖……算了,把这单送完。	まだ手が震えてる……さあ、配達を済ませよう。	손이 아직도 떨려... 그래도 남은 배달하러 가자.
+Á... cái tay. Còn sống là may rồi. Giờ biết nói sao với khách đây?	Ow... my arm. Lucky to be alive. What do I tell the customer now?	Á... cái tay. Còn sống là may rồi. Giờ biết nói sao với khách đây?	啊……我的手。还活着就算走运了。现在怎么跟客人交代?	うっ……腕が。生きてるだけましだ。客に何て言えばいいんだ?	아... 팔이야. 살아 있는 게 다행이지. 손님한테 뭐라고 하지?
+...Giờ biết nói sao với khách đây?	...What do I tell the customer now?	...Giờ biết nói sao với khách đây?	……现在怎么跟客人交代?	……客に何て言えばいいんだ?	...손님한테 뭐라고 하지?
+Gói hàng. Cả ví nữa. Từ từ thôi. Đừng có làm anh hùng.	The package. And the wallet. Nice and slow. Don't play the hero.	Gói hàng. Cả ví nữa. Từ từ thôi. Đừng có làm anh hùng.	包裹。还有钱包。慢慢来。别逞英雄。	荷物。それと財布もだ。ゆっくりな。ヒーロー気取りはやめとけ。	소포. 지갑도. 천천히. 영웅 노릇 하지 말고.
+Đưa hết cho chúng	Give them everything	Đưa hết cho chúng	全都给他们	全部渡す	다 넘겨준다
+Đánh trả	Fight back	Đánh trả	反击	反撃する	맞서 싸운다
+Doạ: \"Công an đang ở ngay sau tôi!\"	Bluff: \"The police are right behind me!\"	Doạ: \"Công an đang ở ngay sau tôi!\"	吓唬:“警察就在我后面!”	はったり:「警察がすぐ後ろにいるぞ!」	엄포: "경찰이 바로 뒤에 있어!"
+Cút đi!	Get lost!	Cút đi!	滚开!	失せろ!	꺼져!
+<i>Cú đấm trúng mặt hắn. Con dao văng xoay tròn rồi rơi loảng xoảng xuống đường.</i>	<i>Your punch hits his face. The knife spins away and clatters onto the road.</i>	<i>Cú đấm trúng mặt hắn. Con dao văng xoay tròn rồi rơi loảng xoảng xuống đường.</i>	<i>你一拳打中他的脸。刀旋转着飞出去,哐当掉在路上。</i>	<i>拳が男の顔に命中。ナイフがくるくる回って道にカランと落ちる。</i>	<i>주먹이 그의 얼굴에 꽂힌다. 칼이 빙글빙글 날아가 길바닥에 쨍그랑 떨어진다.</i>
+Thằng này điên rồi! Chuồn!	This guy's crazy! Run!	Thằng này điên rồi! Chuồn!	这家伙疯了!撤!	こいつイカれてる!逃げろ!	이 녀석 미쳤어! 튀어!
+<i>Hắn né được, quật trả một cú trúng tay bạn. Đau điếng.</i>	<i>He dodges and strikes back, hitting your arm. It hurts like hell.</i>	<i>Hắn né được, quật trả một cú trúng tay bạn. Đau điếng.</i>	<i>他躲开了,反手一击打中你的手臂。疼得要命。</i>	<i>男はかわし、腕に一撃を返してきた。激痛が走る。</i>	<i>그가 피하더니 당신의 팔을 후려친다. 엄청 아프다.</i>
+Đã bảo đừng làm anh hùng. Đưa đây!	I told you not to play the hero. Hand it over!	Đã bảo đừng làm anh hùng. Đưa đây!	都说了别逞英雄。拿来!	ヒーロー気取りはやめろって言ったろ。よこせ!	영웅 노릇 하지 말랬지. 내놔!
+<i>Chúng ngoái lại nhìn cuối phố... rồi vọt mất.</i>	<i>They glance back down the street... then bolt.</i>	<i>Chúng ngoái lại nhìn cuối phố... rồi vọt mất.</i>	<i>他们回头看了看街尾……然后一溜烟跑了。</i>	<i>奴らは通りの奥を振り返り……一目散に逃げた。</i>	<i>그들이 거리 끝을 돌아보더니... 쏜살같이 사라진다.</i>
+Doạ ai đấy. Ví. Ngay.	Who are you kidding? Wallet. Now.	Doạ ai đấy. Ví. Ngay.	吓唬谁呢。钱包。马上。	誰を脅してんだ。財布。今すぐ。	누굴 겁주려고. 지갑. 당장.
+Ngoan đấy.	Good boy.	Ngoan đấy.	真乖。	いい子だ。	착하네.
+Vài khúc rẽ sau...	A few turns later...	Vài khúc rẽ sau...	拐了几个弯后……	いくつか角を曲がって……	몇 번 꺾은 뒤...
+Trái, phải, luồn dưới dây phơi quần áo... Bạn cắt đuôi chúng trong mê cung ngõ nhỏ.	Left, right, under the washing lines... You lose them in the maze of alleys.	Trái, phải, luồn dưới dây phơi quần áo... Bạn cắt đuôi chúng trong mê cung ngõ nhỏ.	左拐、右拐、从晾衣绳下钻过……你在迷宫般的小巷里甩掉了他们。	左、右、物干しロープの下をくぐって……迷路のような路地で奴らをまいた。	왼쪽, 오른쪽, 빨랫줄 아래로... 미로 같은 골목에서 그들을 따돌렸다.
+<i>Bạn đột ngột bẻ lái, ôm cua gắt vào con phố ngang...</i>	<i>You suddenly yank the handlebars and take a sharp turn into a side street...</i>	<i>Bạn đột ngột bẻ lái, ôm cua gắt vào con phố ngang...</i>	<i>你猛地一打方向,急转弯拐进一条横街……</i>	<i>急にハンドルを切り、横道へ鋭く曲がる……</i>	<i>갑자기 핸들을 꺾어 옆길로 급커브를 돈다...</i>
+<i>Phía sau, bọn cướp lao vụt qua ngã tư - phanh rít lên, xe xoay ngang.</i>	<i>Behind you, the robbers shoot past the junction - brakes screeching, bike spinning sideways.</i>	<i>Phía sau, bọn cướp lao vụt qua ngã tư - phanh rít lên, xe xoay ngang.</i>	<i>身后,劫匪冲过了路口——刹车尖啸,车横了过来。</i>	<i>後ろで強盗たちは交差点を通り過ぎた――ブレーキがきしみ、バイクが横を向く。</i>	<i>뒤에서 강도들이 교차로를 지나쳐 버린다 - 브레이크가 끼익, 오토바이가 옆으로 돈다.</i>
+Nó rẽ đâu rồi?! Mất dấu rồi!	Where did it turn?! We lost it!	Nó rẽ đâu rồi?! Mất dấu rồi!	它拐哪去了?!跟丢了!	どこで曲がった?!見失った!	어디로 꺾었어?! 놓쳤어!
+Hộc... hộc... cắt đuôi được rồi.	Pant... pant... I lost them.	Hộc... hộc... cắt đuôi được rồi.	呼……呼……甩掉了。	はあ……はあ……まいたぞ。	헉... 헉... 따돌렸다.
+Brave rider bonus	Brave rider bonus	Thưởng shipper dũng cảm	勇敢外卖员奖励	勇敢な配達員ボーナス	용감한 배달 기사 보너스
+<color=#6BE37B>Thoát rồi! Gói hàng vẫn an toàn - đi giao nốt nhé. Thưởng shipper dũng cảm +$25.</color>	<color=#6BE37B>You got away! The package is safe - go finish the delivery. Brave rider bonus +$25.</color>	<color=#6BE37B>Thoát rồi! Gói hàng vẫn an toàn - đi giao nốt nhé. Thưởng shipper dũng cảm +$25.</color>	<color=#6BE37B>逃掉了!包裹安然无恙——去把它送完吧。勇敢外卖员奖励 +$25。</color>	<color=#6BE37B>逃げ切った!荷物は無事――配達を済ませよう。勇敢な配達員ボーナス +$25。</color>	<color=#6BE37B>빠져나왔다! 소포는 무사해요 - 마저 배달하세요. 용감한 배달 기사 보너스 +$25.</color>
+Police reward	Police reward	Công an thưởng	警方奖励	警察からの謝礼	경찰 포상
+<color=#6BE37B>Bọn cướp đã bị bắt! CSGT thưởng +$80. Đi giao nốt đơn hàng nhé.</color>	<color=#6BE37B>The robbers were caught! Traffic police reward +$80. Go finish the delivery.</color>	<color=#6BE37B>Bọn cướp đã bị bắt! CSGT thưởng +$80. Đi giao nốt đơn hàng nhé.</color>	<color=#6BE37B>劫匪被抓了!交警奖励 +$80。去把这单送完吧。</color>	<color=#6BE37B>強盗が逮捕された!交通警察から謝礼 +$80。配達を済ませよう。</color>	<color=#6BE37B>강도들이 잡혔어요! 교통경찰 포상 +$80. 마저 배달하세요.</color>
+<color=#FF8A7A>Bạn đã đưa gói hàng. Người không sao, nhưng mất đơn.</color>	<color=#FF8A7A>You handed over the package. You're unhurt, but the order is lost.</color>	<color=#FF8A7A>Bạn đã đưa gói hàng. Người không sao, nhưng mất đơn.</color>	<color=#FF8A7A>你交出了包裹。人没事,但订单没了。</color>	<color=#FF8A7A>荷物を渡した。怪我はないが、注文は失った。</color>	<color=#FF8A7A>소포를 넘겼어요. 다치진 않았지만 주문을 잃었어요.</color>
+Robbed during a night delivery	Robbed during a night delivery	Bị cướp khi giao hàng đêm	夜间送货遭抢劫	夜の配達中に強盗に遭った	야간 배달 중 강도 피해
+<color=#FF8A7A>Bị cướp và bị thương! Mất gói hàng và {0} (gồm $40 tiền khám).</color>	<color=#FF8A7A>Robbed and injured! You lost the package and {0} (including $40 in medical fees).</color>	<color=#FF8A7A>Bị cướp và bị thương! Mất gói hàng và {0} (gồm $40 tiền khám).</color>	<color=#FF8A7A>被抢还受了伤!损失包裹和 {0}(含 $40 医药费)。</color>	<color=#FF8A7A>強盗に遭って怪我をした!荷物と {0} を失った(治療費 $40 を含む)。</color>	<color=#FF8A7A>강도를 당하고 다쳤어요! 소포와 {0} 손실 (치료비 $40 포함).</color>
+<color=#FF8A7A>Bị cướp! Mất gói hàng và {0} tiền mặt.</color>	<color=#FF8A7A>Robbed! You lost the package and {0} in cash.</color>	<color=#FF8A7A>Bị cướp! Mất gói hàng và {0} tiền mặt.</color>	<color=#FF8A7A>被抢了!损失包裹和 {0} 现金。</color>	<color=#FF8A7A>強盗に遭った!荷物と現金 {0} を失った。</color>	<color=#FF8A7A>강도를 당했어요! 소포와 현금 {0} 손실.</color>
+BẠN SẼ LÀM GÌ?	WHAT WILL YOU DO?	BẠN SẼ LÀM GÌ?	你要怎么做?	どうする?	어떻게 할까?
+● HÌNH CHẬM ×0.3	● SLOW MOTION ×0.3	● HÌNH CHẬM ×0.3	● 慢动作 ×0.3	● スローモーション ×0.3	● 슬로 모션 ×0.3
+Rain ruined {0} item(s) ({1}). Carry the boxes inside!	Rain ruined {0} item(s) ({1}). Carry the boxes inside!	Mưa làm hỏng {0} món hàng ({1}). Hãy bê thùng vào trong!	雨水毁了 {0} 件商品({1})。把箱子搬进去!	雨で商品が {0} 個だめになった({1})。箱を中に運ぼう!	비 때문에 상품 {0}개가 망가졌어요 ({1}). 상자를 안으로 옮기세요!
+Boxes outside are getting wet! Carry them inside before the goods are ruined.	Boxes outside are getting wet! Carry them inside before the goods are ruined.	Thùng hàng bên ngoài đang bị ướt! Hãy bê vào trong trước khi hàng hỏng.	外面的箱子被淋湿了!在货物损坏前把它们搬进去。	外の箱が濡れている!商品がだめになる前に中へ運ぼう。	밖에 있는 상자가 젖고 있어요! 상품이 망가지기 전에 안으로 옮기세요.
+<color=#FF6B6B>A thief is running away! [3] bat, then swing!</color>	<color=#FF6B6B>A thief is running away! [3] bat, then swing!</color>	<color=#FF6B6B>Có kẻ trộm đang bỏ chạy! [3] lấy gậy, rồi vung!</color>	<color=#FF6B6B>小偷在逃跑!按 [3] 拿球棒,然后挥打!</color>	<color=#FF6B6B>泥棒が逃げていく![3] でバットを持って振れ!</color>	<color=#FF6B6B>도둑이 도망가요! [3] 배트를 들고 휘두르세요!</color>
+STOP THIEF!	STOP THIEF!	BẮT LẤY KẺ TRỘM!	抓小偷!	泥棒を捕まえろ!	도둑 잡아라!
+Someone just ran out without paying. Grab the bat [3] and chase them!	Someone just ran out without paying. Grab the bat [3] and chase them!	Có người vừa chạy ra mà không trả tiền. Cầm gậy [3] và đuổi theo!	有人没付钱就跑了。拿起球棒 [3] 追上去!	誰かがお金を払わずに逃げた。バット [3] を持って追いかけろ!	누가 돈을 안 내고 뛰쳐나갔어요. 배트 [3]를 들고 쫓아가세요!
+Thief	Thief	Kẻ trộm	小偷	泥棒	도둑
+Gotta go, gotta go!	Gotta go, gotta go!	Phải chạy, phải chạy!	快跑,快跑!	逃げろ、逃げろ!	튀어, 튀어!
+SUSPICIOUS GROUP	SUSPICIOUS GROUP	NHÓM KHẢ NGHI	可疑团伙	怪しいグループ	수상한 무리
+Three strangers are walking in together. Keep an eye on them...	Three strangers are walking in together. Keep an eye on them...	Ba người lạ đang cùng bước vào. Để mắt tới họ nhé...	三个陌生人一起走了进来。盯紧他们……	見知らぬ三人が一緒に入ってきた。目を離さないで……	낯선 사람 셋이 함께 들어와요. 잘 지켜보세요...
+Stranger	Stranger	Người lạ	陌生人	見知らぬ人	낯선 사람
+Nobody's watching...	Nobody's watching...	Chẳng ai để ý đâu...	没人在看……	誰も見てない……	아무도 안 봐...
+Grab and run. Easy.	Grab and run. Easy.	Lấy rồi chạy. Dễ ợt.	拿了就跑。简单。	取って逃げる。楽勝だ。	집어서 튀어. 쉽지.
+HEALTH INSPECTION	HEALTH INSPECTION	KIỂM TRA VỆ SINH	卫生检查	衛生検査	위생 점검
+A city health inspector has arrived. Dirty floors and expired food will cost you!	A city health inspector has arrived. Dirty floors and expired food will cost you!	Thanh tra vệ sinh của thành phố đã tới. Sàn bẩn và đồ ăn hết hạn sẽ bị phạt!	市卫生检查员来了。地板脏或食品过期都会被罚款!	市の衛生検査官がやって来た。汚れた床や期限切れの食品は罰金だ!	시 위생 감독관이 왔어요. 더러운 바닥과 유통기한 지난 음식은 벌금이에요!
+Inspector	Inspector	Thanh tra	检查员	検査官	감독관
+Good afternoon. City Health Department.	Good afternoon. City Health Department.	Chào buổi chiều. Sở Y tế thành phố đây.	下午好。市卫生局。	こんにちは。市の保健局です。	안녕하세요. 시 보건국입니다.
+Let's see how clean this place really is.	Let's see how clean this place really is.	Để xem cửa hàng này sạch tới đâu.	看看这里到底有多干净。	ここが本当にどれだけきれいか見てみましょう。	여기가 얼마나 깨끗한지 볼까요.
+Expired food here!	Expired food here!	Đồ ăn hết hạn đây này!	这里有过期食品!	期限切れの食品がある!	유통기한 지난 음식이 있네요!
+Hmm...	Hmm...	Hừm...	嗯……	うーん……	흠...
+Hygiene award	Hygiene award	Thưởng vệ sinh	卫生奖励	衛生賞	위생 포상
+Spotless! Well done.	Spotless! Well done.	Sạch bong! Làm tốt lắm.	一尘不染!干得好。	ピカピカだ!よくできました。	티끌 하나 없네요! 잘했어요.
+<color=#6BE37B>Inspection passed - spotless store! +$100 hygiene award.</color>	<color=#6BE37B>Inspection passed - spotless store! +$100 hygiene award.</color>	<color=#6BE37B>Đạt kiểm tra - cửa hàng sạch bong! Thưởng vệ sinh +$100.</color>	<color=#6BE37B>检查通过——商店一尘不染!卫生奖励 +$100。</color>	<color=#6BE37B>検査合格――ピカピカの店!衛生賞 +$100。</color>	<color=#6BE37B>점검 통과 - 티끌 없는 가게! 위생 포상 +$100.</color>
+Health inspection fine	Health inspection fine	Phạt kiểm tra vệ sinh	卫生检查罚款	衛生検査の罰金	위생 점검 벌금
+This is not acceptable.	This is not acceptable.	Thế này không chấp nhận được.	这是不能接受的。	これは容認できません。	이건 용납할 수 없어요.
+<color=#FF8A7A>Inspection failed: {0} dirty spot(s), {1} expired item(s). Fine {2}.</color>	<color=#FF8A7A>Inspection failed: {0} dirty spot(s), {1} expired item(s). Fine {2}.</color>	<color=#FF8A7A>Không đạt kiểm tra: {0} chỗ bẩn, {1} món hết hạn. Phạt {2}.</color>	<color=#FF8A7A>检查未通过:{0} 处脏污,{1} 件过期商品。罚款 {2}。</color>	<color=#FF8A7A>検査不合格:汚れ {0} か所、期限切れ {1} 点。罰金 {2}。</color>	<color=#FF8A7A>점검 불합격: 더러운 곳 {0}곳, 유통기한 지난 상품 {1}개. 벌금 {2}.</color>
+TOUR GROUP!	TOUR GROUP!	ĐOÀN KHÁCH DU LỊCH!	旅游团来了!	ツアー客だ!	관광객 단체!
+A tour bus just stopped outside. Get the shelves and checkouts ready!	A tour bus just stopped outside. Get the shelves and checkouts ready!	Một xe du lịch vừa đỗ trước cửa. Chuẩn bị kệ hàng và quầy thu ngân đi!	一辆旅游大巴刚停在门口。把货架和收银台准备好!	ツアーバスが店の前に止まった。棚とレジを準備しよう!	관광버스가 방금 앞에 섰어요. 진열대와 계산대를 준비하세요!
+Tour guide	Tour guide	Hướng dẫn viên	导游	ガイド	가이드
+This way, everyone! Stay in line, please.	This way, everyone! Stay in line, please.	Mọi người đi lối này! Xếp hàng nhé.	大家这边走!请排好队。	皆さん、こちらへ!列を乱さないでください。	여러분 이쪽이에요! 줄 서 주세요.
+Tourist	Tourist	Khách du lịch	游客	観光客	관광객
+Wow, a real Vietnamese grocery! I want to try everything!	Wow, a real Vietnamese grocery! I want to try everything!	Ồ, một tiệm tạp hoá Việt Nam thật sự! Tôi muốn thử hết!	哇,真正的越南杂货店!我什么都想尝尝!	わあ、本物のベトナムの食料品店!全部試してみたい!	와, 진짜 베트남 식료품점이네! 전부 먹어 보고 싶어!
+Skip	Skip	Bỏ qua	跳过	スキップ	건너뛰기
+Space	Space	Space	空格	Space	Space
+Alcohol 2	Alcohol 2	Rượu 2	酒 2	お酒 2	술 2
+Alcohol 3	Alcohol 3	Rượu 3	酒 3	お酒 3	술 3
+Alcohol 4	Alcohol 4	Rượu 4	酒 4	お酒 4	술 4
+Artichokes	Artichokes	Atisô	洋蓟	アーティチョーク	아티초크
+Avocados	Avocados	Bơ	牛油果	アボカド	아보카도
+Bananas	Bananas	Chuối	香蕉	バナナ	바나나
+Beer Keg	Beer Keg	Thùng bia	啤酒桶	ビア樽	맥주 통
+Beer Pack	Beer Pack	Lốc bia	啤酒组装	ビールパック	맥주 팩
+Bleach 2	Bleach 2	Nước tẩy 2	漂白剂 2	漂白剤 2	표백제 2
+Cake 2	Cake 2	Bánh ngọt 2	蛋糕 2	ケーキ 2	케이크 2
+Candy Pack	Candy Pack	Gói kẹo	糖果包	キャンディパック	사탕 봉지
+Cans Pack	Cans Pack	Lốc lon	罐装组合	缶パック	캔 팩
+Capsule 2	Capsule 2	Viên nang cà phê 2	咖啡胶囊 2	コーヒーカプセル 2	커피 캡슐 2
+Capsule 3	Capsule 3	Viên nang cà phê 3	咖啡胶囊 3	コーヒーカプセル 3	커피 캡슐 3
+Carrots	Carrots	Cà rốt	胡萝卜	にんじん	당근
+Cheese 2	Cheese 2	Phô mai 2	奶酪 2	チーズ 2	치즈 2
+Cheese 3	Cheese 3	Phô mai 3	奶酪 3	チーズ 3	치즈 3
+Chilli Peppers	Chilli Peppers	Ớt	辣椒	唐辛子	고추
+Chocolate Box	Chocolate Box	Hộp sô-cô-la	巧克力盒	チョコレートボックス	초콜릿 상자
+Chocolate Powder	Chocolate Powder	Bột sô-cô-la	可可粉	ココアパウダー	코코아 가루
+Chocolate Spread	Chocolate Spread	Sô-cô-la phết	巧克力酱	チョコスプレッド	초코 스프레드
+Cleanser 2	Cleanser 2	Nước lau 2	清洁剂 2	クレンザー 2	세정제 2
+Clementines	Clementines	Quýt	小柑橘	みかん	귤
+Crab Sticks	Crab Sticks	Thanh cua	蟹棒	カニカマ	게맛살
+Display Table	Display Table	Bàn trưng bày	展示台	陳列台	진열 테이블
+Double Fridge	Double Fridge	Tủ lạnh đôi	双门冰柜	ダブル冷蔵庫	양문 냉장고
+Egg Box12x	Egg Box12x	Hộp 12 trứng	12 枚装鸡蛋	卵 12 個パック	달걀 12구
+Egg Box4x	Egg Box4x	Hộp 4 trứng	4 枚装鸡蛋	卵 4 個パック	달걀 4구
+Egg Box8x	Egg Box8x	Hộp 8 trứng	8 枚装鸡蛋	卵 8 個パック	달걀 8구
+Flour Pack	Flour Pack	Gói bột mì	面粉	小麦粉	밀가루
+Freezer	Freezer	Tủ đông	冷冻柜	冷凍庫	냉동고
+Fresh Potatoes	Fresh Potatoes	Khoai tây tươi	新鲜土豆	新じゃが	햇감자
+Fridge	Fridge	Tủ lạnh	冰柜	冷蔵庫	냉장고
+Frozen Pack	Frozen Pack	Gói đông lạnh	冷冻包	冷凍パック	냉동 팩
+Frozen Pack 2	Frozen Pack 2	Gói đông lạnh 2	冷冻包 2	冷凍パック 2	냉동 팩 2
+Green Apples	Green Apples	Táo xanh	青苹果	青りんご	청사과
+Juice Brick	Juice Brick	Hộp nước ép	盒装果汁	紙パックジュース	팩 주스
+Kiwis	Kiwis	Kiwi	猕猴桃	キウイ	키위
+Large Shelf	Large Shelf	Kệ lớn	大货架	大型棚	대형 진열대
+Lemons	Lemons	Chanh	柠檬	レモン	레몬
+Mash Potato	Mash Potato	Khoai tây nghiền	土豆泥	マッシュポテト	으깬 감자
+Meat Tray	Meat Tray	Khay thịt	肉盒	肉のパック	고기 팩
+Meat Tray 2	Meat Tray 2	Khay thịt 2	肉盒 2	肉のパック 2	고기 팩 2
+Meat Tray 3	Meat Tray 3	Khay thịt 3	肉盒 3	肉のパック 3	고기 팩 3
+Meat Tray 4	Meat Tray 4	Khay thịt 4	肉盒 4	肉のパック 4	고기 팩 4
+Milk Brick	Milk Brick	Hộp sữa	盒装牛奶	紙パック牛乳	팩 우유
+Mushrooms	Mushrooms	Nấm	蘑菇	きのこ	버섯
+Oil 2	Oil 2	Dầu ăn 2	食用油 2	食用油 2	식용유 2
+Old Metal Box	Old Metal Box	Hộp sắt cũ	旧铁盒	古い金属箱	낡은 철제 상자
+Onions	Onions	Hành tây	洋葱	玉ねぎ	양파
+Paper Towel	Paper Towel	Khăn giấy	厨房纸巾	キッチンペーパー	키친타월
+Pasta 2	Pasta 2	Mì Ý 2	意大利面 2	パスタ 2	파스타 2
+Pears	Pears	Lê	梨	梨	배
+Pet Food	Pet Food	Thức ăn thú cưng	宠物食品	ペットフード	반려동물 사료
+Pet Food 2	Pet Food 2	Thức ăn thú cưng 2	宠物食品 2	ペットフード 2	반려동물 사료 2
+Potato Bag	Potato Bag	Túi khoai tây	袋装土豆	じゃがいも袋	감자 자루
+Produce Stall	Produce Stall	Sạp rau quả	果蔬摊	青果台	채소 판매대
+Red Apples	Red Apples	Táo đỏ	红苹果	赤りんご	빨간 사과
+Rice Pack	Rice Pack	Túi gạo	袋装大米	お米	쌀 포대
+Shampoo 2	Shampoo 2	Dầu gội 2	洗发水 2	シャンプー 2	샴푸 2
+Shampoo 3	Shampoo 3	Dầu gội 3	洗发水 3	シャンプー 3	샴푸 3
+Slice Bread	Slice Bread	Bánh mì lát	切片面包	食パン	식빵
+Sliced Bread	Sliced Bread	Bánh mì lát	切片面包	食パン	식빵
+Small Shelf	Small Shelf	Kệ nhỏ	小货架	小型棚	소형 진열대
+Soap 2	Soap 2	Xà phòng 2	肥皂 2	石けん 2	비누 2
+Soda 2	Soda 2	Nước ngọt 2	汽水 2	炭酸飲料 2	탄산음료 2
+Soda 3	Soda 3	Nước ngọt 3	汽水 3	炭酸飲料 3	탄산음료 3
+Storage Rack	Storage Rack	Giá kho	仓储货架	保管ラック	창고 선반
+Sugar 2	Sugar 2	Đường 2	糖 2	砂糖 2	설탕 2
+Sugar 3	Sugar 3	Đường 3	糖 3	砂糖 3	설탕 3
+Sushis 2	Sushis 2	Sushi 2	寿司 2	寿司 2	초밥 2
+Sweet Jar	Sweet Jar	Hũ kẹo	糖果罐	キャンディジャー	사탕 병
+Sweet Jar 2	Sweet Jar 2	Hũ kẹo 2	糖果罐 2	キャンディジャー 2	사탕 병 2
+Sweet Jar 3	Sweet Jar 3	Hũ kẹo 3	糖果罐 3	キャンディジャー 3	사탕 병 3
+Teabox 2	Teabox 2	Hộp trà 2	茶叶盒 2	紅茶の箱 2	차 상자 2
+Teabox 3	Teabox 3	Hộp trà 3	茶叶盒 3	紅茶の箱 3	차 상자 3
+Teabox 4	Teabox 4	Hộp trà 4	茶叶盒 4	紅茶の箱 4	차 상자 4
+Tin Can 1	Tin Can 1	Đồ hộp 1	罐头 1	缶詰 1	통조림 1
+Tin Can 2	Tin Can 2	Đồ hộp 2	罐头 2	缶詰 2	통조림 2
+Tin Can 3	Tin Can 3	Đồ hộp 3	罐头 3	缶詰 3	통조림 3
+Toilet Paper	Toilet Paper	Giấy vệ sinh	卫生纸	トイレットペーパー	화장지
+Tomatoes	Tomatoes	Cà chua	番茄	トマト	토마토
+Water Bottle	Water Bottle	Chai nước	瓶装水	水のボトル	생수병
+Water Pack	Water Pack	Lốc nước	瓶装水组	水パック	생수 팩
+Wine Bottle	Wine Bottle	Chai rượu vang	葡萄酒	ワインボトル	와인병
+Wooden Stall	Wooden Stall	Sạp gỗ	木摊	木の屋台	나무 좌판
+Yoghurt Pack	Yoghurt Pack	Lốc sữa chua	酸奶组装	ヨーグルトパック	요거트 팩
+Summer	Summer	Mùa hè	夏季	夏	여름
+Autumn	Autumn	Mùa thu	秋季	秋	가을
+Winter	Winter	Mùa đông	冬季	冬	겨울
+Spring	Spring	Mùa xuân	春季	春	봄
+Sunny	Sunny	Nắng	晴	晴れ	맑음
+Cloudy	Cloudy	Nhiều mây	多云	くもり	흐림
+Rain	Rain	Mưa	雨	雨	비
+Storm	Storm	Giông bão	暴风雨	嵐	폭풍
+Fog	Fog	Sương mù	雾	霧	안개
+<b>COMING SOON: Center Aisles</b>	<b>COMING SOON: Center Aisles</b>	<b>SẮP MỞ: Dãy kệ giữa</b>	<b>即将开放:中央货架区</b>	<b>近日オープン:中央通路</b>	<b>오픈 예정: 중앙 통로</b>
+<b>COMING SOON: Chilled Aisle</b>	<b>COMING SOON: Chilled Aisle</b>	<b>SẮP MỞ: Dãy đồ lạnh</b>	<b>即将开放:冷藏区</b>	<b>近日オープン:冷蔵通路</b>	<b>오픈 예정: 냉장 통로</b>
+<b>COMING SOON: East Hall</b>	<b>COMING SOON: East Hall</b>	<b>SẮP MỞ: Sảnh Đông</b>	<b>即将开放:东厅</b>	<b>近日オープン:東ホール</b>	<b>오픈 예정: 동쪽 홀</b>
+<b>COMING SOON: Rear Hall</b>	<b>COMING SOON: Rear Hall</b>	<b>SẮP MỞ: Sảnh sau</b>	<b>即将开放:后厅</b>	<b>近日オープン:奥のホール</b>	<b>오픈 예정: 뒤쪽 홀</b>
+Money:	Money:	Tiền:	资金:	所持金:	돈:
+Vehicles	Vehicles	Xe	车辆	乗り物	차량
+Add to Cart	Add to Cart	Thêm vào giỏ	加入购物车	カートに追加	장바구니에 담기
+Amount	Amount	Số lượng	数量	数量	수량
+Brand	Brand	Thương hiệu	品牌	ブランド	브랜드
+CATEGORY	CATEGORY	DANH MỤC	类别	カテゴリー	카테고리
+DISPLAY	DISPLAY	TRƯNG BÀY	陈列	陳列	진열
+Day	Day	Ngày	天	日	일
+Display	Display	Trưng bày	陈列	陳列	진열
+Floor	Floor	Sàn	地板	床	바닥
+Furnitures	Furniture	Nội thất	家具	家具	가구
+Item Name	Item Name	Tên hàng	商品名称	商品名	상품명
+MARKET	MARKET	CHỢ	市场	マーケット	마켓
+Paints	Paints	Sơn	油漆	ペンキ	페인트
+Press F to Pick up Item	Press F to pick up item	Nhấn F để nhặt đồ	按 F 拾取物品	F で拾う	F를 눌러 줍기
+Price	Price	Giá	价格	価格	가격
+Products	Products	Sản phẩm	商品	商品	상품
+Time	Time	Giờ	时间	時刻	시간
+Tools	Tools	Dụng cụ	工具	道具	도구
+Total	Total	Tổng	合计	合計	합계
+Type	Type	Loại	类型	種類	종류
+Unit Price	Unit Price	Đơn giá	单价	単価	단가
+<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Nước bắn tung toé.</i>	<i>Two bikes tear down the empty street. Horns blaring. Water sprays everywhere.</i>	<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Nước bắn tung toé.</i>	<i>两辆车在空荡的街上飞驰。喇叭声刺耳。水花四溅。</i>	<i>二台のバイクが無人の通りを疾走する。クラクションが鳴り響く。水しぶきが飛び散る。</i>	<i>오토바이 두 대가 텅 빈 거리를 질주한다. 경적이 요란하다. 물보라가 튄다.</i>
+<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Đèn pha loang loáng.</i>	<i>Two bikes tear down the empty street. Horns blaring. Headlights flashing.</i>	<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Đèn pha loang loáng.</i>	<i>两辆车在空荡的街上飞驰。喇叭声刺耳。车灯晃动。</i>	<i>二台のバイクが無人の通りを疾走する。クラクションが鳴り響く。ヘッドライトがぎらつく。</i>	<i>오토바이 두 대가 텅 빈 거리를 질주한다. 경적이 요란하다. 전조등이 번쩍인다.</i>
+<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Bụi tung mù mịt.</i>	<i>Two bikes tear down the empty street. Horns blaring. Dust flies everywhere.</i>	<i>Hai chiếc xe lao vun vút trên phố vắng. Còi inh ỏi. Bụi tung mù mịt.</i>	<i>两辆车在空荡的街上飞驰。喇叭声刺耳。尘土飞扬。</i>	<i>二台のバイクが無人の通りを疾走する。クラクションが鳴り響く。土ぼこりが舞い上がる。</i>	<i>오토바이 두 대가 텅 빈 거리를 질주한다. 경적이 요란하다. 먼지가 자욱하다.</i>
+<i>Người trong các cửa hàng chạy ùa ra, la ó. Bọn cướp hoảng hốt.</i>	<i>People rush out of the shops, shouting. The robbers panic.</i>	<i>Người trong các cửa hàng chạy ùa ra, la ó. Bọn cướp hoảng hốt.</i>	<i>店里的人纷纷冲出来大声呼喊。劫匪慌了。</i>	<i>店の人たちが叫びながら飛び出してくる。強盗たちはうろたえる。</i>	<i>가게 사람들이 소리치며 뛰쳐나온다. 강도들이 당황한다.</i>
+<i>Một ô cửa bật đèn, cánh cửa đập mạnh mở ra. Bọn cướp hoảng hốt.</i>	<i>A light comes on and a door bangs open. The robbers panic.</i>	<i>Một ô cửa bật đèn, cánh cửa đập mạnh mở ra. Bọn cướp hoảng hốt.</i>	<i>一扇窗亮了灯,门砰地打开。劫匪慌了。</i>	<i>窓に明かりがつき、ドアが勢いよく開く。強盗たちはうろたえる。</i>	<i>창에 불이 켜지고 문이 벌컥 열린다. 강도들이 당황한다.</i>
+<i>Một ô cửa sổ bật mở, có người ló ra quát lớn. Bọn cướp hoảng hốt.</i>	<i>A window flies open and someone leans out, shouting. The robbers panic.</i>	<i>Một ô cửa sổ bật mở, có người ló ra quát lớn. Bọn cướp hoảng hốt.</i>	<i>一扇窗户猛地打开,有人探出头大喝。劫匪慌了。</i>	<i>窓が開き、誰かが身を乗り出して怒鳴る。強盗たちはうろたえる。</i>	<i>창문이 벌컥 열리고 누군가 몸을 내밀어 고함친다. 강도들이 당황한다.</i>
+Speed	Speed	Tốc độ	速度	速度	속도
+free	free	miễn phí	免费	無料	무료
+starter	starter	xe khởi đầu	初始车辆	最初の乗り物	기본 지급
+store Lv {0}	store Lv {0}	cửa hàng cấp {0}	商店等级 {0}	店舗 Lv {0}	가게 Lv {0}
+HONDA CUB	HONDA CUB	HONDA CUB	HONDA CUB	HONDA CUB	HONDA CUB
+HONDA C125	HONDA C125	HONDA C125	HONDA C125	HONDA C125	HONDA C125
+CLASSIC SEDAN	CLASSIC SEDAN	SEDAN CỔ ĐIỂN	经典轿车	クラシックセダン	클래식 세단
+TOCUS CITY CAR	TOCUS CITY CAR	TOCUS CITY CAR	TOCUS 城市车	TOCUS シティカー	TOCUS 시티카
+SPORTS COUPE	SPORTS COUPE	XE THỂ THAO	运动跑车	スポーツクーペ	스포츠 쿠페
+CASHIER	CASHIER	THU NGÂN	收银员	レジ係	계산원
+RESTOCKER	RESTOCKER	XẾP KỆ	理货员	品出し係	진열 직원
+GUARD	GUARD	BẢO VỆ	保安	警備員	경비원
+JANITOR	JANITOR	LAO CÔNG	清洁工	清掃員	청소부
+Shelves and checkout	Shelves and checkout	Kệ hàng và quầy thu ngân	货架和收银台	棚とレジ	진열대와 계산대
+owned	owned	đã có	已拥有	所有済み	보유
+built	built	đã xây	已建成	建設済み	완공
+ENTRANCE	ENTRANCE	LỐI VÀO	入口	入口	입구
+adds to the daily rent	adds to the daily rent	cộng vào tiền thuê mỗi ngày	计入每日租金	毎日の家賃に加算	매일 임대료에 추가
+East Hall	East Hall	Sảnh Đông	东厅	東ホール	동쪽 홀
+EAST HALL	EAST HALL	SẢNH ĐÔNG	东厅	東ホール	동쪽 홀
+Chilled Aisle	Chilled Aisle	Dãy đồ lạnh	冷藏区	冷蔵通路	냉장 통로
+CHILLED AISLE	CHILLED AISLE	DÃY ĐỒ LẠNH	冷藏区	冷蔵通路	냉장 통로
+Center Aisles	Center Aisles	Dãy kệ giữa	中央货架区	中央通路	중앙 통로
+CENTER AISLES	CENTER AISLES	DÃY KỆ GIỮA	中央货架区	中央通路	중앙 통로
+Rear Hall	Rear Hall	Sảnh sau	后厅	奥のホール	뒤쪽 홀
+REAR HALL	REAR HALL	SẢNH SAU	后厅	奥のホール	뒤쪽 홀
+Warehouse	Warehouse	Nhà kho	仓库	倉庫	창고
+WAREHOUSE	WAREHOUSE	NHÀ KHO	仓库	倉庫	창고
+Store Expansion #1	Store Expansion #1	Mở rộng cửa hàng #1	商店扩建 #1	店舗拡張 #1	매장 확장 #1
+STORE EXPANSION #1	STORE EXPANSION #1	MỞ RỘNG CỬA HÀNG #1	商店扩建 #1	店舗拡張 #1	매장 확장 #1
+Store Expansion #2	Store Expansion #2	Mở rộng cửa hàng #2	商店扩建 #2	店舗拡張 #2	매장 확장 #2
+STORE EXPANSION #2	STORE EXPANSION #2	MỞ RỘNG CỬA HÀNG #2	商店扩建 #2	店舗拡張 #2	매장 확장 #2
+Produce corner and two more aisles	Produce corner and two more aisles	Góc rau quả và thêm hai dãy kệ	果蔬角和另外两排货架	青果コーナーと通路2本	채소 코너와 통로 2개 추가
+Fridges, freezers and one more aisle	Fridges, freezers and one more aisle	Tủ lạnh, tủ đông và thêm một dãy kệ	冰柜、冷冻柜和另一排货架	冷蔵庫・冷凍庫と通路1本	냉장고, 냉동고와 통로 1개 추가
+Four long aisles in the middle of the store	Four long aisles in the middle of the store	Bốn dãy kệ dài giữa cửa hàng	店中央的四排长货架	店の中央に長い通路4本	매장 중앙의 긴 통로 4개
+Back fridges, freezers and the deli corner	Back fridges, freezers and the deli corner	Tủ lạnh, tủ đông phía sau và góc đồ nguội	后排冰柜、冷冻柜和熟食角	奥の冷蔵庫・冷凍庫と総菜コーナー	뒤쪽 냉장고, 냉동고와 델리 코너
+More floor space for shelves and fridges	More floor space for shelves and fridges	Thêm diện tích sàn cho kệ và tủ lạnh	为货架和冰柜增加更多面积	棚や冷蔵庫を置く床面積を拡張	진열대와 냉장고를 놓을 공간 추가
+A storage building next to the store for your boxes	A storage building next to the store for your boxes	Toà nhà kho cạnh cửa hàng để chứa thùng hàng	商店旁存放箱子的仓库	店の隣にある箱置き用の倉庫	가게 옆 상자 보관용 창고 건물
+Daily wages	Daily wages	Lương mỗi ngày	每日工资	日給合計	일일 급여
+BUILDING NEXT DOOR	BUILDING NEXT DOOR	TOÀ NHÀ BÊN CẠNH	隔壁建筑	隣の建物	옆 건물
