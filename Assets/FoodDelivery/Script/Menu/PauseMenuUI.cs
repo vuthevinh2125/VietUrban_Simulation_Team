@@ -9,6 +9,7 @@ public class PauseMenuUI : MonoBehaviour
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button saveAndQuitButton;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private AccountMenuController accountMenuController;
     [SerializeField] private string sceneMainMenu;
     [SerializeField] private MonoBehaviour[] disableWhileOpen;
     public static bool IsPaused;
@@ -32,9 +33,17 @@ public class PauseMenuUI : MonoBehaviour
     }
     void Start()
     {
+        if (accountMenuController == null)
+        {
+            accountMenuController = GetComponent<AccountMenuController>();
+        }
         resumeButton.onClick.AddListener(Close);
         saveAndQuitButton.onClick.AddListener(SaveAndQuit);
         mainMenuButton.onClick.AddListener(BackMainMenu);
+        if (accountMenuController != null)
+        {
+            accountMenuController.CloseProfile();
+        }
     }
     void Update()
     {
@@ -76,6 +85,10 @@ public class PauseMenuUI : MonoBehaviour
         {
             return;
         }
+        if (accountMenuController != null)
+        {
+            accountMenuController.CloseProfile();
+        }
         IsOpen = true;
         IsPaused = true;
         previousCursorVisible = Cursor.visible;
@@ -92,6 +105,10 @@ public class PauseMenuUI : MonoBehaviour
         if (!IsOpen)
         {
             return;
+        }
+        if (accountMenuController != null)
+        {
+            accountMenuController.CloseProfile();
         }
         IsOpen = false;
         IsPaused = false;

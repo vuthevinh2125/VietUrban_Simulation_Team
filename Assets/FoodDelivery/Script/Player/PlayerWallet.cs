@@ -11,11 +11,20 @@ public class PlayerWallet : MonoBehaviour
         }
     }
     public event Action<int> MoneyChange;
+    public event Action<int> MoneyTransaction;
+    public event Action<int> ReputationChanged;
     public int Money
     {
         get
         {
             return playerData.money;
+        }
+    }
+    public int Reputation
+    {
+        get
+        {
+            return playerData.reputation;
         }
     }
     
@@ -34,6 +43,10 @@ public class PlayerWallet : MonoBehaviour
         {
             MoneyChange(playerData.money);
         }
+        if (MoneyTransaction != null)
+        {
+            MoneyTransaction(-amount);
+        }
         return true;
     }
 
@@ -48,6 +61,23 @@ public class PlayerWallet : MonoBehaviour
         if (MoneyChange != null)
         {
             MoneyChange(playerData.money);
+        }
+        if (MoneyTransaction != null)
+        {
+            MoneyTransaction(amount);
+        }
+    }
+
+    public void SetReputation(int reputation)
+    {
+        if (reputation > 50)
+        {
+            reputation = 50;
+        }
+        playerData.reputation = reputation;
+        if (ReputationChanged != null)
+        {
+            ReputationChanged(playerData.reputation);
         }
     }
 

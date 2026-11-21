@@ -8,6 +8,7 @@ public class DeliveryInventory : MonoBehaviour
     [SerializeField] private PlayerWallet playerWallet;
     [SerializeField] private Transform playerTransform;
     [SerializeField, Min(0.5f)] private float deliveryDistance = 3f;
+    [SerializeField, Min(1)] private int maxPackages = 64;
 
     private readonly List<Order> packages = new List<Order>();
     private Order selectedPackage;
@@ -28,6 +29,16 @@ public class DeliveryInventory : MonoBehaviour
     public float DeliveryDistance
     {
         get { return deliveryDistance; }
+    }
+
+    public int MaxPackages
+    {
+        get { return maxPackages; }
+    }
+
+    public bool IsFull
+    {
+        get { return packages.Count >= maxPackages; }
     }
 
     public float DistanceToSelectedCustomer
@@ -53,7 +64,7 @@ public class DeliveryInventory : MonoBehaviour
 
     public bool TryAddPackage(Order order)
     {
-        if (order == null || order.OrderStatus != Order.OrderState.Closed || !order.IsCreated)
+        if (order == null || order.OrderStatus != Order.OrderState.Closed || !order.IsCreated || IsFull)
         {
             return false;
         }

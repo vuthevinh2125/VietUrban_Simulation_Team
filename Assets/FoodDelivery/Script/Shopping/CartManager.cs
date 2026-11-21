@@ -56,6 +56,11 @@ public class CartManager : MonoBehaviour
     }
     public bool TryAddItem(ItemData item, float amount)
     {
+        if (!GameSession.Current.CanSell)
+        {
+            Debug.Log("business registration required");
+            return false;
+        }
         if (_currentLoad + amount > bagCapacity)
         {
             Debug.Log("Bag is full, cannot add more");
@@ -99,7 +104,7 @@ public class CartManager : MonoBehaviour
 
     private void HandleCheckout()
     { 
-        if (_cart.Count == 0)
+        if (_cart.Count == 0 || !GameSession.Current.CanSell)
         {
             return;
         }

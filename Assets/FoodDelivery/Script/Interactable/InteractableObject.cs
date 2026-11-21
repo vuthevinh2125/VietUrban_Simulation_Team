@@ -8,6 +8,16 @@ public class InteractableObject : MonoBehaviour
         return ItemName;
     }
 
+    public virtual string GetInteractionPrompt()
+    {
+        return ItemName;
+    }
+
+    public virtual bool HandleInteractionKey(KeyCode key)
+    {
+        return false;
+    }
+
     public virtual void Interact()
     {
         Debug.Log("clicked");

@@ -17,8 +17,10 @@ MonoBehaviour:
   ingredients:
   - ingredient: {fileID: 11400000, guid: 5610730d5b8a9444cb4faf5c824843c3, type: 2}
     amount: 1
-  - ingredient: {fileID: 11400000, guid: 5610730d5b8a9444cb4faf5c824843c3, type: 2}
+  - ingredient: {fileID: 11400000, guid: 82861582be3dfa14782a399eb361d752, type: 2}
     amount: 1
-  cookTime: 10
+  - ingredient: {fileID: 11400000, guid: 7cf39b67689237e429b73a72e1cc23fa, type: 2}
+    amount: 1
+  cookTime: 8
   completedDish: {fileID: 7471733910451209573, guid: 8b6440d29375374418d4334b580c2053, type: 3}
   incompletedDish: {fileID: 4406908661635849117, guid: 87de8244ced2e304eb1a3ffbca26a73d, type: 3}

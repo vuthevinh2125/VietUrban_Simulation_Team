@@ -1,15 +1,36 @@
 using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TimeController : MonoBehaviour
 {
+    private static readonly string[] WeekdayNames =
+    {
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    };
+
     [SerializeField]
     private float timeMultiplier;
     [SerializeField]
     private float startHour;
     [SerializeField]
     private TextMeshProUGUI timeText;
+    [SerializeField]
+    private TextMeshProUGUI dateText;
+    [SerializeField]
+    private Image dayNightIcon;
+    [SerializeField]
+    private Sprite sunIcon;
+    [SerializeField]
+    private Sprite moonIcon;
+    [SerializeField]
+    private int startYear = 2026;
+    [SerializeField]
+    private int startMonth = 11;
+    [SerializeField]
+    private int startDay = 15;
     [SerializeField]
     private Light sunLight;
     [SerializeField]
@@ -37,8 +58,11 @@ public class TimeController : MonoBehaviour
     private Material skyboxMaterial;
 
     private DateTime currentTime;
+    private DateTime firstGameDate;
     private TimeSpan sunriseTime;
     private TimeSpan sunsetTime;
+    private bool daytimeIconVisible;
+    private bool hasUpdatedDayNightIcon;
 
     public DateTime CurrentTime
     {
@@ -47,13 +71,13 @@ public class TimeController : MonoBehaviour
             return currentTime;
         }
     }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
+        firstGameDate = new DateTime(startYear, startMonth, startDay);
+        currentTime = firstGameDate.AddHours(startHour);
         sunriseTime = TimeSpan.FromHours(sunriseHour);
         sunsetTime = TimeSpan.FromHours(sunsetHour);
+        UpdateClockUI();
         if (RenderSettings.skybox != null)
         {
             skyboxMaterial = new Material(RenderSettings.skybox);
@@ -61,8 +85,7 @@ public class TimeController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         UpdateTimeOfDay();
         RotateSun();
@@ -75,6 +98,31 @@ public class TimeController : MonoBehaviour
         if (timeText != null)
         {
             timeText.text = currentTime.ToString("HH:mm");
+        }
+        UpdateClockUI();
+    }
+
+    private void UpdateClockUI()
+    {
+        if (dateText != null)
+        {
+            int weekdayIndex = (int)((currentTime.Date - firstGameDate.Date).TotalDays % WeekdayNames.Length);
+            dateText.text = WeekdayNames[weekdayIndex] + " | " + currentTime.ToString("yyyy.dd.MM", CultureInfo.InvariantCulture);
+        }
+
+        bool isDaytime = currentTime.Hour >= 5 && currentTime.Hour < 18;
+        if (dayNightIcon != null && (!hasUpdatedDayNightIcon || daytimeIconVisible != isDaytime))
+        {
+            daytimeIconVisible = isDaytime;
+            hasUpdatedDayNightIcon = true;
+            if (isDaytime)
+            {
+                dayNightIcon.sprite = sunIcon;
+            }
+            else
+            {
+                dayNightIcon.sprite = moonIcon;
+            }
         }
     }
 

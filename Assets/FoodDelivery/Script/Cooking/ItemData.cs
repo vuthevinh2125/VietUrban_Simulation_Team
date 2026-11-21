@@ -1,7 +1,9 @@
 using UnityEngine;
 public enum ItemCategory
 {
-    FoodBuy, Fuel, Repair, FoodSell
+    FoodBuy = 0,
+    Consume = 1,
+    FoodSell = 3
 }
 public enum SellType
 {
@@ -18,5 +20,9 @@ public class ItemData : ScriptableObject
     public string description;
     public float limitPerBuying;
     public Sprite icon;
+    public GameObject worldPrefab;
+    [Min(0f)] public float cookingVisualSize;
+    public Vector3 cookingVisualRotation;
+    [Min(0f)] public float staminaRestore;
 
 }

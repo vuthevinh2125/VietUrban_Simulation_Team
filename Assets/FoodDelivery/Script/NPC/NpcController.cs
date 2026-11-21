@@ -4,14 +4,12 @@ using UnityEngine.AI;
 
 public enum NpcBehaviorType
 {
-    Wanderer,
     Shopper
 }
 
 public class NpcController : MonoBehaviour
 {
     [SerializeField] private NpcBehaviorType behaviorType;
-    [SerializeField, Range(0f, 1f)] private float wandererHomeVisitChance = 0.2f;
     [SerializeField, Min(0f)] private float minTimeInside = 10f;
     [SerializeField, Min(0f)] private float maxTimeInside = 30f;
     [SerializeField, Min(0f)] private float minTimeAtActivity = 5f;
@@ -23,7 +21,7 @@ public class NpcController : MonoBehaviour
     private Renderer[] visualRenderers;
     private Transform[] houseEntrances;
     private Transform[] shopSpots;
-    private Transform[] parkSpots;
+    private Transform player;
     private Transform homeEntrance;
     private Transform currentDestination;
     private Vector3 currentDestinationPosition;
@@ -38,6 +36,9 @@ public class NpcController : MonoBehaviour
     private float roamingRadius;
     private float minTimeRoaming;
     private float maxTimeRoaming;
+    private float maxRoamingHeightDifference;
+    private float playerStopPadding;
+    private float roamingGroundLevel;
 
     private enum DestinationType
     {
@@ -56,11 +57,13 @@ public class NpcController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         visualRenderers = GetComponentsInChildren<Renderer>(true);
+        roamingGroundLevel = transform.position.y;
     }
 
     public void Configure(NpcBehaviorType type, string name, string address, Transform residentHome,
-        Transform[] houses, Transform[] shops, Transform[] parks, float visitChance,
-        float moveRadius, float roamingWaitMin, float roamingWaitMax)
+        Transform[] houses, Transform[] shops, float visitChance,
+        float moveRadius, float roamingWaitMin, float roamingWaitMax, Transform playerTransform,
+        float roamingHeightDifference, float stopPadding)
     {
         behaviorType = type;
         residentName = name;
@@ -68,15 +71,26 @@ public class NpcController : MonoBehaviour
         homeEntrance = residentHome;
         houseEntrances = houses;
         shopSpots = shops;
-        parkSpots = parks;
+        player = playerTransform;
         activityVisitChance = Mathf.Clamp01(visitChance);
         roamingRadius = Mathf.Max(1f, moveRadius);
         minTimeRoaming = Mathf.Max(0f, roamingWaitMin);
         maxTimeRoaming = Mathf.Max(minTimeRoaming, roamingWaitMax);
+        maxRoamingHeightDifference = Mathf.Max(0f, roamingHeightDifference);
+        playerStopPadding = Mathf.Max(0f, stopPadding);
     }
 
     private void Start()
     {
+        if (player == null)
+        {
+            StarterAssets.FirstPersonController playerController = FindAnyObjectByType<StarterAssets.FirstPersonController>();
+            if (playerController != null)
+            {
+                player = playerController.transform;
+            }
+        }
+
         if (agent == null || !agent.isOnNavMesh)
         {
             Debug.Log("npc needs a nav mesh agent on the nav mesh", this);
@@ -87,13 +101,6 @@ public class NpcController : MonoBehaviour
         if (GetValidCount(houseEntrances) < 2 || homeEntrance == null)
         {
             Debug.Log("npc needs a home and at least two house entrances", this);
-            enabled = false;
-            return;
-        }
-
-        if (behaviorType == NpcBehaviorType.Wanderer && GetValidCount(parkSpots) == 0)
-        {
-            Debug.Log("wanderer needs at least one park spot", this);
             enabled = false;
             return;
         }
@@ -115,7 +122,25 @@ public class NpcController : MonoBehaviour
             return;
         }
 
-        if (isWaiting || !hasCurrentDestination || agent.pathPending || !agent.hasPath)
+        if (isWaiting || !hasCurrentDestination)
+        {
+            UpdateWalkingAnimation();
+            return;
+        }
+
+        if (ShouldStopForPlayer())
+        {
+            agent.isStopped = true;
+            UpdateWalkingAnimation();
+            return;
+        }
+
+        if (agent.isStopped)
+        {
+            agent.isStopped = false;
+        }
+
+        if (agent.pathPending || !agent.hasPath)
         {
             UpdateWalkingAnimation();
             return;
@@ -183,7 +208,7 @@ public class NpcController : MonoBehaviour
         yield return new WaitForSeconds(GetRandomWait(minTimeAtActivity, maxTimeAtActivity));
         isWaiting = false;
 
-        if (ShouldVisitHomeAfterActivity())
+        if (Random.value < 0.25f)
         {
             SetHomeDestination(null);
         }
@@ -202,23 +227,7 @@ public class NpcController : MonoBehaviour
         yield return new WaitForSeconds(GetRandomWait(minTimeRoaming, maxTimeRoaming));
         isWaiting = false;
 
-        if (behaviorType == NpcBehaviorType.Wanderer && Random.value < wandererHomeVisitChance)
-        {
-            SetHomeDestination(null);
-        }
-        else
-        {
-            SetNextTravelDestination();
-        }
-    }
-
-    private bool ShouldVisitHomeAfterActivity()
-    {
-        if (behaviorType == NpcBehaviorType.Shopper)
-        {
-            return Random.value < 0.25f;
-        }
-        return Random.value < wandererHomeVisitChance;
+        SetNextTravelDestination();
     }
 
     private IEnumerator EnterHouseAndLeaveLater()
@@ -267,17 +276,13 @@ public class NpcController : MonoBehaviour
 
     private void SetActivityDestination()
     {
-        Transform[] activities = parkSpots;
-        if (behaviorType == NpcBehaviorType.Shopper)
-        {
-            activities = shopSpots;
-        }
-        SetDestination(GetRandomTransform(activities, null), DestinationType.Activity);
+        SetDestination(GetRandomTransform(shopSpots, null), DestinationType.Activity);
     }
 
     private void SetRandomRoamingDestination()
     {
-        if (NpcNavMeshUtility.TryGetReachablePosition(agent, roamingRadius, out Vector3 randomPosition))
+        if (NpcNavMeshUtility.TryGetReachablePosition(agent, roamingRadius, roamingGroundLevel,
+            maxRoamingHeightDifference, out Vector3 randomPosition))
         {
             SetDestination(randomPosition, DestinationType.Roaming);
             return;
@@ -308,7 +313,9 @@ public class NpcController : MonoBehaviour
 
     private void SetDestination(Vector3 destination, DestinationType type)
     {
-        if (!agent.SetDestination(destination))
+        NavMeshPath path;
+        if (!NpcNavMeshUtility.TryGetPathWithinHeight(agent, destination, roamingGroundLevel,
+            maxRoamingHeightDifference, out path) || !agent.SetPath(path))
         {
             Debug.Log("npc could not set a roaming destination", this);
             currentDestination = null;
@@ -378,6 +385,25 @@ public class NpcController : MonoBehaviour
     {
         agent.isStopped = true;
         agent.ResetPath();
+    }
+
+    private bool ShouldStopForPlayer()
+    {
+        if (player == null || agent == null)
+        {
+            return false;
+        }
+
+        Vector3 offset = player.position - transform.position;
+        offset.y = 0f;
+        CharacterController playerController = player.GetComponent<CharacterController>();
+        float stopDistance = agent.radius + playerStopPadding;
+        if (playerController != null)
+        {
+            stopDistance += playerController.radius;
+        }
+
+        return offset.sqrMagnitude <= stopDistance * stopDistance;
     }
 
     private void UpdateWalkingAnimation()

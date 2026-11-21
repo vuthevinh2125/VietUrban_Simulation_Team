@@ -16,7 +16,9 @@ MonoBehaviour:
   itemName: Loaf
   category: 0
   sellType: 1
-  basePriceBuy: 20
+  basePriceBuy: 3000
   description: Gion ngon
   limitPerBuying: 500
-  icon: {fileID: 21300000, guid: 0bae96daf6b8b8f41b88220d0e408859, type: 3}
+  icon: {fileID: 21300000, guid: 07b6a208db209af43893f59af2008a71, type: 3}
+  worldPrefab: {fileID: 6926550738354213948, guid: 2befa64bbbc90b74ea420e65a1e92b49, type: 3}
+  staminaRestore: 0

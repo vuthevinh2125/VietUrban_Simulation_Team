@@ -15,7 +15,7 @@ public class OrderSpawner : MonoBehaviour
     [SerializeField] private float firstOrderDelayGameMinutes;
     [SerializeField] private float minSpawnIntervalGameMinutes = 30f;
     [SerializeField] private float maxSpawnIntervalGameMinutes = 60f;
-    [SerializeField] private float expectedDeliveryGameMinutes = 120f;
+    [SerializeField] private float expectedDeliveryGameMinutes = 60f;
 
     private DateTime nextSpawnTime;
     private int nextOrderId;

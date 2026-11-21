@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class OrderCardView : MonoBehaviour
 {
     [SerializeField] private TMP_Text idText;
@@ -14,75 +13,59 @@ public class OrderCardView : MonoBehaviour
     [SerializeField] private TMP_Text payText;
     [SerializeField] private TMP_Text deadlineText;
     [SerializeField] private Button acceptButton;
-
-    private void Awake()
-    {
-        FindReferencesIfNeeded();
-    }
-
     public void SetOrder(Order order, Action acceptAction)
     {
         if (order == null)
         {
             return;
         }
-
         FindReferencesIfNeeded();
-
         if (idText != null)
         {
-            idText.text = "Đơn #" + order.OrderId;
+            idText.text = "order #" + order.OrderId;
         }
-
         if (dishText != null)
         {
             if (order.Recipe != null)
             {
-                dishText.text = order.Recipe.RecipeName;
+                dishText.text = order.Recipe.RecipeName.ToLowerInvariant();
             }
             else
             {
-                dishText.text = "Chưa xác định món";
+                dishText.text = "unknown dish";
             }
         }
-
         if (countText != null)
         {
-            countText.text = order.RequiredCount + " phần";
+            countText.text = order.RequiredCount + " items";
         }
-
         if (statusText != null)
         {
-            statusText.text = "Đang chờ xác nhận";
+            statusText.text = "available";
         }
-
         if (customerText != null)
         {
-            customerText.text = order.CustomerName;
+            customerText.text = order.CustomerName.ToLowerInvariant();
         }
-
         if (addressText != null)
         {
-            addressText.text = order.DeliveryAddress;
+            addressText.text = order.DeliveryAddress.ToLowerInvariant();
         }
-
         if (payText != null)
         {
-            payText.text = order.Total.ToString("N0") + " đ";
+            payText.text = order.Total.ToString("N0") + " vnd";
         }
-
         if (deadlineText != null)
         {
             if (order.HasDeliveryDeadline)
             {
-                deadlineText.text = "Hạn giao: " + order.ExpectedDeliveryAt.ToString("HH:mm");
+                deadlineText.text = "due " + order.ExpectedDeliveryAt.ToString("HH:mm").ToLowerInvariant();
             }
             else
             {
                 deadlineText.text = string.Empty;
             }
         }
-
         if (acceptButton != null)
         {
             acceptButton.onClick.RemoveAllListeners();
@@ -92,7 +75,6 @@ public class OrderCardView : MonoBehaviour
             }
         }
     }
-
     private void FindReferencesIfNeeded()
     {
         if (idText == null)
@@ -129,14 +111,13 @@ public class OrderCardView : MonoBehaviour
         }
         if (acceptButton == null)
         {
-            Transform buttonTransform = FindChild("AcceptButton");
-            if (buttonTransform != null)
+            Transform button = FindChild("AcceptButton");
+            if (button != null)
             {
-                acceptButton = buttonTransform.GetComponent<Button>();
+                acceptButton = button.GetComponent<Button>();
             }
         }
     }
-
     private TMP_Text FindText(string childName)
     {
         Transform child = FindChild(childName);
@@ -146,7 +127,6 @@ public class OrderCardView : MonoBehaviour
         }
         return child.GetComponent<TMP_Text>();
     }
-
     private Transform FindChild(string childName)
     {
         Transform[] children = GetComponentsInChildren<Transform>(true);

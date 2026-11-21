@@ -106,7 +106,7 @@ public class ShopOpener : MonoBehaviour
     }
     public void Open()
     {
-        if (IsOpen)
+        if (IsOpen || !GameSession.Current.CanSell)
         {
             return;
         }

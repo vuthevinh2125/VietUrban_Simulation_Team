@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class PhoneUIController : MonoBehaviour
 {
     [SerializeField] private GameObject phoneRoot;
@@ -8,12 +7,10 @@ public class PhoneUIController : MonoBehaviour
     [SerializeField] private GameObject vietUrbanFoodScreen;
     [SerializeField] private GameObject crosshair;
     [SerializeField] private KeyCode toggleKey = KeyCode.O;
-
     private bool isPhoneOpen;
     private bool previousCrosshairActive;
     private CursorLockMode previousCursorLockMode;
     private bool previousCursorVisible;
-
     private void Start()
     {
         isPhoneOpen = false;
@@ -34,7 +31,6 @@ public class PhoneUIController : MonoBehaviour
             vietUrbanFoodScreen.SetActive(false);
         }
     }
-
     private void Update()
     {
         if (Input.GetKeyDown(toggleKey))
@@ -42,7 +38,6 @@ public class PhoneUIController : MonoBehaviour
             TogglePhone();
         }
     }
-
     private void OnDestroy()
     {
         if (isPhoneOpen)
@@ -51,19 +46,16 @@ public class PhoneUIController : MonoBehaviour
             Cursor.visible = previousCursorVisible;
         }
     }
-
     public void TogglePhone()
     {
         SetPhoneOpen(!isPhoneOpen);
     }
-
     public void OpenVietUrbanFood()
     {
         if (!isPhoneOpen)
         {
             return;
         }
-
         if (homeScreen != null)
         {
             homeScreen.SetActive(false);
@@ -77,7 +69,6 @@ public class PhoneUIController : MonoBehaviour
             vietUrbanFoodScreen.SetActive(true);
         }
     }
-
     public void ReturnToHomeScreen()
     {
         if (homeScreen != null)
@@ -93,14 +84,12 @@ public class PhoneUIController : MonoBehaviour
             vietUrbanFoodScreen.SetActive(false);
         }
     }
-
     public void SetPhoneOpen(bool open)
     {
         if (phoneRoot == null || isPhoneOpen == open)
         {
             return;
         }
-
         if (open)
         {
             previousCursorLockMode = Cursor.lockState;
@@ -122,7 +111,6 @@ public class PhoneUIController : MonoBehaviour
                 crosshair.SetActive(previousCrosshairActive);
             }
         }
-
         isPhoneOpen = open;
         phoneRoot.SetActive(open);
     }
