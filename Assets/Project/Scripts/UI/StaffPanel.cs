@@ -142,6 +142,22 @@ public class StaffPanel : MonoBehaviour
         root.SetActive(false);
     }
 
+    /// <summary>Model mà StaffManager dùng khi thuê từng vị trí (cùng thứ tự ưu tiên như lúc tạo nhân viên).</summary>
+    private static GameObject StaffModel(string role)
+    {
+        GameObject Load(string n) => Resources.Load<GameObject>(n);
+        switch (role)
+        {
+            case "Cashier": return Load("Staff_Cashier") ?? Load("Staff_Worker");
+            case "Restocker": return Load("Staff_Restocker") ?? Load("Staff_Worker");
+            case "Janitor":
+                CustomerSpawner spawner = FindAnyObjectByType<CustomerSpawner>();
+                GameObject p = spawner != null ? spawner.FindPrefab(StaffManager.JanitorModel) : null;
+                return p != null ? p : Load("Staff_Janitor") ?? Load("Staff_Worker");
+            default: return Load("Staff_Worker");
+        }
+    }
+
     private StaffCard Card(Transform parent, float x, float y, float w, float h, float rot, string role, string desc, float wage, int level,
                            UnityEngine.Events.UnityAction onHire, UnityEngine.Events.UnityAction onFire, float delay)
     {
@@ -152,10 +168,16 @@ public class StaffPanel : MonoBehaviour
         // Ảnh thẻ: bóng người trên nền xanh
         RectTransform photo = ShopPC.Box("Photo", card, 24f, 54f, 111f, 144f, ShopPC.Hex(0x8FB2D6));
         photo.gameObject.AddComponent<RectMask2D>();
-        Color sil = ShopPC.Hex(0x2A2018);
-        ShopPC.Dot(photo, new Vector2(84f, 84f), ShopPC.At(photo.sizeDelta, 13.5f, 75f, 84f, 84f), sil);
-        ShopPC.Box("Body", photo, 13.5f, 117f, 84f, 40f, sil);
-        ShopPC.Dot(photo, new Vector2(42f, 45f), ShopPC.At(photo.sizeDelta, 34.5f, 24f, 42f, 45f), sil);
+        // Ảnh thẻ chụp từ chính model nhân viên được thuê trong game; không có model thì vẽ bóng người như cũ
+        Texture face = ModelSnapshot.Get("staff:" + role, StaffModel(role), ModelSnapshot.Framing.Portrait, 222, 288, ShopPC.Hex(0x8FB2D6));
+        if (face != null) ModelSnapshot.Show(photo, face);
+        else
+        {
+            Color sil = ShopPC.Hex(0x2A2018);
+            ShopPC.Dot(photo, new Vector2(84f, 84f), ShopPC.At(photo.sizeDelta, 13.5f, 75f, 84f, 84f), sil);
+            ShopPC.Box("Body", photo, 13.5f, 117f, 84f, 40f, sil);
+            ShopPC.Dot(photo, new Vector2(42f, 45f), ShopPC.At(photo.sizeDelta, 34.5f, 24f, 42f, 45f), sil);
+        }
         ShopUI.Frame(photo, photo.sizeDelta, Color.white, 3f);
 
         ShopPC.Text(card, role.ToUpperInvariant(), ShopUI.Print, 39, 153f, 50f, w - 170f, 48f, ShopPC.Ink, TextAlignmentOptions.Left, 1.5f);

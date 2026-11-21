@@ -150,9 +150,16 @@ public class VehiclePanel : MonoBehaviour
         // Ảnh: trời + mặt đường + xe
         float aw = w - 36f;
         RectTransform art = ShopPC.Box("Art", card, 18f, 18f, aw, 144f, ShopPC.Hex(0xDDE6EE));
-        ShopPC.Box("Road", art, 0f, 98f, aw, 46f, ShopPC.Hex(0x9AA3AE));
-        if (car) DrawCar(art, paint, e.speed >= 14f);
-        else DrawBike(art, paint);
+        // Ảnh chụp chính chiếc xe trong game (model thật); không chụp được thì vẽ hình đơn giản như cũ
+        Texture photo = ModelSnapshot.Get("vehicle:" + e.id, VehicleManager.FindObject(e.id), ModelSnapshot.Framing.Vehicle,
+                                          Mathf.RoundToInt(aw * 2f), 288, ShopPC.Hex(0xDDE6EE));
+        if (photo != null) ModelSnapshot.Show(art, photo);
+        else
+        {
+            ShopPC.Box("Road", art, 0f, 98f, aw, 46f, ShopPC.Hex(0x9AA3AE));
+            if (car) DrawCar(art, paint, e.speed >= 14f);
+            else DrawBike(art, paint);
+        }
         RectTransform plate = ShopPC.Box("Plate", art, 9f, 9f, 150f, 30f, Color.white);
         ShopUI.Frame(plate, plate.sizeDelta, ShopPC.Hex(0x14100A), 3f);
         int hsh = Mathf.Abs(e.id.GetHashCode());
