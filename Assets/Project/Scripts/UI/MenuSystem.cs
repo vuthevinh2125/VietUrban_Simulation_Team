@@ -66,6 +66,10 @@ public class MenuSystem : MonoBehaviour
         if (mainMenu.activeSelf || gameOverMenu.activeSelf) return;
         if (pauseMenu.activeSelf) { Resume(); return; }
 
+        // Đang chiếu đoạn phim (mở đầu, sự kiện ban ngày / ban đêm): phim chạy theo giờ thật nên vẫn chạy dưới menu tạm dừng,
+        // hết phim lại đặt Time.timeScale = 1 -> game chạy tiếp trong khi menu vẫn mở. Không mở menu tạm dừng lúc này.
+        if (NightRobbery.Playing || StoreEvents.CutsceneRunning || IntroCutscene.Playing) return;
+
         // Esc vừa dùng để đóng bảng khác (máy tính, bảng giá...) thì không mở menu tạm dừng
         if (UIState.IsBlockingUIOpen || UIState.LastClosedFrame >= Time.frameCount - 1) return;
         OpenPause();

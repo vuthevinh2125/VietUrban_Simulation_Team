@@ -71,6 +71,7 @@ public partial class NightRobbery
                 cameraRolledDay = day;
                 cameraPending = GameSettings.HorrorEvents && day >= 2 && day - lastCameraDay >= 2 && Random.value < cameraChance;
             }
+            if (cameraPending && !GameSettings.HorrorEvents) cameraPending = false;   // vừa tắt trong Settings sau khi đã gieo xúc xắc
             if (cameraPending && gm.IsClosingTime && NPCShopper.Active.Count == 0)
             {
                 if (StorePlayer() == null) cameraPending = false;            // người chơi không ở trong cửa hàng: bỏ, cho hết ngày

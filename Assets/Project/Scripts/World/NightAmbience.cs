@@ -64,7 +64,7 @@ public class NightAmbience : MonoBehaviour
     {
         UpdateStreets();
         // Tạo dần âm thanh từ chiều tối, mỗi 0.4 s một clip
-        if (!prewarmed && Evening && Time.unscaledTime >= nextPrewarm)
+        if (!prewarmed && GameSettings.HorrorEvents && Evening && Time.unscaledTime >= nextPrewarm)   // tắt sự kiện kinh dị: khỏi tạo
         {
             nextPrewarm = Time.unscaledTime + 0.4f;
             prewarmed = HorrorAudio.Prewarm();

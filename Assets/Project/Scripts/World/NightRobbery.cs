@@ -71,7 +71,7 @@ public partial class NightRobbery : MonoBehaviour
     void Update()
     {
         if (Playing) return;
-        if (!mournersPrepped && IsNight()) StartCoroutine(PrepMourners());   // chuẩn bị đồ tang từ chập tối (chạy nền)
+        if (!mournersPrepped && GameSettings.HorrorEvents && IsNight()) StartCoroutine(PrepMourners());   // chuẩn bị đồ tang từ chập tối (chạy nền); tắt sự kiện kinh dị thì thôi
         if (HorrorUpdate()) return;                                          // sự kiện kinh dị ban đêm (NightRobbery.Horror*.cs)
         bool force = GameDebug.CheatsEnabled && Input.GetKeyDown(KeyCode.F4) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
         if (!force && Time.time < nextCheck) return;

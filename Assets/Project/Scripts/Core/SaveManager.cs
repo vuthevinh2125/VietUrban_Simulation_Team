@@ -88,6 +88,8 @@ public class SaveManager : MonoBehaviour
     void Update()
     {
         if (UIState.IsBlockingUIOpen) return;
+        // Đang chiếu đoạn phim: không lưu / nạp giữa chừng (xe đang bị khoá, nhân viên đang ẩn, phim xong lại trả về trạng thái cũ)
+        if (NightRobbery.Playing || StoreEvents.CutsceneRunning || IntroCutscene.Playing) return;
         bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         if (Input.GetKeyDown(KeyCode.F5) && !shift) TryManualSave();   // Shift+F5 là phím thử của sự kiện kinh dị (ghi đầu dãy kệ)
         if (Input.GetKeyDown(KeyCode.F9) && File.Exists(SavePath)) Load();
