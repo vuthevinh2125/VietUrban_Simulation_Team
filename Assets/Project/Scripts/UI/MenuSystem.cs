@@ -24,7 +24,7 @@ public class MenuSystem : MonoBehaviour
     private Button continueButton;
     private TMP_Text calDay, calInfo, calSaved, pauseNote, confirmText;
     private GameObject continueTag;
-    private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue, horrorValue;
+    private TMP_Text sensValue, volValue, musicValue, musicVolValue, qualValue, fullValue, shadowValue, horrorValue, langValue;
     private Action confirmAction, confirmNoAction;
     private GameObject settingsReturnTo;
 
@@ -254,6 +254,7 @@ public class MenuSystem : MonoBehaviour
         fullValue.text = GameSettings.Fullscreen ? "On" : "Off";
         shadowValue.text = GameSettings.LampShadows ? "On" : "Off";
         horrorValue.text = GameSettings.HorrorEvents ? "On" : "Off";
+        langValue.text = Loc.CurrentName;
     }
 
     // ================= Tiện ích =================
@@ -382,15 +383,16 @@ public class MenuSystem : MonoBehaviour
         RectTransform sw = ShopUI.Sheet("Form", settingsMenu.transform, new Vector2(900, 800), Vector2.zero, ShopUI.Paper, 0.5f, true);
         ShopUI.Text(sw, "PHIẾU CÀI ĐẶT · SETTINGS", ShopUI.Print, 44, new Vector2(840, 60), new Vector2(0, 340), ShopUI.SignRed, Left, 0f, 6f);
         ShopUI.Box("Rule", sw, new Vector2(840, 3), new Vector2(0, 300), ShopUI.SignRed);
-        sensValue = SettingRow(sw, "Mouse sensitivity", 240, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity - 0.2f); RefreshSettings(); }, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity + 0.2f); RefreshSettings(); });
-        volValue = SettingRow(sw, "Volume", 170, () => { GameSettings.SetVolume(GameSettings.Volume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetVolume(GameSettings.Volume + 0.1f); RefreshSettings(); });
-        musicValue = SettingRow(sw, "Music", 100, () => { GameSettings.SetMusic(GameSettings.Music - 1); RefreshSettings(); }, () => { GameSettings.SetMusic(GameSettings.Music + 1); RefreshSettings(); });
-        musicVolValue = SettingRow(sw, "Music volume", 30, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume + 0.1f); RefreshSettings(); });
-        qualValue = SettingRow(sw, "Graphics quality", -40, () => { GameSettings.SetQuality(GameSettings.Quality - 1); RefreshSettings(); }, () => { GameSettings.SetQuality(GameSettings.Quality + 1); RefreshSettings(); });
-        fullValue = SettingRow(sw, "Fullscreen", -110, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); }, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); });
-        shadowValue = SettingRow(sw, "Lamp shadows (slow)", -180, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); }, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); });
-        horrorValue = SettingRow(sw, "Night horror events", -250, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); }, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); });
-        ShopUI.PrintButton(sw, "DONE", new Vector2(260, 66), new Vector2(0, -340), CloseSettings);
+        langValue = SettingRow(sw, "Language", 250, () => { Loc.Previous(); RefreshSettings(); }, () => { Loc.Next(); RefreshSettings(); });
+        sensValue = SettingRow(sw, "Mouse sensitivity", 188, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity - 0.2f); RefreshSettings(); }, () => { GameSettings.SetSensitivity(GameSettings.MouseSensitivity + 0.2f); RefreshSettings(); });
+        volValue = SettingRow(sw, "Volume", 126, () => { GameSettings.SetVolume(GameSettings.Volume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetVolume(GameSettings.Volume + 0.1f); RefreshSettings(); });
+        musicValue = SettingRow(sw, "Music", 64, () => { GameSettings.SetMusic(GameSettings.Music - 1); RefreshSettings(); }, () => { GameSettings.SetMusic(GameSettings.Music + 1); RefreshSettings(); });
+        musicVolValue = SettingRow(sw, "Music volume", 2, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume - 0.1f); RefreshSettings(); }, () => { GameSettings.SetMusicVolume(GameSettings.MusicVolume + 0.1f); RefreshSettings(); });
+        qualValue = SettingRow(sw, "Graphics quality", -60, () => { GameSettings.SetQuality(GameSettings.Quality - 1); RefreshSettings(); }, () => { GameSettings.SetQuality(GameSettings.Quality + 1); RefreshSettings(); });
+        fullValue = SettingRow(sw, "Fullscreen", -122, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); }, () => { GameSettings.SetFullscreen(!GameSettings.Fullscreen); RefreshSettings(); });
+        shadowValue = SettingRow(sw, "Lamp shadows (slow)", -184, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); }, () => { GameSettings.SetLampShadows(!GameSettings.LampShadows); RefreshSettings(); });
+        horrorValue = SettingRow(sw, "Night horror events", -246, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); }, () => { GameSettings.SetHorrorEvents(!GameSettings.HorrorEvents); RefreshSettings(); });
+        ShopUI.PrintButton(sw, "DONE", new Vector2(260, 66), new Vector2(0, -330), CloseSettings);
 
         // --- Game Over: cửa cuốn kéo xuống, dán giấy "SANG NHƯỢNG CỬA HÀNG" ---
         gameOverMenu = ShopUI.Full("GameOver", canvas, new Color(0.5f, 0.52f, 0.55f)).gameObject;

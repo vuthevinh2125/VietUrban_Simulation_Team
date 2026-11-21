@@ -59,7 +59,7 @@ public static class UIKit
                                 TextAlignmentOptions align = TextAlignmentOptions.Center, bool bold = false, Color? color = null)
     {
         GameObject go = Rect("Text", parent, box, pos);
-        var t = go.AddComponent<TextMeshProUGUI>();
+        var t = Loc.Attach(go.AddComponent<TextMeshProUGUI>());
         t.font = ShopUI.Body;
         t.text = text;
         t.fontSize = size;

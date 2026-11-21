@@ -103,7 +103,7 @@ public static class ShopUI
         var rt = (RectTransform)go.transform;
         rt.sizeDelta = box; rt.anchoredPosition = pos;
         if (rot != 0f) rt.localRotation = Quaternion.Euler(0f, 0f, rot);
-        var t = go.AddComponent<TextMeshProUGUI>();
+        var t = Loc.Attach(go.AddComponent<TextMeshProUGUI>());
         if (font != null) t.font = font;
         t.text = text; t.fontSize = size; t.alignment = align; t.color = color;
         t.characterSpacing = spacing;
