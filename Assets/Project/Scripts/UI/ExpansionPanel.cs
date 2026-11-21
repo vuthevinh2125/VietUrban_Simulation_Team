@@ -118,27 +118,41 @@ public class ExpansionPanel : MonoBehaviour
         for (float gy = 36f; gy < planH; gy += 36f) ShopPC.Box("GridH", plan, 0f, gy, planW, 1.5f, grid);
         ShopPC.Text(plan, "MẶT BẰNG · FLOOR PLAN 1:100", ShopUI.Print, 33, 33f, 21f, 900f, 46f, Color.white, TextAlignmentOptions.Left, 4.5f);
 
-        // Gian chính
-        RectTransform hall = ShopPC.Group("MainHall", plan, 90f, 105f, 630f, 450f);
+        // Mặt bằng: toà siêu thị (gian chính phía trước bên trái, lối vào phố Hai Bà Trưng ở mặt trước), các gian mở thêm
+        // ở cánh phải và phía sau; nhà kho là toà nhà riêng bên cạnh. Mỗi phần mở rộng có ô riêng theo id - không ô nào đè nhau.
+        const float storeX = 72f, storeY = 105f, frontH = 360f, backH = 375f;
+        RectTransform hall = ShopPC.Group("MainHall", plan, storeX, storeY, 540f, frontH);
         ShopUI.Frame(hall, hall.sizeDelta, Color.white, 4.5f);
         ShopPC.Text(hall, "MAIN HALL", ShopUI.Print, 30, 18f, 18f, 500f, 40f, Color.white, TextAlignmentOptions.Left, 3f);
-        ShopPC.Text(hall, "Shelves and checkout · owned", ShopUI.Body, 18, 18f, 58f, 560f, 26f, Color.white, TextAlignmentOptions.Left);
-        for (int i = 0; i < 9; i++) ShopPC.Box("Shelf", hall, 30f + i * 64f, 120f, 30f, 225f, ShopPC.A(Color.white, 0.28f));
-        ShopPC.Box("Door", plan, 300f, 93f, 135f, 24f, ShopUI.Enamel);
-        ShopPC.Box("DoorL", plan, 300f, 93f, 4.5f, 24f, Color.white);
-        ShopPC.Box("DoorR", plan, 430.5f, 93f, 4.5f, 24f, Color.white);
-        ShopPC.Text(plan, "ENTRANCE · HAI BÀ TRƯNG", ShopUI.Body, 16, 294f, 60f, 400f, 24f, Color.white, TextAlignmentOptions.Left, 0f, true);
+        ShopPC.Text(hall, "Shelves and checkout · owned", ShopUI.Body, 18, 18f, 58f, 500f, 26f, Color.white, TextAlignmentOptions.Left);
+        for (int i = 0; i < 7; i++) ShopPC.Box("Shelf", hall, 36f + i * 68f, 110f, 28f, 200f, ShopPC.A(Color.white, 0.28f));
+        ShopPC.Box("Door", plan, 270f, storeY - 12f, 135f, 24f, ShopUI.Enamel);
+        ShopPC.Box("DoorL", plan, 270f, storeY - 12f, 4.5f, 24f, Color.white);
+        ShopPC.Box("DoorR", plan, 400.5f, storeY - 12f, 4.5f, 24f, Color.white);
+        ShopPC.Text(plan, "ENTRANCE · HAI BÀ TRƯNG", ShopUI.Body, 16, 264f, 60f, 400f, 24f, Color.white, TextAlignmentOptions.Left, 0f, true);
 
-        // Các phòng mở rộng
-        float[,] slots = { { 720f, 105f, 375f, 450f }, { 90f, 555f, 450f, 285f }, { 540f, 555f, 555f, 285f }, { 1095f, 105f, 240f, 450f }, { 1095f, 555f, 240f, 285f } };
-        int k = 0;
+        var slotById = new Dictionary<string, Rect>
+        {
+            { "section_easthall",          new Rect(612f, storeY, 228f, frontH) },
+            { "expansion_storeexpansion1", new Rect(840f, storeY, 216f, frontH) },
+            { "section_chilled",           new Rect(storeX, storeY + frontH, 240f, backH) },
+            { "section_center",            new Rect(312f, storeY + frontH, 300f, backH) },
+            { "section_rear",              new Rect(612f, storeY + frontH, 228f, backH) },
+            { "expansion_storeexpansion2", new Rect(840f, storeY + frontH, 216f, backH) },
+            { "expansion_warehouse",       new Rect(1104f, storeY, 228f, frontH) },
+        };
+        var spare = new List<Rect> { new Rect(1104f, storeY + frontH, 228f, backH) };   // phần mở rộng mới chưa có chỗ riêng
+        var used = new HashSet<string>();
         if (builtCount == 0)
-            ShopPC.Text(plan, "No expansions yet.\nRun Tools > Store Setup > 15 / 16 in the editor.", ShopUI.Body, 22, 720f, 200f, 600f, 90f, Color.white, TextAlignmentOptions.Left);
+            ShopPC.Text(plan, "No expansions yet.\nRun Tools > Store Setup > 15 / 16 in the editor.", ShopUI.Body, 22, 640f, 200f, 600f, 90f, Color.white, TextAlignmentOptions.Left);
         foreach (StoreExpansion e in StoreExpansion.All)
         {
             if (e == null) continue;
-            int si = Mathf.Min(k, slots.GetLength(0) - 1);
-            float x = slots[si, 0], y = slots[si, 1], w = slots[si, 2], h = slots[si, 3];
+            Rect slot;
+            if (e.id != null && slotById.TryGetValue(e.id, out slot) && used.Add(e.id)) { }
+            else if (spare.Count > 0) { slot = spare[0]; spare.RemoveAt(0); }
+            else { Debug.LogWarning($"[Expansion] No room on the floor plan for {e.id}."); continue; }
+            float x = slot.x, y = slot.y, w = slot.width, h = slot.height;
             var r = new Room { e = e };
             RectTransform room = ShopPC.Group("Room_" + e.id, plan, x, y, w, h);
             r.group = room.gameObject.AddComponent<CanvasGroup>();
@@ -152,15 +166,20 @@ public class ExpansionPanel : MonoBehaviour
             RectTransform no = ShopUI.Group("DashNo", room, room.sizeDelta, Vector2.zero);
             ShopPC.DashedFrame(no, room.sizeDelta, ShopPC.A(Color.white, 0.55f), 4.5f);
             r.solid = solid.gameObject; r.dashedYes = yes.gameObject; r.dashedNo = no.gameObject;
-            r.name = ShopPC.Text(room, e.displayName.ToUpperInvariant(), ShopUI.Print, 30, 18f, 18f, w - 36f, 40f, Color.white, TextAlignmentOptions.Left, 3f);
-            r.desc = ShopPC.Text(room, e.description, ShopUI.Body, 17, 18f, 60f, w - 36f, h - 60f - 100f, ShopPC.A(Color.white, 0.85f), TextAlignmentOptions.TopLeft);
-            r.state = ShopPC.Text(room, "", ShopUI.Body, 16, 18f, h - 96f, w - 36f, 26f, Color.white, TextAlignmentOptions.Left, 0f, true);
+            // Tên 2 dòng, tự thu nhỏ cho vừa ô hẹp
+            r.name = ShopPC.Text(room, e.displayName.ToUpperInvariant(), ShopUI.Print, 26, 16f, 14f, w - 32f, 66f, Color.white, TextAlignmentOptions.TopLeft, 2f);
+            r.name.enableAutoSizing = true; r.name.fontSizeMin = 16f; r.name.fontSizeMax = 26f;
+            r.desc = ShopPC.Text(room, e.description, ShopUI.Body, 17, 16f, 86f, w - 32f, h - 86f - 110f, ShopPC.A(Color.white, 0.85f), TextAlignmentOptions.TopLeft);
+            r.state = ShopPC.Text(room, "", ShopUI.Body, 15, 16f, h - 108f, w - 32f, 40f, Color.white, TextAlignmentOptions.BottomLeft, 0f, true);
+            r.state.enableAutoSizing = true; r.state.fontSizeMin = 11f; r.state.fontSizeMax = 15f;
             StoreExpansion captured = e;
-            r.buy = ShopPC.Btn(room, "BUILD", 18f, h - 66f, 150f, 50f, () => captured.TryBuy(), ShopPC.Kind.Red, 21f);
+            r.buy = ShopPC.Btn(room, "BUILD", 16f, h - 62f, Mathf.Min(150f, w - 32f), 46f, () => captured.TryBuy(), ShopPC.Kind.Red, 20f);
             rows.Add(r);
-            k++;
         }
-        ShopPC.Text(plan, "Yellow dashed rooms can be built now. Every new room adds to the rent paid each night.", ShopUI.Body, 19, 720f, planH - 70f, 620f, 60f,
+        // Nhà kho là toà nhà riêng: nối với siêu thị bằng lối đi nét đứt
+        if (used.Contains("expansion_warehouse"))
+            for (float px = 1062f; px < 1100f; px += 14f) ShopPC.Box("Path", plan, px, storeY + frontH * 0.5f - 2f, 8f, 4f, ShopPC.A(Color.white, 0.6f));
+        ShopPC.Text(plan, "Yellow dashed rooms can be built now. Every new room adds to the rent paid each night.", ShopUI.Body, 19, storeX, planH - 78f, 1260f, 60f,
             ShopPC.A(Color.white, 0.85f), TextAlignmentOptions.TopLeft);
 
         // Cột phải
