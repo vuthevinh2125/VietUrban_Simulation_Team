@@ -93,13 +93,13 @@ public class InteractCard : MonoBehaviour
         TMP_Text titleT = ShopUI.Text(card, title, ShopUI.Body, 24, new Vector2(MaxW, 40f), Vector2.zero, Color.white, TextAlignmentOptions.TopLeft);
         titleT.fontStyle = FontStyles.Bold;
         float stockW = stock != null ? 150f : 0f;
-        float w = Mathf.Max(MinW, titleT.GetPreferredValues(title).x + stockW + Pad * 2f + 10f);
+        float w = Mathf.Max(MinW, titleT.GetPreferredValues(Loc.T(title)).x + stockW + Pad * 2f + 10f);
         var detailTexts = new List<TMP_Text>();
         for (int i = 1; i < lines.Count; i++)
         {
             TMP_Text d = ShopUI.Text(card, lines[i], ShopUI.Body, 19, new Vector2(MaxW, 30f), Vector2.zero, ShopPC.Hex(0xC9CFD8), TextAlignmentOptions.TopLeft);
             d.richText = true;
-            w = Mathf.Max(w, d.GetPreferredValues(lines[i]).x + Pad * 2f + 10f);
+            w = Mathf.Max(w, d.GetPreferredValues(Loc.T(lines[i])).x + Pad * 2f + 10f);
             detailTexts.Add(d);
         }
         float hintsW = Pad * 2f;
@@ -111,7 +111,7 @@ public class InteractCard : MonoBehaviour
         float y = 16f;
         titleT.textWrappingMode = TextWrappingModes.Normal;
         titleT.overflowMode = TextOverflowModes.Ellipsis;
-        float th = Mathf.Min(64f, titleT.GetPreferredValues(title, inner - stockW, 0f).y);
+        float th = Mathf.Min(64f, titleT.GetPreferredValues(Loc.T(title), inner - stockW, 0f).y);
         Place(titleT.rectTransform, Pad + 6f, y, inner - stockW, th, w);
         if (stock != null)
         {
@@ -127,7 +127,7 @@ public class InteractCard : MonoBehaviour
         foreach (TMP_Text d in detailTexts)
         {
             d.textWrappingMode = TextWrappingModes.Normal;
-            float dh = d.GetPreferredValues(d.text, inner, 0f).y;
+            float dh = d.GetPreferredValues(Loc.T(d.text), inner, 0f).y;
             Place(d.rectTransform, Pad + 6f, y, inner, dh, w);
             y += dh + 2f;
         }
@@ -143,10 +143,10 @@ public class InteractCard : MonoBehaviour
                 TMP_Text kt = ShopUI.Text(card, k, ShopUI.Body, 15, new Vector2(120f, 30f), Vector2.zero, ShopPC.Hex(0x14100A), TextAlignmentOptions.Center);
                 kt.fontStyle = FontStyles.Bold;
                 kt.textWrappingMode = TextWrappingModes.NoWrap;
-                float kw = Mathf.Max(34f, kt.GetPreferredValues(k).x + 16f);
+                float kw = Mathf.Max(34f, kt.GetPreferredValues(Loc.T(k)).x + 16f);
                 TMP_Text wt = ShopUI.Text(card, what, ShopUI.Body, 18, new Vector2(300f, 30f), Vector2.zero, ShopPC.Hex(0xF4ECD8), TextAlignmentOptions.Left);
                 wt.textWrappingMode = TextWrappingModes.NoWrap;
-                float ww = wt.GetPreferredValues(what).x + 4f;
+                float ww = wt.GetPreferredValues(Loc.T(what)).x + 4f;
                 if (x + kw + 8f + ww > w - Pad && x > Pad + 6f) { x = Pad + 6f; y += 38f; }
                 RectTransform keyCap = ShopUI.Box("Key", card, new Vector2(kw, 30f), Vector2.zero, ShopPC.Hex(0xF4ECD8));
                 Place(keyCap, x, y, kw, 30f, w);

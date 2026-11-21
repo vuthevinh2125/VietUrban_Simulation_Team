@@ -146,7 +146,7 @@ public class AdvisorPanel : MonoBehaviour
 
         TMP_Text title = ShopPC.Text(book, "SỔ TAY BÀ LAN", ShopUI.Print, 45, Left, 24f, 500f, 60f, ShopPC.Red, TextAlignmentOptions.BottomLeft, 4.5f);
         title.textWrappingMode = TextWrappingModes.NoWrap;
-        float tw = title.GetPreferredValues(title.text).x + 21f;
+        float tw = title.GetPreferredValues(Loc.T(title.text)).x + 21f;
         learned = ShopPC.Text(book, "", ShopUI.Hand, 33, Left + tw, 30f, sz.x - Left - tw - 40f, 50f, ShopPC.Pen, TextAlignmentOptions.BottomLeft);
         info = ShopPC.Text(book, "", ShopUI.Body, 18, Left, 90f, sz.x - Left - 40f, 28f, ShopPC.Muted, TextAlignmentOptions.Left, 0f, true);
 

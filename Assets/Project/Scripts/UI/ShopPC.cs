@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using TMPro;
 using UnityEngine;
@@ -60,18 +61,37 @@ public static class ShopPC
         // Biển BÀ LAN MART
         float x = 36f;
         TMP_Text tagText = MakeText(bar, "BÀ LAN MART", ShopUI.Print, 30, Gold, TextAlignmentOptions.Center, 3f);
-        float tw = tagText.GetPreferredValues("BÀ LAN MART").x + 36f;
+        float tw = tagText.GetPreferredValues(Loc.T("BÀ LAN MART")).x + 36f;
         RectTransform tag = LeftBox("Brand", bar, x, tw, 48f, Red);
         tagText.transform.SetParent(tag, false);
         Fit(tagText.rectTransform, tag.sizeDelta);
-        x += tw + 39f;
-
-        // Các tab
+        // Các tab: đo chữ ĐÃ DỊCH (độ dài thay theo ngôn ngữ), rồi chia đều khoảng giữa biển tên và nhãn tiền.
+        // Hẹp quá thì thu nhỏ chữ của cả hàng cho vừa.
+        float barW = ((RectTransform)canvas).rect.width;
+        if (barW < 600f) barW = 1920f;
+        float start = x + tw + 24f, end = barW - (36f + 66f + 30f + 200f) - 24f;
+        var labels = new List<TMP_Text>();
+        var widths = new List<float>();
+        float sum = 0f;
         foreach (string t in Tabs)
         {
+            TMP_Text l = MakeText(bar, t, ShopUI.Print, 28, t == active ? Gold : Dim, TextAlignmentOptions.Center, 3f);
+            float lw = Mathf.Clamp(l.GetPreferredValues(Loc.T(t)).x, 20f, 400f) + 4f;
+            labels.Add(l); widths.Add(lw); sum += lw;
+        }
+        const float minGap = 18f, maxGap = 64f;
+        int n = Tabs.Length;
+        float scale = Mathf.Clamp((end - start - minGap * (n - 1)) / Mathf.Max(1f, sum), 0.6f, 1f);
+        float gap = Mathf.Clamp((end - start - sum * scale) / Mathf.Max(1, n - 1), minGap, maxGap);
+        x = start + Mathf.Max(0f, (end - start - sum * scale - gap * (n - 1)) * 0.5f);   // dư chỗ thì căn giữa cả hàng
+
+        for (int i = 0; i < n; i++)
+        {
+            string t = Tabs[i];
             bool on = t == active;
-            TMP_Text label = MakeText(bar, t, ShopUI.Print, 28, on ? Gold : Dim, TextAlignmentOptions.Center, 3f);
-            float w = label.GetPreferredValues(t).x + 4f;
+            TMP_Text label = labels[i];
+            label.fontSize *= scale;
+            float w = widths[i] * scale;
             RectTransform tab = LeftBox("Tab_" + t, bar, x, w, 60f, new Color(0f, 0f, 0f, 0.001f), true);
             label.transform.SetParent(tab, false);
             Fit(label.rectTransform, new Vector2(w, 48f));
@@ -86,7 +106,7 @@ public static class ShopPC
                 tab.gameObject.AddComponent<UIMotion>().hoverScale = 1.06f;
                 tab.gameObject.AddComponent<TabHover>().label = label;
             }
-            x += w + 33f;
+            x += w + gap;
         }
 
         // Nút X (đóng máy tính)
@@ -181,7 +201,7 @@ public static class ShopPC
     {
         TMP_Text t = Text(content, title, ShopUI.Print, 39, 0f, 0f, 700f, 54f, Light, TextAlignmentOptions.BottomLeft, 4.5f);
         t.textWrappingMode = TextWrappingModes.NoWrap;
-        float w = t.GetPreferredValues(title).x + 21f;
+        float w = t.GetPreferredValues(Loc.T(title)).x + 21f;
         TMP_Text s = Text(content, sub, ShopUI.Body, 20, w, 14f, 1848f - w - 520f, 34f, Soft, TextAlignmentOptions.BottomLeft);
         right = Text(content, "", ShopUI.Body, 20, 1848f - 520f, 8f, 520f, 40f, Soft, TextAlignmentOptions.BottomRight);
         return s;
@@ -232,7 +252,7 @@ public static class ShopPC
     public static RectTransform Stamp(Transform parent, string text, Vector2 pos, float fontSize, float rot)
     {
         TMP_Text probe = ShopUI.Text(parent, text, ShopUI.Print, fontSize, new Vector2(1000f, 100f), Vector2.zero, Color.clear, TextAlignmentOptions.Center, 0f, 3f);
-        float w = probe.GetPreferredValues(text).x + 30f;
+        float w = probe.GetPreferredValues(Loc.T(text)).x + 30f;
         UnityEngine.Object.Destroy(probe.gameObject);
         Vector2 size = new Vector2(w, fontSize * 1.45f);
         RectTransform g = ShopUI.Group("Stamp", parent, size, pos, rot);
@@ -351,13 +371,13 @@ public static class ShopPC
         {
             TMP_Text k = MakeText(bar, key, ShopUI.Body, 18, Hex(0x14100A), TextAlignmentOptions.Center, 0f);
             k.fontStyle = FontStyles.Bold;
-            float kw = Mathf.Max(39f, k.GetPreferredValues(key).x + 18f);
+            float kw = Mathf.Max(39f, k.GetPreferredValues(Loc.T(key)).x + 18f);
             RectTransform cap = LeftBox("Key_" + key, bar, x, kw, 39f, Hex(0xF4ECD8));
             k.transform.SetParent(cap, false);
             Fit(k.rectTransform, cap.sizeDelta);
             x += kw + 12f;
             TMP_Text w = MakeText(bar, what, ShopUI.Body, 19, Hex(0xD9CDB4), TextAlignmentOptions.Left, 0f);
-            float ww = w.GetPreferredValues(what).x + 4f;
+            float ww = w.GetPreferredValues(Loc.T(what)).x + 4f;
             RectTransform wr = w.rectTransform;
             wr.anchorMin = wr.anchorMax = new Vector2(0f, 0.5f); wr.pivot = new Vector2(0f, 0.5f);
             wr.sizeDelta = new Vector2(ww, 39f); wr.anchoredPosition = new Vector2(x, 1.5f);
@@ -424,7 +444,7 @@ public class ComputerMoney : MonoBehaviour
         if (Mathf.Approximately(m, last)) return;
         last = m;
         text.text = EconomyManager.Format(m);
-        float w = text.GetPreferredValues(text.text).x + 30f;
+        float w = text.GetPreferredValues(Loc.T(text.text)).x + 30f;
         box.sizeDelta = new Vector2(w, box.sizeDelta.y);
         text.rectTransform.sizeDelta = new Vector2(w, box.sizeDelta.y);
     }
@@ -441,7 +461,7 @@ public class FitTag : MonoBehaviour
         if (text == null || text.text == last) return;
         last = text.text;
         var rt = (RectTransform)transform;
-        float w = Mathf.Max(70f, text.GetPreferredValues(text.text).x + 24f);
+        float w = Mathf.Max(70f, text.GetPreferredValues(Loc.T(text.text)).x + 24f);
         rt.sizeDelta = new Vector2(w, rt.sizeDelta.y);
         text.rectTransform.sizeDelta = new Vector2(w, text.rectTransform.sizeDelta.y);
     }
@@ -543,7 +563,7 @@ public class ChipFit : MonoBehaviour
         bool has = !string.IsNullOrEmpty(last);
         if (bg != null) bg.enabled = has;
         var rt = (RectTransform)transform;
-        float w = has ? text.GetPreferredValues(last).x + padding : 0f;
+        float w = has ? text.GetPreferredValues(Loc.T(last)).x + padding : 0f;
         rt.sizeDelta = new Vector2(w, rt.sizeDelta.y);
         text.rectTransform.sizeDelta = new Vector2(w, rt.sizeDelta.y);
     }

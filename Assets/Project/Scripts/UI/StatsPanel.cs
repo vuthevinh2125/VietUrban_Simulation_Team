@@ -250,7 +250,7 @@ public class StatsPanel : MonoBehaviour
         // Dòng tiêu đề + chip chọn kỳ
         TMP_Text title = ShopPC.Text(c, "SỔ CÁI · LEDGER", ShopUI.Print, 39, 0f, 0f, 520f, 54f, ShopPC.Light, TextAlignmentOptions.BottomLeft, 4.5f);
         title.textWrappingMode = TextWrappingModes.NoWrap;
-        float tw = title.GetPreferredValues(title.text).x + 15f;
+        float tw = title.GetPreferredValues(Loc.T(title.text)).x + 15f;
         rangeText = ShopPC.Text(c, "", ShopUI.Body, 18, tw, 18f, 420f, 30f, ShopPC.Dim, TextAlignmentOptions.BottomLeft);
         string[] names = { "DAY", "WEEK", "MONTH", "REVIEWS" };
         float cxp = leftW;
